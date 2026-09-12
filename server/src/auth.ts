@@ -15,31 +15,32 @@ function emailCredentials(nk: nkruntime.Nakama, account: nkruntime.AccountEmail,
   }
 }
 
-function registerAuth(initializer: nkruntime.Initializer): void {
-  initializer.registerBeforeAuthenticateEmail(function (ctx, _logger, nk, request) {
-    consumeQuota(nk, SYSTEM_ID, "auth_" + nk.sha256Hash(ctx.clientIp || "unknown"), 30, 60000);
-    if (request.create === false && request.account && !request.account.email) {
-      passwordCredential(nk, request.account, false);
-      request.username = userName(request.username);
-    } else emailCredentials(nk, request.account, request.create !== false);
-    if (request.create !== false) request.username = userName(request.username);
-    return request;
-  });
-  initializer.registerBeforeLinkEmail(function (ctx, _logger, nk, request) {
-    consumeQuota(nk, authenticated(ctx), "link_email", 5, 60000);
-    emailCredentials(nk, request, true);
-    return request;
-  });
-  initializer.registerBeforeAuthenticateDevice(function (ctx, _logger, nk, request) {
-    if (ctx.env.ALLOW_DEVICE_AUTH !== "true") fail(nkruntime.Codes.PERMISSION_DENIED, "Guest login is disabled");
-    consumeQuota(nk, SYSTEM_ID, "auth_" + nk.sha256Hash(ctx.clientIp || "unknown"), 30, 60000);
-    return request;
-  });
-  initializer.registerBeforeAuthenticateCustom(denyNativeWrite);
-  initializer.registerBeforeUpdateAccount(function (ctx, _logger, nk, request) {
-    consumeQuota(nk, authenticated(ctx), "account_update", 10, 60000);
-    if (request.username !== undefined) request.username = userName(request.username);
-    if (request.displayName !== undefined) request.displayName = textField(request.displayName, "displayName", 1, 30);
-    return request;
-  });
+function beforeAuthenticateEmail(ctx: nkruntime.Context, _logger: nkruntime.Logger, nk: nkruntime.Nakama, request: nkruntime.AuthenticateEmailRequest): nkruntime.AuthenticateEmailRequest {
+  consumeQuota(nk, SYSTEM_ID, "auth_" + nk.sha256Hash(ctx.clientIp || "unknown"), 30, 60000);
+  if (request.create === false && request.account && !request.account.email) {
+    passwordCredential(nk, request.account, false);
+    request.username = userName(request.username);
+  } else emailCredentials(nk, request.account, request.create !== false);
+  if (request.create !== false) request.username = userName(request.username);
+  return request;
 }
+
+function beforeLinkEmail(ctx: nkruntime.Context, _logger: nkruntime.Logger, nk: nkruntime.Nakama, request: nkruntime.AccountEmail): nkruntime.AccountEmail {
+  consumeQuota(nk, authenticated(ctx), "link_email", 5, 60000);
+  emailCredentials(nk, request, true);
+  return request;
+}
+
+function beforeAuthenticateDevice(ctx: nkruntime.Context, _logger: nkruntime.Logger, nk: nkruntime.Nakama, request: nkruntime.AuthenticateDeviceRequest): nkruntime.AuthenticateDeviceRequest {
+  if (ctx.env.ALLOW_DEVICE_AUTH !== "true") fail(nkruntime.Codes.PERMISSION_DENIED, "Guest login is disabled");
+  consumeQuota(nk, SYSTEM_ID, "auth_" + nk.sha256Hash(ctx.clientIp || "unknown"), 30, 60000);
+  return request;
+}
+
+function beforeUpdateAccount(ctx: nkruntime.Context, _logger: nkruntime.Logger, nk: nkruntime.Nakama, request: nkruntime.UserUpdateAccount): nkruntime.UserUpdateAccount {
+  consumeQuota(nk, authenticated(ctx), "account_update", 10, 60000);
+  if (request.username !== undefined) request.username = userName(request.username);
+  if (request.displayName !== undefined) request.displayName = textField(request.displayName, "displayName", 1, 30);
+  return request;
+}
+

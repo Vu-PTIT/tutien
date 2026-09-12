@@ -64,53 +64,37 @@ const groupActionRpc: nkruntime.RpcFunction = function (ctx, logger, nk, payload
   });
 };
 
-function registerGroups(initializer: nkruntime.Initializer): void {
-  initializer.registerRpc("social_group_create", groupCreateRpc);
-  initializer.registerRpc("social_group_action", groupActionRpc);
-  initializer.registerRpc("social_groups", function (ctx, _logger, nk, payload) {
-    consumeQuota(nk, authenticated(ctx), "group_read", 120, 60000);
-    const data = objectPayload(payload);
-    const kind = data.kind;
-    if (kind !== undefined && kind !== "sect" && kind !== "guild") fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid kind");
-    if (data.mine === true) {
-      const result = nk.userGroupsList(ctx.userId!, pageLimit(data.limit), undefined, pageCursor(data.cursor));
-      return JSON.stringify({ userGroups: (result.userGroups || []).filter(function (g) {
-        return !!g.group && !!g.group.metadata && (g.group.metadata.kind === "sect" || g.group.metadata.kind === "guild") && (!kind || g.group.metadata.kind === kind);
-      }), cursor: result.cursor || "" });
-    }
-    const query = data.query === undefined ? undefined : textField(data.query, "query", 1, 32);
-    if (query && /[%_\\]/.test(query)) fail(nkruntime.Codes.INVALID_ARGUMENT, "Search wildcards are not allowed");
-    const result = nk.groupsList(query ? query + "%" : undefined, undefined, undefined, undefined, pageLimit(data.limit), pageCursor(data.cursor));
-    return JSON.stringify({ groups: (result.groups || []).filter(function (g) {
-      return !!g.metadata && (g.metadata.kind === "sect" || g.metadata.kind === "guild") && (!kind || g.metadata.kind === kind);
+function socialGroupsRpc(ctx: nkruntime.Context, _logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
+  consumeQuota(nk, authenticated(ctx), "group_read", 120, 60000);
+  const data = objectPayload(payload);
+  const kind = data.kind;
+  if (kind !== undefined && kind !== "sect" && kind !== "guild") fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid kind");
+  if (data.mine === true) {
+    const result = nk.userGroupsList(ctx.userId!, pageLimit(data.limit), undefined, pageCursor(data.cursor));
+    return JSON.stringify({ userGroups: (result.userGroups || []).filter(function (g) {
+      return !!g.group && !!g.group.metadata && (g.group.metadata.kind === "sect" || g.group.metadata.kind === "guild") && (!kind || g.group.metadata.kind === kind);
     }), cursor: result.cursor || "" });
-  });
-  initializer.registerRpc("social_group_members", function (ctx, _logger, nk, payload) {
-    const actor = authenticated(ctx);
-    consumeQuota(nk, actor, "group_read", 120, 60000);
-    const data = objectPayload(payload);
-    const id = uuidField(data.groupId, "groupId");
-    socialGroup(nk, id);
-    const role = groupState(nk, id, actor);
-    if (role === undefined || role > 2) fail(nkruntime.Codes.PERMISSION_DENIED, "Group membership required");
-    const state = data.state;
-    if (state !== undefined && [0, 1, 2, 3].indexOf(state as number) < 0) fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid state");
-    if (state === 3 && role > 1) fail(nkruntime.Codes.PERMISSION_DENIED, "Only managers can see join requests");
-    const result = nk.groupUsersList(id, pageLimit(data.limit), state as number | undefined, pageCursor(data.cursor));
-    return JSON.stringify({ groupUsers: (result.groupUsers || []).filter(function (u) { return role <= 1 || (u.state !== undefined && u.state <= 2); }), cursor: result.cursor || "" });
-  });
-  // Runtime calls above bypass API hooks. Block alternate client paths so the
-  // fixed capacity, private membership, roles and group lease stay authoritative.
-  initializer.registerBeforeCreateGroup(denyNativeWrite);
-  initializer.registerBeforeUpdateGroup(denyNativeWrite);
-  initializer.registerBeforeDeleteGroup(denyNativeWrite);
-  initializer.registerBeforeJoinGroup(denyNativeWrite);
-  initializer.registerBeforeLeaveGroup(denyNativeWrite);
-  initializer.registerBeforeAddGroupUsers(denyNativeWrite);
-  initializer.registerBeforeKickGroupUsers(denyNativeWrite);
-  initializer.registerBeforeBanGroupUsers(denyNativeWrite);
-  initializer.registerBeforePromoteGroupUsers(denyNativeWrite);
-  initializer.registerBeforeDemoteGroupUsers(denyNativeWrite);
-  initializer.registerBeforeListGroupUsers(denyNativeWrite);
-  initializer.registerBeforeListUserGroups(denyNativeWrite);
+  }
+  const query = data.query === undefined ? undefined : textField(data.query, "query", 1, 32);
+  if (query && /[%_\\]/.test(query)) fail(nkruntime.Codes.INVALID_ARGUMENT, "Search wildcards are not allowed");
+  const result = nk.groupsList(query ? query + "%" : undefined, undefined, undefined, undefined, pageLimit(data.limit), pageCursor(data.cursor));
+  return JSON.stringify({ groups: (result.groups || []).filter(function (g) {
+    return !!g.metadata && (g.metadata.kind === "sect" || g.metadata.kind === "guild") && (!kind || g.metadata.kind === kind);
+  }), cursor: result.cursor || "" });
 }
+
+function socialGroupMembersRpc(ctx: nkruntime.Context, _logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
+  const actor = authenticated(ctx);
+  consumeQuota(nk, actor, "group_read", 120, 60000);
+  const data = objectPayload(payload);
+  const id = uuidField(data.groupId, "groupId");
+  socialGroup(nk, id);
+  const role = groupState(nk, id, actor);
+  if (role === undefined || role > 2) fail(nkruntime.Codes.PERMISSION_DENIED, "Group membership required");
+  const state = data.state;
+  if (state !== undefined && [0, 1, 2, 3].indexOf(state as number) < 0) fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid state");
+  if (state === 3 && role > 1) fail(nkruntime.Codes.PERMISSION_DENIED, "Only managers can see join requests");
+  const result = nk.groupUsersList(id, pageLimit(data.limit), state as number | undefined, pageCursor(data.cursor));
+  return JSON.stringify({ groupUsers: (result.groupUsers || []).filter(function (u) { return role <= 1 || (u.state !== undefined && u.state <= 2); }), cursor: result.cursor || "" });
+}
+
