@@ -6,5 +6,5 @@ COPY tsconfig.json ./
 COPY src ./src
 COPY vendor ./vendor
 RUN npm run build
-FROM registry.heroiclabs.com/heroiclabs/nakama:3.37.0
+FROM heroiclabs/nakama:3.37.0
 COPY --from=builder /app/build/index.js /nakama/data/modules/index.js
