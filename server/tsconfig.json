@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "none",
+    "lib": [
+      "ES5"
+    ],
+    "strict": true,
+    "noEmitOnError": true,
+    "outFile": "build/index.js"
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}

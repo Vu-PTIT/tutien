@@ -1,0 +1,6 @@
+.godot/
+node_modules/
+server/build/
+.env
+*.log
+exports/
