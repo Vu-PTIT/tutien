@@ -2,6 +2,11 @@
 
 Base game 2D: Godot + GDScript, Nakama + TypeScript, PostgreSQL.
 
+**Backend tương tác người chơi:** đăng ký email, đăng nhập email/tên + mật khẩu,
+refresh/logout, kết bạn/chặn, chat thế giới/riêng/nhóm, tạo và quản lý tông môn/bang
+phái. Có phân quyền, giới hạn gửi và lưu dữ liệu PostgreSQL.
+Xem [hướng dẫn API và kết nối Godot](docs/social-backend.md).
+
 ## Chạy nhanh trên Windows
 
 1. Cài **Godot 4.4.1 Standard**, **Docker Desktop** (Linux containers). Node.js **22.14.0** chỉ cần khi sửa/test server ngoài Docker.
@@ -28,9 +33,12 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 ## Cấu trúc
 
 - `client/`: scene Godot, nhân vật hình tạm, di chuyển, đăng nhập HTTP và đọc hồ sơ.
-- `server/`: runtime TypeScript biên dịch ES5, RPC `get_profile`, test chống ghi đè khi khởi tạo đồng thời.
+- `server/`: runtime TypeScript ES5, hồ sơ và backend tài khoản/bạn bè/chat/nhóm, kiểm thử phân quyền và ghi đồng thời.
+- `client/scripts/social_api.gd`: lớp HTTP/WebSocket cho các màn hình tương tác sau này.
+- `docs/social-backend.md`: API, mô hình dữ liệu, quy tắc và giới hạn phiên bản.
 - `compose.yaml`: build runtime, migration, Nakama và PostgreSQL.
 - `scripts/smoke.mjs`: kiểm tra tích hợp tài khoản và lưu/đọc hồ sơ.
+- `scripts/social-smoke.mjs`: kiểm thử nhiều tài khoản, chat WebSocket và quyền nhóm trên backend thật.
 - `.github/workflows/ci.yml`: build, unit test và smoke test Docker.
 
 ## Phạm vi bản base
@@ -45,7 +53,8 @@ Cấu hình Compose chỉ dành cho localhost: khóa `local-dev-key` và mật k
 
 Thiết bị được nhận dạng bằng ID ngẫu nhiên lưu tại `user://identity.cfg`; xóa file sẽ tạo tài khoản mới. Đây là đăng nhập thử, chưa có khôi phục tài khoản. Phiên chỉ giữ trong RAM; bấm Connect để đăng nhập lại.
 
-Runtime sử dụng một tập interface TypeScript nhỏ cho các API đang dùng. Khi mở rộng, tích hợp definitions chính thức `nakama-common` tương thích phiên bản server. Không dùng API Node.js trong runtime Nakama.
+Runtime dùng definitions chính thức `nakama-common` v1.44.2 (đúng bản Nakama 3.37.0),
+lưu trong `server/vendor` kèm giấy phép. Không dùng API Node.js trong runtime Nakama.
 
 ## Tài liệu chính thức
 

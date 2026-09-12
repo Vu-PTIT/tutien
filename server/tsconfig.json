@@ -10,6 +10,7 @@
     "outFile": "build/index.js"
   },
   "include": [
+    "vendor/nakama-common/index.d.ts",
     "src/**/*.ts"
   ]
 }

@@ -1,4 +1,4 @@
-name: Validate base
+name: Validate backend and client
 on: [push, pull_request]
 permissions:
   contents: read
@@ -19,6 +19,16 @@ jobs:
       - run: docker compose config --quiet
       - run: docker compose up --build --wait --wait-timeout 180
       - run: node scripts/smoke.mjs
+      - run: node scripts/social-smoke.mjs
+      - name: Install Godot for live adapter test
+        run: |
+          curl --fail --location --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip
+          unzip /tmp/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v4.4.1-stable_linux.x86_64
+      - name: Test Godot adapter against Nakama
+        run: |
+          /tmp/godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path client --editor --quit
+          timeout 120 /tmp/godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path client --script res://tests/social_smoke.gd
       - if: failure()
         run: docker compose logs
       - if: always()

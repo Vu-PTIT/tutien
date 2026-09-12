@@ -6,7 +6,9 @@ function handler() {
   const scope = vm.createContext({});
   vm.runInContext(fs.readFileSync('build/index.js','utf8'),scope);
   let rpc;
-  scope.InitModule({}, {}, {}, {registerRpc(id, fn){assert.equal(id,'get_profile');rpc=fn;}});
+  scope.InitModule({}, {}, {}, new Proxy({}, {get: (_, method) => method === 'registerRpc'
+    ? (id, fn) => { if (id === 'get_profile') rpc = fn; }
+    : () => {}}));
   return rpc;
 }
 test('rejects requests without authenticated user',()=>{

@@ -1,20 +1,4 @@
-// Narrow structural types for the Nakama APIs used by this bootstrap.
-// Expand against nakama-common definitions when adding realtime match handlers.
-interface RuntimeContext { userId?: string; }
-interface StorageId { collection: string; key: string; userId: string; }
-interface StorageObject { value: { [key: string]: unknown }; }
-interface StorageWrite extends StorageId {
-  value: { [key: string]: unknown }; version: string;
-  permissionRead: number; permissionWrite: number;
-}
-interface RuntimeNakama {
-  storageRead(ids: StorageId[]): StorageObject[];
-  storageWrite(writes: StorageWrite[]): unknown;
-}
-type Rpc = (ctx: RuntimeContext, logger: unknown, nk: RuntimeNakama, payload: string) => string;
-interface RuntimeInitializer { registerRpc(id: string, handler: Rpc): void; }
-
-const getProfile: Rpc = function (ctx, _logger, nk, _payload) {
+const getProfile: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) {
   if (!ctx.userId) throw { code: 16, message: "Authentication required" };
   const id = { collection: "characters", key: "main", userId: ctx.userId };
   let rows = nk.storageRead([id]);
@@ -34,6 +18,47 @@ const getProfile: Rpc = function (ctx, _logger, nk, _payload) {
   return JSON.stringify(profile);
 };
 
-function InitModule(_ctx: RuntimeContext, _logger: unknown, _nk: RuntimeNakama, initializer: RuntimeInitializer): void {
+function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkruntime.Nakama, initializer: nkruntime.Initializer): void {
   initializer.registerRpc("get_profile", getProfile);
+  initializer.registerRpc("social_find_player", socialFindPlayerRpc);
+  initializer.registerRpc("social_group_create", groupCreateRpc);
+  initializer.registerRpc("social_group_action", groupActionRpc);
+  initializer.registerRpc("social_groups", socialGroupsRpc);
+  initializer.registerRpc("social_group_members", socialGroupMembersRpc);
+  initializer.registerRpc("social_chat_send", socialChatSendRpc);
+  initializer.registerRpc("social_chat_history", socialChatHistoryRpc);
+
+  initializer.registerBeforeAuthenticateEmail(beforeAuthenticateEmail);
+  initializer.registerBeforeLinkEmail(beforeLinkEmail);
+  initializer.registerBeforeAuthenticateDevice(beforeAuthenticateDevice);
+  initializer.registerBeforeAuthenticateCustom(denyNativeWrite);
+  initializer.registerBeforeUpdateAccount(beforeUpdateAccount);
+
+  initializer.registerBeforeAddFriends(friendMutation);
+  initializer.registerBeforeDeleteFriends(friendMutation);
+  initializer.registerBeforeBlockFriends(friendMutation);
+
+  initializer.registerBeforeCreateGroup(denyNativeWrite);
+  initializer.registerBeforeUpdateGroup(denyNativeWrite);
+  initializer.registerBeforeDeleteGroup(denyNativeWrite);
+  initializer.registerBeforeJoinGroup(denyNativeWrite);
+  initializer.registerBeforeLeaveGroup(denyNativeWrite);
+  initializer.registerBeforeAddGroupUsers(denyNativeWrite);
+  initializer.registerBeforeKickGroupUsers(denyNativeWrite);
+  initializer.registerBeforeBanGroupUsers(denyNativeWrite);
+  initializer.registerBeforePromoteGroupUsers(denyNativeWrite);
+  initializer.registerBeforeDemoteGroupUsers(denyNativeWrite);
+  initializer.registerBeforeListGroupUsers(denyNativeWrite);
+  initializer.registerBeforeListUserGroups(denyNativeWrite);
+
+  initializer.registerRtBefore("ChannelJoin", rtBeforeChannelJoin);
+  initializer.registerRtBefore("ChannelMessageSend", denyNativeWrite);
+  initializer.registerRtBefore("ChannelMessageUpdate", denyNativeWrite);
+  initializer.registerRtBefore("ChannelMessageRemove", denyNativeWrite);
+  initializer.registerBeforeListChannelMessages(denyNativeWrite);
+
+  // Prevent a client creating a forged character BEFORE get_profile first runs.
+  initializer.registerBeforeWriteStorageObjects(denyNativeWrite);
+  initializer.registerBeforeDeleteStorageObjects(denyNativeWrite);
 }
+
