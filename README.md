@@ -49,6 +49,7 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 Đã có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**: di chuyển, vật cản, đánh thường, né, HP, kết thúc và reconnect ngắn. Đấu tập không tác động tài sản/hồ sơ. **Chưa có quái, inventory, trồng trọt, giao dịch, PvP mở, đồ họa hoàn chỉnh hoặc bản xuất Android/Windows.**
 
 Xem [tiến độ và thứ tự triển khai](docs/implementation-status.md), [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md). Bước kế tiếp sau nghiệm thu online: tài sản an toàn, rồi encounter PvE và vòng chơi.
+Xem [nhật ký phát triển và lịch sử Git](docs/project-history.md) để biết các mốc đã commit, trạng thái sản phẩm và thứ tự làm tiếp theo.
 
 ## Môi trường phát triển
 
