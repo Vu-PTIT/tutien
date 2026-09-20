@@ -153,3 +153,21 @@ test('coalesced movement packets preserve a one-shot action without extra simula
   assert.equal(a.mode,'windup');assert.equal(a.x,x);
   h.steps(3);assert.equal(a.mode,'active');
 });
+
+test('empty realtime payload does not crash or terminate the match',()=>{
+  const h=harness();h.active();
+  assert(h.step([{sender:h.presence('a'),opCode:1,data:null}]));
+  assert.equal(h.state.phase,'active');
+});
+
+test('new player is fully connected before insertion into a Go-backed state slice',()=>{
+  const h=harness();
+  // Nakama/Goja exports inserted JS objects into Go maps. JS references to the
+  // original object no longer address the stored player after push.
+  Object.defineProperty(h.state.players,'push',{value:function(p){
+    return Array.prototype.push.call(this,JSON.parse(JSON.stringify(p)));
+  }});
+  h.active();
+  assert.equal(h.state.players[0].presence.sessionId,'a');
+  assert.equal(h.state.players[1].presence.sessionId,'b');
+});

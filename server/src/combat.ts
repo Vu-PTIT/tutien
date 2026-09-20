@@ -30,7 +30,7 @@ function combatUnit(x: number, y: number): {x: number; y: number} {
   return length > 1 ? {x: x / length, y: y / length} : {x: x, y: y};
 }
 function combatInput(nk: nkruntime.Nakama, message: nkruntime.MatchMessage, state: CombatState, p: CombatPlayer): CombatInput | null {
-  if (message.opCode !== 1 || message.data.byteLength > 512) return null;
+  if (message.opCode !== 1 || !message.data || message.data.byteLength > 512) return null;
   let v: CombatInput;
   try { v = JSON.parse(nk.binaryToString(message.data)); } catch (_) { return null; }
   if (!v || v.epoch !== state.epoch || !combatFinite(v.seq) || v.seq % 1 !== 0 || v.seq <= p.seq || v.seq > 2147483647) return null;
@@ -113,7 +113,9 @@ const combatJoin: nkruntime.MatchJoinFunction<CombatState> = function (_ctx, _lo
     let p = combatPlayer(state, presence.userId);
     if (!p) {
       const owner = presence.userId === state.owner;
-      p = {id: presence.userId, presence: null, disconnectedAt: -1, x: owner ? 380 : 580, y: 350,
+      // Goja exports an object when pushing into a Go-backed slice. Populate it
+      // fully before insertion; later changes to the original JS object are detached.
+      p = {id: presence.userId, presence: presence, disconnectedAt: -1, x: owner ? 380 : 580, y: 350,
         hp: COMBAT.hp, faceX: owner ? 1 : -1, faceY: 0, ready: false, seq: -1, lastInput: tick,
         input: null, mode: "idle", since: tick, attackAt: 0, dodgeAt: 0, hit: []};
       state.players.push(p);
