@@ -29,6 +29,8 @@ jobs:
         run: |
           /tmp/godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path client --editor --quit
           timeout 120 /tmp/godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path client --script res://tests/social_smoke.gd
+      - name: Test two-player combat against Nakama
+        run: timeout 90 /tmp/godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path client --script res://tests/combat_smoke.gd
       - if: failure()
         run: docker compose logs
       - if: always()

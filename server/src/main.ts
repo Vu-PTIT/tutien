@@ -20,6 +20,12 @@ const getProfile: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) 
 
 function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkruntime.Nakama, initializer: nkruntime.Initializer): void {
   initializer.registerRpc("get_profile", getProfile);
+  initializer.registerRpc("combat_create", combatCreateRpc);
+  initializer.registerMatch("sparring", {
+    matchInit: combatInit, matchJoinAttempt: combatJoinAttempt, matchJoin: combatJoin,
+    matchLeave: combatLeave, matchLoop: combatLoop, matchTerminate: combatTerminate,
+    matchSignal: combatSignal
+  });
   initializer.registerRpc("social_find_player", socialFindPlayerRpc);
   initializer.registerRpc("social_group_create", groupCreateRpc);
   initializer.registerRpc("social_group_action", groupActionRpc);

@@ -15,6 +15,8 @@
 
 Gói này không thay mã nguồn, không ghi đè tài liệu gốc, không tự merge hai nhánh. Những tên riêng, cốt truyện, vật phẩm và thông số gameplay mới đều là đề xuất cho game, không phải thông tin chính thức của phim.
 
+> **Đối chiếu repo 20/09/2026:** các file 08–15 và design-samples/validator trong mục lục dưới đây chưa có trên Git. Xem [tiến độ mã nguồn](../implementation-status.md) và [mốc combat hiện tại](../combat-prototype.md) để phân biệt thiết kế với implementation.
+
 ## 2. Đọc theo mục tiêu
 
 | File | Nội dung chính | Người dùng chính |

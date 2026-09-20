@@ -19,7 +19,8 @@ docker compose up --build -d
 ```
 
 3. Import `client/project.godot` trong Godot, nhấn **F6/F5** chạy scene/project.
-4. Di chuyển bằng **WASD / phím mũi tên**. Nhấn **Connect local backend** để đăng nhập thiết bị và tạo/đọc hồ sơ từ server. Backend chưa bật thì vẫn di chuyển offline được.
+4. Di chuyển bằng **WASD / phím mũi tên**. Nhấn **Kết nối**, tạo hoặc vào phòng đấu tập, cả hai bấm **Sẵn sàng**. **J/chuột trái** đánh, **Space** né theo hướng chuột. Backend chưa bật thì vẫn di chuyển offline được.
+   Xem [cách mở hai tài khoản/cửa sổ và luật đấu tập](docs/combat-prototype.md).
 5. Kiểm tra backend: `docker compose ps`, `docker compose logs nakama`. Sau khi backend healthy: `node scripts/smoke.mjs`.
 
 ```sh
@@ -32,7 +33,9 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 
 ## Cấu trúc
 
-- `client/`: scene Godot, nhân vật hình tạm, di chuyển, đăng nhập HTTP và đọc hồ sơ.
+- `client/`: scene Godot, nhân vật hình tạm, đăng nhập, phòng đấu tập, hiển thị snapshot và HP.
+- `client/scripts/combat_api.gd`: adapter trận đấu dùng chung kết nối với `SocialApi`.
+- `server/src/combat.ts`: mô phỏng authoritative 20 Hz, hai người, đánh thường/né và vòng đời trận.
 - `server/`: runtime TypeScript ES5, hồ sơ và backend tài khoản/bạn bè/chat/nhóm, kiểm thử phân quyền và ghi đồng thời.
 - `client/scripts/social_api.gd`: lớp HTTP/WebSocket cho các màn hình tương tác sau này.
 - `docs/social-backend.md`: API, mô hình dữ liệu, quy tắc và giới hạn phiên bản.
@@ -43,9 +46,9 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 
 ## Phạm vi bản base
 
-Đã có khung chạy offline và kết nối backend local. **Chưa có đồng bộ nhiều người, PvP, quái, trồng trọt, giao dịch, đồ họa hoàn chỉnh hoặc bản xuất Android/Windows.** Di chuyển hiện ở client và không lưu; hồ sơ do server tạo, client không được ghi trực tiếp. API không nhận tiền/cấp độ từ client.
+Đã có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**: di chuyển, vật cản, đánh thường, né, HP, kết thúc và reconnect ngắn. Đấu tập không tác động tài sản/hồ sơ. **Chưa có quái, inventory, trồng trọt, giao dịch, PvP mở, đồ họa hoàn chỉnh hoặc bản xuất Android/Windows.**
 
-Bước tiếp theo: authoritative match hai người, kiểm tra tốc độ di chuyển, một kỹ năng do server tính sát thương; sau đó mới làm tài sản và vòng chơi.
+Xem [tiến độ và thứ tự triển khai](docs/implementation-status.md), [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md). Bước kế tiếp sau nghiệm thu online: tài sản an toàn, rồi encounter PvE và vòng chơi.
 
 ## Môi trường phát triển
 
