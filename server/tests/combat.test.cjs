@@ -146,3 +146,10 @@ test('snapshot contains authoritative public state but no session credentials; t
   assert.equal(snapshot.players[0].presence,undefined);assert.equal(snapshot.players[0].sessionId,undefined);
   assert.equal(snapshot.epoch,'epoch');
 });
+
+test('coalesced movement packets preserve a one-shot action without extra simulation',()=>{
+  const h=harness();h.active();const a=h.state.players[0],x=a.x;
+  h.step([h.message('a',{moveX:1}),h.message('a',{action:'sk_basic'}),h.message('a',{moveX:1})]);
+  assert.equal(a.mode,'windup');assert.equal(a.x,x);
+  h.steps(3);assert.equal(a.mode,'active');
+});

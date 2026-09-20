@@ -34,8 +34,9 @@ Client nội suy vị trí giữa snapshot, chưa có prediction/rollback hoặc
 
 - Tối đa hai tài khoản, một phiên mỗi tài khoản; giữ một vị trí cho chủ phòng.
   Các lượt join đang chờ cũng chiếm chỗ để chống cuộc đua vượt sức chứa.
-- Mô phỏng 20 Hz, snapshot 10 Hz. Mỗi tick nhận tối đa một input hợp lệ/người;
-  chỉ phân tích tối đa bốn gói/người/tick. Nhiều input không làm tăng tốc mô phỏng.
+- Mô phỏng 20 Hz, snapshot 10 Hz. Mỗi tick mô phỏng đúng một bước/người;
+  chỉ phân tích tối đa bốn gói/người/tick, giữ hướng mới nhất và hành động đầu tiên
+  trong các gói hợp lệ. Gói mạng dồn không làm mất nút đánh/né hoặc tăng tốc mô phỏng.
 - Tốc độ 180 px/s; chuẩn hóa hướng chéo; dừng hướng cũ sau 200 ms thiếu input.
 - Đánh thường: windup 150 ms, active 100 ms, recovery 250 ms; cooldown 700 ms;
   cung 120 độ, tầm 41,6 px cộng bán kính mục tiêu 12 px. Một cast chỉ hit mỗi người

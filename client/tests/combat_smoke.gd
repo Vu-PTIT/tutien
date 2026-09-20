@@ -74,9 +74,11 @@ func _scenario() -> bool:
 	if not _good(await bob.join_sparring(room_id), "Join match"): return false
 	if not _check((await clients[2].join_sparring(room_id)).has("error"), "Third player accepted"): return false
 	if not await _wait_for(func() -> bool: return not alice.epoch.is_empty() and not bob.epoch.is_empty()): return _check(false, "No initial snapshot")
-	alice.send_input(Vector2.ZERO, Vector2.RIGHT, "ready")
-	bob.send_input(Vector2.ZERO, Vector2.LEFT, "ready")
-	if not await _wait_for(func() -> bool: return alice.snapshot.get("phase", "") == "active" and bob.snapshot.get("phase", "") == "active"): return _check(false, "Match did not start")
+	if not _check(alice.send_input(Vector2.ZERO, Vector2.RIGHT, "ready") == OK, "Send ready A failed"): return false
+	if not _check(bob.send_input(Vector2.ZERO, Vector2.LEFT, "ready") == OK, "Send ready B failed"): return false
+	if not await _wait_for(func() -> bool: return alice.snapshot.get("phase", "") == "active" and bob.snapshot.get("phase", "") == "active"):
+		print("Combat start diagnostics: ", JSON.stringify({"a": alice.snapshot, "b": bob.snapshot}))
+		return _check(false, "Match did not start")
 	# Move into melee range with fresh intents; never submit positions.
 	var deadline := Time.get_ticks_msec() + 6000
 	while Time.get_ticks_msec() < deadline:

@@ -163,15 +163,19 @@ function combatStep(p: CombatPlayer, tick: number): void {
 }
 const combatLoop: nkruntime.MatchLoopFunction<CombatState> = function (_ctx, _logger, nk, dispatcher, tick, state, messages) {
   if ((state.phase === "waiting" && tick >= COMBAT.lobbyTicks) || (state.phase === "finished" && tick - state.phaseAt >= COMBAT.resultTicks)) return null;
-  const counts: {[id: string]: number} = {}, accepted: {[id: string]: boolean} = {};
+  const counts: {[id: string]: number} = {}, actions: {[id: string]: string} = {};
   messages.forEach(function (message) {
     const p = combatPlayer(state, message.sender.userId);
     if (!p || !p.presence || p.presence.sessionId !== message.sender.sessionId) return;
     counts[p.id] = (counts[p.id] || 0) + 1;
-    if (counts[p.id] > 4 || accepted[p.id] || state.phase === "finished") return;
+    if (counts[p.id] > 4 || state.phase === "finished") return;
     const input = combatInput(nk, message, state, p);
     if (!input) return;
-    accepted[p.id] = true; p.seq = input.seq; p.lastInput = tick;
+    // Coalesced packets can contain movement, then a keypress, then movement.
+    // Keep the first action and newest movement; still simulate only once/tick.
+    if (!actions[p.id] && input.action) actions[p.id] = input.action;
+    input.action = actions[p.id] || "";
+    p.seq = input.seq; p.lastInput = tick;
     p.input = state.phase === "active" ? input : null;
     if (state.phase === "waiting" && input.action === "ready") p.ready = true;
   });

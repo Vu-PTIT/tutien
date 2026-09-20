@@ -18,7 +18,7 @@ mã nguồn đã kiểm tra.
 
 ## Kết quả kiểm tra local của mốc 1
 
-- `npm --prefix server test`: 39/39 test đạt, gồm 16 test chiến đấu mới và 23 test cũ.
+- `npm --prefix server test`: 40/40 test đạt, gồm 17 test chiến đấu mới và 23 test cũ.
 - Godot 4.4.1 headless: import và chạy scene thành công.
 - Không có Docker daemon trong môi trường sửa mã này. Live integration được cấu
   hình chạy trên GitHub Actions; xem kết quả run gắn với commit/PR, không coi việc
