@@ -128,3 +128,19 @@ trường chỉ có root và không cho chuyển chủ thư mục sang tài kho�
 PostgreSQL từ chối chạy root. Vì vậy **live inventory smoke/restart chưa chạy**.
 64/64 unit test và Godot import/chạy scene đạt; không dùng chúng thay cho kết quả
 lưu trữ thật. Sau khi được phép push, chạy CI và xử lý mọi lỗi trước nghiệm thu.
+
+### Đã công bố và qua CI — 21/09/2026
+
+Người dùng đã xác nhận push. Toàn bộ thay đổi được đưa lên
+`feat/inventory-rewards` qua kết nối GitHub, commit `60189fd`; nội dung tree
+trùng bản local `135bb10` + `5dece86`. Commit `a0ad66e` sửa HTTP method trong
+smoke kiểm quyền ghi (`PUT /v2/storage`) và xác nhận profile không đổi.
+
+CI [run 35566231466](https://github.com/Vu-PTIT/tutien/actions/runs/35566231466)
+đạt trên `a0ad66e`: 64 unit test, Docker/Nakama/PostgreSQL thật, profile/social,
+inventory concurrent claim/migration/túi đầy/restart/replay, Godot inventory
+panel và đấu tập hai client. Các giới hạn chưa push/chưa live-test ở trên là
+trạng thái lịch sử trước xác nhận, đã được giải quyết ở mốc này.
+
+Nhánh đã công bố; chưa merge `main`. Bước tiếp theo: encounter Sơn Trư và loot
+server-authoritative. Dùng/trang bị đồ, garden/crafting và quest vẫn chưa có.
