@@ -21,7 +21,8 @@ docker compose up --build -d
 3. Import `client/project.godot` trong Godot, nhấn **F6/F5** chạy scene/project.
 4. Di chuyển bằng **WASD / phím mũi tên**. Nhấn **Kết nối**, tạo hoặc vào phòng đấu tập, cả hai bấm **Sẵn sàng**. **J/chuột trái** đánh, **Space** né theo hướng chuột. Backend chưa bật thì vẫn di chuyển offline được.
    Xem [cách mở hai tài khoản/cửa sổ và luật đấu tập](docs/combat-prototype.md).
-5. Kiểm tra backend: `docker compose ps`, `docker compose logs nakama`. Sau khi backend healthy: `node scripts/smoke.mjs`.
+5. Ngoài trận, bấm **Túi đồ** để xem tài sản và nhận vật tư khởi đầu một lần. Xem [hợp đồng inventory/reward](docs/inventory-and-rewards.md).
+6. Kiểm tra backend: `docker compose ps`, `docker compose logs nakama`. Sau khi backend healthy: `node scripts/smoke.mjs`.
 
 ```sh
 cd server
@@ -46,9 +47,9 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 
 ## Phạm vi bản base
 
-Đã có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**: di chuyển, vật cản, đánh thường, né, HP, kết thúc và reconnect ngắn. Đấu tập không tác động tài sản/hồ sơ. **Chưa có quái, inventory, trồng trọt, giao dịch, PvP mở, đồ họa hoàn chỉnh hoặc bản xuất Android/Windows.**
+Đã có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**: di chuyển, vật cản, đánh thường, né, HP, kết thúc và reconnect ngắn. Đấu tập không tác động tài sản/hồ sơ. Đã có inventory 24 ô, catalog vật phẩm, migration hồ sơ và gói khởi đầu chống nhận trùng. **Chưa có quái, dùng/trang bị vật phẩm, trồng trọt, giao dịch, PvP mở, đồ họa hoàn chỉnh hoặc bản xuất Android/Windows.**
 
-Xem [tiến độ và thứ tự triển khai](docs/implementation-status.md), [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md). Bước kế tiếp sau nghiệm thu online: tài sản an toàn, rồi encounter PvE và vòng chơi.
+Xem [tiến độ và thứ tự triển khai](docs/implementation-status.md), [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md). Bước kế tiếp sau nghiệm thu tài sản: encounter PvE Sơn Trư và cấp loot qua giao dịch đã kiểm chứng, rồi vòng chơi tài nguyên.
 Xem [nhật ký phát triển và lịch sử Git](docs/project-history.md) để biết các mốc đã commit, trạng thái sản phẩm và thứ tự làm tiếp theo.
 
 ## Môi trường phát triển

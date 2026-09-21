@@ -1,6 +1,7 @@
 extends Node2D
 
 const Api = preload("res://scripts/combat_api.gd")
+const Inventory = preload("res://scripts/inventory_panel.gd")
 const SPEED: float = 180.0
 var player_position := Vector2(380, 350)
 var status_label: Label
@@ -11,6 +12,8 @@ var create_button: Button
 var join_button: Button
 var ready_button: Button
 var leave_button: Button
+var inventory_button: Button
+var inventory_panel: InventoryPanel
 var api: CombatApi
 var user_id: String = ""
 var device_id: String = ""
@@ -41,6 +44,10 @@ func _ready() -> void:
 	title.position = Vector2(24, 8)
 	add_child(title)
 	connect_button = _button("Kết nối", 800, 12, _connect_backend)
+	inventory_panel = Inventory.new()
+	inventory_panel.api = api
+	add_child(inventory_panel)
+	inventory_button = _button("Túi đồ", 700, 12, inventory_panel.open_inventory)
 	create_button = _button("Tạo đấu tập", 24, 60, _create_match)
 	room = LineEdit.new()
 	room.placeholder_text = "Mã phòng — sao chép gửi người thứ hai"
@@ -76,6 +83,7 @@ func _connected() -> bool:
 
 func _update_buttons() -> void:
 	var in_match := not api.match_id.is_empty()
+	inventory_button.disabled = busy or api.token.is_empty() or in_match
 	connect_button.disabled = busy or _connected()
 	connect_button.text = "Đã kết nối" if _connected() else "Kết nối"
 	create_button.disabled = busy or not _connected() or in_match
@@ -84,7 +92,7 @@ func _update_buttons() -> void:
 	leave_button.disabled = busy or not in_match
 
 func _unhandled_input(event: InputEvent) -> void:
-	if room.has_focus() or api.snapshot.get("phase", "") != "active":
+	if inventory_panel.visible or room.has_focus() or api.snapshot.get("phase", "") != "active":
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode == KEY_SPACE: pending_action = "sk_dodge"
@@ -95,7 +103,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if api == null: return
 	var direction := Vector2.ZERO
-	if not room.has_focus():
+	if not room.has_focus() and not inventory_panel.visible:
 		direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 		if Input.is_physical_key_pressed(KEY_A): direction.x -= 1
 		if Input.is_physical_key_pressed(KEY_D): direction.x += 1

@@ -10,6 +10,6 @@ const session = await post('/v2/account/authenticate/device?create=true', 'Basic
 const auth = 'Bearer '+session.token;
 const first = JSON.parse((await post('/v2/rpc/get_profile', auth, '{}')).payload);
 const second = JSON.parse((await post('/v2/rpc/get_profile', auth, '{}')).payload);
-assert.equal(first.realm, 'pham_nhan');
+assert.equal(first.realm, 'mortal');
 assert.deepEqual(first, second);
 console.log('PASS: device authentication, profile creation and repeat read');

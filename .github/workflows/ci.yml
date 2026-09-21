@@ -20,6 +20,7 @@ jobs:
       - run: docker compose up --build --wait --wait-timeout 180
       - run: node scripts/smoke.mjs
       - run: node scripts/social-smoke.mjs
+      - run: node scripts/inventory-smoke.mjs
       - name: Install Godot for live adapter test
         run: |
           curl --fail --location --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip
@@ -29,6 +30,8 @@ jobs:
         run: |
           /tmp/godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path client --editor --quit
           timeout 120 /tmp/godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path client --script res://tests/social_smoke.gd
+      - name: Test inventory panel against Nakama
+        run: timeout 90 /tmp/godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path client --script res://tests/inventory_smoke.gd
       - name: Test two-player combat against Nakama
         run: timeout 90 /tmp/godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path client --script res://tests/combat_smoke.gd
       - if: failure()

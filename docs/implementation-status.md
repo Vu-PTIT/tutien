@@ -1,4 +1,4 @@
-# Tiến độ triển khai — 20/09/2026
+# Tiến độ triển khai — 21/09/2026
 
 Mốc nguồn: `main` tại `94fca39`. Backend xã hội và bộ thiết kế v2 đã nằm chung
 trên `main`. Mã nguồn thực tế tại mốc này chưa có catalog gameplay, migration
@@ -10,7 +10,7 @@ mã nguồn đã kiểm tra.
 | Thứ tự | Phần | Trạng thái và điều kiện chuyển bước |
 |---|---|---|
 | 1 | Authoritative match hai người | Có implementation và unit test trong nhánh này; xem `combat-prototype.md`. Live smoke nằm trong CI. Cần qua CI và chơi thử mạng trước mở rộng. |
-| 2 | Tài sản và dữ liệu nhân vật | Chưa làm. Catalog ID ổn định, profile migration, inventory; server cấp thưởng bằng operation ID chống lặp, CAS/atomic write, test disconnect/retry. |
+| 2 | Tài sản và dữ liệu nhân vật | Đã triển khai trên `feat/inventory-rewards`: catalog 24 ID, schema 1→2, inventory 24 ô, starter reward với operation/source receipt atomic và UI Godot. 64 unit test đạt; CI thật cần đối chiếu run của nhánh. Xem `inventory-and-rewards.md`. |
 | 3 | Combat PvE + encounter | Chưa làm. Tái sử dụng luật server; thêm AI Sơn Trư, kết quả encounter duy nhất và đường cấp loot qua lớp tài sản đã kiểm chứng. |
 | 4 | Vòng chơi tài nguyên | Chưa làm. Thu thập → trồng linh thảo → công thức luyện đan → dùng vật phẩm → tu luyện/mở Luyện Khí. |
 | 5 | Quest, story và bản đồ chương đầu | Chưa làm. Runtime tiến độ server, điều kiện mở khóa, checkpoint; đưa nội dung 02/04/05/06/07 vào catalog. |
@@ -31,3 +31,14 @@ README và các phần 00–07. Các phần 08–15, `design-samples/mvp.catalog
 `scripts/validate_design.py` được dẫn chiếu nhưng chưa có trong Git tại mốc nguồn.
 Giữ các tham chiếu đó để truy vết; chưa đánh dấu chúng là đã triển khai. Ưu tiên của
 lần này được lấy từ README gốc, ADR-003 và tài liệu chiến đấu 03 đang có.
+
+## Mốc 2 — 21/09/2026
+
+Kế thừa `feat/authoritative-combat` tại `ab26fb7`, PR #2 vẫn chưa merge main.
+Đã thêm túi đồ và reward foundation; chưa có consume/equip/craft hoặc PvE.
+Unit test và Godot import/chạy scene đạt ở local. Live PostgreSQL/restart và
+Godot panel smoke được bổ sung vào CI; kết quả cuối ghi trong nhật ký dự án.
+
+**Giới hạn bàn giao:** push bị auto-review chặn do chưa có xác nhận công bố code
+lên repo công khai trong yêu cầu hiện tại. CI inventory chưa chạy; native PostgreSQL
+không chạy được trong môi trường root. Mốc 2 có code, chưa nghiệm thu lưu trữ thật.

@@ -95,3 +95,36 @@ feat/authoritative-combat    e8b7c6d  fix presence state in authoritative match
 ```
 
 Lịch sử này là trạng thái của repository tại ngày 20/09/2026. Mỗi mốc mới cần cập nhật file này cùng với test, tài liệu triển khai và trạng thái PR tương ứng.
+
+## 7. Tiếp tục triển khai — 21/09/2026
+
+- Đối chiếu PR #2 và lịch sử nhánh `feat/authoritative-combat` tại `ab26fb7`;
+  `main` vẫn ở `94fca39`, chưa merge PR #2.
+- Tạo nhánh `feat/inventory-rewards` kế thừa combat, làm ưu tiên tài sản của mục 4.
+- Thêm catalog 24 vật phẩm theo thiết kế 07, schema 2 và CAS migration từ schema 1;
+  dữ liệu bất hợp lệ giữ nguyên để rà soát. Tiền và túi lưu cùng profile.
+- Inventory 24 ô, stack 99, instance ID trang bị; gói khởi đầu server định nghĩa.
+- Giao dịch cấp thưởng ghi đồng thời profile + operation receipt + source receipt;
+  chặn double-click, đổi operation để nhận lại source, giả phần thưởng và túi đầy.
+- Godot có nút Túi đồ, xem tiền/vật tư, nhận gói một lần, tải lại sau mất mạng.
+- Local: 64/64 unit test đạt; Godot 4.4.1 import và chạy scene đạt.
+- CI thêm live inventory concurrency/migration/restart và Godot panel smoke.
+  Chờ kết quả run trước khi gọi mốc này đã qua tích hợp thật.
+- Phần tiếp theo: encounter PvE Sơn Trư + quyền nhận loot, rồi vòng tài nguyên.
+  Chưa triển khai dùng/trang bị đồ, crafting, garden, quest hoặc progression.
+
+Các bảng tại mục 1–6 là ảnh chụp lịch sử 20/09, không phải trạng thái thay thế
+cho cập nhật mới ở mục này. Chi tiết API và kiểm thử: `inventory-and-rewards.md`.
+
+### Kết quả bàn giao cục bộ
+
+Commit triển khai: `135bb10` — `feat: add persistent inventory and idempotent starter rewards`.
+Push nhánh bị hệ thống xét duyệt tự động từ chối vì yêu cầu hiện tại chưa xác nhận
+công bố thay đổi lên repository công khai. Chưa tạo PR mới hoặc chạy CI nhánh này.
+Cần người dùng xác nhận push `feat/inventory-rewards` lên `Vu-PTIT/tutien`.
+
+Đã thử chạy Nakama 3.37.0/PostgreSQL 16.8 native để kiểm tra độc lập, nhưng môi
+trường chỉ có root và không cho chuyển chủ thư mục sang tài khoản thường;
+PostgreSQL từ chối chạy root. Vì vậy **live inventory smoke/restart chưa chạy**.
+64/64 unit test và Godot import/chạy scene đạt; không dùng chúng thay cho kết quả
+lưu trữ thật. Sau khi được phép push, chạy CI và xử lý mọi lỗi trước nghiệm thu.
