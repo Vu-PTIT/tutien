@@ -1,3 +1,4 @@
+@tool
 extends Node2D
 
 const Api = preload("res://scripts/combat_api.gd")
@@ -78,6 +79,11 @@ func _label(text: String, position: Vector2, size: Vector2, font_size: int = 10,
 	return label
 
 func _ready() -> void:
+	# The world is procedural, so preview it directly in the 2D editor as well.
+	# Runtime-only controls/network objects are intentionally not created in editor mode.
+	if Engine.is_editor_hint():
+		queue_redraw()
+		return
 	RenderingServer.set_default_clear_color(Color("#171f24"))
 	api = Api.new()
 	add_child(api)
