@@ -43,8 +43,9 @@ try {
   assert.equal(sql(`SELECT count(*) FROM storage WHERE user_id='${a.id}' AND collection='asset_receipts';`),'2');
   assert.notEqual((await rpc(a,'inventory_claim_starter',{operationId:'another_operation'})).status,200);
   assert.notEqual((await rpc(a,'inventory_claim_starter',{operationId:'forged_operation',spiritStones:999999})).status,200);
-  const forged=await request('/v2/storage',a.auth,{objects:[{collection:'characters',key:'main',value:JSON.stringify({...p,spiritStones:99999}),permission_write:1}]});
-  assert.notEqual(forged.status,200);
+  const forged=await request('/v2/storage',a.auth,{objects:[{collection:'characters',key:'main',value:JSON.stringify({...p,spiritStones:99999}),permission_write:1}]},'PUT');
+  assert.equal(forged.status,403);
+  assert.deepEqual(await good(a,'get_profile'),p);
   const b=await account();
   const privateRead=await request('/v2/storage/'+a.id+'/characters',b.auth,undefined,'GET');
   if(privateRead.status===200) assert.equal(privateRead.data.objects?.length||0,0);
