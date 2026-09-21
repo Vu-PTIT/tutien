@@ -7,7 +7,8 @@ const Inventory = preload("res://scripts/inventory_panel.gd")
 ## First playable shell for the visual bible:
 ## 2D pixel top-down/3-4, An Khê as a warm hub, Trúc Âm as the combat field.
 ## The map art is procedural for now so the product can run without imported art.
-const WORLD_RECT := Rect2(8, 48, 444, 276)
+const WORLD_RECT := Rect2(8, 40, 624, 280)
+const MAP_SOURCE_RECT := Rect2(8, 48, 444, 276)
 const SPEED: float = 180.0
 const LOGICAL_WORLD := Vector2(960, 540)
 const INK := Color("#33271f")
@@ -21,6 +22,7 @@ var location_label: Label
 var quest_label: Label
 var room: LineEdit
 var connect_button: Button
+var sparring_button: Button
 var create_button: Button
 var join_button: Button
 var ready_button: Button
@@ -98,18 +100,15 @@ func _ready() -> void:
 	_label("Luyện Khí · tầng 1", Vector2(16, 26), Vector2(125, 13), 8, MUTED)
 	_label("HP", Vector2(150, 26), Vector2(18, 12), 8, Color("#ffb09b"))
 	_label("QI", Vector2(150, 37), Vector2(18, 12), 8, Color("#94d9ed"))
-	connect_button = _button("Kết nối", Vector2(536, 8), Vector2(92, 22), _connect_backend, true)
+	sparring_button = _button("Đấu", Vector2(506, 8), Vector2(42, 22), _toggle_sparring)
+	connect_button = _button("Kết", Vector2(596, 8), Vector2(36, 22), _connect_backend, true)
 	inventory_panel = Inventory.new()
 	inventory_panel.api = api
 	add_child(inventory_panel)
-	inventory_button = _button("Túi đồ", Vector2(536, 273), Vector2(92, 24), inventory_panel.open_inventory, true)
-	_button("Nhân vật", Vector2(464, 273), Vector2(66, 24), func() -> void: _show_toast("Hồ sơ nhân vật sẽ mở ở mốc tu luyện tiếp theo."))
+	inventory_button = _button("Túi", Vector2(552, 8), Vector2(40, 22), inventory_panel.open_inventory, true)
 
 	# Right rail: current objective and compact minimap are readable at 640×360.
 	quest_label = _label("NHIỆM VỤ\n\nViệc ở An Khê\nNói chuyện với Bà Sâm\n\n▸ Khảo sát trạm nước", Vector2(472, 60), Vector2(154, 112), 9, PAPER)
-	_label("BẢN ĐỒ NHỎ", Vector2(472, 181), Vector2(120, 14), 8, Color("#d9b46c"))
-	_label("An Khê  ·  Trúc Âm", Vector2(472, 258), Vector2(154, 13), 8, MUTED)
-	_label("Vườn linh thảo", Vector2(472, 292), Vector2(154, 13), 8, Color("#b7d79d"))
 
 	# Online sparring remains part of the product, but lives in a slim bottom dock.
 	status_label = _label("Đang ở An Khê. WASD / phím mũi tên để đi.", Vector2(16, 326), Vector2(260, 12), 7, PAPER)
@@ -125,6 +124,11 @@ func _ready() -> void:
 	join_button = _button("Vào", Vector2(472, 330), Vector2(34, 20), _join_match)
 	ready_button = _button("Sẵn sàng", Vector2(510, 330), Vector2(60, 20), _ready_match)
 	leave_button = _button("Rời", Vector2(574, 330), Vector2(42, 20), _leave_match)
+	create_button.visible = false
+	room.visible = false
+	join_button.visible = false
+	ready_button.visible = false
+	leave_button.visible = false
 
 	var identity_path := "user://identity.cfg"
 	for argument in OS.get_cmdline_user_args():
@@ -147,7 +151,8 @@ func _update_buttons() -> void:
 	var in_match := not api.match_id.is_empty()
 	inventory_button.disabled = busy or api.token.is_empty() or in_match
 	connect_button.disabled = busy or _connected()
-	connect_button.text = "Đã kết nối" if _connected() else "Kết nối"
+	connect_button.text = "OK" if _connected() else "Kết"
+	sparring_button.disabled = busy
 	create_button.disabled = busy or not _connected() or in_match
 	join_button.disabled = create_button.disabled
 	ready_button.disabled = busy or not _connected() or not in_match or api.snapshot.get("phase", "") != "waiting"
@@ -193,20 +198,35 @@ func _process(delta: float) -> void:
 		toast_until -= delta
 	queue_redraw()
 
+func _toggle_sparring() -> void:
+	var show_controls := not create_button.visible
+	create_button.visible = show_controls
+	room.visible = show_controls
+	join_button.visible = show_controls
+	ready_button.visible = show_controls
+	leave_button.visible = show_controls
+	sparring_button.text = "Đóng" if show_controls else "Đấu"
+	if show_controls:
+		_show_toast("Đấu tập: tạo phòng hoặc nhập mã phòng của đạo hữu.")
+
 func _world_to_screen(value: Vector2) -> Vector2:
 	return Vector2(WORLD_RECT.position.x + value.x / LOGICAL_WORLD.x * WORLD_RECT.size.x, WORLD_RECT.position.y + value.y / LOGICAL_WORLD.y * WORLD_RECT.size.y)
 
 func _draw_player(at: Vector2, color: Color, hp: int, facing: Vector2, mode: String) -> void:
-	# Chunky sprite proxy; real sprite sheets can replace this without changing the UI/API.
-	draw_rect(Rect2(at + Vector2(-8, 9), Vector2(16, 7)), Color("#19312d"))
-	draw_rect(Rect2(at + Vector2(-7, -3), Vector2(14, 17)), color)
-	draw_rect(Rect2(at + Vector2(-7, -3), Vector2(14, 4)), Color("#3c2d27"))
-	draw_rect(Rect2(at + Vector2(-5, -12), Vector2(10, 9)), Color("#ead3ae"))
-	draw_rect(Rect2(at + Vector2(-10, -19), Vector2(20, 5)), Color("#c58a4e"))
-	draw_rect(Rect2(at + Vector2(-13, -15), Vector2(26, 3)), Color("#c58a4e"))
+	# Temporary 32×48 pixel sprite proxy; the combat/API contract is independent of art assets.
+	draw_rect(Rect2(at + Vector2(-10, 14), Vector2(20, 6)), Color("#19312d"))
+	draw_rect(Rect2(at + Vector2(-8, 2), Vector2(7, 14)), Color("#263a59"))
+	draw_rect(Rect2(at + Vector2(1, 2), Vector2(7, 14)), Color("#263a59"))
+	draw_rect(Rect2(at + Vector2(-10, -5), Vector2(20, 11)), color)
+	draw_rect(Rect2(at + Vector2(-8, 2), Vector2(16, 4)), Color("#d7e4dc"))
+	draw_rect(Rect2(at + Vector2(-3, 1), Vector2(6, 3)), Color("#b9893c"))
+	draw_rect(Rect2(at + Vector2(-7, -15), Vector2(14, 11)), Color("#ead3ae"))
+	draw_rect(Rect2(at + Vector2(-8, -16), Vector2(16, 5)), Color("#18202d"))
+	draw_rect(Rect2(at + Vector2(-6, -20), Vector2(12, 6)), Color("#18202d"))
+	draw_rect(Rect2(at + Vector2(-10, -21), Vector2(20, 3)), Color("#243346"))
 	draw_rect(Rect2(at + Vector2(-19, -27), Vector2(38, 3)), Color("#512c30"))
 	draw_rect(Rect2(at + Vector2(-19, -27), Vector2(38.0 * clampf(float(hp) / 100.0, 0.0, 1.0), 3)), Color("#8cda8b"))
-	draw_line(at, at + facing.normalized() * 18, Color("#fff0bb"), 2)
+	draw_line(at + Vector2(8, -1), at + facing.normalized() * 24 + Vector2(8, -1), Color("#d7e4dc"), 2)
 	if mode in ["windup", "active"]:
 		var angle := facing.angle()
 		draw_arc(at, 28, angle - PI / 3, angle + PI / 3, 12, Color("#ffdc7d") if mode == "active" else Color("#b28a4b"), 2)
@@ -221,6 +241,22 @@ func _draw_tree(at: Vector2) -> void:
 func _ui_text(text: String, at: Vector2, size: int = 9, color: Color = PAPER) -> void:
 	draw_string(ThemeDB.fallback_font, at + Vector2(1, 1), text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color("#1a1714"))
 	draw_string(ThemeDB.fallback_font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
+
+func _draw_hotbar_overlay() -> void:
+	var panel := Color("#30453f")
+	var slot := Color("#59725c")
+	draw_rect(Rect2(8, 330, 132, 20), panel)
+	_ui_text("CHAT  ·  chưa có tin mới", Vector2(16, 344), 7, Color("#c8b18c"))
+	draw_rect(Rect2(164, 326, 288, 28), panel)
+	var hotbar_labels := ["1", "2", "Q", "E", "R", "SP"]
+	for index in range(6):
+		var slot_rect := Rect2(170 + index * 45, 331, 38, 18)
+		draw_rect(slot_rect, slot if index == 0 else Color("#3b5148"))
+		draw_rect(Rect2(slot_rect.position + Vector2(2, 2), Vector2(5, 5)), Color("#d9a84e") if index == 0 else Color("#6f8a70"))
+		_ui_text(hotbar_labels[index], slot_rect.position + Vector2(27, 13), 7, PAPER)
+	draw_rect(Rect2(458, 326, 174, 28), panel)
+	_ui_text("AN KHÊ", Vector2(468, 343), 8, Color("#d9b46c"))
+	_ui_text("Túi đồ", Vector2(530, 343), 8, PAPER)
 
 func _draw_editor_ui_preview() -> void:
 	# The editor does not instantiate runtime Controls, so mirror the final HUD here.
@@ -263,26 +299,14 @@ func _draw_editor_ui_preview() -> void:
 	draw_line(Vector2(478, 141), Vector2(612, 141), line, 1)
 	_ui_text("An Khê · bình yên", Vector2(478, 158), 7, Color("#a98b68"))
 
-	# Bottom-left collapsed chat and bottom-center six-slot hotbar.
-	draw_rect(Rect2(8, 330, 132, 20), panel)
-	_ui_text("CHAT  ·  chưa có tin mới", Vector2(16, 344), 7, Color("#c8b18c"))
-	draw_rect(Rect2(164, 326, 288, 28), panel)
-	var hotbar_labels := ["1", "2", "Q", "E", "R", "SP"]
-	for index in range(6):
-		var slot_rect := Rect2(170 + index * 45, 331, 38, 18)
-		draw_rect(slot_rect, slot if index == 0 else Color("#3b5148"))
-		draw_rect(Rect2(slot_rect.position + Vector2(2, 2), Vector2(5, 5)), Color("#d9a84e") if index == 0 else Color("#6f8a70"))
-		_ui_text(hotbar_labels[index], slot_rect.position + Vector2(27, 13), 7, PAPER)
-	draw_rect(Rect2(458, 326, 174, 28), panel)
-	_ui_text("AN KHÊ", Vector2(468, 343), 8, Color("#d9b46c"))
-	_ui_text("Túi đồ", Vector2(530, 343), 8, PAPER)
-
 func _draw() -> void:
 	# Wood frame and paper-like UI surfaces.
 	draw_rect(Rect2(0, 0, 640, 360), Color("#171f24"))
-	draw_rect(Rect2(0, 0, 640, 48), Color("#263d39"))
-	draw_line(Vector2(0, 47), Vector2(640, 47), Color("#8a6847"), 1)
-	draw_rect(WORLD_RECT, Color("#23483d"))
+	draw_rect(Rect2(0, 0, 640, 40), Color("#263d39"))
+	draw_line(Vector2(0, 39), Vector2(640, 39), Color("#8a6847"), 1)
+	# The world is a full-screen field. Source art is scaled horizontally until real 32×32 tiles arrive.
+	draw_set_transform(Vector2(0, -8), 0.0, Vector2(1.4, 1.0))
+	draw_rect(MAP_SOURCE_RECT, Color("#23483d"))
 	for x in range(8, 452, 16):
 		for y in range(48, 324, 16):
 			var checker := int((x / 16) + (y / 16))
@@ -304,21 +328,24 @@ func _draw() -> void:
 	draw_circle(Vector2(302, 184), 6, Color("#f3c968"))
 	draw_rect(Rect2(282, 210, 14, 20), Color("#b87e54"))
 	draw_circle(Vector2(289, 204), 8, Color("#e6c293"))
-	# Right-side panels and minimap.
-	draw_rect(Rect2(460, 48, 172, 276), Color("#30453f"))
-	draw_rect(Rect2(468, 56, 156, 118), Color("#3c554a"))
-	draw_rect(Rect2(468, 178, 156, 70), Color("#263b38"))
-	draw_rect(Rect2(476, 187, 138, 54), Color("#5e775d"))
-	draw_rect(Rect2(490, 196, 62, 35), Color("#42718a"))
-	draw_rect(Rect2(552, 188, 46, 44), Color("#9b815e"))
-	draw_circle(Vector2(515, 213), 4, Color("#f2d479"))
-	draw_circle(Vector2(581, 207), 4, Color("#df9176"))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	# Overlay panels: minimap and quest tracker float above the map like the original concept.
+	draw_rect(Rect2(468, 55, 156, 112), Color("#30453f"))
+	draw_rect(Rect2(476, 63, 140, 50), Color("#3c554a"))
+	draw_rect(Rect2(483, 70, 58, 36), Color("#5e775d"))
+	draw_rect(Rect2(486, 73, 30, 30), Color("#42718a"))
+	draw_rect(Rect2(517, 73, 21, 30), Color("#9b815e"))
+	draw_circle(Vector2(503, 88), 4, Color("#f2d479"))
+	draw_circle(Vector2(527, 84), 4, Color("#df9176"))
+	draw_line(Vector2(483, 119), Vector2(609, 119), Color("#8a6847"), 1)
+	draw_rect(Rect2(483, 127, 7, 7), Color("#d9a84e"))
+	draw_rect(Rect2(483, 141, 7, 7), Color("#6f8a70"))
 	# HUD bars and bottom dock.
 	draw_rect(Rect2(172, 27, 74, 6), Color("#512c30"))
 	draw_rect(Rect2(172, 27, 67, 6), Color("#8cda8b"))
 	draw_rect(Rect2(172, 38, 74, 6), Color("#254b62"))
 	draw_rect(Rect2(172, 38, 53, 6), Color("#86cfe4"))
-	draw_rect(Rect2(8, 324, 624, 34), Color("#263d39"))
+	draw_rect(Rect2(8, 320, 624, 40), Color("#263d39"))
 	# Player or server-authoritative fighters.
 	if api == null or api.match_id.is_empty():
 		_draw_player(_world_to_screen(player_position), Color("#70b9ba"), 100, Vector2.RIGHT, "idle")
@@ -329,6 +356,7 @@ func _draw() -> void:
 		draw_rect(Rect2(wall_pos, wall_size), Color("#7b8179"))
 		for p: Dictionary in api.snapshot.get("players", []):
 			_draw_player(_world_to_screen(render_positions.get(p.id, Vector2(p.x, p.y))), Color("#70b9ba") if p.id == user_id else Color("#df9176"), int(p.hp), Vector2(p.faceX, p.faceY), str(p.mode))
+	_draw_hotbar_overlay()
 	if Engine.is_editor_hint():
 		_draw_editor_ui_preview()
 	if toast_until > 0.0:
