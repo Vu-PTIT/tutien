@@ -1,146 +1,143 @@
-# 04 — Thế giới, bản đồ và nhịp khám phá
+# 04 — Thế giới, bản đồ và tuyến tài nguyên
 
-**Mục tiêu:** mỗi map có lý do tồn tại, nguy hiểm đọc được và liên hệ với story/kinh tế.
+**Cập nhật:** 21/09/2026. **Phạm vi:** bốn map MVP, chưa là bản đồ đã triển khai.
+Mỗi map có mục tiêu phát triển, nguy hiểm, nguồn tài nguyên và đường trở về.
 
-## 1. Cấu trúc thế giới
-
-Thế giới mở theo khu vực nối nhau, không phải một mặt phẳng liên tục vô hạn. Mỗi khu có cổng vào, checkpoint, giới hạn người chơi và phiên bản dữ liệu.
-
-MVP gồm đúng bốn map gameplay. Vườn sáu ô là giao diện quản lý đất riêng tại An Khê; không cần một map thứ năm hoặc nhà xây dựng tự do.
+## 1. Cấu trúc và phân tầng
 
 ```text
-An Khê [hub an toàn]
-    |
-    +-- Trúc Âm [khai thác / học chiến đấu]
-             |
-             +-- Thạch Cạn [đọc địa hình / tinh anh]
-                      |
-                      +-- Cổ Tỉnh [bí cảnh riêng / boss chương đầu]
+An Khê — hub an toàn
+   └─ Trúc Âm — dược liệu, né, cày đầu
+        └─ Thạch Cạn — quặng, vật cản, tinh anh
+             └─ Cổ Tỉnh — bí cảnh riêng, tổng hợp cơ chế
 ```
 
-Mỗi nhánh có đường quay về. Không khóa người chơi vào tuyến nguy hiểm bằng một nhiệm vụ chưa đủ sức làm.
+Thế giới là các khu nối nhau, không phải mặt phẳng vô hạn.
+Vườn 6 ô là UI cá nhân ở An Khê, không tính map thứ năm.
+Mỗi khu có checkpoint, cổng, phiên bản, giới hạn người và dữ liệu spawn.
 
-## 2. Đơn vị và lớp map
+Tile hình ảnh đề xuất 32×32 px; server dùng tile và phần lẻ, không phụ thuộc zoom.
+Tách nền đi được/vật cản, tương tác, trang trí cao và dữ liệu gameplay xuất riêng.
+Không biến một hình trang trí thành va chạm chỉ vì nó che người chơi.
 
-Đề xuất tile hình ảnh 32×32 px; gameplay dùng tile và phần lẻ của tile. Hệ tọa độ server không phụ thuộc kích thước cửa sổ hay zoom.
+## 2. An Khê — `m_an_khe`
 
-Các lớp nội dung:
-- Nền đi được, vật cản, trang trí dưới chân.
-- Đối tượng tương tác: NPC, node tài nguyên, trụ trận, cổng.
-- Trang trí cao và hiệu ứng; không tự tạo va chạm chỉ vì che nhân vật.
-- Dữ liệu gameplay xuất riêng: vùng cấm, hình va chạm, spawn, trigger, checkpoint.
+Kích thước thử 64×48 tile. Hub an toàn, thử tối đa 2 người.
+Nhìn thấy biển đường từ spawn; dịch vụ thiết yếu không bị che hoặc chặn bởi crowd.
 
-Godot có TileMapLayer phục vụ cấu trúc tile; cách phân lớp và xuất dữ liệu phía server ở đây là đề xuất cho dự án, không phải tính năng tự có của Nakama. Nguồn S04 trong 15.
+| Địa điểm | Nhân vật | Công dụng |
+| --- | --- | --- |
+| Nhà dược | Bà Sâm | Nghỉ, vườn, luyện đan, nghiên cứu |
+| Trạm thủy vụ | Tạ Nghiêm | Khảo sát và chứng cứ |
+| Lò rèn | Đỗ Khê | Học/chế tạo kiếm |
+| Sạp chợ | Hà Tố | Mua giống/nước/hồi phục, bán vật liệu |
+| Cổng làng | Lục Vi | Học quan sát, ghim tuyến đi |
+| Nhà khách | Tống Đức | Quyền tiếp cận Cổ Tỉnh và thông tin tiếp |
 
-## 3. Map 1 — An Khê, `m_an_khe`
+Vườn riêng không ai khác lấy/phá. Bãi đấu tập chỉ chuyển hai người đồng thuận vào
+instance, không bật PvP cho hub. Nghỉ hồi phục không mất tiền.
+Bảng mục tiêu ở journal/hub có đường tới nguồn thiếu, không ép đọc mọi NPC lại.
 
-**Kích thước prototype:** 64×48 tile.  
-**Vai trò:** an toàn, giao việc, dịch vụ, nơi trở về.  
-**Người chơi:** tối đa 2 cho bản thử đầu; chưa suy rộng thành giới hạn sản phẩm.
+## 3. Trúc Âm — `m_truc_am`
 
-### Các điểm chức năng
+Kích thước thử 96×96 tile. Sơn Trư/Độc Chu, học chuẩn bị và đi săn có mục tiêu.
 
-| Điểm | NPC/chức năng | Mục đích |
-|---|---|---|
-| Nhà dược | Bà Sâm | Vườn, hồi phục, luyện đan |
-| Trạm thủy vụ | Tạ Nghiêm | Việc khảo sát, chứng cứ linh mạch |
-| Lò rèn | Đỗ Khê | Chế tạo kiếm |
-| Sạp chợ | Hà Tố | Mua giống, bán nguyên liệu, tin đồn |
-| Cổng làng | Lục Vi | Học quan sát và tuyến rừng |
-| Nhà khách | Tống Đức | Đại diện Thanh Lộc Viện và mạch truyện kế tiếp |
+| Tuyến | Người chơi tìm gì? | Nguồn | Nguy hiểm và lý do quay về |
+| --- | --- | --- | --- |
+| Ven suối | Hồi phục, khởi đầu an toàn | Cam Lộ, nước/trúc, dấu khảo sát an toàn | Ít quái; đủ lựa chọn khi hết vật tư |
+| Sườn rừng | Tu vi và nguyên liệu phù | Độc Chu/tơ nhện, Tĩnh Tâm | Đọc vùng độc; không cần thuốc giải độc độc quyền |
+| Bãi Sơn Trư | Tu vi, nguồn tiền bán vật liệu | Da Sơn Trư | Né lao; không đứng giữa nhiều hướng |
+| Đường tắt | Giảm công đi lại | Mở qua khảo sát/sửa cầu | Không tự cộng hệ số loot hoặc reset node |
 
-Vườn cá nhân chỉ chủ sở hữu được trồng/thu. Người khác không lấy cây hoặc phá đất. UI truy cập từ tương tác bàn làm vườn ở nhà dược.
+Giữ cầu hỏng, nước đổi màu, lều bỏ, dấu niêm phong làm điểm định hướng.
+Dấu khảo sát của `q_main_002` là nội dung hướng dẫn không phát XP lặp.
 
-Có bãi đấu tập giới hạn trong hub; chỉ chuyển hai người đồng thuận vào một instance đấu tập, không bật PvP cho cả map.
+Lộ trình mẫu đầu cần đủ nguồn gặp 4 Sơn Trư/2 Độc Chu và 4 Cam Lộ; không bắt mọi
+đối tượng nằm cạnh nhau thành một bãi đứng farm. Có Sơn Trư đơn trước, rồi nhóm nhỏ.
+`poi_truc_am_route` cấp XP một lần sau dẫn khí.
 
-### Bố cục nghiệm thu
+Tuyến tránh đầu: sửa cầu `q_side_001`, khảo sát `poi_safe_bank` và `poi_old_camp`.
+Ba nguồn đủ phần 100 XP thay thế, không đòi cây Tĩnh Tâm 45 phút. Trúc sửa cầu
+lấy ở tuyến an toàn. Người bỏ qua giao tranh `q_main_006` vẫn được mở Thạch Cạn
+bằng điều kiện quest đúng, không bị khóa do thiếu “kill count”.
 
-Từ điểm spawn thấy ít nhất một biển chỉ hướng. Đi đến ba dịch vụ đầu tiên không cần mở bản đồ lớn. Không đặt NPC thiết yếu sau một vùng crowd khiến khó tương tác.
+## 4. Thạch Cạn — `m_thach_can`
 
-## 4. Map 2 — Trúc Âm, `m_truc_am`
+Kích thước thử 80×64 tile. Vai trò: quặng làm kiếm, đối thủ tầm xa, tinh anh.
+Kẻ Rình Đường giữ tuyến trên dễ định hướng; tuyến dưới có quặng/vật cản nhưng
+ít khoảng thoát. Thạch Vệ có điểm quan sát an toàn để học trước khi giao tranh.
 
-**Kích thước:** 96×96 tile.  
-**Vai trò:** dược liệu, dấu nước lạ, học quái có báo đòn.  
-**Địch:** Sơn Trư và Độc Chu.
+Quặng lấy từ node và loot Kẻ Rình Đường; không đặt toàn bộ nguồn làm kiếm sau
+một boss vốn yêu cầu có kiếm mới qua. Cần tuyến khai thác an toàn hơn, còn người
+thích combat có thể kiếm qua quái. Trúc đã có ở Trúc Âm.
+`poi_thach_can_ledger_view` là mốc khám phá một lần, không thay vật phẩm quest sổ đá.
 
-### Ba tuyến
+Checkpoint ở rìa, ngoài tầm đánh. Không đánh người chơi lúc chưa nhận snapshot.
+Tầng 2/Hộ Thân là gợi ý chuẩn bị, không phải khóa cửa mới.
+Cổng Cổ Tỉnh yêu cầu `q_main_009` đã nhận thưởng/mở quyền ở server; quyền tồn tại
+bền vững, không chỉ phụ thuộc cầm một chiếc chìa có thể mất.
 
-Tuyến ven suối an toàn hơn, nhiều Cam Lộ, ít vật liệu đặc biệt. Tuyến sườn rừng có Độc Chu và Tĩnh Tâm, buộc đọc vệt độc. Tuyến đường tắt mở sau khảo sát Mạch Bàn; giúp về làng nhanh chứ không tăng loot vô hạn.
+## 5. Cổ Tỉnh — `m_co_tinh`
 
-### Điểm quan tâm
+Kích thước thử 64×64 tile, instance solo/party 2 người, bố cục cố định.
 
-Một cầu hỏng có thể sửa bằng nhiệm vụ phụ; một bãi nước đổi màu; một lều bỏ; một dấu niêm phong. Dấu niêm phong là tương tác thông tin, không mặc định là rương ngẫu nhiên.
+| Phòng | Nội dung | Điều được kiểm tra |
+| --- | --- | --- |
+| Cửa giếng | Checkpoint và xem vật tư/loadout | Hiểu đường về, quyền vào |
+| Hành lang rễ | Hai Độc Chu trong lộ trình mẫu | Né và mặt đất nguy hiểm |
+| Buồng cân mạch | Hai nguồn cấp/đường thay thế | Dò mạch; `poi_co_tinh_flow` một lần |
+| Nhà trận | Một Thạch Vệ | Hướng phòng thủ và phản công |
+| Tâm giếng | Mộc Tâm Thủ Trận | Tổng hợp; hạ tâm hoặc niêm phong |
 
-Các tuyến phải nhìn thấy điểm tương đồng cảnh quan để định hướng. Không tái sử dụng cùng một góc rừng đến mức người chơi không phân biệt lối đi.
+Không procedural dungeon trong MVP. Người vào sau khi boss bắt đầu không tự có
+công lao; party leader không quyết định thưởng hoặc lựa chọn hội thoại thay người khác.
+Không dùng sát thương để mở một pha chỉ co-op mới giải được.
 
-## 5. Map 3 — Thạch Cạn, `m_thach_can`
+Mỗi lượt mới có ID riêng do server tạo; reset trong lượt không thành một lần clear.
+Respawn boss cần lượt mới hợp lệ, không rời phòng 1 giây để nhận lại cùng kết quả.
 
-**Kích thước:** 80×64 tile.  
-**Vai trò:** quặng, địa hình che chắn, hậu quả khai thác linh mạch.  
-**Địch:** Kẻ Rình Đường và Thạch Vệ.
+## 6. Node và respawn
 
-Tuyến trên dễ định hướng nhưng nhiều đòn xa. Tuyến dưới có vật cản và điểm khoáng; ít đường thoát hơn. Một điểm ngắm cho thấy trụ chuyển dòng, giúp người chơi hiểu xung đột bằng môi trường.
+Node tài nguyên cá nhân trong map chung: `nodeId`, `resourceTableId`,
+`respawnPolicy`, `mapVersion`, chủ thể và thời điểm tương tác.
+Server kiểm khoảng cách/va chạm/trạng thái; không cho đổi giờ máy để thu sớm.
+Không cần tranh click trong hướng dẫn. Cây hiếm tranh chấp để sau ở vùng tự chọn.
 
-Checkpoint ở rìa, không nằm trong tầm đánh của quái. Nhân vật mới vào map không bị đánh ngay trước khi nhận snapshot.
+Spawn quái theo cụm: vị trí, số lượng, vùng notice/chase/return và generation.
+Dùng timer server trong [bảng quái](03-combat-skills-and-artifacts.md).
+Chỉ respawn khi cụm đã kết thúc và vị trí an toàn; trì hoãn khi chồng nhân vật.
+Không spawn trên checkpoint, cổng, NPC hoặc rương/thao tác bắt buộc.
 
-Cửa Cổ Tỉnh yêu cầu `q_main_009` hoàn tất và có quyền vào được ghi ở server. Vật phẩm chìa là công cụ kể chuyện; quyền mở khóa bền vững không chỉ phụ thuộc giữ một item có thể lỡ xóa.
+Timer/quyền thưởng không reset bởi đổi map, đổi instance hoặc reconnect.
+MVP một nhân vật hoạt động ở tối đa một match, đổi vùng phải đổi epoch/quyền điều khiển.
+Đổi vùng thất bại quay nguồn/checkpoint an toàn, không nhân người hoặc tiêu chìa lần hai.
 
-## 6. Map 4 — Cổ Tỉnh, `m_co_tinh`
+## 7. Rủi ro và tài sản
 
-**Kích thước:** 64×64 tile, chia năm phòng nhỏ.  
-**Loại:** instance PvE riêng cho một người hoặc tổ đội hai người.
+| Khu | PvP | Chết/thất bại |
+| --- | --- | --- |
+| Hub | Chỉ đấu tập đồng thuận trong instance | Không mất tài sản |
+| Hoang dã MVP | Không | Giữ XP/đồ đã commit; vật tư đã dùng vẫn tiêu |
+| Bí cảnh MVP | Không | Không có thưởng của encounter thất bại |
+| Vùng tranh đoạt tương lai | Tự chọn, chưa triển khai | Phải chốt và thông báo luật riêng trước vào |
 
-| Phòng | Nội dung | Kiến thức kiểm tra |
-|---|---|---|
-| 1. Cửa giếng | Checkpoint và biển dấu | Đã chuẩn bị vật tư chưa |
-| 2. Hành lang rễ | Độc Chu, vùng báo nguy hiểm | Né và vị trí |
-| 3. Buồng cân mạch | Hai nguồn cấp, đường thay thế | Dò thông tin |
-| 4. Nhà trận | Một Thạch Vệ | Nhịp đỡ và lộ sườn |
-| 5. Tâm giếng | Mộc Tâm Thủ Trận | Tổng hợp cơ chế |
+Không âm thầm đổi các map MVP thành full-loot. Nguồn thưởng đã quyết toán được giữ,
+không phải “mang về làng mới sở hữu” trong bản MVP này. Trở về là nhịp sử dụng thành
+quả/chữa trị/đột phá, không là nút tịch thu loot nếu người chơi chết giữa đường.
 
-Phiên bản MVP dùng bố cục cố định. Không cần procedural dungeon hoặc hàng trăm seed. Chỉ thêm biến thể khi bản cố định đã đủ thú vị.
+## 8. Nhịp phiên và mở rộng
 
-Người vào sau lúc boss bắt đầu không tự nhận điều kiện quest. Party leader không quyết định phần thưởng của người khác.
+Đi đường có định hướng và thông tin nhưng không kéo dài vô ích. Đo riêng thời gian
+di chuyển, combat, UI và chờ. Chuyến mẫu 15–20 phút là giả thuyết cần thử.
+Ngày/đêm chỉ tạo không khí; không khóa quest chính vào giờ thật/nửa đêm.
 
-## 7. Luật rủi ro
+Thanh Lộc Viện, Phường Bạch Sa, Đầm Vân Trạch và Cựu Đài Khuyết là hướng Alpha,
+không thêm vào teleport list khi chưa có nội dung. Không tăng số map chỉ để tăng
+thời gian cày; trước hết mỗi map hiện tại phải tạo quyết định tuyến đi có ý nghĩa.
 
-| Loại khu | PvP | Tài sản khi chết | Thông báo |
-|---|---|---|---|
-| Hub | Không, trừ instance đấu tập | Không mất | Biểu tượng an toàn |
-| Hoang dã MVP | Không | Giữ đồ đã sở hữu | Cảnh báo quái và checkpoint |
-| Bí cảnh MVP | Không | Không thưởng encounter thất bại | Thông tin solo/co-op và cách rút |
-| Tranh đoạt tương lai | Chỉ theo luật tự nguyện | Chưa khóa thiết kế | Bắt buộc xác nhận rủi ro trước vào |
+## 9. Nghiệm thu
 
-Không gọi map “nguy hiểm” rồi âm thầm bật full-loot ở bản sau. Thay đổi loại rủi ro cần migration thiết kế, truyền thông và kiểm thử riêng.
-
-## 8. Node tài nguyên và công bằng online
-
-MVP dùng node tài nguyên cá nhân trong map chung: mỗi người có trạng thái lần thu riêng. Tránh cuộc đua click gây phá trải nghiệm học.
-
-Server xác nhận khoảng cách, trạng thái node và thời gian tương tác. Mỗi node có `nodeId`, `resourceTableId`, `respawnPolicy` và `mapVersion`.
-
-Cây hiếm Alpha có thể dùng tranh chấp riêng trong vùng tự nguyện. Không đổi mọi node thành “ai click trước thắng” chỉ vì thêm online.
-
-## 9. Luật cửa, checkpoint và teleport
-
-Cổng kiểm tra nhiệm vụ, nhóm và server capacity; không tin `mapId` client tự đặt. Lưu vị trí hợp lệ cuối cùng tại checkpoint, không cho client chọn tọa độ spawn.
-
-MVP có một nhân vật hiện diện tại tối đa một match gameplay. Chuyển map phải có chuyển quyền điều khiển và `sessionEpoch` mới, tránh cùng tài khoản farm hai map.
-
-Thất bại khi chuyển map phải về trạng thái nguồn hoặc checkpoint có ghi nhận, không tiêu chìa/đồ hai lần. Chi tiết giao dịch ở 10.
-
-## 10. Ngày đêm và thời tiết
-
-MVP dùng thay đổi hình ảnh nhẹ để tạo không khí; không khóa quest chính vào giờ thật. Thời gian cây tách khỏi hiệu ứng ngày đêm.
-
-Alpha có thể thêm mưa làm thay đổi tuyến tài nguyên, nhưng phải giữ đường tiến trình thay thế. Không yêu cầu online lúc nửa đêm để nhận nguyên liệu đột phá bắt buộc.
-
-## 11. Hướng mở rộng sau MVP
-
-Thanh Lộc Viện làm rõ đời sống tông môn; Phường Bạch Sa là không gian giao lưu và nghề; Đầm Vân Trạch mở tuyến sinh tồn tài nguyên; Cựu Đài Khuyết mở xung đột thế lực.
-
-Đây là tên ý tưởng, chưa phải map đã định nghĩa trong catalog MVP. Không thêm chúng vào loading screen hoặc teleport list trước khi có nội dung.
-
-## 12. Nghiệm thu map
-
-Mỗi map có mục tiêu, đường đi, đường về, ít nhất một quyết định tuyến đường và một phần kể chuyện bằng môi trường. QA kiểm tra spawn an toàn, va chạm khớp client/server, tương tác không xuyên tường, rút lui hợp lệ, chuyển map không tạo hai bản nhân vật và quest không bị kẹt sau reconnect.
+Từ tài khoản mới kiểm đủ đường ra/về, biển định hướng, camera/va chạm đúng server,
+cổng theo quest, node cá nhân, quái không xuyên tường, spawn an toàn, đổi instance
+không farm lại source, reconnect không kẹt. Cả tuyến chiến đấu và đường tránh phải
+dẫn tới tiến trình chính. Xem [kịch bản liên kết](progression-pve-spec.md).

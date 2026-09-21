@@ -1,50 +1,52 @@
-# 03 — Chiến đấu, công pháp, pháp khí và kẻ địch
+# 03 — Chiến đấu, kỹ năng, pháp khí và quái PvE
 
-**Phạm vi:** top-down 2D, PvE và đấu tập; mọi số là giá trị khởi đầu cho playtest.  
-**Nguyên tắc:** server xác định kết quả, client hiển thị và dự đoán có kiểm soát.
+**Cập nhật:** 21/09/2026. Top-down 2D, solo hoặc co-op 2 người.
+**Trạng thái:** đặc tả, không phải PvE đã triển khai.
+Dùng [nguồn số liệu chung](progression-pve-spec.md), không tự đặt XP/loot khác ở module combat.
 
-## 1. Cảm giác chiến đấu
+## 1. Cảm giác cần đạt
 
-Trận đánh tốt là một chuỗi quyết định: nhìn đòn → giữ vị trí → dùng tài nguyên → tận dụng khoảng trống → cân nhắc tiếp tục. Người chơi không cần bấm 10 kỹ năng, nhưng phải có lý do dùng từng kỹ năng.
+Nhìn đòn → chọn vị trí → ra đòn hoặc né → quản lý linh lực → phản công → cân nhắc rút.
+Ít nút nhưng từng nút có công dụng. Có chỗ tránh, góc phản công và đường quay về.
+Không dùng hiệu ứng che kín mặt đất hoặc thêm HP thay cho thiết kế tình huống.
 
-MVP ưu tiên ít mục tiêu, đòn báo rõ và lối thoát. Không đặt hiệu ứng che toàn bộ mặt đất. Kỹ năng mạnh có nhịp chuẩn bị hoặc đánh đổi linh lực.
+Phi Nhận cho cách đánh giữ khoảng cách; Hộ Thân giải quyết một thời điểm nguy hiểm;
+Trói Mộc giúp quản lý vị trí. Người cạn linh lực vẫn đánh thường và né được.
 
 ## 2. Điều khiển và trạng thái
 
-Windows: WASD/phím mũi tên di chuyển; chuột trái đánh thường; Space né; Q/E/R dùng ba kỹ năng; F tương tác; 1/2 dùng vật phẩm; Tab mở Mạch Bàn.
-
-Các phím phải có thể đổi trong cài đặt. Android dùng joystick trái, cụm hành động phải; xem 09. Lệnh gameplay là action ID, không gắn logic trực tiếp vào tên phím.
-
-### Máy trạng thái nhân vật
+Windows dự kiến: WASD/mũi tên di chuyển, chuột trái/J đánh, Space né, Q/E/R ba kỹ
+năng, F tương tác, 1/2 vật phẩm, Tab Mạch Bàn. Cho đổi phím; lệnh server là action ID.
+Android dự kiến joystick trái + nút hành động; chưa là bản client đã xuất.
 
 `idle / moving / windup / active / recovery / dodging / incapacitated / dead`.
+Cho hủy windup trước active; kỹ năng tiêu linh lực khi server chấp nhận active.
+Không chồng hai active để nhân sát thương; không đổi map/loadout khi đang có tác động combat.
+Client có thể dự đoán animation nhưng không tự quyết định HP, hit, loot hoặc chết.
 
-- Đánh thường cho hủy windup trước thời điểm active; chưa active thì chưa tiêu linh lực.
-- Kỹ năng tiêu linh lực khi server chấp nhận chuyển sang active; thông báo rõ nếu bị ngắt trước đó.
-- Không bắt đầu né khi đang dead, bị khóa điều khiển hoặc chưa hồi chiêu.
-- Không chồng hai active để nhân đôi sát thương.
-- Đổi map, đổi loadout và bắt đầu đấu tập bị khóa khi đang có tác động chiến đấu.
+## 3. Sáu hành động MVP
 
-## 3. Bộ sáu hành động MVP
+| ID | Mở khóa | Linh lực | Hồi chiêu | Hiệu ứng |
+| --- | --- | --- | --- | --- |
+| `sk_basic` | Đầu game | 0 | 0,7 giây | Chém cung trước, tầm 1,3 tile |
+| `sk_dodge` | Hướng dẫn | 0 | 2,4 giây | Lướt 2,2 tile trong 0,25 giây, không xuyên tường |
+| `sk_phi_nhan` | Luyện Khí 1 | 10 | 3 giây | Đạn thẳng, tầm 6 tile, tốc độ 10 tile/giây |
+| `sk_ho_than` | Luyện Khí 2 | 14 | 10 giây | Khiên 35 sát thương, tối đa 5 giây |
+| `sk_troi_moc` | Luyện Khí 3 | 12 | 8 giây | Vùng tầm 4 tile, chậm 50% trong 1,5 giây, tối đa 2 mục tiêu |
+| `sk_scan` | Nhận Mạch Bàn | 0 | 5 giây | Dò 6 tile, đứng yên 1 giây |
 
-`sk_basic` và `sk_dodge` không chiếm ô kỹ năng chủ động. Ba ô chủ động dành cho Phi Nhận, Hộ Thân, Trói Mộc. `sk_scan` là hành động khám phá.
+Đánh thường/né không chiếm ô chủ động. Né miễn sát thương từ 50 đến trước 200 ms
+sau bắt đầu, do server quyết định; cần kiểm thử biên tick 50 ms. MVP chưa cần đòn
+không thể né. Không dùng timestamp client tùy ý để rewind.
 
-| ID | Mở khóa | Linh lực | Hồi chiêu | Tác dụng cơ bản |
-|---|---|---:|---:|---|
-| `sk_basic` | Đầu game | 0 | 0,7 s | Chém cung phía trước, tầm 1,3 tile |
-| `sk_dodge` | Hướng dẫn | 0 | 2,4 s | Lướt 2,2 tile trong 0,25 s, không xuyên tường |
-| `sk_phi_nhan` | Luyện Khí 1 | 10 | 3 s | Đạn thẳng, tầm 6 tile, tốc độ 10 tile/s |
-| `sk_ho_than` | Luyện Khí 2 | 14 | 10 s | Khiên hấp thụ 35 sát thương, tối đa 5 s |
-| `sk_troi_moc` | Luyện Khí 3 | 12 | 8 s | Vùng nhỏ tầm 4 tile, giảm tốc 50% trong 1,5 s, tối đa 2 mục tiêu |
-| `sk_scan` | Nhận Mạch Bàn | 0 | 5 s | Dò dấu vết trong 6 tile, cần đứng yên 1 s |
+Hồi linh lực khi không active: 3/giây trong combat, 6/giây ngoài combat.
+Sau 5 giây không gây/nhận sát thương mới coi là ngoài combat; không tự hồi HP giữa trận.
+Ở hub có nghỉ miễn phí như [02](02-character-and-cultivation.md).
 
-Né không tiêu linh lực để phàm nhân và người cạn linh lực vẫn có phương án phòng vệ; giới hạn bởi cooldown và vị trí.
+Trói Mộc không cộng dồn phần trăm; một lần áp dụng không dài hơn 1,5 giây và có
+miễn tái làm chậm 2 giây sau khi hết. Hộ Thân không cộng khiên cùng loại, dùng mức lớn hơn.
 
-Né có cửa sổ miễn sát thương từ 50 đến trước 200 ms sau khi bắt đầu, do server quyết định. Với tick 50 ms phải kiểm tra biên từng tick. Đòn không thể né, nếu có, phải có ký hiệu riêng; MVP chưa cần loại đòn này.
-
-Hồi linh lực khi không có hành động active: 3 điểm/s trong chiến đấu, 6 điểm/s ngoài chiến đấu. Sau lần gây/nhận sát thương cuối 5 giây mới được coi là ngoài chiến đấu. Không hồi HP tự động giữa trận.
-
-## 4. Công thức sát thương mẫu
+## 4. Công thức sát thương
 
 ```text
 raw = attack * coefficient + flatBonus
@@ -52,100 +54,140 @@ mitigated = raw * 100 / (100 + max(0, defense))
 damage = max(1, floor(mitigated))
 ```
 
-Các hệ số: đánh thường 1,0; Phi Nhận 1,6 với `flatBonus = 4`; Trói Mộc 0,6. Khiên nhận sát thương trước HP. MVP không có chí mạng ngẫu nhiên, xuyên giáp, hơn mười hệ kháng hoặc nhân sát thương theo chênh cảnh giới.
+Đánh thường hệ số 1; Phi Nhận hệ số 1,6 cộng 4; Trói Mộc hệ số 0,6.
+Khiên chịu trước HP. Không có chí mạng RNG, xuyên giáp hoặc nhân sát thương theo
+chênh cảnh giới trong MVP. Ví dụ attack 16, Phi Nhận, defense 20 gây 24 sát thương.
 
-Ví dụ: công kích 16, Phi Nhận, đối thủ phòng ngự 20 → `floor((16×1,6+4)×100/120) = 24`.
+Server tính từng mục tiêu, kiểm tra giá trị hữu hạn và catalog đúng phiên bản.
+Không nhận damage, số quái chết hoặc phần thưởng từ client.
 
-Khi trúng nhiều mục tiêu, server tính riêng phòng ngự mỗi mục tiêu. Sát thương không được client truyền lên. Kiểm tra số hữu hạn, giới hạn giá trị và catalog đúng phiên bản.
+## 5. Quái: chiến lợi phẩm và hành vi
 
-### Luật hiệu ứng
+<!-- generated:enemies -->
+| ID / tên | HP solo | XP / lần hợp lệ | Loot bảo đảm / người | Hồi sinh thử |
+| --- | --- | --- | --- | --- |
+| `en_boar` — Sơn Trư | 60 | 10 | `it_boar_hide` ×1 | 45 giây |
+| `en_spider` — Độc Chu | 45 | 15 | `it_spider_silk` ×1 | 60 giây |
+| `en_scout` — Kẻ Rình Đường | 80 | 20 | `it_iron` ×1 | 60 giây |
+| `en_guard` — Thạch Vệ | 180 | 50 | `it_spirit_dust` ×1 | 180 giây |
+| `en_boss` — Mộc Tâm Thủ Trận | 700 | 100 | `it_spirit_dust` ×2 | Lượt bí cảnh mới |
+<!-- /generated:enemies -->
 
-Trói Mộc không cộng dồn phần trăm. Hiệu ứng mới không kéo dài quá 1,5 giây kể từ lần áp dụng mới; mục tiêu được miễn tái áp dụng làm chậm trong 2 giây sau khi hết hiệu ứng. Hộ Thân dùng giá trị lớn nhất, không cộng các khiên cùng loại.
+HP giữ theo v2; attack/defense, các nhịp AI và loot mới là điểm khởi đầu cần thử.
+Quái thường không rơi thẳng linh thạch; tiền đến từ bán vật liệu và quest.
 
-## 5. Công pháp và hướng build
+| Quái | Attack / defense thử | Nhịp và bài học |
+| --- | --- | --- |
+| Sơn Trư | 10 / 5 | Gầm, khóa hướng 0,75 giây → lao 4 tile/0,4 giây → hồi thế 0,8 giây; né ngang và phản công |
+| Độc Chu | 8 / 0 | Báo vùng 0,8 giây → phun độc → hồi thế 0,7 giây; rời mặt đất nguy hiểm |
+| Kẻ Rình Đường | 12 / 8 | Báo ngắm 0,8 giây → bắn đường thẳng tầm 6 tile → hồi 0,9 giây; dùng vật cản |
+| Thạch Vệ | 18 / 20 | Phòng thủ phía trước → báo vung 1 giây → đánh → hồi 1,2 giây; chờ/lách sườn |
+| Mộc Tâm | 16 / 12 | Quét, rễ, trụ cấp, cơ hội niêm phong; tổng hợp những gì đã học |
 
-### MVP: Tức Mạch Quyết — `cp_tuc_mach`
+Đòn cơ bản của quái dùng hệ số 1, không bonus; các hitbox, active/recovery và
+sát thương vùng phải được khóa trong catalog triển khai trước khi nhận P1/P5.
+Đề xuất vùng độc: bán kính 1,3 tile, tồn tại 3 giây, tick mỗi giây với hệ số 0,4;
+cùng nguồn không cộng dồn nhiều vùng sát thương lên một mục tiêu trong cùng tick.
+Thạch Vệ giảm 70% sát thương từ cung trước khi đang phòng thủ, không bất tử mọi hướng.
 
-Một công pháp cơ bản giúp cảm nhận dòng linh khí và duy trì linh lực. Nó cung cấp bộ kỹ năng trên; không có đặc quyền sao chép hoặc nhân tài nguyên.
+AI tối thiểu: `patrol → notice → chase → windup → attack → recover → return`.
+Sơn Trư thử bán kính phát hiện 5 tile/truy đuổi 10 tile; phải thấy đường hợp lệ,
+không đánh xuyên vách. Thông số này không mặc định áp cho boss.
 
-### Alpha: ba hướng, cùng ngân sách sức mạnh
+## 6. Encounter hướng dẫn và cày lặp
 
-| Hướng | Điểm mạnh | Đánh đổi | Vai trò khi co-op |
-|---|---|---|---|
-| Kiếm/pháp khí cơ động | Đổi vị trí, đánh điểm yếu | Phòng ngự thấp hơn, cần canh nhịp | Gây áp lực |
-| Phù thuật | Chuẩn bị vùng và thời điểm | Tiêu vật tư hoặc có thời gian đặt | Khống chế |
-| Thủ ngự/trận pháp | Bảo vệ và kiểm soát khu vực | Cơ động kém hơn | Tạo khoảng an toàn |
+Lần đầu gặp Sơn Trư có một con riêng, nền thoáng và đường rút. Hướng dẫn nhìn
+báo đòn → né ngang → đánh lúc hồi thế. Sau đó mới ghép hai hướng tấn công,
+Độc Chu và vật cản. Không đặt nhóm quái đông ngay chỗ spawn.
 
-Đây là ba cách chơi, không phải class cố định. Khôi lỗi và linh thú để sau vì tăng độ phức tạp AI, đồng bộ và UI.
+Encounter hướng dẫn phàm nhân không cho XP/loot lặp. Quái ngoài đồng sau khi đã
+Luyện Khí có bảng thưởng chuẩn. Tutorial flag và quyền thưởng do server tạo,
+không chấp nhận `tutorial=true` hoặc `reward=true` từ client.
 
-## 6. Trang bị và pháp khí
+Cụm quái có mã spawn, generation và encounter duy nhất. Reset HP/thua không thưởng.
+Hồi sinh theo [04](04-world-and-maps.md); rời/vào lại không làm mới quyền thưởng.
+Không để boss sinh thêm quái vô hạn để farm XP phụ.
 
-MVP có ba ô chiến đấu: pháp khí chính, giáp và hộ cụ. Mạch Bàn là công cụ riêng, không chiếm ô pháp khí.
+## 7. Boss chương đầu
 
-`Thanh Thiết Kiếm` cộng 4 công kích. `Áo Vải Bền` cộng 5 phòng ngự. Ô hộ cụ ban đầu để trống hoặc dùng hiệu ứng từ vật phẩm; không cần tạo hàng chục đồ để lấp UI.
+**100–60% HP:** quét có báo 0,7 giây; rễ thẳng báo 0,9 giây. Có đường né đủ rộng
+cho tốc độ cơ bản, không đòi vật phẩm tăng tốc.
 
-Pháp khí có định nghĩa chung và instance sở hữu riêng. Dù cùng loại kiếm, mỗi instance phải có ID duy nhất nếu về sau có nâng cấp/độ bền.
+**60–25%:** hai trụ linh mạch lần lượt hoạt động; phá trụ hoặc đọc điểm ngắt bằng
+Mạch Bàn làm giảm áp lực. Phá trụ không tự cấp thêm reward lặp ngoài encounter.
 
-### Tiến bộ trang bị
+**Dưới 25%:** có khoảng để hoàn thành niêm phong hoặc hạ tâm trận. Hai cách đều
+mở tiến trình và cùng ngân sách thưởng; khác cờ/hội thoại. Không bắt người niêm
+phong giết lại để đủ XP. Boss chỉ chốt kết quả một lần.
 
-MVP chỉ chế tạo đồ chỉ số cố định. Không cường hóa có xác suất, không phá hủy đồ, không reroll thuộc tính. Alpha có thể nâng bậc bằng nguyên liệu và lựa chọn một hiệu ứng; chi phí, lợi ích và hoàn nguyên phải hiển thị trước khi xác nhận.
+Solo giải được mọi cơ chế. Co-op thử HP thường ×1,4; tinh anh/boss ×1,6,
+sát thương không tăng. Loot/XP cá nhân theo bảng, không chia đôi hoặc nhân theo
+damage dealt. Chưa coi hệ số là kết quả cân bằng.
 
-Đồ hiếm nên thay quyết định, ví dụ giảm tầm nhưng tăng độ rộng Phi Nhận, thay vì chỉ tăng 50% mọi chỉ số.
+## 8. Trang bị và hướng build
 
-## 7. Vật phẩm chiến đấu
+MVP có pháp khí chính, giáp, hộ cụ; Mạch Bàn là công cụ riêng.
+Thanh Thiết Kiếm +4 attack; Áo Vải Bền +5 defense. Ô hộ cụ không cần lấp bằng
+một món mới chỉ để đẹp UI. Trang bị có instance ID, không chỉ là item ID.
 
-Hai ô nhanh, dùng chung cooldown vật phẩm 8 giây. Hồi Nguyên Hoàn hồi 30 HP; Ích Khí Tán hồi 25 linh lực. Không tiêu vật phẩm khi HP/linh lực đã đầy và UI phải nói rõ lý do.
+MVP chế tạo chỉ số cố định, không cường hóa xác suất/phá hủy/reroll.
+Alpha mới thử ba hướng kiếm cơ động, phù thuật và thủ ngự với đánh đổi rõ ràng;
+không phải class khóa vĩnh viễn. Khôi lỗi/linh thú để sau.
 
-Hộ Thân Phù tạo khiên 25 trong 4 giây; không cộng với Hộ Thân, dùng mức cao hơn. Thoát Thân Phù channel 3 giây về checkpoint an toàn, ngắt khi nhận sát thương, chỉ dùng PvE và mất vật phẩm khi teleport được commit.
+Kiếm phải có nguồn quặng/trúc/công thức/phí đọc được trong UI.
+Bỏ nhiệm vụ phụ kiếm vẫn có học bằng phí thường; chưa bắt buộc kiếm cho tuyến chính.
 
-Đấu tập dùng vật tư mô phỏng hoặc vô hiệu hóa đồ tiêu hao thật; không rút đồ khỏi inventory persistent.
+## 9. Vật phẩm tiêu hao
 
-## 8. Năm mẫu kẻ địch
+Hai ô nhanh, cooldown chung 8 giây:
+Hồi Nguyên Hoàn hồi 30 HP; Ích Khí Tán hồi 25 linh lực.
+Đầy HP/linh lực thì không tiêu món hồi tương ứng.
+Hộ Thân Phù khiên 25 trong 4 giây, không cộng với Hộ Thân.
+Thoát Thân Phù channel 3 giây về checkpoint; nhận sát thương thì ngắt, chỉ PvE,
+chỉ tiêu khi teleport được commit.
 
-| ID | Loại | HP solo | Cơ chế dạy người chơi | Nơi gặp |
-|---|---|---:|---|---|
-| `en_boar` Sơn Trư | Thường | 60 | Gầm báo trước rồi lao thẳng | Trúc Âm |
-| `en_spider` Độc Chu | Thường | 45 | Vệt độc dễ thấy, tránh đứng lâu | Trúc Âm / Cổ Tỉnh |
-| `en_scout` Kẻ Rình Đường | Thường | 80 | Bắn từ xa, né sau vật cản | Thạch Cạn |
-| `en_guard` Thạch Vệ | Tinh anh | 180 | Đỡ mặt trước, lộ sườn sau đòn | Thạch Cạn / Cổ Tỉnh |
-| `en_boss` Mộc Tâm Thủ Trận | Boss | 700 | Đọc hai dạng báo đòn và phá nguồn cấp | Cổ Tỉnh |
+Hồi Nguyên Hoàn **không tăng tu vi**. Consumable không sửa trực tiếp XP/cảnh giới.
+Mỗi lần dùng thật phải trừ đúng một lần; kết quả và inventory cần hòa giải được
+khi disconnect. Đấu tập dùng vật tư mô phỏng hoặc tắt, không tiêu đồ persistent.
 
-MVP co-op hai người: HP quái thường ×1,4, tinh anh/boss ×1,6; sát thương không tăng. Loot cấp cá nhân theo thiết kế, không chia đôi vật phẩm nhiệm vụ. Hệ số là điểm bắt đầu cần test.
+## 10. Kết quả encounter và tài sản
 
-### AI tối thiểu
+Server kiểm tra danh tính, epoch, thứ tự/rate input, trạng thái sống, vị trí,
+va chạm, kỹ năng sở hữu, cooldown và linh lực. Snapshot client không là bằng chứng.
 
-`patrol → notice → chase → windup → attack → recover → return`.
+Lưu outcome + người đủ điều kiện + reward bất biến, rồi settlement qua lớp tài
+sản chung. Receipt đơn lẻ không thay thế lưu outcome bền vững. Retry cùng encounter
+kể cả operation khác không trả thêm. XP, loot, tiền và event quest dùng giao dịch
+nhất quán hoặc outbox có reconcile, xem [đặc tả](progression-pve-spec.md).
 
-Có bán kính truy đuổi và đường về, nhưng không reset HP/loot một cách có thể khai thác. Boss bắt đầu encounter riêng; reset không phát phần thưởng. Quái không được chọn mục tiêu xuyên vách hoặc xuyên map.
+Túi đầy giữ thưởng chờ, không vứt đồ/cho một nửa; chặn khởi tạo encounter thưởng
+mới đến khi giải quyết. Cho về hub dọn túi rồi nhận đúng một lần.
+Đóng góp hỗ trợ được tính; last-hit không là tiêu chuẩn duy nhất, AFK ngoài cửa
+không nhận. Mất mạng phải có chính sách reconnect rõ và bài kiểm tra thật.
 
-## 9. Boss chương đầu
+### Dọn túi luôn có đường thực hiện
 
-**Pha 1, HP 100–60%:** đòn quét có vùng báo 0,7 giây và rễ thẳng báo 0,9 giây. Đường tránh phải đủ rộng cho nhân vật không có tăng tốc.
+Ngoài bán NPC, inventory phải có thao tác hủy vật phẩm thông thường sau xác nhận,
+server kiểm ID/số lượng và receipt. Cấm hủy Mạch Bàn, vật phẩm quest và món đang
+trang bị; có thể tháo món thường trước khi hủy. Không phụ thuộc mọi loại vật phẩm
+đều có giá bán. Tính năng này nằm trong P2 cùng equip/consume, tránh kẹt thưởng khi
+túi chỉ chứa kiếm, hạt hoặc nước mà shop chưa mua. Hủy không phát XP/tiền, không thể
+hoàn tác; UI phải hiển thị rõ món và số lượng. Kiểm thử đầy cả 24 ô bằng món không
+bán được, dọn một ô rồi nhận settlement đúng một lần.
 
-**Pha 2, HP 60–25%:** hai trụ linh mạch lần lượt hoạt động. Phá trụ hoặc dùng Mạch Bàn đọc điểm ngắt sẽ làm giảm áp lực. Người chơi không bắt buộc có vật phẩm hiếm.
+## 11. Chết và rút lui
 
-**Pha 3, HP dưới 25%:** boss yếu đi, mở cơ hội niêm phong. Có thể hạ hoàn toàn hoặc hoàn thành thao tác ngắt trận theo quest. Hai cách cùng mở tiến trình; khác hội thoại và một phần tín nhiệm.
+PvE: về checkpoint; giữ đồ/XP đã commit, không tụt tầng. Vật tư đã dùng vẫn tiêu,
+encounter thất bại không có thưởng. Rút trước settlement không tự hưởng công lao.
+Disconnect không được tạo bất tử, cũng không biến thành lý do tịch thu tài sản.
 
-Không có “pha hai chỉ tồn tại khi đủ hai người”. Solo và co-op đều giải được.
+Đấu tập: kết thúc và phục hồi trạng thái ngoài trận; không ghi HP/vật tư mô phỏng
+vào tiến trình PvE. Giữ quy tắc hiện có của prototype.
 
-## 10. Server-authoritative và phản hồi client
+## 12. Nghiệm thu
 
-Mô hình authoritative được Nakama hỗ trợ, nhưng hitbox, AI và luật chiến đấu vẫn phải tự viết. Nguồn S02/S03 trong [15](15-sources-and-change-log.md).
-
-Server kiểm tra danh tính phiên, match/epoch, thứ tự input, số lần gửi, trạng thái sống, skill sở hữu, cooldown, linh lực, vị trí và va chạm. Client chỉ gửi ý định và hướng ngắm.
-
-Client có thể phát hoạt ảnh dự đoán, nhưng HP, đồ, chết và thưởng chờ kết quả server. Không sử dụng vật lý Godot client làm bằng chứng đánh trúng.
-
-Không rewind theo timestamp tùy ý do client gửi trong MVP. Độ trễ cao cần được hiển thị; thiết kế telegraph và nội suy được thử dưới mạng giả lập, không cam kết “không lag”.
-
-## 11. Chết, reset và rút lui
-
-PvE MVP: về checkpoint, không mất đồ đang sở hữu, không tụt tầng. Vật phẩm đã dùng hợp lệ vẫn bị tiêu. Encounter thất bại không cấp thưởng; loot đã commit ở encounter trước vẫn giữ.
-
-Đấu tập: kết thúc trận, phục hồi trạng thái trước trận; không ghi HP mô phỏng hay vật tư dùng thử vào trạng thái PvE.
-
-Disconnect không cho bất tử: nhân vật giữ trạng thái trong thời gian reconnect ngắn; chính sách cụ thể ở 10. Không làm trừng phạt mất tài sản khi mạng kém.
-
-## 12. Nghiệm thu chiến đấu
-
-Phải kiểm tra: đạn không xuyên tường; né không xuyên vật cản; một cast chỉ gây hit đúng số lần; spam input không tăng tốc; làm chậm không khóa vô hạn; chết đồng thời chỉ có một kết quả; boss solo/co-op đều giải được; hai client thống nhất HP và kết quả; reset không phát thưởng lặp.
+Kiểm tra hitbox/tường, né không xuyên vật cản, một cast đúng số hit, tick độc
+không nhân đôi, slow không khóa vô hạn, hai client cùng kết quả, chết đồng thời,
+boss hai cách giải, reset không thưởng, respawn không chồng checkpoint, retry/túi
+đầy/restart không mất hoặc nhân XP/loot. Đo thời gian giết và tiêu hao thực tế;
+không dùng bảng HP để khẳng định combat đã vui hoặc economy đã bền vững.

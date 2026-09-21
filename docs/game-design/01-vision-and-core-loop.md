@@ -1,109 +1,112 @@
 # 01 — Tầm nhìn sản phẩm và vòng chơi
 
-**Mốc áp dụng:** MVP trước, mở rộng theo cổng nghiệm thu.  
-**Thông số trong file:** giả thuyết thiết kế, cần chơi thử.
+**Cập nhật:** 21/09/2026, theo đặc tả tiến trình/PvE mới.
+**Trạng thái:** thiết kế, chưa phải thông báo tính năng đã triển khai.
+**Nguồn số liệu:** [đặc tả liên kết](progression-pve-spec.md) và JSON thiết kế đi kèm.
 
 ## 1. Lời hứa với người chơi
 
-Bạn không phải người mạnh nhất khi bước vào thế giới này. Bạn có thể trở thành người sống sót và tiến xa nhờ biết chuẩn bị: trồng đúng dược liệu, tìm hiểu đối thủ, giữ quan hệ, chọn pháp khí phù hợp và biết lúc nào cần rút.
+Bạn bắt đầu là một người bình thường ở An Khê. Bạn tiến xa bằng cách học quan sát,
+chuẩn bị vật tư, tìm đúng nguồn tài nguyên, mở công pháp và biết lúc nào nên rút.
+Game cần tạo cảm giác “mình đã biết cách xử lý tốt hơn”, không chỉ “chỉ số lớn hơn”.
 
-Game cần cho cảm giác “mình đã khôn hơn, vững hơn” trước cảm giác “chỉ số của mình to hơn”.
+Mỗi bước phát triển phải trả lời:
+**mình thiếu gì → đi đâu → làm gì → nhận gì → dùng vào đâu → mở khả năng gì**.
 
-## 2. Chuyển cảm hứng Phàm Nhân Tu Tiên thành cơ chế
+Cảm hứng tu tiên được chuyển thành thế giới và nhân vật riêng của dự án.
+Không sao chép nhân vật, lời thoại, chuỗi sự kiện, nhạc hoặc hình ảnh của phim.
+Phạm vi cảnh giới trong tài liệu là thiết kế game, không phải bảng mô phỏng phim.
 
-Mô tả chính thức của BiliBili nhấn mạnh nhân vật xuất thân bình thường, tư chất không nổi bật và con đường tu luyện nguy hiểm. Đó là nền cảm hứng; bảng dưới là **diễn giải thiết kế cho game**, không phải bản mô phỏng từng tập phim. Nguồn: S01 trong [15](15-sources-and-change-log.md).
+## 2. Năm trụ cột
 
-| Tinh thần muốn giữ | Người chơi làm gì | Hệ thống thể hiện |
-|---|---|---|
-| Người bình thường tìm đường tiến thân | Hoàn thành việc nhỏ, tích lũy tri thức và tài nguyên | Quest, công pháp, vườn |
-| Thận trọng có giá trị | Đọc dấu vết, quan sát đòn, chuẩn bị hồi phục | Dò mạch, telegraph, vật phẩm |
-| Cơ duyên phải được tận dụng | Tìm một lối vào hoặc công thức rồi hoàn thành thử thách | Khám phá, bí cảnh, tri thức |
-| Mạnh hơn không đồng nghĩa bất cẩn được | Quản lý linh lực, vị trí và thời gian hồi chiêu | Combat, tinh anh, boss |
-| Người và tổ chức có lợi ích riêng | Chọn cách xử lý chứng cứ và quan hệ | Story flags, tín nhiệm |
-| Tu luyện là hành trình dài | Mỗi mốc mở khả năng mới, không chỉ cộng chỉ số | Cảnh giới, công pháp, map |
+**Chuẩn bị có ích.** Dược liệu và chế tạo cải thiện khả năng sống sót trong chuyến đi.
+Không có một vật phẩm hiếm duy nhất bắt buộc mua mới qua được tuyến chính.
 
-Không dùng nhân vật, biểu tượng, nhạc, trích đoạn, thoại hay chuỗi sự kiện của phim làm asset có sẵn. Thế giới và tuyến truyện trong bộ tài liệu là sáng tác riêng cho dự án.
+**Nơi an thân có công dụng.** An Khê cho nghỉ, thu hoạch, luyện đan, đổi trang bị,
+nhận mục tiêu và đột phá. Chuyến đi mang tài nguyên/tri thức về; nơi ở biến chúng
+thành phương án chuẩn bị mới. Vườn không là một minigame tách rời chiến đấu.
 
-## 3. Năm trụ cột thiết kế
+**Tiến bộ nhiều chiều, giao diện đơn giản.** Tu vi, lĩnh ngộ và trang bị/vật tư tạo
+ba lớp dễ hiểu trong MVP. Công pháp, tri thức, quan hệ phát triển theo nội dung;
+chưa thêm một thanh XP cho mọi hoạt động hoặc chỉ số “lực chiến” quyết định tất cả.
 
-### 3.1. Chuẩn bị trước giao tranh
+**Nguy hiểm đọc được.** Quái có vai trò dạy cơ chế, báo đòn và khoảng phản công.
+Tăng khó bằng tình huống, góc tiếp cận và kết hợp quái; không chỉ tăng máu.
+Chết phải hiểu được nguyên nhân và còn cách thử lại.
 
-Biết quái gây độc thì có thể mang hồi phục, né tuyến nguy hiểm hoặc xử lý quái từ xa. Không bắt buộc mua đúng một vật phẩm mới được chơi. Có ít nhất hai cách giải quyết mỗi tình huống quan trọng.
+**Online không phá tiến trình cá nhân.** Chơi solo được, co-op có phần thưởng cá nhân.
+Không ép PvP, bang, săn boss theo giờ thật hoặc online hằng ngày để hoàn thành MVP.
 
-### 3.2. Nơi an thân có công dụng
+## 3. Ba nhịp vòng chơi
 
-Làng và vườn cho nhịp nghỉ: chữa trị, thu hoạch, chế tạo, đọc manh mối, đổi bộ kỹ năng. Vườn tạo vật tư cho chuyến đi; chuyến đi mang giống và tri thức về vườn.
+| Nhịp | Chuỗi hành động | Phản hồi cần có |
+| --- | --- | --- |
+| 10–60 giây | Nhìn đòn → giữ vị trí → đánh/né → quản lý linh lực → phản công/rút | Thấy lý do trúng, hụt hoặc không dùng được kỹ năng |
+| Chuyến 15–20 phút, có thể đến 30 | Ghim mục tiêu → chuẩn bị → chọn tuyến → giao tranh/thu thập → về làng → chế tạo/đột phá | Biết tu vi và vật liệu kiếm được phục vụ mục tiêu nào |
+| Nhiều phiên | Thiếu nguồn/tri thức → tìm cách tiếp cận → mở khả năng → giải thử thách → mở vùng mới | Mỗi mốc có việc mới làm được, không chỉ một con số |
 
-### 3.3. Tiến bộ theo nhiều chiều
+Đây là nhịp cần kiểm chứng, không cam kết thời lượng hoặc suy phút từ số quái.
+Một chuyến có thể không làm đủ mọi bước; người thích combat dùng đồ đã chuẩn bị
+trước hoặc mua NPC, không bị buộc trồng cây mỗi lần.
 
-Tu vi mở điều kiện; công pháp mở cách chơi; trang bị điều chỉnh chiến thuật; tri thức mở lựa chọn; quan hệ mở nguồn thông tin. Không gom cả năm thành một “lực chiến” quyết định thắng thua.
+## 4. Hành trình cần chứng minh trước khi mở rộng
 
-### 3.4. Nguy hiểm đọc được
+Phàm nhân học tương tác/dò mạch/né → `q_main_003` dẫn khí và mở Phi Nhận →
+trồng mẻ Cam Lộ hướng dẫn và luyện hồi phục → đi Trúc Âm tìm XP + nguyên liệu →
+về làng mở Hộ Thân → xử lý địa hình/quái khó hơn ở Thạch Cạn →
+chuẩn bị và hoàn thành Cổ Tỉnh → kết chương, tới giới hạn Luyện Khí 4.
 
-Quái mạnh phải có âm thanh, dáng, đòn báo trước hoặc lời cảnh báo. Chết vì quyết định sai có thể học được; chết vì thông tin không hiển thị cần sửa thiết kế.
+Sơn Trư gặp trước khi có phép chỉ là bài học an toàn, không bãi farm miễn phí.
+Sau Phi Nhận, cùng mẫu quái cho thấy lợi ích của tầm đánh. Hộ Thân giúp chịu áp lực
+ở thời điểm quan trọng; Trói Mộc giúp kiểm soát vị trí. Không đặt kỹ năng thành
+ba nút gây sát thương gần giống nhau.
 
-### 3.5. Online không phá vòng chơi cá nhân
+Một chuyến săn cần phục vụ ít nhất hai trong ba mục tiêu: XP; vật tư/trang bị;
+tri thức/đường đi. Ví dụ, săn nhện để tiến tới Hộ Thân và tích tơ làm phù.
+Các bảng quái/loot/công thức phải nối được với mục tiêu này.
 
-Không ép PvP, gia nhập bang hay canh boss theo giờ để hoàn thành cốt truyện MVP. Chơi cùng người khác giúp phong phú hơn, không phải điều kiện để không bị kẹt.
+## 5. Phiên đầu khoảng 30 phút — mục tiêu thử
 
-## 4. Vòng chơi theo ba thang thời gian
+| Khoảng mục tiêu | Trải nghiệm | Điều cần quan sát |
+| --- | --- | --- |
+| 0–5 phút | Tạo nhân vật, nhận việc, biết NPC và đường ra | Không cần người phát triển chỉ từng nút |
+| 5–10 phút | Dò dấu, nhận biết một cú lao và né | Không chỉ đứng yên bấm đánh |
+| 10–15 phút | Dẫn khí, dùng Phi Nhận | Hiểu quyền mới đến từ đâu |
+| 15–20 phút | Trồng mẻ hướng dẫn, thu và luyện hồi phục | Hiểu vườn phục vụ chuyến đi |
+| 20–25 phút | Chọn tuyến đi với mục tiêu cụ thể | Biết cần nguyên liệu/tu vi nào |
+| 25–30 phút | Mang thành quả về, xem mục tiêu kế tiếp | Tài sản lưu được; biết sẽ làm gì tiếp |
 
-### Vòng ngắn: 10–60 giây
+Không ép hoàn thành 12 quest, cả boss hoặc chắc chắn lên tầng 2 trong 30 phút.
+Đo nút thắt ở giao diện/đường đi trước khi cắt nội dung hoặc tăng tốc XP.
 
-Quan sát → chọn vị trí → ra đòn hoặc tương tác → tiêu tài nguyên → nhận phản hồi → thay đổi quyết định.
-
-Phải đọc được HP, linh lực, cooldown và hướng nguy hiểm. Không cần mở bảng chỉ số để hiểu vì sao một đòn không đánh được.
-
-### Vòng phiên chơi: 15–30 phút
-
-Chọn mục tiêu ở làng → kiểm tra đồ mang theo → đi rừng/khe đá → thu thập và xử lý một tình huống → quyết định đi sâu hay về → xác nhận tài nguyên → chế tạo/tu luyện → mở mục tiêu sau.
-
-Không ép chuyến nào cũng làm đủ các bước. Người chơi thích trồng trọt có thể chủ yếu chuẩn bị; người thích chiến đấu dùng thành quả chuẩn bị của phiên trước.
-
-### Vòng dài: nhiều phiên
-
-Thiếu tài nguyên/tri thức → tìm nguồn → tự cải thiện → giải quyết thử thách → mở tầng tu luyện hoặc lựa chọn mới → khám phá xung đột lớn hơn.
-
-Mỗi mốc phải có cả “mình làm được điều gì mới” và “mình đang tò mò điều gì”.
-
-## 5. Phiên đầu 30 phút — mục tiêu kiểm chứng
-
-| Khoảng thời gian mục tiêu | Trải nghiệm | Bằng chứng cần quan sát |
-|---|---|---|
-| 0–5 phút | Tạo nhân vật, nhận việc tại An Khê | Người mới biết đường đi và nút tương tác |
-| 5–10 phút | Thấy dấu linh mạch, tránh một đòn quái | Hiểu dò mạch và né, không chỉ bấm liên tục |
-| 10–15 phút | Hoàn thành mốc dẫn khí đầu | Hiểu tại sao tu vi tăng |
-| 15–20 phút | Trồng và thu cây hướng dẫn, luyện hồi phục | Hiểu vườn phục vụ chuyến đi |
-| 20–25 phút | Mang vật tư vào tuyến rừng khó hơn | Chủ động chọn vật phẩm hoặc đường đi |
-| 25–30 phút | Quay về, nhận manh mối mới và lưu tiến độ | Muốn tiếp tục; đăng nhập lại không mất tài sản |
-
-Đây là mục tiêu phân bổ nội dung, không phải thời gian cam kết cho mọi người chơi. Không bắt người mới hoàn thành cả 12 quest và boss trong 30 phút.
-
-## 6. Khóa phạm vi theo bản
+## 6. Phạm vi các bản
 
 | Mảng | MVP | Alpha | Sau Alpha |
-|---|---|---|---|
-| Tu luyện | Luyện Khí 1–4 | Luyện Khí 5–13, thử Trúc Cơ sơ kỳ | Kết Đan, Nguyên Anh, các cấp sau |
-| Chiến đấu | Một bộ pháp khí cơ bản | Ba hướng build | Khôi lỗi, linh thú, đội hình phức tạp |
-| Map | 4 map chương đầu | Tông môn, phường thị, một bí cảnh mới | Khu vực xa và tranh đoạt |
-| Đời sống | 6 ô vườn, 3 cây, 5 công thức | Chuyên nghề, nâng tiện ích | Động phủ có trang trí sâu |
-| Cộng đồng | UI tối thiểu trên backend có sẵn; co-op 2 người | Tổ đội 4 người, cộng tác nhóm | Liên minh, sự kiện bang |
-| PvP | Đấu tập đồng thuận, không kinh tế | Đấu trường cân bằng | Vùng tranh đoạt tự chọn |
-| Kinh tế | NPC và tài sản cá nhân | Giao dịch trực tiếp sau audit | Chợ/đấu giá nếu cần |
-| Story | Một chương khép được xung đột nhỏ | Hai chương tiếp theo | Mạch truyện vùng lớn |
+| --- | --- | --- | --- |
+| Cảnh giới | Phàm nhân → Luyện Khí 1–4 | Luyện Khí 5–13, thử Trúc Cơ sơ kỳ | Kết Đan/Nguyên Anh khi có nội dung |
+| Công pháp | Tức Mạch Quyết, một bộ cơ bản | Ba hướng build kiếm/phù/thủ ngự | Khôi lỗi/linh thú nếu thực sự cần |
+| Thế giới | An Khê, Trúc Âm, Thạch Cạn, Cổ Tỉnh | Tông môn, phường thị, bí cảnh mới | Vùng xa và tranh đoạt |
+| Đời sống | 6 ô vườn, 3 cây, 5 công thức | Chuyên nghề và tiện ích | Động phủ/trang trí sâu |
+| Cộng đồng | Backend đã có; trải nghiệm co-op tối đa 2 là mục tiêu | Nhóm 4 và hợp tác nhiều hơn | Liên minh/sự kiện bang |
+| PvP | Đấu tập đồng thuận, chỉ số chuẩn, không kinh tế | Đấu trường cân bằng | Tranh đoạt tự chọn |
+| Kinh tế | NPC, tài sản cá nhân, không chợ người chơi | Giao dịch sau kiểm thử tài sản | Chợ/đấu giá nếu có nhu cầu |
+| Truyện | Một chương, 12 quest chính, 6 quest phụ | Hai chương tiếp | Xung đột vùng dài hạn |
 
-## 7. Những gì chủ động không làm trong MVP
+Chương đầu dự kiến thử trong 2–4 giờ chơi chủ động. Không kéo dài thành nhiều ngày
+bằng quái nhiều máu, daily bắt buộc hoặc chờ cây. Cày dài hạn chỉ mở khi có mục tiêu
+công pháp/trang bị/nội dung tương ứng; tầng 4 phải báo rõ trần MVP.
 
-Không bay xuyên bản đồ, phi thăng, bang chiến, công thành, full-loot, nhân giống linh thú, hệ tình duyên, hàng chục tông môn, nhà đấu giá, auto farm, trợ lý AI hội thoại hoặc cửa hàng tiền thật. Không cài tất cả công nghệ được nhắc trong tài liệu cũ.
+## 7. Không làm trong phạm vi hiện tại
 
-Không biến “tu tiên dài lâu” thành chờ thật nhiều ngày mới được thử cơ chế đầu tiên.
+Không full-loot, PvP ép buộc, nhà đấu giá, auto farm, linh căn quay may rủi, cường hóa
+phá đồ, premium currency, cửa hàng tiền thật, bay xuyên thế giới, hàng chục tông môn,
+tình duyên hoặc AI hội thoại. Không xây cả hệ thống lớn trước rồi mới thử nối vòng chơi.
 
-## 8. Các đối tượng chơi thử
+## 8. Nghiệm thu bản sắc
 
-Mời người thích khám phá/story, người thích cày cuốc/build, người chơi online có PvP và người chưa quen game tu tiên. Đây là phân nhóm kiểm thử, chưa phải phân khúc thị trường được nghiên cứu.
+Người mới phải trải nghiệm được: chuẩn bị hữu ích; nguy hiểm đọc được; quyết định
+đi tiếp/rút; phần thưởng có đầu ra; một khả năng mới; trở lại nơi an toàn.
+Hỏi “bạn đang cần gì và sẽ đi đâu tiếp?”. Nếu không trả lời được, sửa mục tiêu/UI
+và nguồn tài nguyên trước khi thêm cảnh giới.
 
-Mỗi nhóm trả lời một câu: “Trong phiên vừa rồi, quyết định nào của bạn tạo ra khác biệt?” Nếu câu trả lời chỉ là “đeo đồ cao hơn”, vòng chơi chưa đạt mục tiêu.
-
-## 9. Nghiệm thu bản sắc
-
-Bản demo phải có một lần chuẩn bị hữu ích, một nguy hiểm có thể nhận ra, một quyết định rút/tiến, một phần thưởng mở lựa chọn mới và một lần trở về nơi an toàn. Thiếu một trong các điểm này thì ưu tiên sửa vòng chơi trước thêm cảnh giới.
+[Xem các mốc P1–P5 và kịch bản nghiệm thu](progression-pve-spec.md).

@@ -1,172 +1,184 @@
-# 02 — Nhân vật, linh căn, tu vi và cảnh giới
+# 02 — Nhân vật, tu vi và cảnh giới
 
-**Chủ hệ thống:** gameplay + server.  
-**Phụ thuộc:** dữ liệu nhân vật, quest, inventory, combat; xem 03, 06, 10.  
-**Lưu ý:** hệ thống và con số dưới đây là thiết kế của game, không phải bảng cảnh giới chính thức của phim.
+**Cập nhật:** 21/09/2026. **Chủ hệ thống:** gameplay + server.
+**Phụ thuộc:** inventory, quest, encounter và UI tiến trình.
+Các số trong tài liệu là cấu hình thử; runtime ở mốc nguồn chưa có tu luyện.
 
-## 1. Tạo nhân vật
+## 1. Tạo nhân vật và trạng thái ban đầu
 
-Một tài khoản có một nhân vật gameplay trong MVP. Dữ liệu tài khoản Nakama, hồ sơ hiển thị và trạng thái gameplay là các lớp khác nhau.
+Một tài khoản có một nhân vật gameplay MVP. Tài khoản Nakama, hồ sơ hiển thị và
+trạng thái gameplay là các lớp khác nhau. Chọn ngoại hình, tên và xuất thân
+người làm vườn/học việc thợ rèn/người đưa hàng; xuất thân chỉ đổi mô tả/hội thoại,
+không tạo lợi thế tiền hoặc sức mạnh.
 
-Người chơi chọn tên hiển thị, ngoại hình cơ bản và một câu xuất thân. Ba xuất thân dự kiến: người làm vườn, học việc thợ rèn, người đưa hàng. Trong MVP, chúng thay hội thoại/mô tả; không tạo lợi thế tiền hoặc sức mạnh khác nhau.
+Bắt đầu `realm=mortal`, `realmStage=0`. Gói `starter:v1` cấp một lần theo tài khoản,
+không cấp lại khi thử đổi tên hoặc tạo lại đường nhận thưởng.
+Không quay linh căn, không yêu cầu bỏ tài khoản để có chỉ số tốt.
 
-Không quay linh căn ngẫu nhiên, không xóa nhân vật để nhận lại gói khởi đầu. Bộ vật tư khởi đầu cấp một lần theo tài khoản/nhân vật và ghi dấu đã nhận.
+`q_main_003` là mốc chuyển sang `luyen_khi`, tầng 1: cấp công pháp `cp_tuc_mach`,
+mở Phi Nhận, ghi `insight.breath_control` và XP quest trong cùng giao dịch.
+Không mở phép ngay lúc login chỉ để khớp một kịch bản QA.
 
-### Trạng thái ban đầu
+## 2. Các chiều phát triển
 
-`realm = mortal`, chưa có kỹ năng tu luyện. Sau nhiệm vụ `q_main_003`, server chuyển sang `luyen_khi`, tầng 1. Nhân vật ban đầu là một người làm việc ở An Khê, không được mặc định là người cứu thế.
+| Chiều | Đầu vào | Giá trị |
+| --- | --- | --- |
+| Cảnh giới | Tu vi + cờ điều kiện | Thuộc tính và khả năng mới |
+| Công pháp | Học qua nội dung, thực hành | Cách sử dụng bộ kỹ năng |
+| Pháp khí/vật tư | Nguyên liệu, chế tạo, lựa chọn | Tầm đánh, khả năng chuẩn bị |
+| Tri thức | Dò mạch, khảo sát, quest | Nguồn tài nguyên và phương án giải quyết |
+| Quan hệ | Quyết định và hỗ trợ NPC/tổ chức | Tin tức, dịch vụ, tuyến nhiệm vụ |
 
-## 2. Năm chiều phát triển
+Trong UI MVP chỉ cần làm rõ tu vi, điều kiện lĩnh ngộ và trang bị/vật tư.
+Không thêm “level nhân vật” trùng cảnh giới hoặc XP nghề chưa có vòng chơi.
+Không dùng lực chiến tổng để quyết định trúng đòn hoặc khóa mọi cổng.
 
-| Chiều | Đầu vào | Đầu ra | Không thay thế được |
-|---|---|---|---|
-| Cảnh giới | Tu vi, lĩnh ngộ, điều kiện nhiệm vụ | Giới hạn tài nguyên và khả năng mới | Kỹ năng điều khiển |
-| Công pháp | Quyển pháp, thử thách, luyện tập | Kỹ năng, nhánh hiệu ứng | Tất cả loại trang bị |
-| Pháp khí | Nguyên liệu, chế tạo, lựa chọn | Tầm đánh, tiết tấu, bổ trợ | Mọi build cùng lúc |
-| Tri thức | Dò mạch, đọc dấu, quest | Điểm thu thập, công thức, lựa chọn | Tu vi miễn phí vô hạn |
-| Quan hệ | Hành động với NPC/tổ chức | Tin tức, dịch vụ, tuyến nhiệm vụ | Quyền áp đảo người chơi khác |
+## 3. Thuộc tính cơ bản
 
-Không sử dụng “lực chiến tổng” làm điều kiện duy nhất để vào map hoặc quyết định trúng đòn.
+| Thuộc tính | Phàm nhân | Luyện Khí 1 | Tăng mỗi tầng 2/3/4 |
+| --- | --- | --- | --- |
+| HP tối đa | 80 | 100 | +12 |
+| Linh lực tối đa | 0 | 60 | +6 |
+| Công kích | 8 | 12 | +2 |
+| Phòng ngự | 5 | 10 | +2 |
+| Tốc độ | 4 tile/giây | 4 tile/giây | Không tự tăng |
 
-## 3. Thuộc tính chiến đấu đề xuất
+Thần thức nhập môn là 1; MVP chưa có chí mạng ngẫu nhiên, xuyên giáp hoặc nhiều
+hệ kháng cộng dồn. Trang bị cộng riêng. Né không tốn linh lực để phàm nhân và
+người cạn linh lực vẫn có cách phòng vệ. Tham số chiến đấu chi tiết ở [03](03-combat-skills-and-artifacts.md).
 
-| Thuộc tính | Ý nghĩa | Luyện Khí 1, chưa trang bị |
-|---|---|---:|
-| Sinh lực `hpMax` | Khả năng chịu đòn | 100 |
-| Linh lực `qiMax` | Nhiên liệu pháp thuật | 60 |
-| Công kích `attack` | Thành phần sát thương | 12 |
-| Phòng ngự `defense` | Thành phần giảm sát thương | 10 |
-| Tốc độ `moveSpeedTiles` | Tốc độ trên mặt phẳng | 4 tile/giây |
-| Thần thức `perception` | Điều kiện dò một số dấu vết | 1 |
-| Chí mạng | MVP chưa có RNG chí mạng | 0% |
-| Kháng khống chế | MVP dùng miễn nhiễm theo trạng thái, chưa cộng dồn chỉ số | 0 |
+Đấu tập giữ chỉ số chuẩn riêng, không nhập sức mạnh PvE vào trận cân bằng.
+Đột phá/trang bị không được làm biến đổi snapshot giữa một trận đang chạy.
 
-Phàm nhân trong hướng dẫn dùng HP 80, linh lực 0, công kích 8, phòng ngự 5; được đánh thường và né miễn linh lực. Các kỹ năng tu luyện vẫn khóa cho đến `q_main_003`.
+## 4. Linh căn và công pháp
 
-Tầng 2/3/4 tăng HP mỗi tầng 12, linh lực 6, công kích 2, phòng ngự 2. Tốc độ không tự tăng theo tầng. Trang bị cộng riêng và bị giới hạn bởi ngân sách thiết kế.
+MVP dùng `rootProfile=balanced`, tư chất bình thường nhưng tu luyện được.
+Không có xổ số tài khoản. Alpha mới thử sở trường Kim/Mộc/Thủy/Hỏa/Thổ với ngân
+sách sức mạnh ngang nhau và cách đổi bằng nguyên liệu thường tại hub.
 
-Mốc tầng 4 không được khiến một người có thể giết đối thủ mới bằng đòn không có cơ hội phản ứng trong đấu tập. Đấu tập dùng bộ chỉ số chuẩn riêng.
+Tức Mạch Quyết là công pháp MVP. Đánh thường/né không chiếm ô; Phi Nhận, Hộ Thân,
+Trói Mộc dùng 3 ô chủ động; Mạch Bàn là công cụ khám phá riêng.
+Kỹ năng bắt buộc phải có nguồn bảo đảm, không khóa sau drop hiếm.
 
-## 4. Linh căn: cá tính build, không xổ số tài khoản
+Đổi loadout ở hub, ngoài combat. Server xác nhận quyền sở hữu và lưu
+`loadoutVersion`; vào match tạo snapshot hợp lệ. Không thay đồ giữa đòn để cộng
+hiệu ứng hai bộ.
 
-### MVP
+## 5. Cảnh giới và điều kiện đột phá
 
-Mọi nhân vật dùng `root_profile = balanced`. Linh căn được mô tả là không nổi trội nhưng tu luyện được; chưa có chọn hệ ảnh hưởng chỉ số.
+Phàm nhân → Luyện Khí 1 không yêu cầu XP, chỉ hoàn thành `q_main_003`.
+Các ngưỡng sau tính trong tầng hiện tại:
 
-### Alpha
+<!-- generated:thresholds -->
+| Chuyển tầng | Tu vi cần | Cờ bắt buộc | Khả năng mở |
+| --- | --- | --- | --- |
+| 1 → 2 | 300 | `insight.breath_control` | `sk_ho_than` |
+| 2 → 3 | 600 | `insight.first_craft` | `sk_troi_moc` |
+| 3 → 4 | 1000 | `story.ch1.complete` | Kết thúc phạm vi MVP |
+<!-- /generated:thresholds -->
 
-Mở một sở trường chính trong năm hệ Kim/Mộc/Thủy/Hỏa/Thổ bằng nhiệm vụ. Sở trường đổi cách sử dụng kỹ năng, không đổi tổng ngân sách sức mạnh.
+Luyện Khí 5–13/Trúc Cơ là Alpha, Kết Đan/Nguyên Anh là định hướng sau đó.
+Hóa Thần trở lên không ở backlog sản xuất. Không thêm enum/cổng cấp cao vào runtime
+khi chưa có luật xử lý. MVP không có phí hoặc nguyên liệu tiêu ở nút đột phá.
 
-Ví dụ đề xuất: Mộc giúp quản lý vùng khống chế; Hỏa ưu tiên gây áp lực theo thời gian; Thổ ưu tiên chống gián đoạn. Mỗi ưu thế cần một hạn chế tương ứng.
+## 6. Tu vi đến từ đâu?
 
-Cho đổi sở trường tại hub bằng vật liệu thông thường và xác nhận rõ. Không bán lượt quay linh căn hoặc tạo lựa chọn sai không thể cứu.
+`cultivationXp` là điểm dùng để đột phá. `insightFlags` là bằng chứng trải nghiệm
+cơ chế, không phải món có thể bán. Nguồn hợp lệ: quest một lần, khám phá một lần
+và encounter đã được server quyết toán. Bảng XP chi tiết dùng chung [đặc tả](progression-pve-spec.md).
 
-## 5. Cấu trúc cảnh giới dài hạn
+Không thưởng XP vì đứng online, spam vào không khí, PvP, trồng/thu lặp hoặc uống
+thuốc hồi phục. Hồi Nguyên Hoàn giúp sống sót để vượt thử thách; nó không tăng tu vi.
+Bài luyện né của phàm nhân không cho XP/loot lặp. XP một lần nhận trước Luyện Khí
+được giữ dự trữ, nhưng quest chính 001–002 vẫn có XP bằng 0.
 
-| Giai đoạn | Phạm vi nội dung dự kiến | Mở thêm điều gì |
-|---|---|---|
-| Phàm nhân | Mở đầu chương 1 | Dẫn khí, tiếp xúc thế giới tu luyện |
-| Luyện Khí 1–4 | MVP | Một bộ kỹ năng, vườn, công pháp cơ bản |
-| Luyện Khí 5–9 | Alpha phần đầu | Lựa chọn build, nghề, quan hệ tông môn |
-| Luyện Khí 10–13 | Alpha phần sau | Chuẩn bị Trúc Cơ và thử thách nhiều bước |
-| Trúc Cơ: sơ/trung/hậu | Thử sơ kỳ sau khi Alpha có nền | Nguồn lực chiến thuật mới, phường thị và vùng xa |
-| Kết Đan | Sau Alpha | Pháp bảo mang dấu ấn cá nhân, xung đột vùng |
-| Nguyên Anh | Tầm nhìn dài hạn | Vai trò thế lực và chiến lược |
-| Hóa Thần trở lên | Chưa lên backlog sản xuất | Chỉ giữ chỗ trong định hướng thế giới |
+Tổng hành trình mẫu:
 
-Không cần tạo sẵn toàn bộ enum cấp cao trong code runtime. Catalog chỉ được phát hành những định nghĩa có thể xử lý an toàn.
+<!-- generated:milestones -->
+| Mốc | Quest XP | XP ngoài quest | Dư trước | Tiêu đột phá | Dư sau |
+| --- | --- | --- | --- | --- |
+| to_stage_2 | 200 | 100 | 0 | 300 | 0 |
+| to_stage_3 | 600 | 150 | 0 | 600 | 150 |
+| to_stage_4 | 650 | 200 | 150 | 1000 | 0 |
+<!-- /generated:milestones -->
 
-## 6. Tu vi và lĩnh ngộ
+Không ép giết đúng số quái trong mẫu; quest phụ/khám phá tạo lựa chọn thay thế.
+Lên tầng sớm không bỏ qua điều kiện truyện, cổng map hoặc quyền nhận quest.
 
-**Tu vi (`cultivationXp`)** là điểm tích lũy trong tầng hiện tại. Nhận từ quest lần đầu, encounter phù hợp, mốc khám phá hoặc huấn luyện có giới hạn nội dung.
+## 7. Giới hạn XP và xử lý dư
 
-**Lĩnh ngộ (`insightFlags`)** là bằng chứng đã tiếp xúc một cơ chế: hoàn thành dẫn khí, tự luyện một đan, hiểu trận bảo vệ. Đây là cờ tiến trình, không phải vật phẩm có thể bán.
+Nguồn encounter lặp được nhận đến mức `2 × ngưỡng kế tiếp` trong thanh tầng hiện
+tại: một ngưỡng đủ lên và một ngưỡng dự trữ. Phần cấp lặp là:
+`min(xpNguon, max(0, 2*nguong - xpHienTai))`. UI báo trước khi sắp chạm giới hạn.
 
-MVP không cho tu vi chỉ vì online, đứng yên hoặc spam kỹ năng vào không khí. Trồng/thu cùng loại cây lặp không tự sinh tu vi chiến đấu vô hạn.
+Quest/khám phá **một lần** trước tầng 4 không bị cắt bởi giới hạn nguồn lặp;
+reward truyện không thất bại chỉ vì đang dư XP. Chỉ trừ đúng ngưỡng khi đột phá;
+phần đã được cấp còn lại được giữ. Cần giới hạn số nguyên an toàn và kiểm tra lỗi dữ liệu.
 
-### Bảng ngưỡng MVP
+Tại tầng 4, XP mới bằng 0, loot cơ bản vẫn giữ theo nguồn công bố. Không có chuyển
+XP thành tiền/vật liệu thưởng thêm. Đây là thay thế quy định v2 chưa định lượng
+“đổi XP thành vật liệu”. Không xóa XP dư đã lưu; không hứa tự mở tầng mới bằng số đó.
+UI hiện trần nội dung, không mời tiếp tục cày một thanh không có mốc mở.
 
-| Chuyển tầng | Tu vi cần, tính trong tầng | Cờ điều kiện | Kết quả |
-|---|---:|---|---|
-| Phàm nhân → Luyện Khí 1 | Không cần XP | `q_main_003` hoàn tất | Mở linh lực và Phi Nhận |
-| Luyện Khí 1 → 2 | 300 | `insight.breath_control` | Tăng giới hạn; mở Hộ Thân |
-| Luyện Khí 2 → 3 | 600 | `insight.first_craft` | Mở Trói Mộc |
-| Luyện Khí 3 → 4 | 1.000 | `story.ch1.complete` | Kết thúc mốc MVP; tăng thuộc tính |
-| Tầng 4 → cao hơn | Khóa ở bản MVP | `content_not_available` | UI không tiêu vật tư |
-
-Điểm vượt ngưỡng được giữ trong giới hạn một ngưỡng dự trữ của tầng hiện tại; không âm thầm mất XP. Tại tầng 4, MVP dừng thưởng XP và đổi phần thưởng được thiết kế trước thành vật liệu không giao dịch; UI thông báo ngay trước khi nhận nhiệm vụ lặp.
-
-Không tự biến phần thưởng XP thành tiền theo tỷ lệ động.
-
-## 7. Luồng đột phá MVP
+## 8. Luồng đột phá
 
 `locked → eligible → preparing → committing → completed`.
 
-1. Server kiểm tra trạng thái sống, đang ở hub, không combat, không trong đấu tập.
-2. Tính lại XP và cờ lĩnh ngộ từ dữ liệu đã lưu.
-3. Client hiện rõ điều kiện thiếu và phần nhận được.
-4. Khi xác nhận, server thực hiện một giao dịch: trừ ngưỡng XP, tăng tầng, ghi receipt, cập nhật mở khóa.
-5. Chỉ sau khi lưu thành công mới chạy hiệu ứng chúc mừng và cho dùng kỹ năng mới.
+Server kiểm tra đang sống, ở hub, không combat/đấu tập, đúng tầng, đủ XP và cờ.
+Client hiển thị điều kiện thiếu và quyền sẽ mở; không tự quyết định `eligible`.
+Khi xác nhận: CAS profile, trừ XP, tăng tầng, mở kỹ năng và ghi receipt cùng giao dịch.
+Hiệu ứng chỉ chạy sau thành công bền vững.
 
-**MVP đột phá thành công 100% khi đủ điều kiện.** Sự khó đến từ hành trình chuẩn bị, không từ một nút quay xác suất.
+Đột phá thành công 100% khi đủ điều kiện. Hai yêu cầu cùng tầng chỉ thành công một lần,
+kể cả operation ID khác nhau; source có tầng đích. Retry trả kết quả cũ, không trừ lại.
+Mất mạng trước commit không mất gì; sau commit login đọc kết quả đã lưu.
 
-Ngắt kết nối trước commit: không trừ gì. Ngắt kết nối sau commit: đăng nhập lại đọc kết quả đã có. Hai yêu cầu đột phá đồng thời chỉ được thực hiện một lần ở cùng tầng.
+## 9. Thiền và offline
 
-### Hướng Trúc Cơ trong Alpha
+Thiền ở hub phục hồi HP/linh lực miễn phí trong 10 giây khi không combat.
+Không tăng tu vi theo thời gian online/offline. Cây vẫn trưởng thành bằng giờ server.
+Alpha có thể thử dự trữ tĩnh dưỡng, nhưng chưa là cơ chế hoặc quyền lợi MVP.
 
-Dùng thử thách nhiều phần: lĩnh ngộ công pháp, nguyên liệu, một encounter và quyết định quan hệ. Chưa chọn cơ chế xác suất thất bại. Chỉ bổ sung rủi ro khi có lý do gameplay và phương án phục hồi rõ ràng.
+## 10. Dữ liệu đề xuất, không thay schema đang chạy
 
-## 8. Thiền định, offline và cảm giác thời gian dài
-
-Không lấy việc treo máy nhiều giờ làm cách chơi tối ưu.
-
-MVP không có tu vi offline. Cây vẫn trưởng thành theo thời gian server. Thiền tại hub chỉ phục hồi HP/linh lực và diễn giải tu luyện; hồi đầy miễn phí trong 10 giây khi không combat.
-
-Alpha có thể thử “dự trữ tĩnh dưỡng” tối đa 8 giờ để tăng tốc thực hành một lượng nhỏ sau khi đăng nhập. Đây là đề xuất chưa triển khai; không được đổi thẳng thành vật phẩm hiếm, cấp bậc hoặc PvP thắng tự động.
-
-## 9. Công pháp và đổi build
-
-MVP có `cp_tuc_mach`, một công pháp nhập môn. Có 3 ô kỹ năng chủ động; kỹ năng chưa mở thì ô hiển thị điều kiện, không tự thay bằng nút mua.
-
-Alpha mới thêm các công pháp thiên kiếm, phù và thủ ngự. Kỹ năng bắt buộc của tuyến chính phải có phương án nhận bảo đảm qua quest hoặc chế tạo; không khóa tiến trình sau drop cực hiếm.
-
-Đổi kỹ năng ở hub, ngoài combat. Server lưu `loadoutVersion`; lúc vào match tạo snapshot hợp lệ. Không cho đổi bộ đồ giữa đòn đánh để hưởng hai bộ hiệu ứng.
-
-## 10. Dữ liệu tối thiểu
+Runtime tại mốc nguồn dùng schema hồ sơ 2 cho inventory. Đoạn dưới chỉ minh họa
+**trường bổ sung tương lai**, không gán ngược `schemaVersion=1` và không coi schema 3 đã có.
 
 ```json
 {
-  "schemaVersion": 1,
-  "characterId": "server-created-id",
   "realm": "luyen_khi",
   "realmStage": 2,
-  "cultivationXp": 120,
+  "cultivationXp": 150,
   "rootProfile": "balanced",
   "cultivationMethodId": "cp_tuc_mach",
-  "insightFlags": ["insight.breath_control"],
-  "unlockedSkillIds": ["sk_basic", "sk_dodge", "sk_phi_nhan", "sk_ho_than", "sk_scan"],
+  "insightFlags": ["insight.breath_control", "insight.first_craft"],
+  "unlockedSkillIds": ["sk_basic", "sk_dodge", "sk_scan", "sk_phi_nhan", "sk_ho_than"],
   "activeSkillIds": ["sk_phi_nhan", "sk_ho_than"],
-  "loadoutVersion": 3
+  "loadoutVersion": 1
 }
 ```
 
-Ví dụ hợp đồng dữ liệu; không phải dữ liệu thật của tài khoản. HP hiện tại trong trận và chỉ số suy ra không được client ghi vào đây.
+Trước runtime phải thiết kế migration riêng từ schema 2, giữ tiền/túi/revision và
+trường hợp dữ liệu lỗi. HP trong trận và chỉ số suy ra không do client ghi.
+Nguồn và receipt XP dùng cùng tầng giao dịch với tài sản hoặc outbox đã kiểm chứng.
 
-## 11. Các kiểm thử bắt buộc
+## 11. Giao diện và nghiệm thu
 
-| ID | Tình huống | Kết quả mong đợi |
-|---|---|---|
-| CUL-01 | Gửi tầng đích 99 từ client | Từ chối; tầng đích do server suy ra |
-| CUL-02 | Có đủ XP nhưng thiếu lĩnh ngộ | Không trừ XP, trả điều kiện thiếu |
-| CUL-03 | Double-click xác nhận | Một lần tăng tầng |
-| CUL-04 | Disconnect sau khi commit | Đọc đúng tầng mới, không cấp lại |
-| CUL-05 | Đổi giờ máy để thiền | Không tăng tu vi |
-| CUL-06 | Đang trong match gửi đột phá | Từ chối theo trạng thái |
-| CUL-07 | Nhận XP khi chạm trần MVP | Thực hiện đúng chính sách cap đã hiển thị |
-| CUL-08 | Đổi công pháp có skill chưa sở hữu | Không tạo loadout trái phép |
-| CUL-09 | Nhận gói khởi đầu lần hai | Receipt/cờ đã nhận chặn cấp lặp |
-| CUL-10 | Migration gặp tầng không hợp lệ | Cách ly dữ liệu, không tự sửa tiền/đồ |
+Bảng mục tiêu hiện tầng đích, kỹ năng mở, XP còn thiếu, cờ còn thiếu và địa điểm gợi ý.
+Đủ XP mà chưa đủ truyện thì hiện tên nhiệm vụ, không chỉ một ổ khóa vô nghĩa.
 
-## 12. Nghiệm thu
+| ID | Bài kiểm tra | Kết quả |
+| --- | --- | --- |
+| CUL-01 | Client tự gửi tầng/XP/skill | Bị từ chối |
+| CUL-02 | Hai yêu cầu đột phá, cùng/khác ID | Chỉ trừ XP và mở tầng một lần |
+| CUL-03 | Reconnect trước/sau commit | Khôi phục đúng trạng thái |
+| CUL-04 | Thiếu cờ nhưng đủ XP | Không tiêu; UI chỉ rõ điều kiện |
+| CUL-05 | XP lặp vượt dự trữ | Cấp phần hợp lệ, thông báo rõ; không âm |
+| CUL-06 | Quest một lần khi đã đầy dự trữ | Giữ đủ XP đã hứa trước trần MVP |
+| CUL-07 | Tầng 4 hoặc yêu cầu tầng 5 | Không thưởng XP mới/không tiêu để mở nội dung chưa có |
+| CUL-08 | Trang bị/kỹ năng không sở hữu | Không tạo loadout trái phép |
+| CUL-09 | Nhận starter lần nữa | Chặn bằng source receipt |
+| CUL-10 | Migration gặp tầng/schema lỗi | Giữ bản gốc để rà soát, không reset tài sản |
 
-Người chơi giải thích được tại sao được lên tầng, thấy khác biệt khi mở kỹ năng và không phải tạo lại tài khoản để có linh căn tốt. Các bài kiểm tra đồng thời/mất kết nối phải chạy trên lưu trữ thật, không chỉ mock.
+Người chơi cần giải thích được tại sao lên tầng và mình làm được gì mới.
+Kiểm thử lưu trữ thật bắt buộc; validator thiết kế không thay thế runtime test.

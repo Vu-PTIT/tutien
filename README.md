@@ -49,7 +49,7 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 
 Đã có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**: di chuyển, vật cản, đánh thường, né, HP, kết thúc và reconnect ngắn. Đấu tập không tác động tài sản/hồ sơ. Đã có inventory 24 ô, catalog vật phẩm, migration hồ sơ và gói khởi đầu chống nhận trùng. **Chưa có quái, dùng/trang bị vật phẩm, trồng trọt, giao dịch, PvP mở, đồ họa hoàn chỉnh hoặc bản xuất Android/Windows.**
 
-Xem [tiến độ và thứ tự triển khai](docs/implementation-status.md), [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md). Bước kế tiếp sau nghiệm thu tài sản: encounter PvE Sơn Trư và cấp loot qua giao dịch đã kiểm chứng, rồi vòng chơi tài nguyên.
+Xem [tiến độ và thứ tự triển khai](docs/implementation-status.md), [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md). Thứ tự mới: một Sơn Trư → một chuyến săn có thành quả → mở đầu phàm nhân/Luyện Khí → chuẩn bị–Trúc Âm–trở về → chương Thạch Cạn/Cổ Tỉnh. Xem [đặc tả tiến trình, XP và loot](docs/game-design/progression-pve-spec.md). Thông số ở đây là thiết kế thử, không phải PvE đã có.
 Xem [nhật ký phát triển và lịch sử Git](docs/project-history.md) để biết các mốc đã commit, trạng thái sản phẩm và thứ tự làm tiếp theo.
 
 ## Môi trường phát triển

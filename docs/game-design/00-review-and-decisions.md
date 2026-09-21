@@ -1,3 +1,19 @@
+> **Cập nhật thiết kế 21/09/2026 — áp dụng trước các đoạn v2 giữ bên dưới.**
+> Mốc nguồn `feat/inventory-rewards` tại `05f5dd0`.
+> Đọc [đặc tả tiến trình/PvE](progression-pve-spec.md) và
+> [tiến độ mới](../implementation-status.md) trước khi triển khai.
+>
+> Quyết định cập nhật: làm rõ hành trình thiếu gì → tìm nguồn → đánh/thu thập →
+> dùng thành quả → mở khả năng. Giữ ngưỡng 300/600/1.000; dùng một JSON cho XP,
+> loot, giá/công thức và các bảng sinh trong MD. Nguồn một lần không bị cắt bởi
+> trần dự trữ nguồn lặp; tầng 4 không thưởng XP mới và không tự đổi XP thành tiền.
+> Thứ tự sản xuất mới là P1–P5 theo đoạn trải nghiệm, thay cách triển khai từng
+> hệ thống riêng. Giữ 4 map, 24 item, 5 mẫu địch, 5 công thức, 12+6 quest.
+>
+> Các tham chiếu 08–15, `mvp.catalog.json`, `validate_design.py` ở nội dung lịch sử
+> dưới đây chưa có tại mốc nguồn. Dùng mục lục cập nhật để tìm các file thực có.
+> Đây là sửa thiết kế, không phải PvE/tu luyện đã được triển khai hoặc merge Git.
+
 # 00 — Rà soát hiện trạng và nhật ký quyết định
 
 **Trạng thái:** rà soát tài liệu + đề xuất; 16/09/2026.  
