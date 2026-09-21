@@ -218,6 +218,65 @@ func _draw_tree(at: Vector2) -> void:
 	draw_rect(Rect2(at + Vector2(-6, -11), Vector2(12, 8)), Color("#4e8650"))
 	draw_rect(Rect2(at + Vector2(-6, -4), Vector2(4, 4)), Color("#6fa15d"))
 
+func _ui_text(text: String, at: Vector2, size: int = 9, color: Color = PAPER) -> void:
+	draw_string(ThemeDB.fallback_font, at + Vector2(1, 1), text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color("#1a1714"))
+	draw_string(ThemeDB.fallback_font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
+
+func _draw_editor_ui_preview() -> void:
+	# The editor does not instantiate runtime Controls, so mirror the final HUD here.
+	# This keeps the 2D scene preview faithful to the same visual bible as the running game.
+	var panel := Color("#30453f")
+	var panel_light := Color("#3c554a")
+	var line := Color("#8a6847")
+	var slot := Color("#59725c")
+	draw_rect(Rect2(8, 6, 148, 37), panel)
+	draw_rect(Rect2(14, 12, 22, 22), Color("#b87e54"))
+	draw_rect(Rect2(18, 16, 14, 8), Color("#e6c293"))
+	_ui_text("LÝ MINH", Vector2(42, 17), 9, PAPER)
+	_ui_text("Luyện Khí · tầng 1", Vector2(42, 29), 7, Color("#d9b46c"))
+	_ui_text("HP", Vector2(94, 16), 7, Color("#ffb09b"))
+	draw_rect(Rect2(108, 12, 40, 5), Color("#512c30"))
+	draw_rect(Rect2(108, 12, 36, 5), Color("#8cda8b"))
+	_ui_text("QI", Vector2(94, 29), 7, Color("#94d9ed"))
+	draw_rect(Rect2(108, 25, 40, 5), Color("#254b62"))
+	draw_rect(Rect2(108, 25, 27, 5), Color("#86cfe4"))
+
+	# Top-right minimap/menu cluster.
+	draw_rect(Rect2(458, 6, 92, 37), panel)
+	draw_rect(Rect2(464, 12, 48, 25), Color("#5e775d"))
+	draw_rect(Rect2(468, 15, 21, 19), Color("#42718a"))
+	draw_rect(Rect2(490, 15, 18, 19), Color("#9b815e"))
+	draw_circle(Vector2(480, 25), 3, Color("#f2d479"))
+	_ui_text("M", Vector2(520, 23), 8, Color("#d9b46c"))
+	draw_rect(Rect2(556, 6, 35, 37), panel)
+	draw_rect(Rect2(596, 6, 36, 37), panel)
+	_ui_text("Túi", Vector2(565, 28), 8, PAPER)
+	_ui_text("☰", Vector2(608, 28), 10, PAPER)
+
+	# Right quest tracker: compact, paper-like, no oversized portrait.
+	draw_rect(Rect2(468, 56, 156, 118), panel_light)
+	_ui_text("NHIỆM VỤ", Vector2(478, 70), 9, Color("#d9b46c"))
+	_ui_text("Việc ở An Khê", Vector2(478, 91), 9, PAPER)
+	_ui_text("Nói chuyện với Bà Sâm", Vector2(478, 108), 8, Color("#ead3ae"))
+	draw_rect(Rect2(478, 120, 8, 8), Color("#d9a84e"))
+	_ui_text("Khảo sát trạm nước", Vector2(492, 128), 8, Color("#b7d79d"))
+	draw_line(Vector2(478, 141), Vector2(612, 141), line, 1)
+	_ui_text("An Khê · bình yên", Vector2(478, 158), 7, Color("#a98b68"))
+
+	# Bottom-left collapsed chat and bottom-center six-slot hotbar.
+	draw_rect(Rect2(8, 330, 132, 20), panel)
+	_ui_text("CHAT  ·  chưa có tin mới", Vector2(16, 344), 7, Color("#c8b18c"))
+	draw_rect(Rect2(164, 326, 288, 28), panel)
+	var hotbar_labels := ["1", "2", "Q", "E", "R", "SP"]
+	for index in range(6):
+		var slot_rect := Rect2(170 + index * 45, 331, 38, 18)
+		draw_rect(slot_rect, slot if index == 0 else Color("#3b5148"))
+		draw_rect(Rect2(slot_rect.position + Vector2(2, 2), Vector2(5, 5)), Color("#d9a84e") if index == 0 else Color("#6f8a70"))
+		_ui_text(hotbar_labels[index], slot_rect.position + Vector2(27, 13), 7, PAPER)
+	draw_rect(Rect2(458, 326, 174, 28), panel)
+	_ui_text("AN KHÊ", Vector2(468, 343), 8, Color("#d9b46c"))
+	_ui_text("Túi đồ", Vector2(530, 343), 8, PAPER)
+
 func _draw() -> void:
 	# Wood frame and paper-like UI surfaces.
 	draw_rect(Rect2(0, 0, 640, 360), Color("#171f24"))
@@ -270,6 +329,8 @@ func _draw() -> void:
 		draw_rect(Rect2(wall_pos, wall_size), Color("#7b8179"))
 		for p: Dictionary in api.snapshot.get("players", []):
 			_draw_player(_world_to_screen(render_positions.get(p.id, Vector2(p.x, p.y))), Color("#70b9ba") if p.id == user_id else Color("#df9176"), int(p.hp), Vector2(p.faceX, p.faceY), str(p.mode))
+	if Engine.is_editor_hint():
+		_draw_editor_ui_preview()
 	if toast_until > 0.0:
 		draw_rect(Rect2(180, 292, 280, 22), Color("#432f28"))
 		draw_string(ThemeDB.fallback_font, Vector2(190, 307), status_label.text, HORIZONTAL_ALIGNMENT_LEFT, 260, 9, PAPER)
