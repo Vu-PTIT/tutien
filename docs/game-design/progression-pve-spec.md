@@ -2,7 +2,7 @@
 
 **Phạm vi:** sửa thiết kế trên nền `feat/inventory-rewards` tại `05f5dd0eb9df36d5790e268879b8fbe3699994ea`.
 **Trạng thái:** thiết kế để triển khai, chưa phải tính năng runtime hoặc kết quả playtest.
-**Bản dữ liệu:** `progression-pve-prototype-1`.
+**Bản dữ liệu:** `progression-pve-prototype-2-economy-v1`.
 
 ## 1. Quyết định sản phẩm
 
@@ -131,13 +131,13 @@ Bốn Sơn Trư + hai Độc Chu + mốc khám phá đầu tiên cho 100 XP.
 Loot bảo đảm là 4 da và 2 tơ. Thu thêm 4 Cam Lộ ở node riêng.
 
 Bài tính ví biên, không cộng gói khởi đầu hoặc tiền quest:
-bán 4 da × 3 = 12 linh thạch; mua 2 nước = 2; phí luyện 2 viên hồi phục = 4;
-còn 6 linh thạch, 2 tơ nhện và 2 Hồi Nguyên Hoàn mới chế tạo.
+bán 4 da × 30 = 120 Linh Thạch; mua 2 nước = 20; phí luyện 2 viên hồi phục = 40;
+còn 60 Linh Thạch, 2 tơ nhện và 2 Hồi Nguyên Hoàn mới chế tạo.
 
 **Đây là sản lượng gộp, không phải lợi nhuận chắc chắn của mọi chuyến.**
 Chưa trừ vật tư đã dùng trong rừng. Nếu đã dùng 1 viên, mức tăng ròng là 1 viên;
 dùng 2 thì chỉ hòa vốn số viên; dùng 3 thì thiếu 1 viên để trở lại mức đầu chuyến.
-Mua bù viên thứ ba với giá thử 8 khiến dòng tiền 6 thành -2. Cần ghi nhận phân bố
+Mua bù viên thứ ba với giá thử 80 khiến dòng tiền 60 thành -20. Cần ghi nhận phân bố
 tiêu hao thực tế, giảm độ khó/tăng nguồn hoặc đổi tuyến; không khẳng định economy
 đã cân bằng từ một phép tính thuận lợi.
 
@@ -207,7 +207,7 @@ hiện XP còn thiếu, điều kiện dẫn khí đã/chưa đạt, địa đi�
 Đủ XP nhưng thiếu lĩnh ngộ phải nói rõ cần làm quest nào, không chỉ đổi màu thanh.
 
 Bảng vật phẩm có “dùng để làm gì” và “nguồn ở đâu”. Theo dõi kiếm hiển thị quặng
-4/6, trúc 2/2, phí 8, quyền công thức đã mở hay chưa; không chỉ hiện icon khóa.
+4/6, trúc 2/2, phí 80, quyền công thức đã mở hay chưa; không chỉ hiện icon khóa.
 Sau chuyến đi, tổng kết riêng XP quest, XP encounter, khám phá, tiền bán, phí,
 vật tư đã dùng và vật tư mang về. Hiển thị trạng thái thưởng đang chờ lưu/nhận.
 
@@ -226,8 +226,8 @@ khoản người chơi thật hoặc mở debug RPC công khai để bỏ qua P3
 bán da/mua nước/mua hồi phục và craft; không nghiệm thu “loot có giá trị” khi chỉ
 nhặt được đồ nhưng chưa làm gì với nó.
 
-Giữ gate CI/tài sản của các mốc đã có. Không thêm map, tông môn, linh thú, cường hóa,
-auto farm hoặc cảnh giới mới trước khi P1–P5 có kết quả chơi thử.
+Giữ gate CI/tài sản của các mốc đã có. Không thêm map, tông môn, linh thú hoặc cảnh giới mới trước khi P1–P5 có kết quả chơi thử.
+Economy v1 đã đặc tả cường hóa như một sink tương lai, nhưng **không triển khai runtime cường hóa** trước khi vòng P1–P5 có số liệu chơi thử.
 
 ## 12. Các bài nghiệm thu xuyên hệ thống
 
