@@ -81,6 +81,14 @@ test('concurrent same operation commits exactly once',()=>{
   s.nk.storageWrite=w=>{s.nk.storageWrite=write;claim(s);return write(w);};
   assert.equal(claim(s).replayed,true);assert.equal(s.state().spiritStones,12);assert.equal(s.state().revision,1);
 });
+test('concurrent same operation interleaved commit replays without 409 conflict',()=>{
+  const s=setup();s.rpc('get_profile');const read=s.nk.storageRead;let firstRead=true;
+  s.nk.storageRead=ids=>{
+    if(firstRead){firstRead=false;claim(s);}
+    return read(ids);
+  };
+  const res=claim(s);assert.equal(res.replayed,true);assert.equal(res.profile.spiritStones,12);
+});
 test('concurrent different IDs cannot both claim starter',()=>{
   const s=setup();s.rpc('get_profile');const write=s.nk.storageWrite;
   s.nk.storageWrite=w=>{s.nk.storageWrite=write;s.rpc('inventory_claim_starter',{operationId:'concurrent_other'});return write(w);};

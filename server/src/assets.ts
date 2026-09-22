@@ -139,14 +139,25 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
   const opKey = "op:" + operationId;
   const sourceKey = "source:" + sourceId;
   for (let attempt = 0; attempt < 5; attempt++) {
-    // Read operation first: reusing it for a different source must always fail.
-    const operation = nk.storageRead([receiptId(userId, opKey)])[0];
+    // Read operation and source receipts together so concurrent commits do not split checks.
+    const existing = nk.storageRead([receiptId(userId, opKey), receiptId(userId, sourceKey)]);
+    let operation: nkruntime.StorageObject | undefined;
+    let source: nkruntime.StorageObject | undefined;
+    for (let i = 0; i < existing.length; i++) {
+      if (existing[i].key === opKey) operation = existing[i];
+      else if (existing[i].key === sourceKey) source = existing[i];
+    }
     if (operation) {
       if (operation.value.fingerprint !== fingerprint) return fail(nkruntime.Codes.ALREADY_EXISTS, "Operation ID already used for another reward");
       return assetResult(nk, userId, operation.value as AssetReceipt, true);
     }
-    const source = nk.storageRead([receiptId(userId, sourceKey)])[0];
-    if (source) return fail(nkruntime.Codes.ALREADY_EXISTS, "Reward source already claimed");
+    if (source) {
+      if (source.value.operationId === operationId) {
+        if (source.value.fingerprint !== fingerprint) return fail(nkruntime.Codes.ALREADY_EXISTS, "Operation ID already used for another reward");
+        return assetResult(nk, userId, source.value as AssetReceipt, true);
+      }
+      return fail(nkruntime.Codes.ALREADY_EXISTS, "Reward source already claimed");
+    }
     const loaded = loadCharacter(nk, userId);
     const next = addReward(loaded.state, bundle, nk);
     const receipt: AssetReceipt = { operationId: operationId, sourceId: sourceId, fingerprint: fingerprint,
@@ -160,8 +171,22 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
     } catch (_error) { /* Includes lost acknowledgement after commit: re-read receipt. */ }
   }
   // A final receipt lookup also handles an acknowledgement lost on the last try.
-  const receipt = nk.storageRead([receiptId(userId, opKey)])[0];
+  const last = nk.storageRead([receiptId(userId, opKey), receiptId(userId, sourceKey)]);
+  let receipt: nkruntime.StorageObject | undefined;
+  let conflictingSource = false;
+  for (let i = 0; i < last.length; i++) {
+    if (last[i].key === opKey) {
+      receipt = last[i];
+    } else if (last[i].key === sourceKey) {
+      if (last[i].value.operationId === operationId) {
+        if (!receipt) receipt = last[i];
+      } else {
+        conflictingSource = true;
+      }
+    }
+  }
   if (receipt && receipt.value.fingerprint === fingerprint) return assetResult(nk, userId, receipt.value as AssetReceipt, true);
+  if (conflictingSource) return fail(nkruntime.Codes.ALREADY_EXISTS, "Reward source already claimed");
   return fail(nkruntime.Codes.UNAVAILABLE, "Asset storage busy or unavailable; retry with the same operation ID");
 }
 const inventoryGetRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) {
