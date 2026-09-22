@@ -1,4 +1,4 @@
-# Tiến độ triển khai và thứ tự mới — 21/09/2026
+# Tiến độ triển khai và thứ tự mới — 22/09/2026
 
 ## 1. Mốc mã nguồn đã đối chiếu
 
@@ -22,7 +22,7 @@ Không lấy mô tả trong hội thoại hoặc file thiết kế làm bằng c
 | Tu vi/đột phá | Chưa có runtime |
 | Node, vườn, craft, shop | Chưa có runtime |
 | Quest/chương/bản đồ gameplay | Có thiết kế; chưa có luồng chơi hoàn chỉnh |
-| Bản cập nhật tiến trình 21/09 | Tài liệu + dữ liệu mẫu + validator, không đổi các trạng thái trên |
+| Bản cập nhật tiến trình 21/09 | Tài liệu + dữ liệu mẫu + validator, không đổi các trạng thái trên |\n| Cross-platform PC + mobile 22/09 | Có plan kiến trúc/UI/input; chưa phải runtime mobile đã hoàn thành |
 
 Chi tiết: [combat](combat-prototype.md), [tài sản](inventory-and-rewards.md),
 [nhật ký](project-history.md), [đặc tả mới](game-design/progression-pve-spec.md).
@@ -39,7 +39,7 @@ Các mốc mới kế thừa nền đã có, không làm lại combat/tài sản
 | P4 — vòng Trúc Âm | Node, shop nhỏ, garden/craft, 004–006, Độc Chu, đột phá tầng 2 | P3 + UI/kinh tế nhất quán | Chuẩn bị → đi rừng/đường tránh → về → mở Hộ Thân, có nguồn thay thế |
 | P5 — chương đầu | 007–012, Thạch Cạn/Cổ Tỉnh, quái/công thức còn lại, tầng 3–4 | P4 | Solo/co-op, hạ/niêm phong, đủ XP và không kẹt; đo nhịp/tiêu hao thật |
 
-P2 có thể dùng fixture Luyện Khí trong test; không thay trạng thái người chơi thật
+CP-1 đến CP-3 của G0.5 phải đủ trước khi P1 được xem là hoàn thành; CP-4 phải đi cùng P2 vì inventory cần hai layout dùng chung presenter/state.\n\nP2 có thể dùng fixture Luyện Khí trong test; không thay trạng thái người chơi thật
 hoặc thêm debug grant RPC vào production. P4 phải có bán da/mua nước/thuốc và craft,
 không nghiệm thu economy khi loot chỉ nằm trong túi.
 
