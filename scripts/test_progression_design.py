@@ -115,7 +115,33 @@ class DesignTests(unittest.TestCase):
     def test_three_pill_consumption_deficit_visible(self):
         report=validate_data(self.base)
         self.assertEqual(report["consumptionSensitivity"][-1]["pillNet"],-1)
-        self.assertEqual(report["consumptionSensitivity"][-1]["netCoinsAfterReplacingDeficit"],-2)
+        self.assertEqual(report["consumptionSensitivity"][-1]["netCoinsAfterReplacingDeficit"],-20)
+
+    def test_economy_reference_run(self):
+        report=validate_data(self.base)
+        self.assertEqual(report["sampleGrossCoins"],120)
+        self.assertEqual(report["sampleSpendCoins"],60)
+        self.assertEqual(report["sampleNetCoins"],60)
+
+    def test_economy_quest_coin_budget(self):
+        d=self.changed(); d["mainQuests"][-1]["coins"]+=10; self.bad(d)
+
+    def test_economy_market_tax_guard(self):
+        d=self.changed(); d["economyBalance"]["market"]["salesTaxBps"]=300; self.bad(d)
+
+    def test_economy_bound_item_cannot_be_marketed(self):
+        d=self.changed()
+        for row in d["economyBalance"]["itemTargets"]:
+            if row["itemId"]=="it_mach_ban":
+                row["policy"]="market"; row["marketMin"]=1; row["marketMax"]=2
+        self.bad(d)
+
+    def test_enhancement_curve_guard(self):
+        d=self.changed(); d["economyBalance"]["enhancement"]["levels"][-1]["coins"]=470; self.bad(d)
+
+    def test_starter_v1_stays_immutable_while_v2_is_planned(self):
+        self.assertEqual(self.base["starter"]["coins"],12)
+        self.assertEqual(self.base["economyBalance"]["starterV2Plan"]["coins"],120)
 
     def test_duplicate_json_keys_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
