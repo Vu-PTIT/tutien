@@ -1,6 +1,6 @@
 # 07 — Vườn, chế tạo và đầu ra của chiến lợi phẩm
 
-**Cập nhật:** 21/09/2026. **Trạng thái:** thiết kế kinh tế prototype.
+**Cập nhật:** 22/09/2026. **Trạng thái:** thiết kế kinh tế prototype.
 Giá, loot và công thức lấy từ [JSON chung](../../design-samples/progression-pve.v1.json).
 Không coi kết quả tính một chuyến là bằng chứng economy đã cân bằng.
 
@@ -78,11 +78,11 @@ Vật tư quest và Mạch Bàn gắn nhân vật, không bán/tặng. Các món
 <!-- generated:recipes -->
 | Công thức | Nguyên liệu | Phí linh thạch | Thành phẩm |
 | --- | --- | --- | --- |
-| `rc_heal` | `it_herb_cam_lo` ×2, `it_water` ×1 | 2 | `it_heal_pill` ×1 |
-| `rc_qi` | `it_herb_ich_khi` ×2, `it_herb_tinh_tam` ×1 | 3 | `it_qi_pill` ×1 |
-| `rc_ward` | `it_spider_silk` ×2, `it_spirit_dust` ×1 | 4 | `it_ward_talisman` ×1 |
-| `rc_sword` | `it_iron` ×6, `it_bamboo` ×2 | 8 | `it_iron_sword` ×1 |
-| `rc_escape` | `it_herb_tinh_tam` ×2, `it_bamboo` ×1 | 4 | `it_escape_talisman` ×1 |
+| `rc_heal` | `it_herb_cam_lo` ×2, `it_water` ×1 | 20 | `it_heal_pill` ×1 |
+| `rc_qi` | `it_herb_ich_khi` ×2, `it_herb_tinh_tam` ×1 | 30 | `it_qi_pill` ×1 |
+| `rc_ward` | `it_spider_silk` ×2, `it_spirit_dust` ×1 | 40 | `it_ward_talisman` ×1 |
+| `rc_sword` | `it_iron` ×6, `it_bamboo` ×2 | 80 | `it_iron_sword` ×1 |
+| `rc_escape` | `it_herb_tinh_tam` ×2, `it_bamboo` ×1 | 40 | `it_escape_talisman` ×1 |
 <!-- /generated:recipes -->
 
 MVP chế tạo tại trạm, kết quả bảo đảm. Animation 2–3 giây không quyết định thành
@@ -90,8 +90,8 @@ công; không hàng chờ nhiều giờ. Lượng mẻ là số nguyên 1–10; 
 liệu, phí và túi trước khi commit, không làm một nửa.
 
 `rc_heal` mở để thực hiện quest 005; cờ lĩnh ngộ được cấp khi nhận thưởng quest.
-`rc_qi`/`rc_ward` nghiên cứu ở Bà Sâm sau tầng 2, giá thử 8 linh thạch mỗi công thức.
-`rc_sword` mở miễn phí qua side 004 hoặc nghiên cứu 12 ở Đỗ Khê sau main 007.
+`rc_qi`/`rc_ward` nghiên cứu ở Bà Sâm sau tầng 2, giá thử 80 Linh Thạch mỗi công thức.
+`rc_sword` mở miễn phí qua side 004 hoặc nghiên cứu 120 ở Đỗ Khê sau main 007.
 `rc_escape` mở trong chuẩn bị Cổ Tỉnh tại main 010.
 Linh sa cho phù đến từ Thạch Vệ/boss; Hộ Thân kỹ năng đã là lựa chọn phòng vệ trước
 đó, không khóa người chơi vì chưa có phù.
@@ -104,35 +104,35 @@ Linh sa cho phù đến từ Thạch Vệ/boss; Hộ Thân kỹ năng đã là l
 <!-- generated:shop -->
 | Vật phẩm | NPC bán cho người chơi | NPC mua từ người chơi |
 | --- | --- | --- |
-| `it_bamboo` | Không bán | 1 |
-| `it_boar_hide` | Không bán | 3 |
-| `it_escape_talisman` | Không bán | 2 |
-| `it_heal_pill` | 8 | 2 |
-| `it_herb_cam_lo` | Không bán | 1 |
-| `it_herb_ich_khi` | Không bán | 1 |
-| `it_herb_tinh_tam` | Không bán | 1 |
-| `it_iron` | Không bán | 1 |
-| `it_qi_pill` | Không bán | 2 |
-| `it_seed_cam_lo` | 3 | Không mua |
-| `it_seed_ich_khi` | 3 | Không mua |
-| `it_seed_tinh_tam` | 3 | Không mua |
-| `it_spider_silk` | Không bán | 1 |
-| `it_spirit_dust` | Không bán | 1 |
-| `it_ward_talisman` | Không bán | 2 |
-| `it_water` | 1 | Không mua |
+| `it_bamboo` | Không bán | 10 |
+| `it_boar_hide` | Không bán | 30 |
+| `it_escape_talisman` | Không bán | 20 |
+| `it_heal_pill` | 80 | 20 |
+| `it_herb_cam_lo` | Không bán | 10 |
+| `it_herb_ich_khi` | Không bán | 10 |
+| `it_herb_tinh_tam` | Không bán | 10 |
+| `it_iron` | Không bán | 10 |
+| `it_qi_pill` | Không bán | 20 |
+| `it_seed_cam_lo` | 30 | Không mua |
+| `it_seed_ich_khi` | 30 | Không mua |
+| `it_seed_tinh_tam` | 30 | Không mua |
+| `it_spider_silk` | Không bán | 10 |
+| `it_spirit_dust` | Không bán | 10 |
+| `it_ward_talisman` | Không bán | 20 |
+| `it_water` | 10 | Không mua |
 <!-- /generated:shop -->
 
-Các giá mới như da 3, mua hồi phục 8 và phí nghiên cứu là giả thuyết cần playtest.
+Các giá Economy v1 như da 30, mua hồi phục 80 và phí nghiên cứu vẫn là giả thuyết cần playtest.
 Vật phẩm không trong bảng: chưa cho mua/bán. Không nhận `price` từ client.
 
-Hạt 3 + nước 1 cho 4 cây; bán thô 4 cây × 1 = 4, không lời tiền trước các chi phí
+Hạt 30 + nước 10 cho 4 cây; bán thô 4 cây × 10 = 40, không lời tiền trước các chi phí
 khác. NPC mua chế phẩm thấp hơn giá trị đầu vào/phí; không có vòng mua–chế–bán
 sinh tiền vô hạn. Nguyên liệu khai thác rồi bán là đổi thời gian thành tiền.
 Không được từ đây suy ra mọi tuyến đều đáng chơi hoặc economy tự cân bằng.
 
 ## 6. Gói khởi đầu — giữ nguyên implementation
 
-`starter:v1`: 12 linh thạch, 2 hạt Cam Lộ, 4 nước, 2 Hồi Nguyên Hoàn, 1 áo vải.
+`starter:v1` runtime vẫn bất biến: 12 Linh Thạch, 2 hạt Cam Lộ, 4 nước, 2 Hồi Nguyên Hoàn, 1 áo vải.
 Không đổi source/version để cấp lại đồ; không tặng Mạch Bàn trước quest.
 Đây là gói đã định nghĩa ở mốc nguồn, còn consume/equip/garden chưa có runtime.
 
@@ -143,24 +143,24 @@ không buộc uống khi đầy HP hoặc vứt viên cũ.
 ## 7. Một chuyến Trúc Âm và kiểm tra tiêu hao
 
 Mẫu gộp: 4 Sơn Trư + 2 Độc Chu; thu 4 Cam Lộ. Có 4 da + 2 tơ.
-Bán da được 12; mua 2 nước hết 2; phí luyện hai viên hết 4; tiền ròng +6.
+Bán da được 120; mua 2 nước hết 20; phí luyện hai viên hết 40; tiền ròng +60.
 Sau bán/mua/craft có 2 tơ và 2 viên **mới tạo**.
 
 Không cộng tiền quest hoặc starter vào dòng thu lặp. Bảng kiểm tiêu hao:
 
 | Viên đã dùng trong chuyến | Viên mới tạo | Chênh số viên so với đầu chuyến | Tiền ròng trước mua bù |
 | --- | --- | --- | --- |
-| 0 | 2 | +2 | +6 |
-| 1 | 2 | +1 | +6 |
-| 2 | 2 | 0 | +6 |
-| 3 | 2 | -1 | +6 |
+| 0 | 2 | +2 | +60 |
+| 1 | 2 | +1 | +60 |
+| 2 | 2 | 0 | +60 |
+| 3 | 2 | -1 | +60 |
 
-Ở dòng cuối, mua bù 1 viên giá 8 làm dòng tiền thành -2.
+Ở dòng cuối, mua bù 1 viên giá 80 làm dòng tiền thành -20.
 Đây là tình huống cần xử lý bằng độ khó, nguồn, cách chơi hoặc giá; không giấu nó
 bằng cách tính gói một lần thành thu nhập mỗi chuyến. Nhiều tử vong/dùng thuốc hơn
 càng cần ghi nhận; không khẳng định tự duy trì cho mọi người.
 
-Mua sẵn hai viên bằng tiền bán 4 da tốn 16 trong khi thu 12; tuyến không làm vườn
+Mua sẵn hai viên bằng tiền bán 4 da tốn 160 trong khi thu 120; tuyến không làm vườn
 không nhất thiết mua nổi hai viên mỗi chuyến. Viên mua sẵn là tùy chọn, còn nghỉ
 miễn phí/thu Cam Lộ an toàn vẫn phải đủ để phục hồi khả năng chơi. Playtest riêng
 người dùng 0–3 viên và người bỏ garden trước khi chốt shop.
@@ -208,3 +208,18 @@ Kiểm thu/craft/mua/bán/dùng không nhân đôi hoặc âm số; không bán 
 giả giá/đổi giờ để thu sớm; chặn integer overflow; túi đầy không mất nguyên liệu;
 reconnect/restart phục hồi đúng. Chạy từ lúc hết tiền/thuốc để chứng minh còn đường
 chơi. Validator số học không thay kiểm thử cạnh tranh PostgreSQL hoặc playtest economy.
+
+
+## 12. Economy Balance v1 — tương quan thu nhập, giao dịch và cường hóa
+
+Mốc cân bằng chuẩn là **60 Linh Thạch ròng / chuyến Trúc Âm 15–20 phút**, tương đương khoảng **180–240 Linh Thạch/giờ** nếu chơi liên tục. Mọi mức giá mới phải quy đổi được về số chuyến chơi thay vì đặt số tuyệt đối theo cảm giác.
+
+- Market toàn server: phí đăng bán 1%, thuế bán thành công 4%, direct trade 1%.
+- Thuế chợ là sink phụ, không được dùng như sink chính.
+- `starter:v2` dự kiến 120 Linh Thạch cho tài khoản mới sau cutover; không tự cho người đã nhận `starter:v1` claim lại.
+- Thanh Thiết Kiếm có vùng giá mục tiêu 190–220, khoảng 3,2–3,7 chuyến chuẩn.
+- Hồi Nguyên Hoàn market mục tiêu 60–70; NPC 80 đóng vai trò giá trần tiện lợi.
+- Cường hóa thiết kế thử +1→+5 dùng 30/60/120/240/480 Linh Thạch, bảo đảm thành công, không phá đồ; tổng 930 tiền + vật liệu, xấp xỉ 18,8 chuyến chỉ tính tiền.
+- Mục tiêu dài hạn sau khi market/cường hóa hoạt động là sink trung bình 80–90% faucet theo tuần, không ép mọi phiên chơi phải tiêu đúng tỷ lệ này.
+
+Chi tiết đầy đủ và telemetry xem [economy-balance-v1.md](economy-balance-v1.md).
