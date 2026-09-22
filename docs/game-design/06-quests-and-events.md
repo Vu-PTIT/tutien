@@ -1,6 +1,6 @@
 # 06 — Nhiệm vụ, phần thưởng và tiến trình chương đầu
 
-**Cập nhật:** 21/09/2026. **Phạm vi:** 12 quest chính + 6 quest phụ.
+**Cập nhật:** 22/09/2026. **Phạm vi:** 12 quest chính + 6 quest phụ.
 Nhiệm vụ dạy cơ chế và mở mục tiêu, không chỉ yêu cầu tăng số quái phải giết.
 Các bảng XP/tiền bên dưới lấy từ [JSON chung](../../design-samples/progression-pve.v1.json).
 
@@ -48,17 +48,18 @@ Không dùng quest unlock làm vòng phụ thuộc tự khóa.
 | `q_main_002` | Dấu nước lạ | 0 | 0 |
 | `q_main_003` | Hơi thở đầu tiên | 40 | 0 |
 | `q_main_004` | Một khoảnh đất nhỏ | 60 | 0 |
-| `q_main_005` | Không đi tay không | 100 | 20 |
-| `q_main_006` | Lối rừng bị cấm | 120 | 6 |
-| `q_main_007` | Chữ trong sổ đá | 180 | 8 |
+| `q_main_005` | Không đi tay không | 100 | 120 |
+| `q_main_006` | Lối rừng bị cấm | 120 | 80 |
+| `q_main_007` | Chữ trong sổ đá | 180 | 100 |
 | `q_main_008` | Nói với ai | 120 | 0 |
-| `q_main_009` | Chìa của người giữ giếng | 180 | 8 |
+| `q_main_009` | Chìa của người giữ giếng | 180 | 100 |
 | `q_main_010` | Chuẩn bị một đường về | 100 | 0 |
-| `q_main_011` | Mộc Tâm Thủ Trận | 250 | 12 |
-| `q_main_012` | Dòng nước trở lại | 300 | 16 |
+| `q_main_011` | Mộc Tâm Thủ Trận | 250 | 140 |
+| `q_main_012` | Dòng nước trở lại | 300 | 160 |
 <!-- /generated:quests -->
 
-Tổng XP chính 1.450. Tiền là ngân sách thử mới, tổng 70 linh thạch, không phải
+Tổng XP chính 1.450. Economy Balance v1 chuẩn hóa ngân sách tiền quest lên tổng
+**700 Linh Thạch** để đồng bộ thang giá ×10; đây vẫn là nguồn một lần và chưa phải
 kết quả economy đã đo. Công pháp/Mạch Bàn/quyền vào map luôn bảo đảm, không random.
 
 Quyền học công thức/skill cấp một lần và có nguồn riêng. Đủ mục tiêu nhưng túi
