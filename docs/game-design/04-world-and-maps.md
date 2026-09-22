@@ -1,6 +1,8 @@
 # 04 — Thế giới, bản đồ và tuyến tài nguyên
 
-**Cập nhật:** 21/09/2026. **Phạm vi:** bốn map MVP, chưa là bản đồ đã triển khai.
+**Cập nhật:** 23/09/2026. **Phạm vi:** world topology + gameplay role; layout tile chi tiết nằm ở [map-layout-spec.md](map-layout-spec.md).
+
+> Các kích thước dưới đây là prototype sau vòng review PC/mobile, chưa phải production lock.
 Mỗi map có mục tiêu phát triển, nguy hiểm, nguồn tài nguyên và đường trở về.
 
 ## 1. Cấu trúc và phân tầng
@@ -22,7 +24,8 @@ Không biến một hình trang trí thành va chạm chỉ vì nó che người
 
 ## 2. An Khê — `m_an_khe`
 
-Kích thước thử 64×48 tile. Hub an toàn, thử tối đa 2 người.
+Kích thước prototype **48×36 tile** (1536×1152 px ở tile 32×32). Hub an toàn, thử tối đa 2 người.
+Camera chỉ hiển thị một phần world; không còn coi 640×360 là toàn bộ map.
 Nhìn thấy biển đường từ spawn; dịch vụ thiết yếu không bị che hoặc chặn bởi crowd.
 
 | Địa điểm | Nhân vật | Công dụng |
@@ -38,9 +41,14 @@ Vườn riêng không ai khác lấy/phá. Bãi đấu tập chỉ chuyển hai 
 instance, không bật PvP cho hub. Nghỉ hồi phục không mất tiền.
 Bảng mục tiêu ở journal/hub có đường tới nguồn thiếu, không ép đọc mọi NPC lại.
 
-## 3. Trúc Âm — `m_truc_am`
+## 3. Trúc Âm — cụm zone PvE
 
-Kích thước thử 96×96 tile. Sơn Trư/Độc Chu, học chuẩn bị và đi săn có mục tiêu.
+Không dùng một rectangle 96×96 duy nhất. Prototype chia thành:
+- `m_truc_am_stream`: Ven Suối **40×28 tile**;
+- `m_truc_am_deep`: Rừng Trúc Sâu **44×32 tile**;
+- `m_truc_am_boar`: Bãi Sơn Trư **36×28 tile**.
+
+Ba zone nối logic với nhau để tạo cảm giác thế giới lớn nhưng vẫn giữ mật độ nội dung, camera và spawn dễ kiểm soát. Sơn Trư/Độc Chu vẫn giữ vai trò học chuẩn bị và đi săn có mục tiêu.
 
 | Tuyến | Người chơi tìm gì? | Nguồn | Nguy hiểm và lý do quay về |
 | --- | --- | --- | --- |
@@ -61,9 +69,13 @@ Ba nguồn đủ phần 100 XP thay thế, không đòi cây Tĩnh Tâm 45 phút
 lấy ở tuyến an toàn. Người bỏ qua giao tranh `q_main_006` vẫn được mở Thạch Cạn
 bằng điều kiện quest đúng, không bị khóa do thiếu “kill count”.
 
-## 4. Thạch Cạn — `m_thach_can`
+## 4. Thạch Cạn — cụm zone PvE
 
-Kích thước thử 80×64 tile. Vai trò: quặng làm kiếm, đối thủ tầm xa, tinh anh.
+Prototype chia thành:
+- `m_thach_can_outer`: Ngoại Vi **48×36 tile**;
+- `m_thach_can_mine`: Mỏ Cũ **40×32 tile**.
+
+Vai trò: quặng làm kiếm, đối thủ tầm xa, vật cản, tinh anh.
 Kẻ Rình Đường giữ tuyến trên dễ định hướng; tuyến dưới có quặng/vật cản nhưng
 ít khoảng thoát. Thạch Vệ có điểm quan sát an toàn để học trước khi giao tranh.
 
@@ -77,9 +89,9 @@ Tầng 2/Hộ Thân là gợi ý chuẩn bị, không phải khóa cửa mới.
 Cổng Cổ Tỉnh yêu cầu `q_main_009` đã nhận thưởng/mở quyền ở server; quyền tồn tại
 bền vững, không chỉ phụ thuộc cầm một chiếc chìa có thể mất.
 
-## 5. Cổ Tỉnh — `m_co_tinh`
+## 5. Cổ Tỉnh — `d_co_tinh`
 
-Kích thước thử 64×64 tile, instance solo/party 2 người, bố cục cố định.
+Không dùng một map 64×64 duy nhất. Cổ Tỉnh là **room graph cố định** cho instance solo/party 2 người. Room prototype gồm Entrance 20×14, Root Hall 12×20, Loot 16×12, Spider Combat 22×16, Balance 20×16, Guardian 24×16 và Boss 30×20 tile.
 
 | Phòng | Nội dung | Điều được kiểm tra |
 | --- | --- | --- |
