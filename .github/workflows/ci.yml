@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Validate economy content pack
+        run: python3 scripts/validate_content_pack_economy.py
       - uses: actions/setup-node@v4
         with:
           node-version: '22.14.0'
