@@ -1,6 +1,6 @@
 # Tu Tiên — Thiết kế sản phẩm và tiến trình PvE
 
-**Bản cập nhật:** 21/09/2026, bổ sung tiến trình vào bộ thiết kế v2.
+**Bản cập nhật:** 22/09/2026, bổ sung nền cross-platform PC + mobile vào bộ thiết kế.
 **Mốc đối chiếu:** `feat/inventory-rewards` tại `05f5dd0eb9df36d5790e268879b8fbe3699994ea`.
 **Trạng thái:** tài liệu triển khai + số liệu thử, không phải PvE/tu luyện đã chạy.
 **Nền dự án:** Godot/GDScript, Nakama/TypeScript, PostgreSQL.
@@ -23,7 +23,7 @@ Không bắt đầu bằng file 12/14 chưa có trên Git.
 | [04 — bản đồ](04-world-and-maps.md) | Bốn map, nguồn tài nguyên, tuyến tránh và respawn |
 | [05 — truyện](05-story-bible.md) | Thế giới/NPC/xung đột; không viết lại trong cập nhật này |
 | [06 — nhiệm vụ](06-quests-and-events.md) | Chuỗi 12 + 6 quest, ngân sách XP/tiền, nhánh và chống kẹt |
-| [07 — kinh tế/chế tạo](07-garden-crafting-and-economy.md) | Đầu ra loot, 24 ID, vườn, 5 công thức và giá thử |
+| [07 — kinh tế/chế tạo](07-garden-crafting-and-economy.md) | Đầu ra loot, 24 ID, vườn, 5 công thức và giá thử |\n| [08 — PC + mobile](08-cross-platform-pc-mobile.md) | Kiến trúc dùng chung, input, responsive UI, safe area, camera, DoD và G0.5 |
 | [Đặc tả tiến trình/PvE](progression-pve-spec.md) | Nối mọi mảng thành hành trình và mốc P1–P5 |
 | [Nguồn tham khảo](progression-references.md) | Cơ chế game tham khảo, phạm vi nguồn và diễn giải riêng |
 | [Nhật ký](../project-history.md) | Mốc code/CI đã ghi và lần sửa thiết kế hiện tại |
