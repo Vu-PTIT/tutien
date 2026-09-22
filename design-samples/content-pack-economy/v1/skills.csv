@@ -1,0 +1,41 @@
+id,name,group,build,element,requirement,realmIndex,realm,spiritCost,cooldownSec,damagePctAtk,flatDamage,rangeM,aoeM,cc,effect,pvpScalar,source,unlockItemId,balanceNote
+sk_sword_arc,Thanh Phong Trảm,Võ kỹ,Kiếm,Vật lý,Kiếm,0,Phàm Nhân,6,3.5,115,0,2.0,0.0,,Chém nhanh hình cung,0.95,Học mặc định,,Core ổn định
+sk_blade_break,Liệt Sơn Trảm,Võ kỹ,Đao,Vật lý,Đao,1,Luyện Khí sơ (1-3),10,6.5,175,0,2.1,0.0,Stagger 0.5s,"Đòn nặng, +8% phá giáp 4s",0.9,Võ quán,,Burst đổi tốc độ
+sk_spear_pierce,Xuyên Vân Kích,Võ kỹ,Thương,Vật lý,Thương,1,Luyện Khí sơ (1-3),9,5.0,135,0,3.2,0.0,Knockback nhẹ,Đâm thẳng xuyên tối đa 2 mục tiêu,0.92,Phong Lang Lĩnh,,Reach utility
+sk_fist_chain,Liên Hoàn Quyền,Võ kỹ,Quyền,Vật lý,Quyền,1,Luyện Khí sơ (1-3),8,4.0,105,0,1.4,0.0,,3 hit; hit cuối +30%,0.95,Võ quán,,Phải áp sát
+sk_bow_power,Xuyên Tâm Tiễn,Võ kỹ,Cung,Vật lý,Cung,2,Luyện Khí trung (4-6),12,6.0,150,0,8.0,0.0,,Charge 0.6s; +10% crit khi full charge,0.9,Liệp Yêu nhiệm vụ,,An toàn nên có charge
+sk_flysword_return,Ngự Kiếm Hồi Phong,Võ kỹ,Phi kiếm,Kim,Phi kiếm,2,Luyện Khí trung (4-6),18,8.0,125,0,6.5,1.2,,"Kiếm bay đi-về, có thể trúng 2 lần",0.88,Cổ Tu Động Phủ,,Tổng 250% nếu đặt vị trí tốt
+sk_staff_burst,Linh Quang Đạn,Pháp thuật,Pháp,Vô,Pháp trượng,1,Luyện Khí sơ (1-3),11,4.5,120,0,7.0,1.3,,Đạn nổ nhỏ,0.93,Tông môn,,AOE nhỏ
+sk_fan_wave,Thanh Phong Phiến,Pháp thuật,Hỗ trợ,Phong,Quạt,1,Luyện Khí sơ (1-3),10,5.5,90,0,5.0,2.2,Slow 15% 2s,Sóng gió hình nón,0.95,Tông môn,,Damage thấp đổi slow
+sk_fireball,Hỏa Cầu Thuật,Pháp thuật,Pháp,Hỏa,Không,1,Luyện Khí sơ (1-3),14,5.0,140,0,7.5,1.8,,Nổ AOE,0.9,Bí tịch,it_book_fireball,Burst chuẩn
+sk_firewall,Hỏa Tường,Pháp thuật,Pháp/Control,Hỏa,Không,2,Luyện Khí trung (4-6),22,10.0,45,0,5.0,3.0,,"Vùng lửa 5s, tick mỗi giây",0.82,Hỏa Thạch Động,,DoT tổng cao nhưng né được
+sk_wood_vine,Thanh Đằng Trói,Khống chế,Mộc/Độc,Mộc,Không,1,Luyện Khí sơ (1-3),16,11.0,55,0,6.0,1.2,Root 1.1s,Trói 1 mục tiêu,0.9,Trúc Lâm,it_book_vine,CC budget
+sk_wood_bloom,Hồi Xuân Mộc Khí,Hỗ trợ,Mộc/Độc,Mộc,Không,2,Luyện Khí trung (4-6),24,12.0,0,0,5.0,2.5,,Hồi 9% HP + 3% trong 4s,1.0,Tông môn,,Không burst heal quá lớn
+sk_water_arrow,Thủy Tiễn,Pháp thuật,Pháp,Thủy,Không,1,Luyện Khí sơ (1-3),10,3.8,105,0,7.5,0.0,,Xuyên 2 mục tiêu; mục tiêu 2 nhận 75%,0.95,Bí tịch,,Spam skill
+sk_water_prison,Thủy Lao,Khống chế,Control,Thủy,Không,3,Luyện Khí hậu (7-9),26,15.0,70,0,6.0,1.5,Root 1.5s,Sau root slow 20% 2s,0.85,Bí cảnh,,CC dài nên CD cao
+sk_earth_spike,Địa Thứ,Pháp thuật,Thương/Pháp,Thổ,Không,2,Luyện Khí trung (4-6),18,7.0,125,0,5.5,1.6,Knock-up 0.45s,Gai đất trễ 0.45s,0.88,Huyền Thiết Mạch,,Telegraph rõ
+sk_earth_skin,Thạch Phu,Phòng thủ,Bruiser,Thổ,Không,2,Luyện Khí trung (4-6),20,18.0,0,0,0.0,0.0,,"+12% DEF, -4% move trong 6s",1.0,Bí tịch,it_book_earthskin,Tank đổi mobility
+sk_metal_blade,Kim Nhận,Pháp thuật,Kiếm/Pháp,Kim,Không,3,Luyện Khí hậu (7-9),18,6.5,150,0,6.0,0.0,,Nếu mục tiêu có shield: +15% damage,0.9,Bí cảnh,,Anti-shield niche
+sk_metal_guard,Kim Quang Thuẫn,Phòng thủ,Đa dụng,Kim,Không,3,Luyện Khí hậu (7-9),28,20.0,0,0,0.0,0.0,,Shield 14% max HP trong 5s,1.0,Tông môn,,Defensive cooldown dài
+sk_thunder_chain,Lôi Dẫn,Pháp thuật,Lôi,Lôi,Không,4,Trúc Cơ sơ,32,11.0,125,0,7.0,0.0,,"Nảy 3 mục tiêu, mỗi lần -20% damage",0.85,Trúc Cơ Bí Cảnh,,AOE PvP scalar thấp
+sk_thunder_step,Lôi Bộ,Thân pháp,Kiếm/Cung,Lôi,Không,4,Trúc Cơ sơ,24,9.0,65,0,4.5,1.0,Slow 15% 1s,Lướt 4.5m để lại tia sét,0.9,Bí cảnh,,Mobility+damage vừa
+sk_wind_dash,Ngự Phong Bộ,Thân pháp,Đa dụng,Phong,Không,1,Luyện Khí sơ (1-3),12,7.0,0,0,4.0,0.0,,"Dash, 0.18s giảm 40% projectile damage",1.0,Tông môn,it_book_dash,Không invulnerable hoàn toàn
+sk_shadow_step,Ảnh Bộ,Thân pháp,Kiếm/Quyền,Vô,Không,3,Luyện Khí hậu (7-9),20,9.0,70,0,4.2,0.0,,Dash xuyên mục tiêu; hit từ sau +20%,0.9,Âm Vụ Đầm,,Position skill
+sk_spear_sweep,Hoành Tảo,Khống chế,Thương,Vật lý,Thương,2,Luyện Khí trung (4-6),14,9.0,95,0,2.8,2.8,Knockback 1.5m,Quét vòng trước mặt,0.9,Võ quán,,Peel tool
+sk_fist_grapple,Cầm Nã Thủ,Khống chế,Quyền,Vật lý,Quyền,3,Luyện Khí hậu (7-9),16,12.0,80,0,1.2,0.0,Stun 0.8s,Chỉ dùng cận chiến,0.88,Võ quán cao cấp,,Hard CC rất ngắn
+sk_bow_snare,Phược Yêu Tiễn,Khống chế,Cung,Mộc,Cung,3,Luyện Khí hậu (7-9),18,13.0,75,0,8.0,0.0,Root 0.9s,Projectile chậm hơn tên thường,0.9,Liệp Yêu nhiệm vụ,,Telegraph dễ né
+sk_fan_gust,Cuồng Phong Hồi,Khống chế,Hỗ trợ,Phong,Quạt,4,Trúc Cơ sơ,26,14.0,85,0,4.0,3.0,Knockback,Đẩy kẻ địch khỏi vùng,0.92,Tông môn,,"Peel, không burst"
+sk_guard_stance,Thủ Thế,Phòng thủ,Đao/Thương,Vật lý,Melee,0,Phàm Nhân,0,8.0,0,0,0.0,0.0,,Giảm 20% damage trước mặt 1.8s; không tấn công,1.0,Học mặc định,,Có counterplay
+sk_blood_breath,Điều Tức,Hỗ trợ,Quyền/Bruiser,Vô,Không,1,Luyện Khí sơ (1-3),0,22.0,0,0,0.0,0.0,,Hồi 7% HP trong 5s; bị đánh giảm hiệu quả 50%,1.0,Nhiệm vụ,,Ngoài áp lực tốt hơn trong combat
+sk_spirit_flow,Tụ Linh Quyết,Hỗ trợ,Pháp,Vô,Không,2,Luyện Khí trung (4-6),0,18.0,0,0,0.0,0.0,,Đứng yên 3s hồi 18% linh lực; bị hit hủy,1.0,Tông môn,,Không spam giữa giao tranh
+sk_cleanse,Thanh Tâm Chú,Hỗ trợ,Hỗ trợ,Mộc,Không,3,Luyện Khí hậu (7-9),24,24.0,0,0,5.0,0.0,,Xóa 1 debuff thường; hard CC chỉ giảm 35% còn lại,1.0,Tông môn,,Không xóa sạch mọi CC
+sk_group_aura,Tụ Khí Trận,Hỗ trợ,Trận/Hỗ trợ,Vô,Không,4,Trúc Cơ sơ,35,28.0,0,0,5.0,3.5,,"Vùng 8s: đồng minh +8% hồi linh, +4% move",1.0,Trận pháp bí tịch,,Không stack cùng aura tương tự
+sk_guard_link,Hộ Mạch Quyết,Phòng thủ,Hỗ trợ,Thổ,Không,5,Trúc Cơ trung,38,26.0,0,0,5.0,0.0,,Mục tiêu nhận -12% damage 5s; caster nhận 25% damage đã giảm,1.0,Tông môn nội truyền,,Support tradeoff
+sk_passive_sword,Thanh Nguyên Kiếm Ý,Công pháp,Kiếm,Kim,Kiếm,3,Luyện Khí hậu (7-9),0,0.0,0,0,0.0,0.0,,Kiếm skill +4%; crit kiếm +2%; HP -3%,1.0,Công pháp Thanh Nguyên,it_book_swordcult,Power có tradeoff
+sk_passive_body,Kim Cương Luyện Thể,Công pháp,Quyền/Bruiser,Thổ,Không,3,Luyện Khí hậu (7-9),0,0.0,0,0,0.0,0.0,,"HP +7%, DEF +5%, move -3%",1.0,Công pháp luyện thể,it_book_bodycult,Tank tradeoff
+sk_passive_fire,Xích Dương Quyết,Công pháp,Hỏa pháp,Hỏa,Không,4,Trúc Cơ sơ,0,0.0,0,0,0.0,0.0,,"Hỏa damage +7%, linh lực cost +5%",1.0,Công pháp Hỏa,it_book_firecult,Damage đổi tài nguyên
+sk_passive_wood,Trường Xuân Công,Công pháp,Mộc/Độc,Mộc,Không,4,Trúc Cơ sơ,0,0.0,0,0,0.0,0.0,,"Heal +6%, DoT +5%, burst direct -4%",1.0,Công pháp Mộc,it_book_woodcult,Chuyên sustain
+sk_ult_swords,Vạn Kiếm Quy Tông,Thần thông,Kiếm/Phi kiếm,Kim,Kiếm/Phi kiếm,5,Trúc Cơ trung,60,52.0,280,0,7.0,4.0,,1s channel; mưa kiếm vùng lớn,0.75,Cổ Tu truyền thừa,,Burst AOE có channel
+sk_ult_blade,Khai Sơn Nhất Đao,Thần thông,Đao,Vật lý,Đao,4,Trúc Cơ sơ,45,45.0,330,0,3.0,1.5,,Wind-up 0.9s; +15% penetration,0.72,Bí cảnh,,"Rất dễ đọc, rất đau"
+sk_ult_storm,Lôi Ngục,Thần thông,Lôi/Pháp,Lôi,Không,5,Trúc Cơ trung,70,55.0,70,0,6.0,4.5,Slow 20%,6 tick trong 6s,0.78,Trúc Cơ Bí Cảnh,,"Zone control, có thể rời vùng"
+sk_ult_spring,Vạn Mộc Hồi Xuân,Thần thông,Mộc/Hỗ trợ,Mộc,Không,5,Trúc Cơ trung,65,58.0,0,0,6.0,4.0,,Đồng minh trong vùng hồi 4% HP/s x5; nhận heal lặp giảm 20%,1.0,Tông môn truyền thừa,,Heal có diminishing
