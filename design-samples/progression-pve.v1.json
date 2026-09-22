@@ -1,8 +1,8 @@
 {
   "designSchemaVersion": 1,
-  "contentVersion": "progression-pve-prototype-1",
+  "contentVersion": "progression-pve-prototype-2-economy-v1",
   "status": "design_only_unimplemented",
-  "reviewedAt": "2026-09-21",
+  "reviewedAt": "2026-09-22",
   "sourceRepository": "Vu-PTIT/tutien",
   "sourceRef": "05f5dd0eb9df36d5790e268879b8fbe3699994ea",
   "runtimeCatalogImportAllowed": false,
@@ -32,94 +32,887 @@
     "it_array_shard",
     "it_well_key"
   ],
-  "inactiveLootItems": ["it_venom"],
-  "maps": ["m_an_khe","m_truc_am","m_thach_can","m_co_tinh"],
+  "inactiveLootItems": [
+    "it_venom"
+  ],
+  "maps": [
+    "m_an_khe",
+    "m_truc_am",
+    "m_thach_can",
+    "m_co_tinh"
+  ],
   "stageCap": 4,
   "transitions": [
-    {"from":1,"to":2,"xp":300,"flag":"insight.breath_control","skill":"sk_ho_than"},
-    {"from":2,"to":3,"xp":600,"flag":"insight.first_craft","skill":"sk_troi_moc"},
-    {"from":3,"to":4,"xp":1000,"flag":"story.ch1.complete","skill":null}
+    {
+      "from": 1,
+      "to": 2,
+      "xp": 300,
+      "flag": "insight.breath_control",
+      "skill": "sk_ho_than"
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "xp": 600,
+      "flag": "insight.first_craft",
+      "skill": "sk_troi_moc"
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "xp": 1000,
+      "flag": "story.ch1.complete",
+      "skill": null
+    }
   ],
   "mainQuests": [
-    {"id":"q_main_001","name":"Việc ở An Khê","requires":[],"xp":0,"coins":0,"repeatable":false},
-    {"id":"q_main_002","name":"Dấu nước lạ","requires":["q_main_001"],"xp":0,"coins":0,"repeatable":false},
-    {"id":"q_main_003","name":"Hơi thở đầu tiên","requires":["q_main_002"],"xp":40,"coins":0,"repeatable":false},
-    {"id":"q_main_004","name":"Một khoảnh đất nhỏ","requires":["q_main_003"],"xp":60,"coins":0,"repeatable":false},
-    {"id":"q_main_005","name":"Không đi tay không","requires":["q_main_004"],"xp":100,"coins":20,"repeatable":false},
-    {"id":"q_main_006","name":"Lối rừng bị cấm","requires":["q_main_005"],"xp":120,"coins":6,"repeatable":false},
-    {"id":"q_main_007","name":"Chữ trong sổ đá","requires":["q_main_006"],"xp":180,"coins":8,"repeatable":false},
-    {"id":"q_main_008","name":"Nói với ai","requires":["q_main_007"],"xp":120,"coins":0,"repeatable":false},
-    {"id":"q_main_009","name":"Chìa của người giữ giếng","requires":["q_main_008"],"xp":180,"coins":8,"repeatable":false},
-    {"id":"q_main_010","name":"Chuẩn bị một đường về","requires":["q_main_009"],"xp":100,"coins":0,"repeatable":false},
-    {"id":"q_main_011","name":"Mộc Tâm Thủ Trận","requires":["q_main_010"],"xp":250,"coins":12,"repeatable":false},
-    {"id":"q_main_012","name":"Dòng nước trở lại","requires":["q_main_011"],"xp":300,"coins":16,"repeatable":false}
+    {
+      "id": "q_main_001",
+      "name": "Việc ở An Khê",
+      "requires": [],
+      "xp": 0,
+      "coins": 0,
+      "repeatable": false
+    },
+    {
+      "id": "q_main_002",
+      "name": "Dấu nước lạ",
+      "requires": [
+        "q_main_001"
+      ],
+      "xp": 0,
+      "coins": 0,
+      "repeatable": false
+    },
+    {
+      "id": "q_main_003",
+      "name": "Hơi thở đầu tiên",
+      "requires": [
+        "q_main_002"
+      ],
+      "xp": 40,
+      "coins": 0,
+      "repeatable": false
+    },
+    {
+      "id": "q_main_004",
+      "name": "Một khoảnh đất nhỏ",
+      "requires": [
+        "q_main_003"
+      ],
+      "xp": 60,
+      "coins": 0,
+      "repeatable": false
+    },
+    {
+      "id": "q_main_005",
+      "name": "Không đi tay không",
+      "requires": [
+        "q_main_004"
+      ],
+      "xp": 100,
+      "coins": 120,
+      "repeatable": false
+    },
+    {
+      "id": "q_main_006",
+      "name": "Lối rừng bị cấm",
+      "requires": [
+        "q_main_005"
+      ],
+      "xp": 120,
+      "coins": 80,
+      "repeatable": false
+    },
+    {
+      "id": "q_main_007",
+      "name": "Chữ trong sổ đá",
+      "requires": [
+        "q_main_006"
+      ],
+      "xp": 180,
+      "coins": 100,
+      "repeatable": false
+    },
+    {
+      "id": "q_main_008",
+      "name": "Nói với ai",
+      "requires": [
+        "q_main_007"
+      ],
+      "xp": 120,
+      "coins": 0,
+      "repeatable": false
+    },
+    {
+      "id": "q_main_009",
+      "name": "Chìa của người giữ giếng",
+      "requires": [
+        "q_main_008"
+      ],
+      "xp": 180,
+      "coins": 100,
+      "repeatable": false
+    },
+    {
+      "id": "q_main_010",
+      "name": "Chuẩn bị một đường về",
+      "requires": [
+        "q_main_009"
+      ],
+      "xp": 100,
+      "coins": 0,
+      "repeatable": false
+    },
+    {
+      "id": "q_main_011",
+      "name": "Mộc Tâm Thủ Trận",
+      "requires": [
+        "q_main_010"
+      ],
+      "xp": 250,
+      "coins": 140,
+      "repeatable": false
+    },
+    {
+      "id": "q_main_012",
+      "name": "Dòng nước trở lại",
+      "requires": [
+        "q_main_011"
+      ],
+      "xp": 300,
+      "coins": 160,
+      "repeatable": false
+    }
   ],
   "sideQuests": [
-    {"id":"q_side_001","name":"Cầu qua suối","xp":50,"requires":["q_main_002"]},
-    {"id":"q_side_002","name":"Đất chưa hiểu cây","xp":50,"requires":["q_main_004"]},
-    {"id":"q_side_003","name":"Tiếng động trong khe","xp":40,"requires":["q_main_006"]},
-    {"id":"q_side_004","name":"Lời hẹn của người thợ","xp":50,"requires":["q_main_007"]},
-    {"id":"q_side_005","name":"Giá một lời đồn","xp":40,"requires":["q_main_008"]},
-    {"id":"q_side_006","name":"Sau trận nước đục","xp":0,"requires":["q_main_012"]}
+    {
+      "id": "q_side_001",
+      "name": "Cầu qua suối",
+      "xp": 50,
+      "requires": [
+        "q_main_002"
+      ]
+    },
+    {
+      "id": "q_side_002",
+      "name": "Đất chưa hiểu cây",
+      "xp": 50,
+      "requires": [
+        "q_main_004"
+      ]
+    },
+    {
+      "id": "q_side_003",
+      "name": "Tiếng động trong khe",
+      "xp": 40,
+      "requires": [
+        "q_main_006"
+      ]
+    },
+    {
+      "id": "q_side_004",
+      "name": "Lời hẹn của người thợ",
+      "xp": 50,
+      "requires": [
+        "q_main_007"
+      ]
+    },
+    {
+      "id": "q_side_005",
+      "name": "Giá một lời đồn",
+      "xp": 40,
+      "requires": [
+        "q_main_008"
+      ]
+    },
+    {
+      "id": "q_side_006",
+      "name": "Sau trận nước đục",
+      "xp": 0,
+      "requires": [
+        "q_main_012"
+      ]
+    }
   ],
   "discoveries": [
-    {"id":"poi_truc_am_route","xp":30,"map":"m_truc_am","requires":["q_main_003"]},
-    {"id":"poi_thach_can_ledger_view","xp":20,"map":"m_thach_can","requires":["q_main_006"]},
-    {"id":"poi_co_tinh_flow","xp":20,"map":"m_co_tinh","requires":["q_main_009"]},
-    {"id":"poi_safe_bank","xp":25,"map":"m_truc_am","requires":["q_main_003"]},
-    {"id":"poi_old_camp","xp":25,"map":"m_truc_am","requires":["q_main_003"]}
+    {
+      "id": "poi_truc_am_route",
+      "xp": 30,
+      "map": "m_truc_am",
+      "requires": [
+        "q_main_003"
+      ]
+    },
+    {
+      "id": "poi_thach_can_ledger_view",
+      "xp": 20,
+      "map": "m_thach_can",
+      "requires": [
+        "q_main_006"
+      ]
+    },
+    {
+      "id": "poi_co_tinh_flow",
+      "xp": 20,
+      "map": "m_co_tinh",
+      "requires": [
+        "q_main_009"
+      ]
+    },
+    {
+      "id": "poi_safe_bank",
+      "xp": 25,
+      "map": "m_truc_am",
+      "requires": [
+        "q_main_003"
+      ]
+    },
+    {
+      "id": "poi_old_camp",
+      "xp": 25,
+      "map": "m_truc_am",
+      "requires": [
+        "q_main_003"
+      ]
+    }
   ],
   "enemies": [
-    {"id":"en_boar","name":"Sơn Trư","hp":60,"attack":10,"defense":5,"xp":10,"loot":{"it_boar_hide":1},"respawnSeconds":45,"windupMs":750,"recoveryMs":800,"repeatable":true},
-    {"id":"en_spider","name":"Độc Chu","hp":45,"attack":8,"defense":0,"xp":15,"loot":{"it_spider_silk":1},"respawnSeconds":60,"windupMs":800,"recoveryMs":700,"repeatable":true},
-    {"id":"en_scout","name":"Kẻ Rình Đường","hp":80,"attack":12,"defense":8,"xp":20,"loot":{"it_iron":1},"respawnSeconds":60,"windupMs":800,"recoveryMs":900,"repeatable":true},
-    {"id":"en_guard","name":"Thạch Vệ","hp":180,"attack":18,"defense":20,"xp":50,"loot":{"it_spirit_dust":1},"respawnSeconds":180,"windupMs":1000,"recoveryMs":1200,"repeatable":true},
-    {"id":"en_boss","name":"Mộc Tâm Thủ Trận","hp":700,"attack":16,"defense":12,"xp":100,"loot":{"it_spirit_dust":2},"respawnSeconds":null,"windupMs":700,"recoveryMs":1200,"repeatable":true}
+    {
+      "id": "en_boar",
+      "name": "Sơn Trư",
+      "hp": 60,
+      "attack": 10,
+      "defense": 5,
+      "xp": 10,
+      "loot": {
+        "it_boar_hide": 1
+      },
+      "respawnSeconds": 45,
+      "windupMs": 750,
+      "recoveryMs": 800,
+      "repeatable": true
+    },
+    {
+      "id": "en_spider",
+      "name": "Độc Chu",
+      "hp": 45,
+      "attack": 8,
+      "defense": 0,
+      "xp": 15,
+      "loot": {
+        "it_spider_silk": 1
+      },
+      "respawnSeconds": 60,
+      "windupMs": 800,
+      "recoveryMs": 700,
+      "repeatable": true
+    },
+    {
+      "id": "en_scout",
+      "name": "Kẻ Rình Đường",
+      "hp": 80,
+      "attack": 12,
+      "defense": 8,
+      "xp": 20,
+      "loot": {
+        "it_iron": 1
+      },
+      "respawnSeconds": 60,
+      "windupMs": 800,
+      "recoveryMs": 900,
+      "repeatable": true
+    },
+    {
+      "id": "en_guard",
+      "name": "Thạch Vệ",
+      "hp": 180,
+      "attack": 18,
+      "defense": 20,
+      "xp": 50,
+      "loot": {
+        "it_spirit_dust": 1
+      },
+      "respawnSeconds": 180,
+      "windupMs": 1000,
+      "recoveryMs": 1200,
+      "repeatable": true
+    },
+    {
+      "id": "en_boss",
+      "name": "Mộc Tâm Thủ Trận",
+      "hp": 700,
+      "attack": 16,
+      "defense": 12,
+      "xp": 100,
+      "loot": {
+        "it_spirit_dust": 2
+      },
+      "respawnSeconds": null,
+      "windupMs": 700,
+      "recoveryMs": 1200,
+      "repeatable": true
+    }
   ],
   "recipes": [
-    {"id":"rc_heal","ingredients":{"it_herb_cam_lo":2,"it_water":1},"fee":2,"output":{"it_heal_pill":1}},
-    {"id":"rc_qi","ingredients":{"it_herb_ich_khi":2,"it_herb_tinh_tam":1},"fee":3,"output":{"it_qi_pill":1}},
-    {"id":"rc_ward","ingredients":{"it_spider_silk":2,"it_spirit_dust":1},"fee":4,"output":{"it_ward_talisman":1}},
-    {"id":"rc_sword","ingredients":{"it_iron":6,"it_bamboo":2},"fee":8,"output":{"it_iron_sword":1}},
-    {"id":"rc_escape","ingredients":{"it_herb_tinh_tam":2,"it_bamboo":1},"fee":4,"output":{"it_escape_talisman":1}}
+    {
+      "id": "rc_heal",
+      "ingredients": {
+        "it_herb_cam_lo": 2,
+        "it_water": 1
+      },
+      "fee": 20,
+      "output": {
+        "it_heal_pill": 1
+      }
+    },
+    {
+      "id": "rc_qi",
+      "ingredients": {
+        "it_herb_ich_khi": 2,
+        "it_herb_tinh_tam": 1
+      },
+      "fee": 30,
+      "output": {
+        "it_qi_pill": 1
+      }
+    },
+    {
+      "id": "rc_ward",
+      "ingredients": {
+        "it_spider_silk": 2,
+        "it_spirit_dust": 1
+      },
+      "fee": 40,
+      "output": {
+        "it_ward_talisman": 1
+      }
+    },
+    {
+      "id": "rc_sword",
+      "ingredients": {
+        "it_iron": 6,
+        "it_bamboo": 2
+      },
+      "fee": 80,
+      "output": {
+        "it_iron_sword": 1
+      }
+    },
+    {
+      "id": "rc_escape",
+      "ingredients": {
+        "it_herb_tinh_tam": 2,
+        "it_bamboo": 1
+      },
+      "fee": 40,
+      "output": {
+        "it_escape_talisman": 1
+      }
+    }
   ],
   "crops": [
-    {"id":"crop_cam_lo","seed":"it_seed_cam_lo","output":"it_herb_cam_lo","quantity":4,"seconds":1200},
-    {"id":"crop_tinh_tam","seed":"it_seed_tinh_tam","output":"it_herb_tinh_tam","quantity":4,"seconds":2700},
-    {"id":"crop_ich_khi","seed":"it_seed_ich_khi","output":"it_herb_ich_khi","quantity":4,"seconds":3600}
+    {
+      "id": "crop_cam_lo",
+      "seed": "it_seed_cam_lo",
+      "output": "it_herb_cam_lo",
+      "quantity": 4,
+      "seconds": 1200
+    },
+    {
+      "id": "crop_tinh_tam",
+      "seed": "it_seed_tinh_tam",
+      "output": "it_herb_tinh_tam",
+      "quantity": 4,
+      "seconds": 2700
+    },
+    {
+      "id": "crop_ich_khi",
+      "seed": "it_seed_ich_khi",
+      "output": "it_herb_ich_khi",
+      "quantity": 4,
+      "seconds": 3600
+    }
   ],
-  "starter": {"coins":12,"items":{"it_seed_cam_lo":2,"it_water":4,"it_heal_pill":2,"it_cloth_armor":1}},
+  "starter": {
+    "coins": 12,
+    "items": {
+      "it_seed_cam_lo": 2,
+      "it_water": 4,
+      "it_heal_pill": 2,
+      "it_cloth_armor": 1
+    }
+  },
   "shop": {
-    "npcSells":{"it_water":1,"it_seed_cam_lo":3,"it_seed_tinh_tam":3,"it_seed_ich_khi":3,"it_heal_pill":8},
-    "npcBuys":{"it_boar_hide":3,"it_spider_silk":1,"it_iron":1,"it_bamboo":1,"it_spirit_dust":1,"it_herb_cam_lo":1,"it_herb_tinh_tam":1,"it_herb_ich_khi":1,"it_heal_pill":2,"it_qi_pill":2,"it_ward_talisman":2,"it_escape_talisman":2},
-    "researchFees":{"rc_qi":8,"rc_ward":8,"rc_sword":12}
+    "npcSells": {
+      "it_water": 10,
+      "it_seed_cam_lo": 30,
+      "it_seed_tinh_tam": 30,
+      "it_seed_ich_khi": 30,
+      "it_heal_pill": 80
+    },
+    "npcBuys": {
+      "it_boar_hide": 30,
+      "it_spider_silk": 10,
+      "it_iron": 10,
+      "it_bamboo": 10,
+      "it_spirit_dust": 10,
+      "it_herb_cam_lo": 10,
+      "it_herb_tinh_tam": 10,
+      "it_herb_ich_khi": 10,
+      "it_heal_pill": 20,
+      "it_qi_pill": 20,
+      "it_ward_talisman": 20,
+      "it_escape_talisman": 20
+    },
+    "researchFees": {
+      "rc_qi": 80,
+      "rc_ward": 80,
+      "rc_sword": 120
+    }
   },
   "milestones": [
-    {"id":"to_stage_2","from":1,"to":2,"quests":["q_main_003","q_main_004","q_main_005"],"kills":{"en_boar":4,"en_spider":2},"discoveries":["poi_truc_am_route"],"questXp":200,"extraXp":100,"carryBefore":0,"threshold":300,"carryAfter":0},
-    {"id":"to_stage_3","from":2,"to":3,"quests":["q_main_006","q_main_007","q_main_008","q_main_009"],"kills":{"en_scout":4,"en_guard":1},"discoveries":["poi_thach_can_ledger_view"],"questXp":600,"extraXp":150,"carryBefore":0,"threshold":600,"carryAfter":150},
-    {"id":"to_stage_4","from":3,"to":4,"quests":["q_main_010","q_main_011","q_main_012"],"kills":{"en_spider":2,"en_guard":1,"en_boss":1},"discoveries":["poi_co_tinh_flow"],"questXp":650,"extraXp":200,"carryBefore":150,"threshold":1000,"carryAfter":0}
+    {
+      "id": "to_stage_2",
+      "from": 1,
+      "to": 2,
+      "quests": [
+        "q_main_003",
+        "q_main_004",
+        "q_main_005"
+      ],
+      "kills": {
+        "en_boar": 4,
+        "en_spider": 2
+      },
+      "discoveries": [
+        "poi_truc_am_route"
+      ],
+      "questXp": 200,
+      "extraXp": 100,
+      "carryBefore": 0,
+      "threshold": 300,
+      "carryAfter": 0
+    },
+    {
+      "id": "to_stage_3",
+      "from": 2,
+      "to": 3,
+      "quests": [
+        "q_main_006",
+        "q_main_007",
+        "q_main_008",
+        "q_main_009"
+      ],
+      "kills": {
+        "en_scout": 4,
+        "en_guard": 1
+      },
+      "discoveries": [
+        "poi_thach_can_ledger_view"
+      ],
+      "questXp": 600,
+      "extraXp": 150,
+      "carryBefore": 0,
+      "threshold": 600,
+      "carryAfter": 150
+    },
+    {
+      "id": "to_stage_4",
+      "from": 3,
+      "to": 4,
+      "quests": [
+        "q_main_010",
+        "q_main_011",
+        "q_main_012"
+      ],
+      "kills": {
+        "en_spider": 2,
+        "en_guard": 1,
+        "en_boss": 1
+      },
+      "discoveries": [
+        "poi_co_tinh_flow"
+      ],
+      "questXp": 650,
+      "extraXp": 200,
+      "carryBefore": 150,
+      "threshold": 1000,
+      "carryAfter": 0
+    }
   ],
-  "alternativeEarlyRoute":{"sideQuests":["q_side_001"],"discoveries":["poi_safe_bank","poi_old_camp"],"expectedXp":100,"note":"Replaces the 100 extra XP in the sample route, not a mutually-exclusive claim system."},
-  "returnBudget":{
-    "initialCoins":0,
-    "kills":{"en_boar":4,"en_spider":2},
-    "gathered":{"it_herb_cam_lo":4},
-    "sell":{"it_boar_hide":4},
-    "buy":{"it_water":2},
-    "craft":{"rc_heal":2},
-    "consumeDuringRoute":{},
-    "expectedGrossCoins":12,
-    "expectedSpendCoins":6,
-    "expectedNetCoins":6,
-    "expectedInventory":{"it_spider_silk":2,"it_heal_pill":2},
-    "note":"Marginal gross-output example; excludes starter gifts and quest coins. Consumption is tested separately."
+  "alternativeEarlyRoute": {
+    "sideQuests": [
+      "q_side_001"
+    ],
+    "discoveries": [
+      "poi_safe_bank",
+      "poi_old_camp"
+    ],
+    "expectedXp": 100,
+    "note": "Replaces the 100 extra XP in the sample route, not a mutually-exclusive claim system."
   },
-  "xpPolicy":{"trainingXp":0,"pvpXp":0,"mortalRepeatableXp":0,"repeatableReserveThresholds":2,"oneTimeRewardsBypassRepeatableReserve":true,"stage4Xp":0,"stage4BonusXpConversion":false},
-  "totals":{"mainQuestXp":1450,"sampleExtraXp":450,"requiredXp":1900},
-  "gatherableItems":{"m_truc_am":["it_herb_cam_lo","it_herb_tinh_tam","it_water","it_bamboo"],"m_thach_can":["it_iron","it_herb_ich_khi"]},
-  "questGrantedItems":{
-    "q_main_002":{"it_mach_ban":1,"it_water_sample":1},
-    "q_main_007":{"it_ledger":1,"it_array_shard":1},
-    "q_main_009":{"it_well_key":1}
+  "returnBudget": {
+    "initialCoins": 0,
+    "kills": {
+      "en_boar": 4,
+      "en_spider": 2
+    },
+    "gathered": {
+      "it_herb_cam_lo": 4
+    },
+    "sell": {
+      "it_boar_hide": 4
+    },
+    "buy": {
+      "it_water": 2
+    },
+    "craft": {
+      "rc_heal": 2
+    },
+    "consumeDuringRoute": {},
+    "expectedGrossCoins": 120,
+    "expectedSpendCoins": 60,
+    "expectedNetCoins": 60,
+    "expectedInventory": {
+      "it_spider_silk": 2,
+      "it_heal_pill": 2
+    },
+    "note": "Marginal gross-output example; excludes starter gifts and quest coins. Consumption is tested separately."
+  },
+  "xpPolicy": {
+    "trainingXp": 0,
+    "pvpXp": 0,
+    "mortalRepeatableXp": 0,
+    "repeatableReserveThresholds": 2,
+    "oneTimeRewardsBypassRepeatableReserve": true,
+    "stage4Xp": 0,
+    "stage4BonusXpConversion": false
+  },
+  "totals": {
+    "mainQuestXp": 1450,
+    "sampleExtraXp": 450,
+    "requiredXp": 1900
+  },
+  "gatherableItems": {
+    "m_truc_am": [
+      "it_herb_cam_lo",
+      "it_herb_tinh_tam",
+      "it_water",
+      "it_bamboo"
+    ],
+    "m_thach_can": [
+      "it_iron",
+      "it_herb_ich_khi"
+    ]
+  },
+  "questGrantedItems": {
+    "q_main_002": {
+      "it_mach_ban": 1,
+      "it_water_sample": 1
+    },
+    "q_main_007": {
+      "it_ledger": 1,
+      "it_array_shard": 1
+    },
+    "q_main_009": {
+      "it_well_key": 1
+    }
+  },
+  "economyBalance": {
+    "version": "economy-v1",
+    "currencyId": "spirit_stones",
+    "displayName": "Linh Thạch",
+    "integerOnly": true,
+    "normalizationScale": 10,
+    "referenceRun": {
+      "id": "truc_am_standard",
+      "minutesMin": 15,
+      "minutesMax": 20,
+      "grossCoins": 120,
+      "mandatorySpendCoins": 60,
+      "netCoins": 60,
+      "runsPerHourMin": 3,
+      "runsPerHourMax": 4,
+      "netCoinsPerHourMin": 180,
+      "netCoinsPerHourMax": 240
+    },
+    "starterV2Plan": {
+      "source": "starter:v2",
+      "status": "planned_not_runtime",
+      "coins": 120,
+      "items": {
+        "it_seed_cam_lo": 2,
+        "it_water": 4,
+        "it_heal_pill": 2,
+        "it_cloth_armor": 1
+      },
+      "grantPolicy": "new_characters_after_economy_cutover_only",
+      "migrationPolicy": "starter:v1 remains immutable; do not let old recipients claim v2 automatically"
+    },
+    "market": {
+      "scope": "global_server",
+      "listingFeeBps": 100,
+      "salesTaxBps": 400,
+      "directTradeFeeBps": 100,
+      "maxActiveSellOrders": 8,
+      "escrowRequired": true,
+      "premiumCurrencyTradable": false,
+      "marketTaxIsPrimarySink": false
+    },
+    "itemTargets": [
+      {
+        "itemId": "it_seed_cam_lo",
+        "policy": "market",
+        "marketMin": 24,
+        "marketMax": 29,
+        "role": "npc-ceiling seed"
+      },
+      {
+        "itemId": "it_herb_cam_lo",
+        "policy": "market",
+        "marketMin": 12,
+        "marketMax": 18,
+        "role": "basic herb"
+      },
+      {
+        "itemId": "it_seed_tinh_tam",
+        "policy": "market",
+        "marketMin": 24,
+        "marketMax": 29,
+        "role": "npc-ceiling seed"
+      },
+      {
+        "itemId": "it_herb_tinh_tam",
+        "policy": "market",
+        "marketMin": 12,
+        "marketMax": 18,
+        "role": "basic herb"
+      },
+      {
+        "itemId": "it_seed_ich_khi",
+        "policy": "market",
+        "marketMin": 24,
+        "marketMax": 29,
+        "role": "npc-ceiling seed"
+      },
+      {
+        "itemId": "it_herb_ich_khi",
+        "policy": "market",
+        "marketMin": 12,
+        "marketMax": 18,
+        "role": "basic herb"
+      },
+      {
+        "itemId": "it_water",
+        "policy": "market",
+        "marketMin": 8,
+        "marketMax": 9,
+        "role": "npc-ceiling utility"
+      },
+      {
+        "itemId": "it_bamboo",
+        "policy": "market",
+        "marketMin": 12,
+        "marketMax": 20,
+        "role": "craft material"
+      },
+      {
+        "itemId": "it_iron",
+        "policy": "market",
+        "marketMin": 12,
+        "marketMax": 22,
+        "role": "craft and enhancement material"
+      },
+      {
+        "itemId": "it_spirit_dust",
+        "policy": "market",
+        "marketMin": 20,
+        "marketMax": 35,
+        "role": "rare craft and enhancement material"
+      },
+      {
+        "itemId": "it_spider_silk",
+        "policy": "market",
+        "marketMin": 15,
+        "marketMax": 25,
+        "role": "talisman material"
+      },
+      {
+        "itemId": "it_boar_hide",
+        "policy": "market",
+        "marketMin": 30,
+        "marketMax": 50,
+        "role": "npc floor; needs additional crafting sink"
+      },
+      {
+        "itemId": "it_venom",
+        "policy": "disabled",
+        "marketMin": null,
+        "marketMax": null,
+        "role": "inactive catalog reserve"
+      },
+      {
+        "itemId": "it_heal_pill",
+        "policy": "market",
+        "marketMin": 60,
+        "marketMax": 70,
+        "role": "consumable; NPC ceiling 80"
+      },
+      {
+        "itemId": "it_qi_pill",
+        "policy": "market",
+        "marketMin": 70,
+        "marketMax": 90,
+        "role": "crafted consumable"
+      },
+      {
+        "itemId": "it_ward_talisman",
+        "policy": "market",
+        "marketMin": 85,
+        "marketMax": 105,
+        "role": "crafted defensive consumable"
+      },
+      {
+        "itemId": "it_escape_talisman",
+        "policy": "market",
+        "marketMin": 85,
+        "marketMax": 105,
+        "role": "crafted escape utility"
+      },
+      {
+        "itemId": "it_iron_sword",
+        "policy": "market",
+        "marketMin": 190,
+        "marketMax": 220,
+        "role": "basic crafted gear"
+      },
+      {
+        "itemId": "it_cloth_armor",
+        "policy": "hold",
+        "marketMin": null,
+        "marketMax": null,
+        "role": "starter-only source; market waits for repeatable source"
+      },
+      {
+        "itemId": "it_mach_ban",
+        "policy": "bound",
+        "marketMin": null,
+        "marketMax": null,
+        "role": "quest tool"
+      },
+      {
+        "itemId": "it_water_sample",
+        "policy": "bound",
+        "marketMin": null,
+        "marketMax": null,
+        "role": "quest item"
+      },
+      {
+        "itemId": "it_ledger",
+        "policy": "bound",
+        "marketMin": null,
+        "marketMax": null,
+        "role": "quest item"
+      },
+      {
+        "itemId": "it_array_shard",
+        "policy": "bound",
+        "marketMin": null,
+        "marketMax": null,
+        "role": "quest item"
+      },
+      {
+        "itemId": "it_well_key",
+        "policy": "bound",
+        "marketMin": null,
+        "marketMax": null,
+        "role": "quest item"
+      }
+    ],
+    "enhancement": {
+      "status": "design_only_unimplemented",
+      "referenceItemId": "it_iron_sword",
+      "maxLevel": 5,
+      "guaranteedSuccess": true,
+      "destroyOnFailure": false,
+      "cumulativeStatBonusPct": [
+        3,
+        6,
+        9,
+        12,
+        15
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "coins": 30,
+          "materials": {
+            "it_iron": 2
+          }
+        },
+        {
+          "level": 2,
+          "coins": 60,
+          "materials": {
+            "it_iron": 4
+          }
+        },
+        {
+          "level": 3,
+          "coins": 120,
+          "materials": {
+            "it_spirit_dust": 2
+          }
+        },
+        {
+          "level": 4,
+          "coins": 240,
+          "materials": {
+            "it_spirit_dust": 4
+          }
+        },
+        {
+          "level": 5,
+          "coins": 480,
+          "materials": {
+            "it_spirit_dust": 8
+          }
+        }
+      ],
+      "totalCoinCost": 930,
+      "referenceMaterialFloorValue": 200,
+      "referenceTotalEconomicCost": 1130,
+      "referenceRunsAtNetIncome": 18.83
+    },
+    "longRunTargets": {
+      "sinkRateMinBps": 8000,
+      "sinkRateMaxBps": 9000,
+      "priceIndexBasket": [
+        "it_boar_hide",
+        "it_herb_cam_lo",
+        "it_spider_silk",
+        "it_iron",
+        "it_spirit_dust",
+        "it_heal_pill",
+        "it_qi_pill",
+        "it_iron_sword"
+      ],
+      "walletPercentiles": [
+        50,
+        90,
+        99
+      ],
+      "telemetryRequired": [
+        "currency_faucets_by_source",
+        "currency_sinks_by_source",
+        "money_supply",
+        "market_volume",
+        "market_tax_destroyed",
+        "item_created_destroyed",
+        "wallet_percentiles",
+        "price_index"
+      ]
+    }
   }
 }
