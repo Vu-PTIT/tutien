@@ -40,16 +40,31 @@ jobs:
         run: docker compose down
   client:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        godot: ["4.4.1", "4.6.1"]
     steps:
       - uses: actions/checkout@v4
-      - name: Install Godot 4.4.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.14.0'
+      - name: Static scene and asset audit
+        run: node scripts/check-pixel-scenes.cjs
+      - name: Install Godot
+        env:
+          GODOT_VERSION: ${{ matrix.godot }}
         run: |
-          curl --fail --location --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip
+          curl --fail --location --retry 3 -o /tmp/godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
           unzip /tmp/godot.zip -d /tmp/godot
-          chmod +x /tmp/godot/Godot_v4.4.1-stable_linux.x86_64
+          chmod +x "/tmp/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+          ln -s "/tmp/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64" /tmp/godot/engine
       - name: Import and run prototype
         run: |
-          /tmp/godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path client --editor --quit 2>&1 | tee /tmp/import.log
+          /tmp/godot/engine --headless --path client --editor --quit 2>&1 | tee /tmp/import.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/import.log
-          /tmp/godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path client --quit-after 60 2>&1 | tee /tmp/run.log
+          /tmp/godot/engine --headless --path client --quit-after 60 2>&1 | tee /tmp/run.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/run.log
+      - name: Offline presentation interaction smoke
+        run: |
+          timeout 90 /tmp/godot/engine --headless --path client --script res://tests/presentation_smoke.gd 2>&1 | tee /tmp/presentation.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/presentation.log

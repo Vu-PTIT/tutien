@@ -145,24 +145,19 @@ trạng thái lịch sử trước xác nhận, đã được giải quyết ở
 Nhánh đã công bố; chưa merge `main`. Bước tiếp theo: encounter Sơn Trư và loot
 server-authoritative. Dùng/trang bị đồ, garden/crafting và quest vẫn chưa có.
 
+### Thiết kế lại phần trình bày pixel — 21/09/2026, bản local
 
-## 8. Điều chỉnh thiết kế tiến trình/PvE — 21/09/2026
+Theo phản hồi giao diện không giống concept, thay nền procedural bằng PNG
+làng An Khê, atlas nhân vật bốn hướng và icon trong suốt. Tách scene world,
+player, HUD và túi 24 ô; editor/runtime dùng cùng cây node. Theme xanh đen
+viền đồng, viewport 640 × 360, nearest và scale nguyên. Bỏ preview `@tool`
+riêng và ItemList ẩn. Túi offline ghi rõ mẫu; túi thật xóa mẫu trước khi tải.
 
-Mốc đối chiếu: `feat/inventory-rewards` tại `05f5dd0eb9df36d5790e268879b8fbe3699994ea`; `main` vẫn ở `94fca39`.
-Theo yêu cầu làm rõ quá trình phát triển nhân vật, cập nhật 01/02/03/04/06/07,
-mục lục và tiến độ; bổ sung đặc tả liên kết cùng nguồn tham khảo.
+Static scene audit đạt; 64/64 unit test server đạt. **Chưa xác nhận Godot
+runtime cho lần sửa này**: engine local lỗi khởi động, chưa có run CI mới.
+Đã thêm offline presentation smoke và ma trận CI 4.4.1/4.6.1. Ảnh trong
+`docs/ui-previews` là render bố cục tĩnh, không phải screenshot Godot.
 
-Giữ phạm vi v2; xác định nguồn XP, loot có đầu ra, tuyến thay thế an toàn, giá thử,
-tiêu hao chuyến đi, điều kiện mở kỹ năng/cổng và thứ tự P1–P5. Không đổi starter:v1
-hoặc catalog/schema runtime. Làm rõ trần XP và thao tác dọn túi để tránh kẹt thưởng.
-
-Bổ sung `design-samples/progression-pve.v1.json`,
-`scripts/validate_progression_design.py` và `scripts/test_progression_design.py`.
-Kiểm tra thiết kế local đạt: tổng 1.450 + 450 = 1.900 XP; dư 0/150/0; đường thay
-thế đầu 100 XP; ngân sách chuyến mẫu và kịch bản tiêu 0–3 viên; 13 bảng sinh khớp.
-32 bài tự kiểm của validator đạt. Đây **không** là unit test gameplay hoặc
-Nakama/PostgreSQL/Godot integration được chạy lại.
-
-Bản cập nhật này được công bố trên nhánh `feat/inventory-rewards` trong commit
-chứa mục nhật ký này; chưa merge `main`. CI/runtime phải được đối chiếu riêng,
-không suy từ validator thiết kế.
+Nền làng chưa phải TileMap, atlas AI chưa chuẩn hóa pixel/frame thủ công;
+không thêm PvE hoặc quest lưu trữ. Xem `ui-product-slice.md`. Thay đổi hiện
+chưa push; lịch sử CI đã đạt ở trên chỉ áp dụng các commit được ghi rõ.

@@ -1,0 +1,435 @@
+[gd_scene load_steps=12 format=3]
+[ext_resource type="Theme" path="res://themes/tutien_theme.tres" id="theme"]
+[ext_resource type="Texture2D" path="res://assets/pixel/hero_idle.tres" id="hero"]
+[ext_resource type="Texture2D" path="res://assets/pixel/an_khe.png" id="map"]
+[ext_resource type="Texture2D" path="res://assets/pixel/icon_0.tres" id="icon0"]
+[ext_resource type="Texture2D" path="res://assets/pixel/icon_1.tres" id="icon1"]
+[ext_resource type="Texture2D" path="res://assets/pixel/icon_15.tres" id="icon2"]
+[ext_resource type="Texture2D" path="res://assets/pixel/icon_3.tres" id="icon3"]
+[ext_resource type="Texture2D" path="res://assets/pixel/icon_11.tres" id="icon4"]
+[ext_resource type="Texture2D" path="res://assets/pixel/icon_4.tres" id="icon5"]
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory.tscn" id="bag"]
+
+[node name="HUD" type="Control"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+theme = ExtResource("theme")
+script = ExtResource("script")
+
+[node name="Vitals" type="Panel" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 191.0
+offset_bottom = 65.0
+
+[node name="Portrait" type="TextureRect" parent="Vitals"]
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 40.0
+offset_bottom = 50.0
+mouse_filter = 2
+texture = ExtResource("hero")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Realm" type="Label" parent="Vitals"]
+offset_left = 44.0
+offset_top = 4.0
+offset_right = 177.0
+offset_bottom = 17.0
+mouse_filter = 2
+text = "PHÀM NHÂN"
+theme_override_font_sizes/font_size = 10
+
+[node name="HP" type="ProgressBar" parent="Vitals"]
+offset_left = 45.0
+offset_top = 21.0
+offset_right = 173.0
+offset_bottom = 31.0
+mouse_filter = 2
+value = 100.0
+show_percentage = false
+
+[node name="HPText" type="Label" parent="Vitals"]
+offset_left = 47.0
+offset_top = 18.0
+offset_right = 169.0
+offset_bottom = 33.0
+mouse_filter = 2
+text = "100 / 100"
+theme_override_font_sizes/font_size = 8
+
+[node name="Qi" type="ProgressBar" parent="Vitals"]
+offset_left = 45.0
+offset_top = 35.0
+offset_right = 173.0
+offset_bottom = 43.0
+mouse_filter = 2
+theme_type_variation = &"QiBar"
+value = 0.0
+show_percentage = false
+
+[node name="QiText" type="Label" parent="Vitals"]
+offset_left = 47.0
+offset_top = 43.0
+offset_right = 177.0
+offset_bottom = 55.0
+mouse_filter = 2
+text = "Linh lực • chưa khai mở"
+theme_override_font_sizes/font_size = 8
+
+[node name="Location" type="Panel" parent="."]
+offset_left = 246.0
+offset_top = 8.0
+offset_right = 396.0
+offset_bottom = 39.0
+
+[node name="Title" type="Label" parent="Location"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 150.0
+offset_bottom = 17.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "AN KHÊ"
+theme_override_font_sizes/font_size = 12
+
+[node name="State" type="Label" parent="Location"]
+offset_left = 0.0
+offset_top = 17.0
+offset_right = 150.0
+offset_bottom = 29.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "Làng khởi đầu • an toàn"
+theme_override_font_sizes/font_size = 8
+
+[node name="Minimap" type="Panel" parent="."]
+offset_left = 532.0
+offset_top = 8.0
+offset_right = 632.0
+offset_bottom = 85.0
+
+[node name="Map" type="TextureRect" parent="Minimap"]
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 95.0
+offset_bottom = 54.0
+mouse_filter = 2
+texture = ExtResource("map")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Marker" type="ColorRect" parent="Minimap"]
+offset_left = 49.0
+offset_top = 31.0
+offset_right = 52.0
+offset_bottom = 34.0
+mouse_filter = 2
+color = Color(1, 0.85, 0.4, 1)
+
+[node name="Coordinates" type="Label" parent="Minimap"]
+offset_left = 6.0
+offset_top = 57.0
+offset_right = 96.0
+offset_bottom = 70.0
+mouse_filter = 2
+text = "An Khê  (10, 7)"
+theme_override_font_sizes/font_size = 8
+
+[node name="Quest" type="Panel" parent="."]
+offset_left = 488.0
+offset_top = 95.0
+offset_right = 632.0
+offset_bottom = 161.0
+
+[node name="Title" type="Label" parent="Quest"]
+offset_left = 8.0
+offset_top = 5.0
+offset_right = 136.0
+offset_bottom = 18.0
+mouse_filter = 2
+text = "VIỆC Ở AN KHÊ"
+theme_override_font_sizes/font_size = 10
+
+[node name="Body" type="Label" parent="Quest"]
+offset_left = 8.0
+offset_top = 24.0
+offset_right = 136.0
+offset_bottom = 60.0
+mouse_filter = 2
+text = "Ghé hiệu thuốc Bà Sâm.\n[E] Xem lời nhắn tại cửa."
+theme_override_font_sizes/font_size = 9
+
+[node name="Mode" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 72.0
+offset_right = 193.0
+offset_bottom = 87.0
+mouse_filter = 2
+text = "BẢN XEM THỬ • OFFLINE"
+theme_override_font_sizes/font_size = 8
+
+[node name="BagButton" type="Button" parent="."]
+offset_left = 532.0
+offset_top = 170.0
+offset_right = 579.0
+offset_bottom = 193.0
+text = "Túi [I]"
+
+[node name="SparringButton" type="Button" parent="."]
+offset_left = 583.0
+offset_top = 170.0
+offset_right = 632.0
+offset_bottom = 193.0
+text = "Đấu tập"
+
+[node name="Hotbar" type="Panel" parent="."]
+offset_left = 180.0
+offset_top = 306.0
+offset_right = 462.0
+offset_bottom = 353.0
+
+[node name="Slot0" type="Button" parent="Hotbar"]
+offset_left = 6.0
+offset_top = 4.0
+offset_right = 46.0
+offset_bottom = 35.0
+text = ""
+icon = ExtResource("icon0")
+expand_icon = true
+
+[node name="Key0" type="Label" parent="Hotbar"]
+offset_left = 6.0
+offset_top = 33.0
+offset_right = 46.0
+offset_bottom = 44.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "1"
+theme_override_font_sizes/font_size = 8
+
+[node name="Slot1" type="Button" parent="Hotbar"]
+offset_left = 51.0
+offset_top = 4.0
+offset_right = 91.0
+offset_bottom = 35.0
+text = ""
+icon = ExtResource("icon1")
+expand_icon = true
+
+[node name="Key1" type="Label" parent="Hotbar"]
+offset_left = 51.0
+offset_top = 33.0
+offset_right = 91.0
+offset_bottom = 44.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "2"
+theme_override_font_sizes/font_size = 8
+
+[node name="Slot2" type="Button" parent="Hotbar"]
+offset_left = 96.0
+offset_top = 4.0
+offset_right = 136.0
+offset_bottom = 35.0
+text = ""
+icon = ExtResource("icon2")
+expand_icon = true
+
+[node name="Key2" type="Label" parent="Hotbar"]
+offset_left = 96.0
+offset_top = 33.0
+offset_right = 136.0
+offset_bottom = 44.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "Q"
+theme_override_font_sizes/font_size = 8
+
+[node name="Slot3" type="Button" parent="Hotbar"]
+offset_left = 141.0
+offset_top = 4.0
+offset_right = 181.0
+offset_bottom = 35.0
+text = ""
+icon = ExtResource("icon3")
+expand_icon = true
+
+[node name="Key3" type="Label" parent="Hotbar"]
+offset_left = 141.0
+offset_top = 33.0
+offset_right = 181.0
+offset_bottom = 44.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "E"
+theme_override_font_sizes/font_size = 8
+
+[node name="Slot4" type="Button" parent="Hotbar"]
+offset_left = 186.0
+offset_top = 4.0
+offset_right = 226.0
+offset_bottom = 35.0
+text = ""
+icon = ExtResource("icon4")
+expand_icon = true
+
+[node name="Key4" type="Label" parent="Hotbar"]
+offset_left = 186.0
+offset_top = 33.0
+offset_right = 226.0
+offset_bottom = 44.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "R"
+theme_override_font_sizes/font_size = 8
+
+[node name="Slot5" type="Button" parent="Hotbar"]
+offset_left = 231.0
+offset_top = 4.0
+offset_right = 271.0
+offset_bottom = 35.0
+text = ""
+icon = ExtResource("icon5")
+expand_icon = true
+
+[node name="Key5" type="Label" parent="Hotbar"]
+offset_left = 231.0
+offset_top = 33.0
+offset_right = 271.0
+offset_bottom = 44.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "Space"
+theme_override_font_sizes/font_size = 8
+
+[node name="HelpButton" type="Button" parent="."]
+offset_left = 8.0
+offset_top = 328.0
+offset_right = 154.0
+offset_bottom = 353.0
+text = "Hướng dẫn / trạng thái"
+
+[node name="Controls" type="Label" parent="."]
+offset_left = 474.0
+offset_top = 321.0
+offset_right = 632.0
+offset_bottom = 351.0
+mouse_filter = 2
+text = "WASD di chuyển\nI túi đồ • E tương tác"
+theme_override_font_sizes/font_size = 8
+
+[node name="Toast" type="Panel" parent="."]
+visible = false
+offset_left = 150.0
+offset_top = 272.0
+offset_right = 490.0
+offset_bottom = 299.0
+
+[node name="Message" type="Label" parent="Toast"]
+offset_left = 9.0
+offset_top = 3.0
+offset_right = 331.0
+offset_bottom = 25.0
+mouse_filter = 2
+text = "Chào mừng đến An Khê. Nhấn I để xem túi đồ."
+theme_override_font_sizes/font_size = 9
+
+[node name="ModalShade" type="ColorRect" parent="."]
+visible = false
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 0
+color = Color(0.015, 0.025, 0.04, 0.65)
+
+[node name="Dock" type="Panel" parent="."]
+visible = false
+offset_left = 50.0
+offset_top = 109.0
+offset_right = 590.0
+offset_bottom = 239.0
+
+[node name="Title" type="Label" parent="Dock"]
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 452.0
+offset_bottom = 24.0
+mouse_filter = 2
+text = "ĐẤU TẬP ONLINE • NAKAMA"
+theme_override_font_sizes/font_size = 12
+
+[node name="Close" type="Button" parent="Dock"]
+offset_left = 503.0
+offset_top = 6.0
+offset_right = 531.0
+offset_bottom = 28.0
+text = "X"
+
+[node name="Status" type="Label" parent="Dock"]
+offset_left = 12.0
+offset_top = 32.0
+offset_right = 526.0
+offset_bottom = 64.0
+mouse_filter = 2
+text = "Kết nối backend để tạo hoặc vào phòng. Không mất đồ."
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 9
+
+[node name="Connect" type="Button" parent="Dock"]
+offset_left = 12.0
+offset_top = 68.0
+offset_right = 98.0
+offset_bottom = 92.0
+text = "Kết nối"
+
+[node name="Create" type="Button" parent="Dock"]
+offset_left = 104.0
+offset_top = 68.0
+offset_right = 184.0
+offset_bottom = 92.0
+text = "Tạo phòng"
+
+[node name="Room" type="LineEdit" parent="Dock"]
+offset_left = 190.0
+offset_top = 68.0
+offset_right = 392.0
+offset_bottom = 92.0
+placeholder_text = "Dán mã phòng tại đây"
+
+[node name="Join" type="Button" parent="Dock"]
+offset_left = 400.0
+offset_top = 68.0
+offset_right = 460.0
+offset_bottom = 92.0
+text = "Vào"
+
+[node name="Ready" type="Button" parent="Dock"]
+offset_left = 12.0
+offset_top = 100.0
+offset_right = 98.0
+offset_bottom = 124.0
+text = "Sẵn sàng"
+
+[node name="Leave" type="Button" parent="Dock"]
+offset_left = 104.0
+offset_top = 100.0
+offset_right = 184.0
+offset_bottom = 124.0
+text = "Rời trận"
+
+[node name="Safety" type="Label" parent="Dock"]
+offset_left = 195.0
+offset_top = 99.0
+offset_right = 523.0
+offset_bottom = 124.0
+mouse_filter = 2
+text = "J / Q đánh • Space né theo chuột"
+theme_override_font_sizes/font_size = 9
+
+[node name="Inventory" parent="." instance=ExtResource("bag")]
+visible = false
