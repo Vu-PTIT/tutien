@@ -83,3 +83,10 @@ trở về/Hộ Thân → P5: chương Thạch Cạn/Cổ Tỉnh và tầng 3–
 
 Giữ các gate nghiệm thu combat/tài sản đã làm. Không thêm tông môn, cảnh giới hoặc
 map trước khi đi hết vòng chơi bằng tài khoản mới, không cấp tay đồ/XP.
+
+
+## Economy Balance v1
+
+- [Economy Balance v1 — Linh Thạch, giao dịch và cường hóa](economy-balance-v1.md)
+- Mốc cân bằng chuẩn: 60 Linh Thạch ròng / chuyến Trúc Âm 15–20 phút.
+- Dữ liệu số nằm trong `design-samples/progression-pve.v1.json`; tài liệu này giải thích tương quan thu nhập → craft → market → cường hóa.
