@@ -1,0 +1,51 @@
+id,name,group,kind,realmIndex,realm,rarity,stack,effect,craftUse,source,npcSell,npcBuy,marketMin,marketMax,marketPolicy,bindPolicy,destroyOnUse,economicRole,runtimeStatus
+it_mon_firetail,Hỏa Hồ Vĩ,Nguyên liệu quái,Lông yêu thú,2,Luyện Khí trung (4-6),Thượng phẩm,99,,Hỏa phù/trang sức,Hỏa Linh Hồ,,,55,75,market,none,False,craft_material,future_design
+it_spider_silk,Tơ nhện,Nguyên liệu quái,Tơ yêu thú,1,Luyện Khí sơ (1-3),Hạ phẩm,99,,Hộ Thân Phù/pháp bào,Độc Chu/Âm Vụ Quỷ Chu,,10,15,25,market,none,False,craft_material,mvp_contract
+it_mon_crowfeather,Hắc Nha Vũ,Nguyên liệu quái,Lông yêu thú,3,Luyện Khí hậu (7-9),Thượng phẩm,99,,Cung/phù,Hắc Nha Yêu,,,80,100,market,none,False,craft_material,future_design
+it_mon_earthhorn,Địa Tê Giác,Nguyên liệu quái,Sừng yêu thú,3,Luyện Khí hậu (7-9),Thượng phẩm,99,,Thương/giáp,Địa Tê,,,80,100,market,none,False,craft_material,future_design
+it_mon_thunderwing,Lôi Tước Vũ,Nguyên liệu quái,Lông yêu thú,4,Trúc Cơ sơ,Cực phẩm,99,,Lôi cung/pháp khí,Lôi Tước,,,135,175,market,none,False,craft_material,future_design
+it_mon_core1,Nhất Giai Yêu Đan,Nguyên liệu quái,Yêu đan,1,Luyện Khí sơ (1-3),Trung phẩm,99,,Luyện đan/pháp khí,Yêu thú tinh anh,,,35,45,market,none,False,craft_material,future_design
+it_mon_core2,Nhị Giai Yêu Đan,Nguyên liệu quái,Yêu đan,3,Luyện Khí hậu (7-9),Thượng phẩm,99,,Trang bị Luyện Khí hậu,Boss Luyện Khí,,,80,100,market,none,False,craft_material,future_design
+it_mon_core3,Tam Giai Yêu Đan,Nguyên liệu quái,Yêu đan,4,Trúc Cơ sơ,Cực phẩm,99,,Trang bị Trúc Cơ,Boss Trúc Cơ,,,135,175,market,none,False,craft_material,future_design
+it_mon_bone,Yêu Cốt,Nguyên liệu quái,Xương yêu thú,3,Luyện Khí hậu (7-9),Thượng phẩm,99,,Vũ khí/đan luyện thể,Yêu thú lớn,,,80,100,market,none,False,craft_material,future_design
+it_mon_blood,Tinh Huyết Yêu Thú,Nguyên liệu quái,Tinh huyết,4,Trúc Cơ sơ,Thượng phẩm,99,,Luyện thể/đan dược,Boss yêu thú,,,115,145,market,none,False,craft_material,future_design
+it_tal_firebolt,Hỏa Cầu Phù,Phù,Tấn công,1,Luyện Khí sơ (1-3),Hạ phẩm,20,"Gây 95% ATK Hỏa, CD vật phẩm 18s",,Luyện phù/NPC,,,95,125,market,none,True,consumable_sink,future_design
+it_tal_ice,Hàn Sương Phù,Phù,Control,2,Luyện Khí trung (4-6),Trung phẩm,20,"Gây 55% ATK, slow 20% 2.5s",,Luyện phù,,,150,190,market,none,True,consumable_sink,future_design
+it_ward_talisman,Hộ Thân Phù,Phù,Phòng thủ,2,Luyện Khí trung (4-6),Trung phẩm,20,"Shield 8% HP 4s, CD vật phẩm 25s",,Craft,,20,85,105,market,none,True,consumable_sink,mvp_contract
+it_tal_dash,Thần Hành Phù,Phù,Cơ động,2,Luyện Khí trung (4-6),Thượng phẩm,20,+10% move 8s; nhận damage hủy bonus sau 2s,,Luyện phù,,,175,225,market,none,True,consumable_sink,future_design
+it_tal_cleanse,Thanh Tịnh Phù,Phù,Giải hiệu ứng,3,Luyện Khí hậu (7-9),Thượng phẩm,20,Xóa 1 debuff thường; không xóa stun,,Luyện phù,,,255,325,market,none,True,consumable_sink,future_design
+it_tal_thunder,Lôi Kích Phù,Phù,Tấn công,3,Luyện Khí hậu (7-9),Thượng phẩm,20,Gây 135% ATK Lôi; cast 0.4s,,Bí cảnh/Luyện phù,,,255,325,market,none,True,consumable_sink,future_design
+it_tal_root,Phược Địa Phù,Phù,Control,3,Luyện Khí hậu (7-9),Thượng phẩm,20,"Root vùng nhỏ 0.8s, CD vật phẩm 30s",,Luyện phù,,,255,325,market,none,True,consumable_sink,future_design
+it_escape_talisman,Thoát Thân Phù,Phù,Tiện ích,1,Luyện Khí sơ (1-3),Trung phẩm,20,Niệm 5s để về điểm an toàn; bị đánh hủy,,Craft/Main 010,,20,85,105,market,none,True,utility_sink,mvp_contract
+it_tal_reveal,Hiện Linh Phù,Phù,Khám phá,3,Luyện Khí hậu (7-9),Thượng phẩm,20,Hiện đơn vị tàng hình/bẫy 8m trong 8s,,Luyện phù,,,255,325,market,none,True,consumable_sink,future_design
+it_tal_barrier,Kim Quang Phù,Phù,Phòng thủ,4,Trúc Cơ sơ,Cực phẩm,20,Giảm 10% damage 5s; CD vật phẩm 35s,,Bí cảnh/Luyện phù,,,430,550,market,none,True,consumable_sink,future_design
+it_book_fireball,Bí Tịch: Hỏa Cầu Thuật,Bí tịch/Công thức,Kỹ năng,1,Luyện Khí sơ (1-3),Trung phẩm,1,Mở skill Hỏa Cầu Thuật,,Hỏa Thạch Động,,,370,470,market,bind_on_use,True,knowledge_sink,future_design
+it_book_vine,Bí Tịch: Thanh Đằng Trói,Bí tịch/Công thức,Kỹ năng,1,Luyện Khí sơ (1-3),Trung phẩm,1,Mở skill Thanh Đằng Trói,,Trúc Lâm,,,370,470,market,bind_on_use,True,knowledge_sink,future_design
+it_book_dash,Bí Tịch: Ngự Phong Bộ,Bí tịch/Công thức,Kỹ năng,1,Luyện Khí sơ (1-3),Trung phẩm,1,Mở thân pháp Ngự Phong Bộ,,Tông môn,,,370,470,market,bind_on_use,True,knowledge_sink,future_design
+it_book_earthskin,Bí Tịch: Thạch Phu,Bí tịch/Công thức,Kỹ năng,2,Luyện Khí trung (4-6),Thượng phẩm,1,Mở skill Thạch Phu,,Huyền Thiết Mạch,,,595,755,market,bind_on_use,True,knowledge_sink,future_design
+it_book_swordcult,Thanh Nguyên Kiếm Quyết - Quyển I,Bí tịch/Công thức,Công pháp,3,Luyện Khí hậu (7-9),Cực phẩm,1,Mở công pháp Kiếm,,Truyền thừa,,,1010,1280,market,bind_on_use,True,knowledge_sink,future_design
+it_book_bodycult,Kim Cương Luyện Thể Quyết - Quyển I,Bí tịch/Công thức,Công pháp,3,Luyện Khí hậu (7-9),Cực phẩm,1,Mở công pháp Luyện thể,,Cổ Tu Động Phủ,,,1010,1280,market,bind_on_use,True,knowledge_sink,future_design
+it_book_woodcult,Trường Xuân Công - Quyển I,Bí tịch/Công thức,Công pháp,4,Trúc Cơ sơ,Cực phẩm,1,Mở công pháp Mộc,,Tông môn/Bí cảnh,,,1445,1835,market,bind_on_use,True,knowledge_sink,future_design
+it_book_firecult,Xích Dương Quyết - Quyển I,Bí tịch/Công thức,Công pháp,4,Trúc Cơ sơ,Cực phẩm,1,Mở công pháp Hỏa,,Hỏa bí cảnh,,,1445,1835,market,bind_on_use,True,knowledge_sink,future_design
+it_scroll_recipe_foundation,Đan Phương: Trúc Cơ Đan,Bí tịch/Công thức,Công thức,3,Luyện Khí hậu (7-9),Cực phẩm,1,Mở công thức Trúc Cơ Đan,,Boss/Bí cảnh,,,1010,1280,market,bind_on_use,True,knowledge_sink,future_design
+it_scroll_artifact,Luyện Khí Đồ Phổ - Sơ Thiên,Bí tịch/Công thức,Công thức,4,Trúc Cơ sơ,Thượng phẩm,1,Mở công thức pháp bảo đầu game,,Tông môn,,,1220,1550,market,bind_on_use,True,knowledge_sink,future_design
+it_seed_cam_lo,Hạt Cam Lộ,Đời sống,Hạt giống,0,Phàm Nhân,Hạ phẩm,99,Trồng Cam Lộ,,Starter/NPC,30,,24,29,market,none,False,npc_ceiling_seed,mvp_contract
+it_seed_ich_khi,Hạt Ích Khí,Đời sống,Hạt giống,1,Luyện Khí sơ (1-3),Hạ phẩm,99,Trồng Ích Khí,,NPC,30,,24,29,market,none,False,npc_ceiling_seed,mvp_contract
+it_seed_tinh_tam,Hạt Tĩnh Tâm,Đời sống,Hạt giống,1,Luyện Khí sơ (1-3),Hạ phẩm,99,Trồng Tĩnh Tâm,,NPC,30,,24,29,market,none,False,npc_ceiling_seed,mvp_contract
+it_water,Nước,Đời sống,Nông vụ,0,Phàm Nhân,Phàm,99,Dùng trồng cây và luyện Hồi Nguyên Hoàn,Hồi Nguyên Hoàn,NPC/node,10,,8,9,market,none,False,npc_ceiling_utility,mvp_contract
+it_life_fishbait,Linh Nhĩ Mồi,Đời sống,Câu cá,0,Phàm Nhân,Hạ phẩm,99,Tăng nhẹ cơ hội cá linh,,NPC,,,20,20,market,none,False,life_loop,future_design
+it_life_spiritrice,Linh Mễ,Đời sống,Thực phẩm,0,Phàm Nhân,Hạ phẩm,99,Nấu thức ăn/hồi thể lực,,Trồng trọt,,,20,20,market,none,False,life_loop,future_design
+it_life_tea,Thanh Tâm Trà,Đời sống,Thực phẩm,1,Luyện Khí sơ (1-3),Trung phẩm,99,Ngoài combat: +5% hồi linh 10 phút,,Nấu ăn,,,30,40,market,none,False,life_loop,future_design
+it_life_meat,Yêu Thú Nhục,Đời sống,Thực phẩm,1,Luyện Khí sơ (1-3),Trung phẩm,99,Nấu ăn/buff thể lực,,Yêu thú,,,30,40,market,none,False,life_loop,future_design
+it_life_ink,Phù Mặc,Đời sống,Chế tạo,1,Luyện Khí sơ (1-3),Trung phẩm,99,Nguyên liệu luyện phù,Nguyên liệu luyện phù,Chế tạo,,,30,40,market,none,False,life_loop,future_design
+it_life_paper,Linh Phù Chỉ,Đời sống,Chế tạo,1,Luyện Khí sơ (1-3),Trung phẩm,99,Nguyên liệu luyện phù,Nguyên liệu luyện phù,NPC/Chế tạo,,,30,40,market,none,False,life_loop,future_design
+it_spirit_dust,Linh sa,Nguyên liệu,Tinh luyện,1,Luyện Khí sơ (1-3),Trung phẩm,99,,Hộ Thân Phù/cường hóa,Thạch Vệ/boss,,10,20,35,market,none,False,enhancement_material,mvp_contract
+it_venom,Độc tố,Nguyên liệu quái,Độc liệu,1,Luyện Khí sơ (1-3),Hạ phẩm,99,,Future poison recipes,Dự trữ catalog; chưa phát loot,,,,,disabled,none,False,inactive_reserve,mvp_contract
+it_mat_refining_sand,Tinh Luyện Sa,Nguyên liệu,Tinh luyện,2,Luyện Khí trung (4-6),Trung phẩm,99,,Tinh luyện/hoàn vật liệu enhancement,Phân giải trang bị/tinh anh,,,35,45,market,none,False,craft_material,future_design
+it_mat_binding_thread,Khóa Linh Ti,Nguyên liệu,Tinh luyện,2,Luyện Khí trung (4-6),Thượng phẩm,99,,Tinh luyện/pháp bảo,Bí cảnh/chế tạo,,,45,55,market,none,False,craft_material,future_design
+it_mach_ban,Mạch Bàn,Đặc biệt,Công cụ nhiệm vụ,0,Phàm Nhân,Trung phẩm,1,Công cụ dò mạch cho nhiệm vụ,,Main 002,,,,,bound,character_bound,False,quest,mvp_contract
+it_water_sample,Mẫu nước,Đặc biệt,Nhiệm vụ,0,Phàm Nhân,Phàm,1,Mẫu nhiệm vụ; không có tác dụng chiến đấu,,Main 002,,,,,bound,character_bound,False,quest,mvp_contract
+it_ledger,Sổ ghi,Đặc biệt,Nhiệm vụ,1,Luyện Khí sơ (1-3),Trung phẩm,1,Chứng cứ nhiệm vụ,,Main 007,,,,,bound,character_bound,False,quest,mvp_contract
+it_array_shard,Mảnh trận,Đặc biệt,Nhiệm vụ,1,Luyện Khí sơ (1-3),Trung phẩm,1,Dấu/sơ đồ trận cho nhiệm vụ,,Main 007,,,,,bound,character_bound,False,quest,mvp_contract
+it_well_key,Chìa giếng,Đặc biệt,Nhiệm vụ,1,Luyện Khí sơ (1-3),Trung phẩm,1,Quyền vào Cổ Tỉnh theo nhiệm vụ,,Main 009,,,,,bound,character_bound,False,quest,mvp_contract
+it_key_beast,Liệp Yêu Lệnh,Đặc biệt,Chìa khóa,3,Luyện Khí hậu (7-9),Thượng phẩm,20,Triệu hồi boss săn yêu theo nhóm,,Liệp Yêu nhiệm vụ,,,,,hold,bind_on_use,True,future_access,future_design
