@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "version": "content-pack-economy-v1.1",
+  "status": "design_only_unimplemented",
+  "runtimeCatalogImportAllowed": false,
+  "economyRef": {
+    "version": "economy-v1",
+    "unitSpiritStones": 60,
+    "referenceRunNet": 60,
+    "referenceRunMinutes": [
+      15,
+      20
+    ]
+  },
+  "currencyContract": {
+    "walletCurrencies": [
+      "spirit_stones"
+    ],
+    "inventoryCurrencyForbidden": true,
+    "premiumCurrencyTradable": false
+  },
+  "marketContract": {
+    "scope": "global_server",
+    "listingFeeBps": 100,
+    "salesTaxBps": 400,
+    "directTradeFeeBps": 100,
+    "maxActiveSellOrders": 8,
+    "escrowRequired": true
+  },
+  "supplyRules": {
+    "normalMobsDropCurrency": false,
+    "pvpKillsDropCurrency": false,
+    "futureItemsMayAddNpcBuyWithoutEconomyReview": false,
+    "gearDefaultBindPolicy": "bind_on_equip",
+    "skillBookDefaultBindPolicy": "bind_on_use",
+    "skillBookConsumedOnLearn": true,
+    "consumableSharedCooldownSec": 25
+  },
+  "futureStageIncomeTargets": [
+    {
+      "realmIndex": 1,
+      "netPerHourMin": 180,
+      "netPerHourMax": 240,
+      "status": "economy_v1_reference"
+    },
+    {
+      "realmIndex": 2,
+      "netPerHourMin": 300,
+      "netPerHourMax": 420,
+      "status": "playtest_target"
+    },
+    {
+      "realmIndex": 3,
+      "netPerHourMin": 480,
+      "netPerHourMax": 660,
+      "status": "playtest_target"
+    },
+    {
+      "realmIndex": 4,
+      "netPerHourMin": 780,
+      "netPerHourMax": 1020,
+      "status": "playtest_target"
+    },
+    {
+      "realmIndex": 5,
+      "netPerHourMin": 1140,
+      "netPerHourMax": 1500,
+      "status": "playtest_target"
+    }
+  ],
+  "enhancementCompatibility": {
+    "economyV1Levels": [
+      {"level": 1, "coins": 30},
+      {"level": 2, "coins": 60},
+      {"level": 3, "coins": 120},
+      {"level": 4, "coins": 240},
+      {"level": 5, "coins": 480}
+    ],
+    "guaranteedSuccess": true,
+    "destroyOnFailure": false,
+    "replacementPolicy": "item_bound_with_partial_material_recovery",
+    "salvageRecovery": "no coin refund; future Tinh Luyện Sa may recover part of material investment after playtest",
+    "reason": "preserve enhancement as a sink without making new drops feel like punishment"
+  },
+  "inventoryPhasing": {
+    "baseCapacity": 24,
+    "rule": "Do not activate all 150 item/equipment definitions at once. Early MVP uses the canonical 24-item catalog; future definitions unlock by realm/content patch."
+  },
+  "dataFiles": {
+    "equipment": ["equipment-1.csv", "equipment-2.csv"],
+    "skills": "skills.csv",
+    "items": ["items-1.csv", "items-2.csv"],
+    "recipes": "recipes.csv"
+  }
+}
