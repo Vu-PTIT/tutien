@@ -161,3 +161,16 @@ runtime cho lần sửa này**: engine local lỗi khởi động, chưa có run
 Nền làng chưa phải TileMap, atlas AI chưa chuẩn hóa pixel/frame thủ công;
 không thêm PvE hoặc quest lưu trữ. Xem `ui-product-slice.md`. Thay đổi hiện
 chưa push; lịch sử CI đã đạt ở trên chỉ áp dụng các commit được ghi rõ.
+
+
+### Economy Balance v1 — 22/09/2026
+
+- Tạo nhánh `feat/economy-balance-v1` từ `feat/inventory-rewards` để tách thay đổi cân bằng khỏi mốc inventory đã qua CI.
+- Chuẩn hóa thang tiền thiết kế ×10 cho quest/shop/craft nhưng giữ `starter:v1` runtime = 12 Linh Thạch bất biến; lập kế hoạch `starter:v2` = 120 cho tài khoản mới sau cutover.
+- Chốt chuyến Trúc Âm chuẩn 15–20 phút: gross 120, spend 60, net 60; tương đương 180–240 Linh Thạch/giờ khi farm liên tục.
+- Thêm market toàn server: listing 1%, sales tax 4%, direct trade 1%, escrow bắt buộc, tối đa 8 sell order, premium currency không trade.
+- Thêm market target cho toàn bộ 24 item và khóa item quest/bound khỏi giao dịch.
+- Thêm thiết kế cường hóa +1→+5 bảo đảm thành công, không phá đồ: 30/60/120/240/480 Linh Thạch + quặng/linh sa; tổng tiền 930, bonus tối đa +15%.
+- Mục tiêu dài hạn sau khi market/cường hóa hoạt động: tổng sink 80–90% faucet theo tuần; telemetry theo source, money supply, wallet percentile và basket price index.
+- Mở rộng validator/test để khóa ngân sách quest 700, reference run 120/60/60, thuế market, bound item policy và đường cong cường hóa.
+- Đây vẫn là **design/data**, chưa thay runtime shop/craft/market/cường hóa. Cần chạy validator/CI trên môi trường có checkout repository trước khi coi thay đổi đã qua kiểm thử tích hợp.
