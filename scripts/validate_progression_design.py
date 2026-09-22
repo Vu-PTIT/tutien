@@ -324,6 +324,75 @@ def validate_data(d: dict) -> dict:
             (b["expectedGrossCoins"],b["expectedSpendCoins"],b["expectedNetCoins"]),
             "Budget money mismatch")
 
+    economy = d["economyBalance"]
+    require(economy["currencyId"] == "spirit_stones" and economy["integerOnly"] is True,
+            "Economy currency contract mismatch")
+    require(economy["normalizationScale"] == 10, "Economy normalization must remain x10 for v1")
+    run = economy["referenceRun"]
+    for key in ("minutesMin","minutesMax","grossCoins","mandatorySpendCoins","netCoins",
+                "runsPerHourMin","runsPerHourMax","netCoinsPerHourMin","netCoinsPerHourMax"):
+        integer(run[key], "economy.referenceRun." + key, 1)
+    require(run["grossCoins"] - run["mandatorySpendCoins"] == run["netCoins"],
+            "Reference run net coin arithmetic mismatch")
+    require((run["grossCoins"],run["mandatorySpendCoins"],run["netCoins"]) ==
+            (b["expectedGrossCoins"],b["expectedSpendCoins"],b["expectedNetCoins"]),
+            "Reference run must match returnBudget")
+    require(run["netCoinsPerHourMin"] == run["netCoins"] * run["runsPerHourMin"] and
+            run["netCoinsPerHourMax"] == run["netCoins"] * run["runsPerHourMax"],
+            "Reference hourly income mismatch")
+
+    require(sum(q["coins"] for q in main.values()) == 700, "Main quest coin budget must total 700")
+    require(d["starter"]["coins"] == 12, "starter:v1 remains immutable")
+    starter_v2 = economy["starterV2Plan"]
+    require(starter_v2["status"] == "planned_not_runtime" and starter_v2["coins"] == 120,
+            "starter:v2 plan mismatch")
+    require(starter_v2["source"] == "starter:v2", "starter:v2 needs a distinct source")
+    require(starter_v2["items"] == d["starter"]["items"], "starter:v2 should only normalize coin scale")
+
+    market = economy["market"]
+    for key in ("listingFeeBps","salesTaxBps","directTradeFeeBps","maxActiveSellOrders"):
+        integer(market[key], "economy.market." + key, 1)
+    require((market["listingFeeBps"],market["salesTaxBps"]) == (100,400),
+            "Market v1 tax must remain 1% listing + 4% sale")
+    require(market["escrowRequired"] is True and market["premiumCurrencyTradable"] is False,
+            "Market safety policy mismatch")
+
+    targets = economy["itemTargets"]
+    require(isinstance(targets, list) and len(targets) == len(items), "Every catalog item needs one economy policy")
+    target_ids = [x["itemId"] for x in targets]
+    require(len(set(target_ids)) == len(target_ids) and set(target_ids) == items,
+            "Economy item targets must cover catalog exactly once")
+    for target in targets:
+        require(target["policy"] in {"market","bound","hold","disabled"}, "Unknown item economy policy")
+        if target["policy"] == "market":
+            integer(target["marketMin"], target["itemId"] + ".marketMin", 1)
+            integer(target["marketMax"], target["itemId"] + ".marketMax", 1)
+            require(target["marketMin"] <= target["marketMax"], "Market target range inverted")
+        else:
+            require(target["marketMin"] is None and target["marketMax"] is None,
+                    "Non-market item must not have market target")
+    for quest_item in ("it_mach_ban","it_water_sample","it_ledger","it_array_shard","it_well_key"):
+        policy = next(x["policy"] for x in targets if x["itemId"] == quest_item)
+        require(policy == "bound", f"{quest_item}: quest item must remain bound")
+
+    enhancement = economy["enhancement"]
+    require(enhancement["status"] == "design_only_unimplemented" and enhancement["guaranteedSuccess"] is True,
+            "Enhancement v1 status/success policy mismatch")
+    require(enhancement["destroyOnFailure"] is False and enhancement["maxLevel"] == 5,
+            "Enhancement v1 must not destroy gear and caps at +5")
+    levels = enhancement["levels"]
+    require([x["level"] for x in levels] == [1,2,3,4,5], "Enhancement levels must be +1..+5")
+    require([x["coins"] for x in levels] == [30,60,120,240,480], "Enhancement coin curve changed")
+    require(sum(x["coins"] for x in levels) == enhancement["totalCoinCost"] == 930,
+            "Enhancement total coin cost mismatch")
+    require(enhancement["cumulativeStatBonusPct"] == [3,6,9,12,15],
+            "Enhancement power curve changed")
+    for level in levels:
+        quantities(level["materials"], items, "enhancement.materials")
+    require(economy["longRunTargets"]["sinkRateMinBps"] == 8000 and
+            economy["longRunTargets"]["sinkRateMaxBps"] == 9000,
+            "Long-run sink target must remain 80-90% until playtest data replaces it")
+
     policy = d["xpPolicy"]
     for key in ("trainingXp","pvpXp","mortalRepeatableXp","stage4Xp"):
         require(policy[key] == 0, f"Unexpected XP source: {key}")
@@ -343,7 +412,7 @@ def validate_data(d: dict) -> dict:
         "sampleInventory":inventory,
         "consumptionSensitivity":[
             {"pillsUsed":used,"pillsCreated":2,"pillNet":2-used,
-             "netCoinsAfterReplacingDeficit":6-max(0,used-2)*shop["npcSells"]["it_heal_pill"]}
+             "netCoinsAfterReplacingDeficit":b["expectedNetCoins"]-max(0,used-2)*shop["npcSells"]["it_heal_pill"]}
             for used in range(4)
         ]
     }
