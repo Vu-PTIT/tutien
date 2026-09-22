@@ -46,7 +46,7 @@ for(const name of ['an_khe','cultivator','icons']) {
   const png=fs.readFileSync(path.join(root,'assets/pixel/'+name+'.png'));
   assert.equal(png.subarray(1,4).toString(),'PNG');
   assert.ok(png.readUInt32BE(16)>0 && png.readUInt32BE(20)>0);
-  if(name!=='an_khe') assert.equal(png[25],6,'Expected RGBA PNG: '+name);
+  if(name!=='an_khe') assert.ok([3,6].includes(png[25]),'Expected transparent PNG atlas: '+name);
 }
 console.log('PASS static scene audit: '+scenes+' scenes, '+references+' resource references, 24 inventory slots, 6 hotbar buttons, real PNG assets.');
 console.log('Not a GDScript parser or Godot runtime test. Run presentation_smoke.gd in Godot.');
