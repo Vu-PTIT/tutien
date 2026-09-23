@@ -1,155 +1,180 @@
-# 04 — Thế giới, bản đồ và tuyến tài nguyên
+# 04 — Thế giới, map và giao diện khám phá
 
-**Cập nhật:** 23/09/2026. **Phạm vi:** world topology + gameplay role; layout tile chi tiết nằm ở [map-layout-spec.md](map-layout-spec.md).
+**Cập nhật:** 23/09/2026
 
-> Các kích thước dưới đây là prototype sau vòng review PC/mobile, chưa phải production lock.
-Mỗi map có mục tiêu phát triển, nguy hiểm, nguồn tài nguyên và đường trở về.
+**Trạng thái:** Bốn map có art nền và runtime prototype; tuyến chuyển map chạy cục bộ, chưa dùng quest/unlock từ server.
 
-## 1. Cấu trúc và phân tầng
+## 1. Rà soát bản hiện tại
+
+Prototype có bốn nền pixel, một scene map dùng chung, camera theo nhân vật, minimap động, blocker chữ nhật và route để đi thử giữa các map. An Khê dùng kích thước đã chốt 48×36 tile (1536×1152 world pixels). Ba map còn lại tạm dùng canvas prototype 48×36 để thử bố cục; metadata đánh dấu kích thước này chưa chốt. Art vẫn là ảnh nền một lớp, chưa phải TileMap.
+
+Các điểm đã kiểm tra trong repo:
+
+- `client/scenes/map_world.tscn` dùng chung cho bốn map; `client/scripts/game_map.gd` nạp nền, spawn, khu/phòng, blocker và chế độ camera từ `client/data/map_catalog.json`.
+- `Camera2D` theo người chơi ở map dã ngoại; Cổ Tỉnh đổi giới hạn camera theo phòng. Blocker chữ nhật là ước lượng, chưa khớp chi tiết cảnh vật.
+- Route có thể tải map cục bộ. Đây là luồng test client; cổng server, checkpoint, quest, NPC, PvE, fog-of-war và lưu trạng thái chưa được nối.
+- `client/scripts/ui/hud.gd` tính minimap theo kích thước world và tile size; `M` mở overlay tuyến, `Esc` đóng.
+- Overlay đọc bốn map và ảnh preview từ `client/data/map_catalog.json`; chọn thẻ để xem, bấm **Đi thử map này** để đổi scene cục bộ. Server chưa xác nhận quyền vào.
+- Tài liệu cũ ghi kích thước 64×48, 96×96, 80×64 và 64×64 tile; các số này đã lỗi thời so với quy chuẩn mới bên dưới.
+
+Vì vậy, phần đang có là **prototype trình bày và đi thử tuyến bốn map**. Các lớp tile, foreground, tương tác và collision tinh chỉnh vẫn cần làm; dữ liệu cục bộ không đại diện cho luật mở khóa gameplay.
+
+## 2. Quy chuẩn nền tảng
+
+| Thành phần | Chuẩn hiện tại |
+|---|---|
+| Phong cách | 2D pixel top-down, hơi nhìn từ trên xuống; tilemap và sprite cùng lưới, pixel FX tiết chế |
+| Kích thước tile mục tiêu | 32×32 px; sprite và collision không buộc phải phủ toàn tile |
+| Khung hình cơ sở | 640×360, nearest filtering, giữ tỷ lệ và scale nguyên |
+| Mở rộng camera PvE | Có thể mở nhẹ theo chiều ngang đến tối đa khoảng 704–720×360; không thay tọa độ thế giới hoặc luật server |
+| PvP | Khóa FOV và camera cho cả hai người chơi để không tạo lợi thế nhìn xa |
+| Thế giới | Các map chia khu/zone nối nhau; tránh một hình chữ nhật open-world quá lớn |
+| PC và mobile | Chung map, tile, NPC, quest, collision và tọa độ server; khác bố cục HUD, điều khiển, vùng an toàn thao tác và camera PvE |
+
+Kích thước An Khê đã chốt là **48×36 tile**. Trúc Âm có **3 zone**, Thạch Cạn có **2 zone**, Cổ Tỉnh có **5 phòng**. Chưa ấn định kích thước map/zone/phòng còn lại; 48×36 hiện chỉ là canvas đồ họa và thử runtime, không phải quy chuẩn thiết kế mới.
+
+## 3. Cấu trúc tuyến MVP
 
 ```text
-An Khê — hub an toàn
-   └─ Trúc Âm — dược liệu, né, cày đầu
-        └─ Thạch Cạn — quặng, vật cản, tinh anh
-             └─ Cổ Tỉnh — bí cảnh riêng, tổng hợp cơ chế
+An Khê — hub an toàn (48×36)
+  └─ Trúc Âm — 3 zone, khai thác và học chiến đấu
+       └─ Thạch Cạn — 2 zone, đọc địa hình và đối đầu tinh anh
+            └─ Cổ Tỉnh — instance theo phòng, boss chương đầu
+
+Đấu tập PvP — instance riêng, FOV cố định
 ```
 
-Thế giới là các khu nối nhau, không phải mặt phẳng vô hạn.
-Vườn 6 ô là UI cá nhân ở An Khê, không tính map thứ năm.
-Mỗi khu có checkpoint, cổng, phiên bản, giới hạn người và dữ liệu spawn.
+Map được nối bằng cổng có tương tác và trạng thái mở khóa rõ ràng. Mỗi tuyến nguy hiểm có đường rút hoặc checkpoint phù hợp. Người chơi không bị khóa trong khu vực vì quest lỗi hoặc do mất vật phẩm nhiệm vụ.
 
-Tile hình ảnh đề xuất 32×32 px; server dùng tile và phần lẻ, không phụ thuộc zoom.
-Tách nền đi được/vật cản, tương tác, trang trí cao và dữ liệu gameplay xuất riêng.
-Không biến một hình trang trí thành va chạm chỉ vì nó che người chơi.
+## 4. Giao diện bản đồ trên hai nền tảng
 
-## 2. An Khê — `m_an_khe`
+### PC/laptop
 
-Kích thước prototype **48×36 tile** (1536×1152 px ở tile 32×32). Hub an toàn, thử tối đa 2 người.
-Camera chỉ hiển thị một phần world; không còn coi 640×360 là toàn bộ map.
-Nhìn thấy biển đường từ spawn; dịch vụ thiết yếu không bị che hoặc chặn bởi crowd.
+- HUD chơi giữ gọn: sinh lực/linh lực góc trên trái; minimap và tên khu vực góc trên phải; thanh kỹ năng ở cạnh dưới; quest đang theo dõi ở cạnh trái.
+- Phím `M` mở bản đồ toàn khu; `WASD`/phím mũi tên di chuyển; `E` tương tác. Minimap chỉ để định hướng, không chứa nút nhỏ bắt buộc phải bấm.
+- Bản đồ toàn khu mở thành lớp phủ có tên zone, điểm đã phát hiện, cổng đã mở, checkpoint và đường nhiệm vụ hiện tại. Chưa khám phá thì dùng mảng địa hình mờ, không vẽ chính xác quái hoặc node tài nguyên.
+- Bản đồ đóng bằng `M` hoặc `Esc`; không che mất trạng thái quest khi đóng.
 
-| Địa điểm | Nhân vật | Công dụng |
-| --- | --- | --- |
-| Nhà dược | Bà Sâm | Nghỉ, vườn, luyện đan, nghiên cứu |
-| Trạm thủy vụ | Tạ Nghiêm | Khảo sát và chứng cứ |
-| Lò rèn | Đỗ Khê | Học/chế tạo kiếm |
-| Sạp chợ | Hà Tố | Mua giống/nước/hồi phục, bán vật liệu |
-| Cổng làng | Lục Vi | Học quan sát, ghim tuyến đi |
-| Nhà khách | Tống Đức | Quyền tiếp cận Cổ Tỉnh và thông tin tiếp |
+### Mobile
 
-Vườn riêng không ai khác lấy/phá. Bãi đấu tập chỉ chuyển hai người đồng thuận vào
-instance, không bật PvP cho hub. Nghỉ hồi phục không mất tiền.
-Bảng mục tiêu ở journal/hub có đường tới nguồn thiếu, không ép đọc mọi NPC lại.
+- Giữ nguyên thế giới và thiết kế map. D-pad/joystick ảo đặt góc dưới trái; nút tương tác và kỹ năng nằm góc dưới phải trong vùng chạm an toàn.
+- Minimap, quest và trạng thái nhân vật được xếp lại để không nằm dưới tai thỏ, bo góc hoặc vùng gesture hệ điều hành.
+- Chạm minimap mở bản đồ toàn khu; các điểm bấm có vùng chạm lớn và nhãn hiện khi chọn. Không yêu cầu kéo chính xác vào icon nhỏ.
+- Camera PvE có thể lộ thêm một ít không gian theo chiều ngang trên thiết bị rộng; không thu nhỏ nhân vật/UI để nhét thêm nội dung. PvP vẫn dùng cùng FOV cố định giữa các thiết bị.
 
-## 3. Trúc Âm — cụm zone PvE
+### Thành phần dùng chung
 
-Không dùng một rectangle 96×96 duy nhất. Prototype chia thành:
-- `m_truc_am_stream`: Ven Suối **40×28 tile**;
-- `m_truc_am_deep`: Rừng Trúc Sâu **44×32 tile**;
-- `m_truc_am_boar`: Bãi Sơn Trư **36×28 tile**.
+Tên/ID khu vực, biểu tượng quest, trạng thái mở khóa, fog-of-war, điểm dịch chuyển, checkpoint và dữ liệu vị trí dùng chung. Tỉ lệ bố cục UI, phương thức mở bản đồ và điều khiển mới là phần riêng theo nền tảng. Bản đồ không mở menu nạp tiền hay biểu tượng sự kiện phủ lên đường đi.
 
-Ba zone nối logic với nhau để tạo cảm giác thế giới lớn nhưng vẫn giữ mật độ nội dung, camera và spawn dễ kiểm soát. Sơn Trư/Độc Chu vẫn giữ vai trò học chuẩn bị và đi săn có mục tiêu.
+## 5. Phong cách và bố cục từng map
 
-| Tuyến | Người chơi tìm gì? | Nguồn | Nguy hiểm và lý do quay về |
-| --- | --- | --- | --- |
-| Ven suối | Hồi phục, khởi đầu an toàn | Cam Lộ, nước/trúc, dấu khảo sát an toàn | Ít quái; đủ lựa chọn khi hết vật tư |
-| Sườn rừng | Tu vi và nguyên liệu phù | Độc Chu/tơ nhện, Tĩnh Tâm | Đọc vùng độc; không cần thuốc giải độc độc quyền |
-| Bãi Sơn Trư | Tu vi, nguồn tiền bán vật liệu | Da Sơn Trư | Né lao; không đứng giữa nhiều hướng |
-| Đường tắt | Giảm công đi lại | Mở qua khảo sát/sửa cầu | Không tự cộng hệ số loot hoặc reset node |
+Các mô tả dưới đây là hướng dựng art và level. PC/mobile dùng cùng địa hình; chỉ khác khung camera, cách đặt HUD và cách người chơi thao tác.
 
-Giữ cầu hỏng, nước đổi màu, lều bỏ, dấu niêm phong làm điểm định hướng.
-Dấu khảo sát của `q_main_002` là nội dung hướng dẫn không phát XP lặp.
+### 5.1 An Khê — `m_an_khe` — 48×36 tile
 
-Lộ trình mẫu đầu cần đủ nguồn gặp 4 Sơn Trư/2 Độc Chu và 4 Cam Lộ; không bắt mọi
-đối tượng nằm cạnh nhau thành một bãi đứng farm. Có Sơn Trư đơn trước, rồi nhóm nhỏ.
-`poi_truc_am_route` cấp XP một lần sau dẫn khí.
+**Vai trò:** điểm trở về, nhận việc, dịch vụ và vườn cá nhân. Khu an toàn, màu xanh lá dịu, mái ngói nâu đỏ, đá xám ấm và nước xanh ngọc. Silhouette mái nhà và cầu phải đọc được ở kích thước tile; hiệu ứng lá/đom đóm chỉ làm điểm nhấn.
 
-Tuyến tránh đầu: sửa cầu `q_side_001`, khảo sát `poi_safe_bank` và `poi_old_camp`.
-Ba nguồn đủ phần 100 XP thay thế, không đòi cây Tĩnh Tâm 45 phút. Trúc sửa cầu
-lấy ở tuyến an toàn. Người bỏ qua giao tranh `q_main_006` vẫn được mở Thạch Cạn
-bằng điều kiện quest đúng, không bị khóa do thiếu “kill count”.
+**Bố cục:** spawn ở sân làng trung tâm; đường chính dẫn đến nhà dược và bảng chỉ hướng. Lò rèn, sạp chợ và trạm thủy vụ nằm trên nhánh phụ dễ nhìn. Cổng Trúc Âm ở rìa có dấu hiệu thị giác riêng. Vườn sáu ô là giao diện chức năng gắn với nhà dược, không phải map thứ năm. Bãi đấu tập chỉ đưa người chơi sang instance riêng.
 
-## 4. Thạch Cạn — cụm zone PvE
+**PC:** dành khoảng trống quanh spawn và các cửa dịch vụ; bảng địa danh/quest tránh phủ lên NPC. Minimap làm rõ sân, bờ nước, nhà dược và cổng rừng.
 
-Prototype chia thành:
-- `m_thach_can_outer`: Ngoại Vi **48×36 tile**;
-- `m_thach_can_mine`: Mỏ Cũ **40×32 tile**.
+**Mobile:** giữ lối đi rộng quanh nhà dược và cổng; nút tương tác không che cửa hoặc nhân vật. Khi mở map, ưu tiên tên điểm dịch vụ thay cho nhãn trang trí.
 
-Vai trò: quặng làm kiếm, đối thủ tầm xa, vật cản, tinh anh.
-Kẻ Rình Đường giữ tuyến trên dễ định hướng; tuyến dưới có quặng/vật cản nhưng
-ít khoảng thoát. Thạch Vệ có điểm quan sát an toàn để học trước khi giao tranh.
+### 5.2 Trúc Âm — `m_truc_am` — 3 zone
 
-Quặng lấy từ node và loot Kẻ Rình Đường; không đặt toàn bộ nguồn làm kiếm sau
-một boss vốn yêu cầu có kiếm mới qua. Cần tuyến khai thác an toàn hơn, còn người
-thích combat có thể kiếm qua quái. Trúc đã có ở Trúc Âm.
-`poi_thach_can_ledger_view` là mốc khám phá một lần, không thay vật phẩm quest sổ đá.
+**Vai trò:** tuyến đầu dã ngoại, dược liệu và bài học né đòn. Bảng màu xanh trúc lạnh, mặt nước xanh xám và vài điểm vàng nhạt từ dược liệu. Không phủ toàn khu bằng một màu xanh giống nhau: mỗi zone cần khác nhau về đường chân trời, mật độ cây và hình dáng lối đi.
 
-Checkpoint ở rìa, ngoài tầm đánh. Không đánh người chơi lúc chưa nhận snapshot.
-Tầng 2/Hộ Thân là gợi ý chuẩn bị, không phải khóa cửa mới.
-Cổng Cổ Tỉnh yêu cầu `q_main_009` đã nhận thưởng/mở quyền ở server; quyền tồn tại
-bền vững, không chỉ phụ thuộc cầm một chiếc chìa có thể mất.
+| Zone | Nhận diện cảnh quan | Lối chơi và điểm mốc |
+|---|---|---|
+| Ven Suối | Nước và đá sáng, tầm nhìn thoáng | Đường an toàn, Cam Lộ; cầu là mốc dễ nhận ra |
+| Rừng Trúc Sâu | Thân trúc dày, bóng đổ thành cụm | Sơn Trư; các khoảng trống báo trước vị trí né và hướng thoát |
+| Bãi Sơn Trư | Bãi giao tranh cạnh sườn rừng, tương phản cao hơn | Tuyến nguy hiểm hơn; Độc Chu/Tĩnh Tâm và lối tắt sau khảo sát Mạch Bàn |
 
-## 5. Cổ Tỉnh — `d_co_tinh`
+**PC:** minimap hiển thị rõ ba nhánh và hướng quay về; camera có thể rộng hơn cơ sở một chút trong PvE. Không dùng lặp nền trúc khiến người chơi mất phương hướng.
 
-Không dùng một map 64×64 duy nhất. Cổ Tỉnh là **room graph cố định** cho instance solo/party 2 người. Room prototype gồm Entrance 20×14, Root Hall 12×20, Loot 16×12, Spider Combat 22×16, Balance 20×16, Guardian 24×16 và Boss 30×20 tile.
+**Mobile:** đường chính rộng và dễ đọc từ camera thấp hơn; cảnh báo quái hiện gần mép màn hình trước khi bị che bởi joystick. Lối tắt và điểm rút lui dùng biểu tượng lớn, không chỉ dựa vào màu.
 
-| Phòng | Nội dung | Điều được kiểm tra |
-| --- | --- | --- |
-| Cửa giếng | Checkpoint và xem vật tư/loadout | Hiểu đường về, quyền vào |
-| Hành lang rễ | Hai Độc Chu trong lộ trình mẫu | Né và mặt đất nguy hiểm |
-| Buồng cân mạch | Hai nguồn cấp/đường thay thế | Dò mạch; `poi_co_tinh_flow` một lần |
-| Nhà trận | Một Thạch Vệ | Hướng phòng thủ và phản công |
-| Tâm giếng | Mộc Tâm Thủ Trận | Tổng hợp; hạ tâm hoặc niêm phong |
+### 5.3 Thạch Cạn — `m_thach_can` — 2 zone
 
-Không procedural dungeon trong MVP. Người vào sau khi boss bắt đầu không tự có
-công lao; party leader không quyết định thưởng hoặc lựa chọn hội thoại thay người khác.
-Không dùng sát thương để mở một pha chỉ co-op mới giải được.
+**Vai trò:** khai thác quặng, dùng địa hình che chắn và giới thiệu hệ quả của linh mạch bị khai thác. Bảng màu đất vàng xám, đá nâu lạnh, quặng lam sáng. Silhouette đá có cạnh gãy; tránh đặt hiệu ứng quặng sáng cùng màu vùng tấn công.
 
-Mỗi lượt mới có ID riêng do server tạo; reset trong lượt không thành một lần clear.
-Respawn boss cần lượt mới hợp lệ, không rời phòng 1 giây để nhận lại cùng kết quả.
+| Zone | Nhận diện cảnh quan | Lối chơi và điểm mốc |
+|---|---|---|
+| Ngoại Vi | Lối đất rộng, cọc gỗ và xe quặng | Đi vào an toàn, checkpoint ngoài tầm quái, thấy được hai hướng tiến |
+| Mỏ Cũ | Vách đá, quặng lam và trụ chuyển dòng | Vật cản chia tầm nhìn; Kẻ Rình Đường/Thạch Vệ; điểm ngắm giải thích xung đột bằng cảnh vật |
 
-## 6. Node và respawn
+Cửa Cổ Tỉnh yêu cầu `q_main_009` và quyền mở khóa được xác nhận phía server. Vật phẩm chìa có thể kể chuyện nhưng không phải trạng thái mở khóa duy nhất.
 
-Node tài nguyên cá nhân trong map chung: `nodeId`, `resourceTableId`,
-`respawnPolicy`, `mapVersion`, chủ thể và thời điểm tương tác.
-Server kiểm khoảng cách/va chạm/trạng thái; không cho đổi giờ máy để thu sớm.
-Không cần tranh click trong hướng dẫn. Cây hiếm tranh chấp để sau ở vùng tự chọn.
+**PC:** minimap thể hiện hai zone, vùng khuất và checkpoint; địa hình che chắn phải còn đọc được khi thu nhỏ.
 
-Spawn quái theo cụm: vị trí, số lượng, vùng notice/chase/return và generation.
-Dùng timer server trong [bảng quái](03-combat-skills-and-artifacts.md).
-Chỉ respawn khi cụm đã kết thúc và vị trí an toàn; trì hoãn khi chồng nhân vật.
-Không spawn trên checkpoint, cổng, NPC hoặc rương/thao tác bắt buộc.
+**Mobile:** ưu tiên tương phản cao cho vách, đòn xa và lối rút; không đặt nút tương tác lên node quặng hoặc hiệu ứng báo đòn.
 
-Timer/quyền thưởng không reset bởi đổi map, đổi instance hoặc reconnect.
-MVP một nhân vật hoạt động ở tối đa một match, đổi vùng phải đổi epoch/quyền điều khiển.
-Đổi vùng thất bại quay nguồn/checkpoint an toàn, không nhân người hoặc tiêu chìa lần hai.
+### 5.4 Cổ Tỉnh — `m_co_tinh` — instance theo phòng
 
-## 7. Rủi ro và tài sản
+**Vai trò:** kiểm tra khả năng chuẩn bị, đọc dấu hiệu, né đòn và phối hợp trước boss Mộc Tâm Thủ Trận. Art chuyển từ đá khô sang rễ cổ và ánh lam lục; mỗi phòng có một silhouette riêng để người chơi nhớ thứ tự.
 
-| Khu | PvP | Chết/thất bại |
-| --- | --- | --- |
-| Hub | Chỉ đấu tập đồng thuận trong instance | Không mất tài sản |
-| Hoang dã MVP | Không | Giữ XP/đồ đã commit; vật tư đã dùng vẫn tiêu |
-| Bí cảnh MVP | Không | Không có thưởng của encounter thất bại |
-| Vùng tranh đoạt tương lai | Tự chọn, chưa triển khai | Phải chốt và thông báo luật riêng trước vào |
+| Phòng | Cảnh quan và dấu hiệu | Cơ chế học |
+|---|---|---|
+| Cửa giếng | Bia đá, checkpoint và vùng chuẩn bị | Kiểm tra vật tư trước khi đi tiếp |
+| Hành lang rễ | Rễ chắn đường, vệt độc nổi rõ | Đọc vùng nguy hiểm và né |
+| Buồng cân mạch | Hai nguồn sáng với lối vòng nhìn thấy được | Quan sát, chọn nguồn/lối thay thế |
+| Nhà trận | Nền gạch hình học, một Thạch Vệ | Canh nhịp đỡ và lộ sườn |
+| Tâm giếng | Không gian tròn, dấu hiệu boss trước khi kích hoạt | Tổng hợp các kỹ năng đã học |
 
-Không âm thầm đổi các map MVP thành full-loot. Nguồn thưởng đã quyết toán được giữ,
-không phải “mang về làng mới sở hữu” trong bản MVP này. Trở về là nhịp sử dụng thành
-quả/chữa trị/đột phá, không là nút tịch thu loot nếu người chơi chết giữa đường.
+Bố cục cố định cho MVP; chưa procedural. Người chơi có thể rút khỏi encounter theo checkpoint/luật instance đã báo trước. Vào sau khi boss bắt đầu không tự nhận điều kiện quest.
 
-## 8. Nhịp phiên và mở rộng
+**PC:** sơ đồ phòng là một chuỗi nút; phòng chưa khám phá không lộ sơ đồ chi tiết. **Mobile:** chỉ báo phòng hiện tại và phòng kế; tránh minimap nhiều chi tiết trong combat.
 
-Đi đường có định hướng và thông tin nhưng không kéo dài vô ích. Đo riêng thời gian
-di chuyển, combat, UI và chờ. Chuyến mẫu 15–20 phút là giả thuyết cần thử.
-Ngày/đêm chỉ tạo không khí; không khóa quest chính vào giờ thật/nửa đêm.
+### 5.5 Đấu tập PvP — instance riêng
 
-Thanh Lộc Viện, Phường Bạch Sa, Đầm Vân Trạch và Cựu Đài Khuyết là hướng Alpha,
-không thêm vào teleport list khi chưa có nội dung. Không tăng số map chỉ để tăng
-thời gian cày; trước hết mỗi map hiện tại phải tạo quyết định tuyến đi có ý nghĩa.
+Giữ arena đơn giản, nền tối trung tính và vật cản dễ đọc. Không để khác biệt góc nhìn, zoom, minimap hoặc độ rộng màn hình thay đổi lượng thông tin chiến đấu. Map chung của An Khê vẫn an toàn; vào đấu tập luôn cần lựa chọn rõ ràng và đồng thuận.
 
-## 9. Nghiệm thu
+## 6. UI bản đồ toàn khu và trạng thái khám phá
 
-Từ tài khoản mới kiểm đủ đường ra/về, biển định hướng, camera/va chạm đúng server,
-cổng theo quest, node cá nhân, quái không xuyên tường, spawn an toàn, đổi instance
-không farm lại source, reconnect không kẹt. Cả tuyến chiến đấu và đường tránh phải
-dẫn tới tiến trình chính. Xem [kịch bản liên kết](progression-pve-spec.md).
+Màn hình bản đồ là lớp giao diện riêng, không phải ảnh nền của map đang chơi. Overlay prototype có bốn thẻ, ảnh preview, mô tả và nút **Đi thử map này**. Nút này nạp map local để kiểm tra tuyến; không xác nhận quest hoặc quyền vào phía server. Bản hoàn chỉnh gồm:
+
+1. **Tên khu + mức nguy hiểm** ở đầu bảng; nguy hiểm có nhãn chữ và biểu tượng, không chỉ đổi màu.
+2. **Sơ đồ tuyến** ở giữa: An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh; cổng khóa ghi điều kiện mở.
+3. **Thẻ điểm quan tâm**: NPC/dịch vụ, checkpoint, lối tắt đã mở và quest đang theo dõi.
+4. **Thông tin zone** khi chọn: mục tiêu, loại đối thủ đã biết, tài nguyên liên quan và đường rút.
+5. **Chỉ đường** chỉ hiển thị nơi đã phát hiện; không khẳng định vị trí quái/node theo thời gian thực nếu server không cung cấp.
+
+Không ghi số lượng loot, giá bán, xác suất rơi hoặc thưởng quest trực tiếp vào art. Tên nguyên liệu và điểm farm phải trỏ đến catalog kinh tế hiện hành để tránh lệch nguồn và chỗ tiêu tài nguyên.
+
+## 7. Quy tắc rủi ro, tài nguyên và chuyển map
+
+| Khu | PvP | Mất vật phẩm khi thất bại | Thông báo bắt buộc |
+|---|---|---|---|
+| An Khê | Không; trừ instance đấu tập tự nguyện | Không | Khu an toàn |
+| Trúc Âm/Thạch Cạn MVP | Không | Giữ đồ đã sở hữu | Quái, lối về và checkpoint |
+| Cổ Tỉnh MVP | Không | Encounter thất bại không phát thưởng | Solo/co-op, điều kiện vào và cách rút |
+| Tranh đoạt tương lai | Chưa khóa | Chưa khóa | Xác nhận rủi ro trước khi vào |
+
+Node tài nguyên MVP có trạng thái thu cá nhân trong map chung; server kiểm tra khoảng cách, trạng thái node và thời gian tương tác. Mỗi node cần `nodeId`, `resourceTableId`, `respawnPolicy`, `mapVersion`. Loot, giá bán và chi phí craft/nâng cấp lấy từ catalog kinh tế đã có; không tạo bảng drop hoặc giá riêng trong tài liệu map.
+
+Cổng kiểm tra quest, nhóm và sức chứa ở server; client không tự chọn `mapId`/spawn hợp lệ. Chuyển map tạo quyền điều khiển/`sessionEpoch` mới. Nếu chuyển thất bại, quay về trạng thái nguồn hoặc checkpoint; không tiêu vật phẩm hai lần. Mỗi nhân vật chỉ hiện diện trong một match gameplay tại một thời điểm.
+
+## 8. Kế hoạch dựng map trong Godot
+
+1. **Bốn nền prototype:** đã có art, preview, spawn, các vùng, blocker thô và chuyển map cục bộ. An Khê giữ kích thước 48×36 tile.
+2. **Trúc Âm:** ba vùng dữ liệu là Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư; cần nắn đường và collision theo gameplay.
+3. **Thạch Cạn:** hai vùng dữ liệu là Ngoại Vi, Mỏ Cũ; cần hoàn thiện checkpoint, encounter và cổng server.
+4. **Cổ Tỉnh:** năm phòng cố định đã có nhãn/vùng; prototype khóa camera theo phòng, còn thiếu encounter, điều kiện vào và sơ đồ khám phá.
+5. **Nền tảng:** bổ sung input touch và HUD mobile; giới hạn camera PvE 704–720×360, giữ PvP FOV cố định.
+
+### Cổng nghiệm thu
+
+- Không có node thiết yếu bị HUD hoặc safe-area che trên PC/mobile.
+- Đường đi, vùng va chạm, vật cản che nhân vật và lối rút khớp với mục đích art.
+- Spawn/checkpoint an toàn; người chơi không vào tầm đánh trước khi nhận trạng thái từ server.
+- Minimap phản ánh đúng kích thước map, vị trí hiện tại, cổng đã biết và fog-of-war.
+- Tất cả tên nguyên liệu/quest/drop tham chiếu đúng dữ liệu nguồn; không trùng hoặc phát sinh tiền/vật phẩm ngoài hệ thống kinh tế.
+- PvP có FOV đồng nhất; test trên tỉ lệ PC và mobile, không chỉ editor viewport.
+
+## 9. Rủi ro thiết kế còn mở
+
+- Art An Khê hiện tại là PNG RGB một lớp, không thể gọi là tileset hoặc coi là nền production.
+- Chưa có tileset nhất quán cho bốn map; ảnh AI cần tách và kiểm từng tile/frame trước khi dùng làm gameplay.
+- Ba map ngoài An Khê tạm lấy canvas 48×36 tile để dựng art/runtime; kích thước map và từng zone/phòng chưa được chốt.
+- Travel prototype chạy phía client, chưa dùng quyền vào/quest của server; chưa có touch controls hoặc fog-of-war.
+- Ngưỡng độ rộng camera PvE mobile 704–720×360 cần kiểm tra trên thiết bị thật; FOV PvP vẫn khóa.

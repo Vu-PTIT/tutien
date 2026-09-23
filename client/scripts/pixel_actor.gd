@@ -1,5 +1,5 @@
 class_name PixelActor
-extends Node2D
+extends CharacterBody2D
 ## Sprite atlas frames are presentation only; combat stays on the server.
 const SHEET = preload("res://assets/pixel/cultivator.png")
 var clock: float = 0.0

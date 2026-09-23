@@ -161,3 +161,38 @@ runtime cho lần sửa này**: engine local lỗi khởi động, chưa có run
 Nền làng chưa phải TileMap, atlas AI chưa chuẩn hóa pixel/frame thủ công;
 không thêm PvE hoặc quest lưu trữ. Xem `ui-product-slice.md`. Thay đổi hiện
 chưa push; lịch sử CI đã đạt ở trên chỉ áp dụng các commit được ghi rõ.
+
+## 8. Prototype map An Khê — 23/09/2026, bản local
+
+- Tạo `client/assets/pixel/an_khe_world_v1.png` theo ảnh An Khê gốc làm style
+  reference; đây là nền pixel 4:3 cho world 48×36 tile (1536×1152 px).
+- Đổi người chơi sang `CharacterBody2D`, thêm `Camera2D` cuộn theo nhân vật,
+  giới hạn camera theo world và thêm blocker va chạm chữ nhật cho biên, nhà,
+  vườn và sông. Blocker là prototype, chưa khớp từng hàng rào/bụi cây.
+- Minimap lấy kích thước world từ `AnKheMap`, hiển thị tọa độ tile 32 px.
+- Thêm `client/data/map_catalog.json` cho bốn map MVP và overlay sơ đồ tuyến
+  pixel trong HUD; `M` mở, `Esc` đóng, chọn map xem mô tả/preview. Tuyến chưa
+  có runtime chuyển map.
+- Static scene audit và `git diff --check` đạt. Smoke kiểm tra map asset,
+  bounds, camera, blockers và overlay nhưng chưa chạy bằng Godot trong môi
+  trường hiện tại.
+- Các map Trúc Âm/Thạch Cạn/Cổ Tỉnh, TileMap/tileset tách lớp, collision chi
+  tiết, cổng/checkpoint/quest và HUD mobile chưa triển khai.
+
+Thay đổi chưa push. Chi tiết giao diện và hướng dựng tiếp: `ui-product-slice.md`
+và `game-design/04-world-and-maps.md`.
+
+## 9. Prototype bốn map và thử tuyến cục bộ — 23/09/2026
+
+- Tạo ba nền pixel mới cho Trúc Âm, Thạch Cạn và Cổ Tỉnh, đồng bộ phong cách
+  với An Khê. Art đang là PNG một lớp, chưa phải tileset production.
+- Chuyển từ scene An Khê riêng sang `map_world.tscn` và `game_map.gd`; catalog
+  cấp ảnh nền, điểm spawn, vùng/phòng, blocker và chế độ camera.
+- Route overlay có ảnh preview và nút **Đi thử map này**; tải map cục bộ, cập
+  nhật HUD/minimap và tọa độ. Ba map mới dùng canvas 48×36 tạm thời, không khóa
+  kích thước thiết kế.
+- Trúc Âm có Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư; Thạch Cạn có Ngoại Vi, Mỏ Cũ;
+  Cổ Tỉnh có năm phòng và camera khóa theo phòng. Quest/unlock và gameplay vẫn
+  chưa được xác nhận/nối với server.
+- Static scene audit và `git diff --check` đạt; Godot executable không có trong
+  môi trường nên `presentation_smoke.gd` chưa chạy.
