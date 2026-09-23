@@ -1,8 +1,8 @@
 # Nhật ký phát triển dự án Tu Tiên
 
 **Repository:** [`Vu-PTIT/tutien`](https://github.com/Vu-PTIT/tutien)<br>
-**Ngày rà soát:** 20/09/2026<br>
-**Nhánh ghi nhật ký:** `feat/authoritative-combat`
+**Ngày rà soát:** 23/09/2026<br>
+**Nhánh ghi nhật ký:** `feat/inventory-rewards`
 **Mục đích:** ghi lại những gì đã được commit trên Git, trạng thái sản phẩm hiện tại và thứ tự triển khai tiếp theo.
 
 > Nhật ký này được đối chiếu từ lịch sử commit, cây thư mục, các nhánh Git và PR trên GitHub. Nội dung thiết kế chỉ được gọi là “đã làm” khi có file hoặc mã tương ứng trong repository.
@@ -159,8 +159,10 @@ runtime cho lần sửa này**: engine local lỗi khởi động, chưa có run
 `docs/ui-previews` là render bố cục tĩnh, không phải screenshot Godot.
 
 Nền làng chưa phải TileMap, atlas AI chưa chuẩn hóa pixel/frame thủ công;
-không thêm PvE hoặc quest lưu trữ. Xem `ui-product-slice.md`. Thay đổi hiện
-chưa push; lịch sử CI đã đạt ở trên chỉ áp dụng các commit được ghi rõ.
+không thêm PvE hoặc quest lưu trữ. Xem `ui-product-slice.md`. Ghi chú “chưa
+push” ở thời điểm sửa local đã hết hiệu lực: phần UI/pixel sau đó được công bố
+qua chuỗi commit `873ba24` → `97d467e`; kết quả CI cũ vẫn chỉ áp dụng các commit
+được ghi rõ.
 
 ## 8. Prototype map An Khê — 23/09/2026, bản local
 
@@ -179,8 +181,10 @@ chưa push; lịch sử CI đã đạt ở trên chỉ áp dụng các commit đ
 - Các map Trúc Âm/Thạch Cạn/Cổ Tỉnh, TileMap/tileset tách lớp, collision chi
   tiết, cổng/checkpoint/quest và HUD mobile chưa triển khai.
 
-Thay đổi chưa push. Chi tiết giao diện và hướng dựng tiếp: `ui-product-slice.md`
-và `game-design/04-world-and-maps.md`.
+Trạng thái “chưa push” ở thời điểm ghi prototype An Khê đã được giải quyết.
+Toàn bộ prototype bốn map/UI liên quan hiện nằm trên `feat/inventory-rewards`,
+với mốc tính năng mới nhất `1fced41`. Chi tiết giao diện và hướng dựng tiếp:
+`ui-product-slice.md` và `game-design/04-world-and-maps.md`.
 
 ## 9. Prototype bốn map và thử tuyến cục bộ — 23/09/2026
 
@@ -196,3 +200,85 @@ và `game-design/04-world-and-maps.md`.
   chưa được xác nhận/nối với server.
 - Static scene audit và `git diff --check` đạt; Godot executable không có trong
   môi trường nên `presentation_smoke.gd` chưa chạy.
+
+
+## 10. Đối chiếu GitHub và hợp nhất nhật ký — 23/09/2026
+
+Phần này được rà lại trực tiếp từ branch/ref, commit và PR trên GitHub để sửa
+các trạng thái cũ kiểu “local/chưa push” và ghi nhận các nhánh phát triển song song.
+
+### Trạng thái branch tại thời điểm rà soát
+
+| Nhánh | Head | So với `main` | Vai trò hiện tại |
+|---|---|---:|---|
+| `main` | `94fca39` | mốc gốc | Tài liệu game-design v2 + nền Godot/Nakama; chưa nhận các feature mới. |
+| `feat/social-backend` | `d6f07ef` | đã merge qua PR #1 | Auth, bạn bè, chat, group/tông môn-bang hội nền. |
+| `feat/authoritative-combat` | `ab26fb7` | +4 commit | Đấu tập online authoritative; PR #2 vẫn mở dạng draft, chưa merge. |
+| `feat/inventory-rewards` | `1fced41` | +23 commit | Nhánh đang chứa inventory/reward, UI pixel, kế hoạch PC/mobile và prototype 4 map. |
+| `feat/economy-balance-v1` | `3afa1a5` | +36 commit | Nhánh song song cho cân bằng tiền tệ, catalog vật phẩm/kỹ năng/trang bị và validator economy. |
+| `docs/game-design-v2` | `bb645a4` | nhánh tài liệu gốc | Nguồn của bộ game-design v2 đã đưa vào `main`. |
+
+### Các mốc đã thực sự được push sau nhật ký 20/09
+
+**21/09 — inventory/reward và giao diện pixel**
+
+- `60189fd` — persistent inventory + starter reward idempotent.
+- `a0ad66e` — sửa smoke kiểm quyền ghi Storage bằng PUT và xác nhận tài sản không đổi.
+- `05f5dd0` — ghi nhận inventory milestone đã công bố và CI live thành công.
+- `85fe7e5` — làm rõ progression/PvE loop.
+- `873ba24` — đưa visual bible thành Godot UI slice có thể chạy/chỉnh.
+- `1c9e967`, `ce4b47a`, `d252e65` — sửa preview/editor và căn HUD/world/combat theo concept.
+
+**22/09 — pixel asset, PC/mobile, map spec và asset runtime**
+
+- `2812da5` — rebuild pixel village và giao diện Godot editable.
+- `97d467e` — công bố lại đầy đủ asset pixel đã tối ưu, xử lý tình trạng asset PNG bị thiếu/hỏng.
+- `72e13a1`, `9a7d556`, `e258028` — thêm và đưa kế hoạch PC/mobile thành cổng bắt buộc trong roadmap.
+- `f3a2e00`, `ef1f5b2`, `810131f` — đặc tả kích thước/bố cục map PC-mobile và đồng bộ world-map design.
+- `24ce73c`, `15ef6bb` — triển khai quản lý asset/character phía server, logic inventory, test và client imports.
+
+**23/09 — prototype thế giới/map**
+
+- `1fced41` — **feat: complete pixel maps and game UI prototype**.
+- Có 4 nền map: An Khê, Trúc Âm, Thạch Cạn, Cổ Tỉnh; dùng chung `map_world.tscn`
+  + `game_map.gd`, catalog spawn/zone/blocker/camera và route overlay trong HUD.
+- An Khê khóa 48×36 tile; ba map còn lại dùng canvas prototype 48×36 để thử tuyến,
+  chưa phải kích thước production cuối.
+- Player đã chuyển sang `CharacterBody2D`, có `Camera2D`, blocker va chạm thô,
+  minimap theo map và chuyển map cục bộ.
+- Phần này **đã push lên GitHub**. Tuy nhiên TileMap/tileset production, collision
+  chi tiết, fog-of-war, touch HUD, quest/unlock server, NPC/PvE encounter và boss
+  vẫn chưa được coi là hoàn thành.
+
+### Nhánh economy song song — 22/09
+
+Nhánh `feat/economy-balance-v1` không nằm trong head của nhánh map hiện tại,
+nhưng là một phần lịch sử project và cần giữ khi hợp nhất sau này:
+
+- `74c9a81` → `43a8da7`: economy balance v1, quest budget, shop/craft, market,
+  direct trade, sink/faucet và đường cong cường hóa.
+- `cb70c28` → `2ae73c4`: content pack economy gồm metadata, recipe, trang bị,
+  kỹ năng và item catalog.
+- `000d178`, `06a36cc`, `3afa1a5`: validator/test, tài liệu và CI cho content pack economy.
+- Đây chủ yếu là **design/data + validation**; chưa đồng nghĩa runtime market,
+  shop, craft hoặc cường hóa đã được triển khai hoàn chỉnh.
+
+### PR và trạng thái hợp nhất
+
+- PR #1 `feat/social-backend` → `main`: **đã merge** ngày 16/09/2026.
+- PR #2 `feat/authoritative-combat` → `main`: **vẫn mở dạng draft**, head
+  `ab26fb7`, chưa merge.
+- Chưa có PR hợp nhất `feat/inventory-rewards` hoặc `feat/economy-balance-v1`
+  vào `main`.
+- Vì vậy `main` hiện chưa phản ánh đầy đủ sản phẩm đang có trên các feature branch.
+
+### Kết luận trạng thái project sau rà soát
+
+Đã có nền backend xã hội, combat authoritative prototype, inventory/reward có
+kiểm thử, giao diện pixel Godot, kế hoạch PC/mobile, bốn map prototype và một
+nhánh economy/data tương đối chi tiết. Phần thiếu quan trọng để tạo vertical
+slice chơi được vẫn là: hợp nhất nhánh, PvE encounter/AI + loot authoritative,
+quest/story runtime, NPC/tương tác, resource loop, runtime economy, TileMap/
+collision production và hoàn thiện mobile controls.
+
+Mốc tính năng mới nhất trước commit cập nhật nhật ký này: `1fced41`.
