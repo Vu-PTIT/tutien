@@ -318,3 +318,9 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 - Restored matching detailed biome terrain and 128 px landmark regions from `c7767a2`; kept TileMap layers, independent props, gates, collision and room camera behavior.
 - Removed painted background fallback/loading, added complete PNG integrity audit and four-map runtime asset checks.
 - See `map-runtime-repair-2026-09-24.md` for asset provenance, checks and remaining art limitations.
+
+## 2026-09-25 — Unify engine and CI/CD version to Godot 4.6.1 Standard
+
+- Standardized Godot version to 4.6.1 across `client/project.godot`, `.github/workflows/ci.yml` (both server integration and client offline suites), and documentation (`README.md`, `combat-prototype.md`, `social-backend.md`, `inventory-and-rewards.md`, `ui-product-slice.md`).
+- Eliminated dual-version matrix and version flip-flopping between 4.4 and 4.6 caused by local Godot 4.6.1 editor auto-updates.
+

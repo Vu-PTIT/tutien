@@ -1,6 +1,6 @@
 # Backend tương tác người chơi — v0.2
 
-Nền tảng hiện có: Godot 4.4.1 / GDScript, Nakama 3.37.0 / TypeScript,
+Nền tảng hiện có: Godot 4.6.1 / GDScript, Nakama 3.37.0 / TypeScript,
 PostgreSQL 16.8. Các API này hoạt động độc lập với di chuyển, chiến đấu và bản đồ.
 
 ## Chạy và kiểm tra
@@ -30,7 +30,7 @@ volume dữ liệu. Không cần tạo bảng riêng ngoài migration có sẵn 
 
 - Build TypeScript và 23 unit test: đạt.
 - `nakama check --runtime.path server/build` bằng Nakama 3.37.0: đạt.
-- Godot 4.4.1: kiểm tra cú pháp adapter/bộ smoke và chạy scene gốc headless: đạt.
+- Godot 4.6.1: kiểm tra cú pháp adapter/bộ smoke và chạy scene gốc headless: đạt.
 - Smoke HTTP/WebSocket với PostgreSQL thật và smoke adapter Godot: **chưa chạy**.
   Workspace không có Docker và không cho chạy PostgreSQL dưới tài khoản không
   phải root. Workflow đã có các bước chạy hai bộ smoke này khi code được đẩy lên.

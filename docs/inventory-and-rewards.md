@@ -85,7 +85,7 @@ Mốc này chưa triển khai encounter/loot.
 
 - `npm --prefix server test`: 64 unit test, gồm migration, invalid schema, CAS cạnh
   tranh, replay/reconnect, giả payload, đầy túi, tràn số dư và lỗi trước/sau commit.
-- Godot 4.4.1: import và chạy scene; live panel test tại `client/tests/inventory_smoke.gd`.
+- Godot 4.6.1: import và chạy scene; live panel test tại `client/tests/inventory_smoke.gd`.
 - `node scripts/inventory-smoke.mjs`: Docker local, tài khoản riêng cho từng ca;
   concurrent init/claim cùng ID/khác ID, SQL kiểm receipt, migration, túi đầy,
   quyền đọc/ghi và restart Nakama rồi xác thực/replay.

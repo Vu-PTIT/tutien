@@ -29,7 +29,7 @@ minimap, thanh phím tắt và túi đồ dạng lưới.
 Khung hình gốc 640 × 360; cửa sổ mặc định 1280 × 720, nearest filtering,
 integer viewport scaling và snap transform. Giữ tỷ lệ, không kéo giãn hai
 chiều độc lập. Cơ sở cấu hình:
-[Godot ProjectSettings 4.4](https://docs.godotengine.org/en/4.4/classes/class_projectsettings.html).
+[Godot ProjectSettings 4.6](https://docs.godotengine.org/en/4.6/classes/class_projectsettings.html).
 
 ## Cách xem và thao tác
 

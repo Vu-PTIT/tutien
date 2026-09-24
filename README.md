@@ -9,7 +9,7 @@ Xem [hướng dẫn API và kết nối Godot](docs/social-backend.md).
 
 ## Chạy nhanh trên Windows
 
-1. Cài **Godot 4.4.1 Standard**, **Docker Desktop** (Linux containers). Node.js **22.14.0** chỉ cần khi sửa/test server ngoài Docker.
+1. Cài **Godot 4.6.1 Standard**, **Docker Desktop** (Linux containers). Node.js **22.14.0** chỉ cần khi sửa/test server ngoài Docker.
 2. Clone repo và khởi động backend:
 
 ```sh
@@ -69,6 +69,6 @@ lưu trong `server/vendor` kèm giấy phép. Không dùng API Node.js trong run
 
 ## Tài liệu chính thức
 
-- https://docs.godotengine.org/en/4.4/
+- https://docs.godotengine.org/en/4.6/
 - https://heroiclabs.com/docs/nakama/getting-started/install/docker/
 - https://heroiclabs.com/docs/nakama/server-framework/typescript-runtime/

@@ -63,7 +63,7 @@ Không bắt đầu encounter thưởng mới khi còn settlement chờ đầy t
 
 ## 5. Bằng chứng kiểm thử đã ghi trước cập nhật
 
-Mốc combat local từng đạt 42/42 unit test; Godot 4.4.1 import/chạy scene.
+Mốc combat local từng đạt 42/42 unit test; Godot 4.6.1 import/chạy scene.
 Mốc tài sản đã ghi 64 unit test và CI run
 [35566231466](https://github.com/Vu-PTIT/tutien/actions/runs/35566231466)
 thành công trên `a0ad66e`, gồm Nakama/PostgreSQL, inventory/restart, social và Godot.

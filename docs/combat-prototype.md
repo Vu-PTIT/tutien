@@ -9,7 +9,7 @@ bằng một trận authoritative trước khi làm tài sản và nội dung l�
 docker compose up --build -d
 ```
 
-Mở `client/project.godot` bằng Godot 4.4.1. Chạy hai cửa sổ với **hai tài khoản
+Mở `client/project.godot` bằng Godot 4.6.1. Chạy hai cửa sổ với **hai tài khoản
 thiết bị khác nhau**. Từ terminal có `godot` trong PATH, tại thư mục repo:
 
 ```sh
