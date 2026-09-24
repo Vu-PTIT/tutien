@@ -5,7 +5,7 @@ cung cấp. Tài nguyên AI-generated, không phải tileset vẽ/tách thủ c�
 
 | File | Kích thước | Dùng trong project |
 | --- | --- | --- |
-| `an_khe.png` | 1672 × 941 RGB | Nền An Khê, TextureRect 640 × 360 |
+| `an_khe.png` | 640 × 360 RGB | Nền An Khê, TextureRect 640 × 360 |
 | `cultivator.png` | 1182 × 1330 RGBA | 4 hướng × 4 frame, nền trong suốt |
 | `icons.png` | 1254 × 1254 RGBA | 16 icon, nền trong suốt |
 | `hero_idle.tres` | AtlasTexture | Nhân vật trong editor và chân dung HUD |
