@@ -6,8 +6,8 @@ cung cấp. Tài nguyên AI-generated, không phải tileset vẽ/tách thủ c�
 | File | Kích thước | Dùng trong project |
 | --- | --- | --- |
 | `an_khe.png` | 640 × 360 RGB | Nền An Khê, TextureRect 640 × 360 |
-| `cultivator.png` | 1182 × 1330 RGBA | 4 hướng × 4 frame, nền trong suốt |
-| `icons.png` | 1254 × 1254 RGBA | 16 icon, nền trong suốt |
+| `cultivator.png` | 1182 × 1330 transparent PNG | 4 hướng × 4 frame, nền trong suốt |
+| `icons.png` | 1254 × 1254 transparent PNG | 16 icon, nền trong suốt |
 | `hero_idle.tres` | AtlasTexture | Nhân vật trong editor và chân dung HUD |
 | `icon_0.tres` … `icon_15.tres` | AtlasTexture | Icon dùng lại trong HUD/túi |
 | `ui_font.ttf` | DejaVu Sans | Tiếng Việt; license `FONT-LICENSE.txt` |
