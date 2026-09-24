@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "tile_set": "res://assets/pixel/terrain/an_khe_terrain.tres",
+  "base_tile": 0,
+  "regions": [
+    {
+      "rect": [
+        0,
+        0,
+        48,
+        36
+      ],
+      "tile": 0
+    },
+    {
+      "rect": [
+        20,
+        0,
+        7,
+        36
+      ],
+      "tile": 1
+    },
+    {
+      "rect": [
+        0,
+        16,
+        48,
+        5
+      ],
+      "tile": 1
+    },
+    {
+      "rect": [
+        42,
+        0,
+        6,
+        36
+      ],
+      "tile": 2
+    },
+    {
+      "rect": [
+        17,
+        22,
+        7,
+        9
+      ],
+      "tile": 3
+    }
+  ],
+  "detail_regions": [
+    {
+      "rect": [
+        5,
+        5,
+        9,
+        8
+      ],
+      "tile": 4
+    },
+    {
+      "rect": [
+        26,
+        4,
+        11,
+        9
+      ],
+      "tile": 4
+    },
+    {
+      "rect": [
+        30,
+        13,
+        10,
+        7
+      ],
+      "tile": 5
+    },
+    {
+      "rect": [
+        4,
+        23,
+        13,
+        8
+      ],
+      "tile": 6
+    },
+    {
+      "rect": [
+        23,
+        23,
+        9,
+        8
+      ],
+      "tile": 6
+    }
+  ],
+  "foreground_regions": [
+    {
+      "rect": [
+        1,
+        1,
+        47,
+        2
+      ],
+      "tile": 7
+    }
+  ]
+}

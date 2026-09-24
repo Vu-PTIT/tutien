@@ -1,11 +1,19 @@
 class_name GameMap
 extends Node2D
-## Shared world runtime for the four maps. The painted map is split into
-## editable tile cells at load time while gameplay objects remain independent scenes.
+## Shared world runtime for the four maps.
+## Gameplay now uses reusable 32 px TileSet atlases + compact layout data.
+## Painted world PNG files are retained only for preview/minimap/fallback rendering.
 
 const TILE_SIZE_DEFAULT := 32
 const INTERACTABLE_SCENE = preload("res://scenes/map_interactable.tscn")
 const WATER_RIPPLE_SCENE = preload("res://scenes/map_water_ripple.tscn")
+
+const MAP_LAYOUTS := {
+	"m_an_khe": "res://data/maps/an_khe.json",
+	"m_truc_am": "res://data/maps/truc_am.json",
+	"m_thach_can": "res://data/maps/thach_can.json",
+	"m_co_tinh": "res://data/maps/co_tinh.json",
+}
 
 var map_data: Dictionary = {}
 var map_id: String = ""
@@ -59,8 +67,8 @@ func _ready() -> void:
 		var texture := load(preview_path) as Texture2D
 		if texture != null:
 			background.texture = texture
-	var rasterized := _build_raster_ground_layer(background.texture)
-	background.visible = not rasterized
+	var tiled := _build_authored_tile_layers()
+	background.visible = not tiled
 	background.position = map_size_px / 2.0
 	if background.texture != null:
 		background.scale = map_size_px / Vector2(background.texture.get_size())
@@ -81,30 +89,53 @@ func _ready() -> void:
 	_update_area_and_camera($Actors/Player.position)
 	update_interaction_focus($Actors/Player.position)
 
-func _build_raster_ground_layer(source_texture: Texture2D) -> bool:
-	if source_texture == null:
+func _build_authored_tile_layers() -> bool:
+	var layout_path := str(MAP_LAYOUTS.get(map_id, ""))
+	if layout_path.is_empty() or not FileAccess.file_exists(layout_path):
 		return false
-	var image := source_texture.get_image()
-	if image == null or image.is_empty():
+	var file := FileAccess.open(layout_path, FileAccess.READ)
+	if file == null:
 		return false
-	image.resize(int(map_size_px.x), int(map_size_px.y), Image.INTERPOLATE_NEAREST)
-	image.convert(Image.FORMAT_RGBA8)
-	var atlas := TileSetAtlasSource.new()
-	atlas.texture = ImageTexture.create_from_image(image)
-	atlas.texture_region_size = Vector2i(tile_size_px, tile_size_px)
-	for y in range(map_size_tiles.y):
-		for x in range(map_size_tiles.x):
-			atlas.create_tile(Vector2i(x, y))
-	var tile_set := TileSet.new()
-	tile_set.tile_size = Vector2i(tile_size_px, tile_size_px)
-	tile_set.add_source(atlas, 0)
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if not parsed is Dictionary:
+		return false
+	var layout: Dictionary = parsed
+	var tile_set_path := str(layout.get("tile_set", ""))
+	var tile_set := load(tile_set_path) as TileSet
+	if tile_set == null:
+		return false
 	var ground: TileMapLayer = $WorldLayers/GroundLayer
-	ground.tile_set = tile_set
-	for y in range(map_size_tiles.y):
-		for x in range(map_size_tiles.x):
-			var cell := Vector2i(x, y)
-			ground.set_cell(cell, 0, cell)
+	var detail: TileMapLayer = $WorldLayers/DetailLayer
+	var foreground: TileMapLayer = $WorldLayers/ForegroundLayer
+	for layer: TileMapLayer in [ground, detail, foreground]:
+		layer.tile_set = tile_set
+		layer.clear()
+	_fill_layer(ground, [{"rect": [0, 0, map_size_tiles.x, map_size_tiles.y], "tile": int(layout.get("base_tile", 0))}])
+	_fill_layer(ground, layout.get("regions", []))
+	_fill_layer(detail, layout.get("detail_regions", []))
+	_fill_layer(foreground, layout.get("foreground_regions", []))
 	return ground.get_used_cells().size() == map_size_tiles.x * map_size_tiles.y
+
+func _fill_layer(layer: TileMapLayer, regions: Array) -> void:
+	for value: Variant in regions:
+		if not value is Dictionary:
+			continue
+		var region: Dictionary = value
+		var rect_values: Array = region.get("rect", [])
+		if rect_values.size() < 4:
+			continue
+		var tile_index := int(region.get("tile", 0))
+		var atlas_coords := Vector2i(tile_index % 4, tile_index / 4)
+		var rect := Rect2i(
+			Vector2i(int(rect_values[0]), int(rect_values[1])),
+			Vector2i(int(rect_values[2]), int(rect_values[3]))
+		)
+		for y in range(rect.position.y, rect.end.y):
+			for x in range(rect.position.x, rect.end.x):
+				var cell := Vector2i(x, y)
+				if cell.x < 0 or cell.y < 0 or cell.x >= map_size_tiles.x or cell.y >= map_size_tiles.y:
+					continue
+				layer.set_cell(cell, 0, atlas_coords)
 
 func _build_interactables() -> void:
 	var root: Node2D = $Actors

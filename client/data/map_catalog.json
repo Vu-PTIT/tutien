@@ -13,7 +13,7 @@
       "camera_mode": "map",
       "spawn_tiles": [24, 18],
       "summary": "Hub an toàn • làng khởi đầu",
-      "details": "An Khê 48×36 tile, có dịch vụ làng, điểm tương tác và cổng sang Trúc Âm. Art PNG được chia thành ô atlas 32 px lúc chạy để giữ tương thích; blocker vẫn cần nắn theo cảnh.",
+      "details": "An Khê 48×36 tile, có dịch vụ làng, điểm tương tác và cổng sang Trúc Âm. Gameplay dùng TileMapLayer với atlas terrain 32 px tái sử dụng; PNG world chỉ còn cho preview/minimap. Blocker vẫn cần nắn theo cảnh.",
       "quest_title": "VIỆC Ở AN KHÊ",
       "quest_body": "Ghé hiệu thuốc Bà Sâm.\nLại gần NPC rồi nhấn E hoặc Chạm.",
       "preview": "res://assets/pixel/an_khe_world_v1.png",

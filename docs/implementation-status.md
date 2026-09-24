@@ -94,3 +94,8 @@ inventory hiện chưa từng qua integration test.
 Bản sửa tiến trình lần này được chuẩn bị thành gói áp dụng vào mốc nguồn.
 Việc sửa nội dung gói không tự đồng nghĩa đã commit, push, tạo PR hoặc merge Git.
 Trạng thái công bố phải cập nhật theo thao tác Git thực tế, không đánh dấu trước.
+
+
+### Authored TileMap recovery — 24/09/2026
+
+The four map prototypes now use reusable biome `TileSet` atlases and authored layout JSON for Ground/Detail/Foreground layers. Painted world PNGs are preview/minimap/fallback assets only; runtime PNG slicing has been removed. Collision and interaction data remain catalog-driven while terrain presentation is editable at tile level.

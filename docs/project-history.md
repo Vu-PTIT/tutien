@@ -293,3 +293,12 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 - Bổ sung smoke test đi qua An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh, kiểm tra điểm đến cổng, vùng/phòng, tương tác và đường rút. Kích thước ba map sau An Khê vẫn chưa chốt.
 
 Đây là nền prototype cho lần dựng tiếp theo. Terrain tách lớp, collision khớp art, touch HUD, fog-of-war, quest/unlock và encounter authoritative còn trong kế hoạch production.
+
+
+## 24/09/2026 — Recovered authored TileMap conversion
+
+- Replaced the runtime PNG-slicing prototype with reusable 32 px biome terrain atlases for An Khê, Trúc Âm, Thạch Cạn and Cổ Tỉnh.
+- Added compact map layout data under `client/data/maps/`; `GameMap` now populates Ground/Detail/Foreground `TileMapLayer` nodes from these layouts and `TileSet` resources.
+- Original `*_world_v1.png` files remain only as route/minimap art and a fallback renderer; they are no longer converted into one-off atlas tiles at runtime.
+- Existing catalog-driven blockers, interactables, gates, water effects, Y-sorted actors and room-lock camera behavior are preserved.
+- Static checks explicitly reject the old `get_image()/atlas.create_tile()` runtime slicing path and require all four terrain/layout resources.

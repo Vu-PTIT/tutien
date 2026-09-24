@@ -101,7 +101,14 @@ assert.ok(mapWorldScene.includes('name="DetailLayer" type="TileMapLayer"'), 'Map
 assert.ok(mapWorldScene.includes('name="ForegroundLayer" type="TileMapLayer"'), 'Maps have a foreground TileMapLayer');
 assert.ok(mapWorldScene.includes('name="Actors" type="Node2D" parent="."') && mapWorldScene.includes('y_sort_enabled = true') && gameMap.includes('var root: Node2D = $Actors'), 'Player and world objects are Y-sorted together');
 assert.ok(gameMap.includes('solid_rects_tiles'), 'Map collision blockers are catalog-backed');
-assert.ok(gameMap.includes('atlas.create_tile(') && gameMap.includes('ground.set_cell('), 'Map preview art is loaded into editable tile cells');
+assert.ok(gameMap.includes('_build_authored_tile_layers()') && gameMap.includes('_fill_layer('), 'Maps build from authored reusable tile layouts');
+assert.ok(!gameMap.includes('source_texture.get_image()') && !gameMap.includes('atlas.create_tile('), 'Runtime must not slice the painted world PNG into one-off atlas cells');
+for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
+  assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/'+name+'_terrain.png')), 'Missing reusable terrain atlas: '+name);
+  assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/'+name+'_terrain.tres')), 'Missing TileSet resource: '+name);
+  const layout=JSON.parse(fs.readFileSync(path.join(root,'data/maps/'+name+'.json'),'utf8'));
+  assert.ok(layout.tile_set && Array.isArray(layout.regions), 'Missing authored map layout data: '+name);
+}
 assert.ok(gameMap.includes('_build_interactables()') && gameMap.includes('_build_water_ripples()'), 'Map POIs and water motion are data-driven');
 assert.ok(main.includes('func _travel_to_map(map_id: String, arrival_tiles: Array = [])') && main.includes('target_arrival_tiles'), 'Map gates load their configured arrival point');
 assert.ok(gameMap.includes('room_lock'), 'Cổ Tỉnh camera locks by room');

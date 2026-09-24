@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "tile_set": "res://assets/pixel/terrain/thach_can_terrain.tres",
+  "base_tile": 0,
+  "regions": [
+    {
+      "rect": [
+        0,
+        0,
+        48,
+        36
+      ],
+      "tile": 0
+    },
+    {
+      "rect": [
+        0,
+        15,
+        48,
+        6
+      ],
+      "tile": 1
+    },
+    {
+      "rect": [
+        23,
+        0,
+        25,
+        36
+      ],
+      "tile": 2
+    }
+  ],
+  "detail_regions": [
+    {
+      "rect": [
+        4,
+        5,
+        9,
+        7
+      ],
+      "tile": 4
+    },
+    {
+      "rect": [
+        28,
+        6,
+        10,
+        10
+      ],
+      "tile": 5
+    },
+    {
+      "rect": [
+        30,
+        20,
+        12,
+        9
+      ],
+      "tile": 6
+    }
+  ],
+  "foreground_regions": [
+    {
+      "rect": [
+        0,
+        0,
+        48,
+        2
+      ],
+      "tile": 7
+    }
+  ]
+}
