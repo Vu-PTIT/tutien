@@ -19,9 +19,9 @@ docker compose up --build -d
 ```
 
 3. Import `client/project.godot` trong Godot, nhấn **F6/F5** chạy scene/project.
-4. Di chuyển bằng **WASD / phím mũi tên**. Nhấn **Kết nối**, tạo hoặc vào phòng đấu tập, cả hai bấm **Sẵn sàng**. **J/chuột trái** đánh, **Space** né theo hướng chuột. Backend chưa bật thì vẫn di chuyển offline được.
+4. Di chuyển bằng **WASD / phím mũi tên**. Mở **Đấu tập → Kết nối**, tạo hoặc vào phòng đấu tập, cả hai bấm **Sẵn sàng**. **Q/J/chuột trái** đánh, **Space** né theo hướng chuột. Backend chưa bật thì vẫn di chuyển offline trong sân An Khê được.
    Xem [cách mở hai tài khoản/cửa sổ và luật đấu tập](docs/combat-prototype.md).
-5. Ngoài trận, bấm **Túi đồ** để xem tài sản và nhận vật tư khởi đầu một lần. Xem [hợp đồng inventory/reward](docs/inventory-and-rewards.md).
+5. Ngoài trận, bấm **Túi [I]**; **Esc** đóng. Chưa kết nối chỉ hiển thị mẫu có nhãn, không lưu và không nhận thưởng. Sau kết nối mới xem tài sản và nhận vật tư khởi đầu một lần. Xem [hợp đồng inventory/reward](docs/inventory-and-rewards.md).
 6. Kiểm tra backend: `docker compose ps`, `docker compose logs nakama`. Sau khi backend healthy: `node scripts/smoke.mjs`.
 
 ```sh
@@ -34,7 +34,7 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 
 ## Cấu trúc
 
-- `client/`: scene Godot, nhân vật hình tạm, đăng nhập, phòng đấu tập, hiển thị snapshot và HP.
+- `client/`: scene làng/HUD/túi chỉnh được trong editor, atlas nhân vật/icon, đăng nhập, đấu tập, snapshot và HP.
 - `client/scripts/combat_api.gd`: adapter trận đấu dùng chung kết nối với `SocialApi`.
 - `server/src/combat.ts`: mô phỏng authoritative 20 Hz, hai người, đánh thường/né và vòng đời trận.
 - `server/`: runtime TypeScript ES5, hồ sơ và backend tài khoản/bạn bè/chat/nhóm, kiểm thử phân quyền và ghi đồng thời.
@@ -46,6 +46,12 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 - `.github/workflows/ci.yml`: build, unit test và smoke test Docker.
 
 ## Phạm vi bản base
+
+Giao diện được thiết kế lại với nền làng, atlas pixel, theme xanh đen/đồng,
+HUD và túi dùng chung scene editor/runtime. Nền làng là ảnh minh họa, chưa
+phải TileMap hoàn chỉnh. Xem [thiết kế và kiểm chứng](docs/ui-product-slice.md)
+và [bố cục tĩnh](docs/ui-previews/README.md). Lần viết lại UI này chưa được
+xác nhận chạy qua Godot/CI; không dùng kết quả commit cũ thay thế.
 
 Đã có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**: di chuyển, vật cản, đánh thường, né, HP, kết thúc và reconnect ngắn. Đấu tập không tác động tài sản/hồ sơ. Đã có inventory 24 ô, catalog vật phẩm, migration hồ sơ và gói khởi đầu chống nhận trùng. **Chưa có quái, dùng/trang bị vật phẩm, trồng trọt, giao dịch, PvP mở, đồ họa hoàn chỉnh hoặc bản xuất Android/Windows.**
 

@@ -1,6 +1,6 @@
 extends SceneTree
 const Api = preload("res://scripts/social_api.gd")
-const BagPanel = preload("res://scripts/inventory_panel.gd")
+const BagScene = preload("res://scenes/ui/inventory.tscn")
 var api: SocialApi
 var panel: InventoryPanel
 
@@ -10,7 +10,7 @@ func _initialize() -> void:
 func _run() -> void:
 	api = Api.new()
 	root.add_child(api)
-	panel = BagPanel.new()
+	panel = BagScene.instantiate() as InventoryPanel
 	panel.api = api
 	root.add_child(panel)
 	var success := await _scenario()
@@ -28,9 +28,15 @@ func _scenario() -> bool:
 	var login := await api.register_account("bag_" + suffix + "@example.com", suffix + "Password1!", "bag_" + suffix)
 	if login.has("error"): return false
 	await panel.refresh()
-	if panel.claim_button.disabled or panel.items.item_count != 1: return false
+	if panel.claim_button.disabled or not panel.inventory.is_empty(): return false
+	if panel.slot_buttons.size() != 24 or panel.preview_mode: return false
 	await panel._claim()
-	if not panel.claim_button.disabled or panel.items.item_count != 4: return false
+	if not panel.claim_button.disabled or panel.inventory.size() != 4: return false
+	panel.set_filter("equipment")
+	if panel.filtered.size() != 1: return false
+	panel.select_slot(0)
+	if panel.selected_id != "it_cloth_armor": return false
+	panel.set_filter("all")
 	var before := await api.call_rpc("get_profile")
 	await panel.refresh()
 	await panel._claim()

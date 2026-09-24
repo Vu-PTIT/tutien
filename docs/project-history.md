@@ -144,3 +144,20 @@ trạng thái lịch sử trước xác nhận, đã được giải quyết ở
 
 Nhánh đã công bố; chưa merge `main`. Bước tiếp theo: encounter Sơn Trư và loot
 server-authoritative. Dùng/trang bị đồ, garden/crafting và quest vẫn chưa có.
+
+### Thiết kế lại phần trình bày pixel — 21/09/2026, bản local
+
+Theo phản hồi giao diện không giống concept, thay nền procedural bằng PNG
+làng An Khê, atlas nhân vật bốn hướng và icon trong suốt. Tách scene world,
+player, HUD và túi 24 ô; editor/runtime dùng cùng cây node. Theme xanh đen
+viền đồng, viewport 640 × 360, nearest và scale nguyên. Bỏ preview `@tool`
+riêng và ItemList ẩn. Túi offline ghi rõ mẫu; túi thật xóa mẫu trước khi tải.
+
+Static scene audit đạt; 64/64 unit test server đạt. **Chưa xác nhận Godot
+runtime cho lần sửa này**: engine local lỗi khởi động, chưa có run CI mới.
+Đã thêm offline presentation smoke và ma trận CI 4.4.1/4.6.1. Ảnh trong
+`docs/ui-previews` là render bố cục tĩnh, không phải screenshot Godot.
+
+Nền làng chưa phải TileMap, atlas AI chưa chuẩn hóa pixel/frame thủ công;
+không thêm PvE hoặc quest lưu trữ. Xem `ui-product-slice.md`. Thay đổi hiện
+chưa push; lịch sử CI đã đạt ở trên chỉ áp dụng các commit được ghi rõ.
