@@ -24,7 +24,7 @@ func _ready() -> void:
 		button.modulate = Color(0.6, 0.6, 0.6)
 		button.tooltip_text = "Chưa có cơ chế sử dụng. Không trừ vật phẩm."
 	$Hotbar/Slot2.tooltip_text = "Q / J: đánh trong đấu tập online"
-	$Hotbar/Slot3.tooltip_text = "E: tương tác ở An Khê"
+	$Hotbar/Slot3.tooltip_text = "E / chạm: tương tác với điểm gần nhất"
 	$Hotbar/Slot5.tooltip_text = "Space: né trong đấu tập online"
 
 func _process(delta: float) -> void:
@@ -46,6 +46,10 @@ func configure_map(map_data: Dictionary) -> void:
 	$Location/Title.text = str(map_data.get("name", "Map")).to_upper()
 	$Location/State.text = str(map_data.get("summary", ""))
 	$Minimap/Coordinates.tooltip_text = str(map_data.get("name", "Map"))
+
+func set_interaction_prompt(message: String) -> void:
+	$InteractionHint/Message.text = message
+	$InteractionHint.visible = not message.is_empty()
 
 func update_position(
 		point: Vector2,

@@ -61,6 +61,28 @@ for(const map of mapCatalog.maps) {
     const [x,y,w,h]=area.rect_tiles;
     return spawnX>=x&&spawnX<x+w&&spawnY>=y&&spawnY<y+h;
   }), 'Map spawn is outside all named areas: '+map.id);
+  assert.ok(Array.isArray(map.interactables) && map.interactables.length>0, 'Map needs data-driven POIs: '+map.id);
+  const ids=new Set();
+  for(const poi of map.interactables) {
+    assert.ok(poi.entity_id && !ids.has(poi.entity_id), 'POI ids must be unique within '+map.id);
+    ids.add(poi.entity_id);
+    assert.ok(poi.icon && fs.existsSync(path.join(root,poi.icon.replace(/^res:\/\//,''))), 'Missing POI icon for '+poi.entity_id);
+    const [x,y]=poi.position_tiles;
+    assert.ok(x>=0 && x<map.size_tiles[0] && y>=0 && y<map.size_tiles[1], 'POI outside map: '+poi.entity_id);
+    assert.ok(!map.solid_rects_tiles.some(([sx,sy,w,h])=>x>=sx&&x<sx+w&&y>=sy&&y<sy+h), 'POI is inside a blocker: '+poi.entity_id);
+    if(poi.action_kind==='gate') {
+      const [ax,ay]=poi.target_arrival_tiles||[];
+      const target=mapCatalog.maps.find(candidate=>candidate.id===poi.target_map_id);
+      assert.ok(target && Number.isInteger(ax) && Number.isInteger(ay), 'Gate needs a known map and arrival tile: '+poi.entity_id);
+      assert.ok(ax>=0 && ax<target.size_tiles[0] && ay>=0 && ay<target.size_tiles[1], 'Gate arrival is outside destination map: '+poi.entity_id);
+      assert.ok(!target.solid_rects_tiles.some(([sx,sy,w,h])=>ax>=sx&&ax<sx+w&&ay>=sy&&ay<sy+h), 'Gate arrival is blocked: '+poi.entity_id);
+      assert.ok(target.areas.some(area=>{const [sx,sy,w,h]=area.rect_tiles;return ax>=sx&&ax<sx+w&&ay>=sy&&ay<sy+h;}), 'Gate arrival is outside named destination areas: '+poi.entity_id);
+    }
+  }
+  for(const ripple of map.water_ripples||[]) {
+    const [x,y]=ripple.position_tiles;
+    assert.ok(x>=0 && x<map.size_tiles[0] && y>=0 && y<map.size_tiles[1], 'Water ripple outside map: '+map.id);
+  }
 }
 assert.ok(read('project.godot').includes('window/stretch/scale_mode="integer"'));
 assert.ok(read('project.godot').includes('window/size/viewport_width=640'));
@@ -72,9 +94,17 @@ for(const name of ['an_khe','an_khe_world_v1','cultivator','icons']) {
   assert.ok(png.readUInt32BE(16)>0 && png.readUInt32BE(20)>0);
   if(['cultivator','icons'].includes(name)) assert.ok([3,6].includes(png[25]),'Expected transparent PNG atlas: '+name);
 }
-assert.ok(read('scenes/map_world.tscn').includes('name="Background" type="Sprite2D"'), 'All maps share a scrolling background scene');
-assert.ok(read('scripts/game_map.gd').includes('solid_rects_tiles'), 'Map collision blockers are catalog-backed');
-assert.ok(read('scripts/game_map.gd').includes('room_lock'), 'Cổ Tỉnh camera locks by room');
+const mapWorldScene=read('scenes/map_world.tscn'), gameMap=read('scripts/game_map.gd');
+assert.ok(mapWorldScene.includes('name="Background" type="Sprite2D"'), 'Original map art remains available as a fallback preview');
+assert.ok(mapWorldScene.includes('name="GroundLayer" type="TileMapLayer"'), 'Maps have an editable ground TileMapLayer');
+assert.ok(mapWorldScene.includes('name="DetailLayer" type="TileMapLayer"'), 'Maps have a detail TileMapLayer');
+assert.ok(mapWorldScene.includes('name="ForegroundLayer" type="TileMapLayer"'), 'Maps have a foreground TileMapLayer');
+assert.ok(mapWorldScene.includes('name="Actors" type="Node2D" parent="."') && mapWorldScene.includes('y_sort_enabled = true') && gameMap.includes('var root: Node2D = $Actors'), 'Player and world objects are Y-sorted together');
+assert.ok(gameMap.includes('solid_rects_tiles'), 'Map collision blockers are catalog-backed');
+assert.ok(gameMap.includes('atlas.create_tile(') && gameMap.includes('ground.set_cell('), 'Map preview art is loaded into editable tile cells');
+assert.ok(gameMap.includes('_build_interactables()') && gameMap.includes('_build_water_ripples()'), 'Map POIs and water motion are data-driven');
+assert.ok(main.includes('func _travel_to_map(map_id: String, arrival_tiles: Array = [])') && main.includes('target_arrival_tiles'), 'Map gates load their configured arrival point');
+assert.ok(gameMap.includes('room_lock'), 'Cổ Tỉnh camera locks by room');
 assert.ok(read('scripts/ui/world_map_panel.gd').includes('signal map_requested'), 'Route panel emits travel requests');
 assert.ok(main.includes('world_map.map_requested.connect(_travel_to_map)'), 'Main connects map travel');
 console.log('PASS static scene audit: '+scenes+' scenes, '+references+' resource references, 24 inventory slots, 6 hotbar buttons, real PNG assets.');

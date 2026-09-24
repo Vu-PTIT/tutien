@@ -9,13 +9,34 @@ texture_filter = 1
 script = ExtResource("map_script")
 
 [node name="Background" type="Sprite2D" parent="."]
+visible = true
 position = Vector2(768, 576)
 scale = Vector2(1.0607735, 1.0607735)
 texture = ExtResource("map")
+
+[node name="WorldLayers" type="Node2D" parent="."]
+
+[node name="GroundLayer" type="TileMapLayer" parent="WorldLayers"]
+texture_filter = 1
+
+[node name="DetailLayer" type="TileMapLayer" parent="WorldLayers"]
+texture_filter = 1
+z_index = 1
+
+[node name="ForegroundLayer" type="TileMapLayer" parent="WorldLayers"]
+texture_filter = 1
+z_index = 3
 
 [node name="CollisionRoot" type="Node2D" parent="."]
 
 [node name="LocationLabels" type="Node2D" parent="."]
 
-[node name="Player" parent="." instance=ExtResource("player")]
+[node name="AmbientFX" type="Node2D" parent="."]
+z_index = 1
+
+[node name="Actors" type="Node2D" parent="."]
+y_sort_enabled = true
+z_index = 2
+
+[node name="Player" parent="Actors" instance=ExtResource("player")]
 position = Vector2(768, 576)

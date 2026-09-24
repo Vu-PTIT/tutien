@@ -1,4 +1,8 @@
-# Tiến độ triển khai và thứ tự mới — 22/09/2026
+# Tiến độ triển khai và thứ tự mới — cập nhật 24/09/2026
+
+> Ghi chú runtime map 24/09: nhánh `feat/inventory-rewards` hiện có prototype map dùng chung với ground chia ô atlas 32 px lúc chạy, 21 POI cục bộ, điểm đến cổng riêng và smoke test tuyến bốn map. Ground vẫn dựa trên ảnh PNG một lớp; detail/foreground, collision chi tiết, touch HUD, fog-of-war, quest/unlock và lưu trạng thái server chưa hoàn thành. An Khê giữ 48×36; kích thước Trúc Âm, Thạch Cạn và Cổ Tỉnh vẫn chưa chốt.
+
+Các bảng dưới đây tiếp tục ghi trạng thái tại mốc mã nguồn lịch sử được nêu; ghi chú runtime map phía trên là cập nhật mới nhất.
 
 ## 1. Mốc mã nguồn đã đối chiếu
 

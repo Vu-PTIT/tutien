@@ -1,23 +1,26 @@
 # 04 — Thế giới, map và giao diện khám phá
 
-**Cập nhật:** 23/09/2026
+**Cập nhật:** 24/09/2026
 
-**Trạng thái:** Bốn map có art nền và runtime prototype; tuyến chuyển map chạy cục bộ, chưa dùng quest/unlock từ server.
+**Trạng thái:** Runtime prototype có lớp ground dạng atlas ô 32 px, 21 điểm tương tác dùng chung và cổng vào/ra có điểm đến riêng. Nội dung và quyền mở map vẫn là cục bộ, chưa do server xác nhận.
 
 ## 1. Rà soát bản hiện tại
 
-Prototype có bốn nền pixel, một scene map dùng chung, camera theo nhân vật, minimap động, blocker chữ nhật và route để đi thử giữa các map. An Khê dùng kích thước đã chốt 48×36 tile (1536×1152 world pixels). Ba map còn lại tạm dùng canvas prototype 48×36 để thử bố cục; metadata đánh dấu kích thước này chưa chốt. Art vẫn là ảnh nền một lớp, chưa phải TileMap.
+Prototype có bốn nền pixel, một scene map dùng chung, camera theo nhân vật, minimap động, blocker chữ nhật và route để đi thử giữa các map. An Khê dùng kích thước đã chốt 48×36 tile (1536×1152 world pixels). Ba map còn lại tạm dùng canvas prototype 48×36 để thử bố cục; metadata đánh dấu kích thước này chưa chốt.
 
 Các điểm đã kiểm tra trong repo:
 
 - `client/scenes/map_world.tscn` dùng chung cho bốn map; `client/scripts/game_map.gd` nạp nền, spawn, khu/phòng, blocker và chế độ camera từ `client/data/map_catalog.json`.
+- Khi chạy, ảnh PNG được resize theo kích thước map rồi chia thành ô atlas 32×32 trong `GroundLayer`. Cách này giữ nguyên art hiện có và cho phép thay từng ô; đây là cầu nối runtime, chưa phải tileset terrain có thể tái sử dụng. `DetailLayer` và `ForegroundLayer` hiện là khung rỗng.
+- Catalog định nghĩa 21 POI có `entity_id` ổn định trên bốn map. Scene POI dùng chung hiển thị nhãn, biểu tượng và gợi ý tương tác; các điểm nước có shimmer riêng. Cổng có vị trí đến ở map đích để chuyến đi/về khớp lối nối.
+- Hành động NPC, dịch vụ, đọc dấu vết, dò Mạch Bàn, khảo sát node và checkpoint mới chỉ đổi thông báo/cờ trong phiên cục bộ. Chúng không mở quest thật, cấp vật phẩm, lưu tiến độ hay xác nhận quyền vào map.
 - `Camera2D` theo người chơi ở map dã ngoại; Cổ Tỉnh đổi giới hạn camera theo phòng. Blocker chữ nhật là ước lượng, chưa khớp chi tiết cảnh vật.
 - Route có thể tải map cục bộ. Đây là luồng test client; cổng server, checkpoint, quest, NPC, PvE, fog-of-war và lưu trạng thái chưa được nối.
 - `client/scripts/ui/hud.gd` tính minimap theo kích thước world và tile size; `M` mở overlay tuyến, `Esc` đóng.
 - Overlay đọc bốn map và ảnh preview từ `client/data/map_catalog.json`; chọn thẻ để xem, bấm **Đi thử map này** để đổi scene cục bộ. Server chưa xác nhận quyền vào.
 - Tài liệu cũ ghi kích thước 64×48, 96×96, 80×64 và 64×64 tile; các số này đã lỗi thời so với quy chuẩn mới bên dưới.
 
-Vì vậy, phần đang có là **prototype trình bày và đi thử tuyến bốn map**. Các lớp tile, foreground, tương tác và collision tinh chỉnh vẫn cần làm; dữ liệu cục bộ không đại diện cho luật mở khóa gameplay.
+Vì vậy, phần đang có là **prototype trình bày và đi thử tuyến bốn map**. Ground đang lấy từ raster art cũ; chưa có terrain nhiều lớp, foreground che nhân vật, collision được nắn theo địa hình hoặc luật mở khóa gameplay.
 
 ## 2. Quy chuẩn nền tảng
 
@@ -156,11 +159,13 @@ Cổng kiểm tra quest, nhóm và sức chứa ở server; client không tự c
 
 ## 8. Kế hoạch dựng map trong Godot
 
-1. **Bốn nền prototype:** đã có art, preview, spawn, các vùng, blocker thô và chuyển map cục bộ. An Khê giữ kích thước 48×36 tile.
-2. **Trúc Âm:** ba vùng dữ liệu là Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư; cần nắn đường và collision theo gameplay.
-3. **Thạch Cạn:** hai vùng dữ liệu là Ngoại Vi, Mỏ Cũ; cần hoàn thiện checkpoint, encounter và cổng server.
-4. **Cổ Tỉnh:** năm phòng cố định đã có nhãn/vùng; prototype khóa camera theo phòng, còn thiếu encounter, điều kiện vào và sơ đồ khám phá.
-5. **Nền tảng:** bổ sung input touch và HUD mobile; giới hạn camera PvE 704–720×360, giữ PvP FOV cố định.
+1. **Khung dùng chung — đã dựng prototype:** atlas ground runtime, scene POI, lớp vị trí cho actor/FX và quy ước dữ liệu 32×32; detail/foreground đang để trống cho art tách lớp.
+2. **An Khê — lát cắt đầu — đã dựng prototype:** giữ 48×36; có NPC Bà Sâm, dịch vụ làng, vườn, cổng Trúc Âm, gợi ý tương tác và cờ hội thoại cục bộ.
+3. **Trúc Âm — đã gắn dữ liệu tương tác:** giữ ba zone Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư; có Cam Lộ, dấu Sơn Trư, Mạch Bàn và lối rút/cổng đi tiếp. Đường và blocker vẫn là bản thô.
+4. **Thạch Cạn — đã gắn dữ liệu tương tác:** giữ hai zone Ngoại Vi, Mỏ Cũ; có trạm nghỉ, node quặng chỉ để khảo sát, trụ chuyển dòng và cổng hai chiều. Chưa khai thác tài nguyên thật.
+5. **Cổ Tỉnh — đã gắn điểm phòng:** giữ năm phòng và camera khóa theo phòng; có điểm chuẩn bị, Mạch Bàn, bảng trận, Tâm Giếng và lối rút. Chưa có encounter/boss.
+6. **Kiểm thử tuyến — có smoke test cục bộ:** đi qua cổng An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh, kiểm tra điểm đến, map/zone/phòng, tương tác và lối rút.
+7. **Phần kế tiếp để đạt chất lượng production:** tách art thành ground/detail/foreground thật; nắn collision và đường đi theo ảnh; xác định kích thước ba map chưa khóa từ layout; nối quyền chuyển map, quest, checkpoint, NPC/PvE và tài nguyên với server; sau đó hoàn thiện touch HUD, safe-area và kiểm tra PC/mobile.
 
 ### Cổng nghiệm thu
 

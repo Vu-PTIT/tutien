@@ -1,7 +1,7 @@
 # Nhật ký phát triển dự án Tu Tiên
 
 **Repository:** [`Vu-PTIT/tutien`](https://github.com/Vu-PTIT/tutien)<br>
-**Ngày rà soát:** 23/09/2026<br>
+**Ngày rà soát:** 24/09/2026<br>
 **Nhánh ghi nhật ký:** `feat/inventory-rewards`
 **Mục đích:** ghi lại những gì đã được commit trên Git, trạng thái sản phẩm hiện tại và thứ tự triển khai tiếp theo.
 
@@ -282,3 +282,14 @@ quest/story runtime, NPC/tương tác, resource loop, runtime economy, TileMap/
 collision production và hoàn thiện mobile controls.
 
 Mốc tính năng mới nhất trước commit cập nhật nhật ký này: `1fced41`.
+
+### 24/09 — nền runtime map dùng chung
+
+Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho cả bốn map:
+
+- Ground art PNG được nạp vào `TileMapLayer` dưới dạng atlas 32×32 lúc chạy; đây là cầu nối giữ art hiện có, chưa phải tileset nhiều lớp production. Detail và foreground layer đang là khung trống.
+- Thêm scene POI dùng chung, gợi ý tương tác trong HUD, hiệu ứng shimmer mặt nước và 21 ID tương tác ổn định trong catalog.
+- Cổng map khai báo điểm đến riêng để vào/ra liền tuyến; các thao tác map và trạng thái quest vẫn chỉ chạy cục bộ, không mở quyền server hoặc cấp/lưu phần thưởng.
+- Bổ sung smoke test đi qua An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh, kiểm tra điểm đến cổng, vùng/phòng, tương tác và đường rút. Kích thước ba map sau An Khê vẫn chưa chốt.
+
+Đây là nền prototype cho lần dựng tiếp theo. Terrain tách lớp, collision khớp art, touch HUD, fog-of-war, quest/unlock và encounter authoritative còn trong kế hoạch production.

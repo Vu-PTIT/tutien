@@ -36,6 +36,12 @@ func _run() -> void:
 	check(main.map_world.map_size_tiles == Vector2i(48, 36), "An Khê uses the agreed map size")
 	check(main.map_world.get_node("CollisionRoot").get_child_count() == 12, "Map blocker shapes are generated")
 	check(main.player is CharacterBody2D, "Village player uses physics movement")
+	var ground_layer: TileMapLayer = main.map_world.get_node("WorldLayers/GroundLayer")
+	check(ground_layer.get_used_cells().size() == 48 * 36, "An Khê preview is split into editable tile cells")
+	check(not main.map_world.get_node("Background").visible, "Tile layer replaces the full-screen map sprite at runtime")
+	check(main.map_world.get_node("WorldLayers/ForegroundLayer") is TileMapLayer, "Map has a dedicated foreground tile layer")
+	check(main.map_world.interactables_size() == 6, "An Khê loads six data-driven interactive points")
+	check(main.map_world.get_node("AmbientFX").get_child_count() == 3, "An Khê loads animated water highlights")
 	check(main.village_camera.enabled, "Camera follows the village player")
 	check(main.village_camera.limit_right == 1536 and main.village_camera.limit_bottom == 1152, "Camera clamps to An Khê world bounds")
 	check(bag.slot_buttons.size() == 24, "Inventory requires exactly 24 visual slots")
@@ -48,7 +54,25 @@ func _run() -> void:
 	check(map_panel.travel_button != null, "World map has a local travel action")
 	check(hud.get_node("Vitals/Qi").value == 0, "Do not invent a Qi value")
 	await _capture("an-khe-runtime.png")
+	var herbalist: MapInteractable = main.map_world.get_interactable("ak.npc.ba_sam")
+	check(herbalist != null, "Herbalist has a stable map entity id")
+	main.player.position = herbalist.position
+	check(main.map_world.update_interaction_focus(herbalist.position) == herbalist, "Nearest POI becomes the interaction target")
+	hud.set_interaction_prompt(herbalist.prompt_text())
+	check(hud.get_node("InteractionHint").visible, "Focused POI appears in the HUD")
+	main._action("interact")
+	check(main.local_map_flags.has("ak.ba_sam_intro"), "Herbalist interaction advances the local preview flag")
+	check(hud.get_node("Quest/Body").text.contains("Ven Suối"), "Herbalist updates the tracked map objective")
+	var village_gate: MapInteractable = main.map_world.get_interactable("ak.gate.truc_am")
+	main.player.position = village_gate.position
+	main._action("interact")
+	await process_frame
+	await process_frame
+	check(main.current_map_id == "m_truc_am", "Village gate opens its configured destination")
+	check(main.player.position == Vector2(5 * 32, 26 * 32), "Village gate arrives at the Trúc Âm entrance")
 	var initial_position: Vector2 = main.player.position
+	check(main.map_world.interactables_size() == 5, "Trúc Âm loads its own interactive map data")
+	check(main.map_world.get_node("AmbientFX").get_child_count() == 3, "Trúc Âm loads its water highlights")
 	main._action("map")
 	await process_frame
 	check(map_panel.visible, "Map action opens route panel")
@@ -64,25 +88,46 @@ func _run() -> void:
 	check(main.map_world.active_area_name == "Ven Suối", "Trúc Âm spawn is in Ven Suối")
 	check(main.hud.get_node("Minimap/Map").texture.resource_path.ends_with("truc_am_world_v1.png"), "Travel updates the minimap art")
 	check(main.hud.get_node("Location/Title").text == "TRÚC ÂM", "Travel updates the HUD map name")
-	map_panel.open_map()
-	map_panel.route_buttons["m_thach_can"].emit_signal("pressed")
-	map_panel.travel_button.emit_signal("pressed")
+	var mach_ban: MapInteractable = main.map_world.get_interactable("ta.mach_ban.scan")
+	check(mach_ban != null and main.can_walk(mach_ban.position), "Trúc Âm Mạch Bàn is reachable on the walkable path")
+	main.player.position = mach_ban.position
+	main._action("interact")
+	check(main.local_map_flags.has("ta.shortcut_seen"), "Mạch Bàn interaction records its local discovery")
+	var thach_gate: MapInteractable = main.map_world.get_interactable("ta.gate.thach_can")
+	main.player.position = thach_gate.position
+	main._action("interact")
 	await process_frame
 	await process_frame
-	check(main.current_map_id == "m_thach_can", "Travel action loads Thạch Cạn")
-	check(main.map_world.areas_size() == 2, "Thạch Cạn has two named areas")
-	check(main.map_world.active_area_name == "Ngoại Vi", "Thạch Cạn spawn is in Ngoại Vi")
-	map_panel.open_map()
-	map_panel.route_buttons["m_co_tinh"].emit_signal("pressed")
-	map_panel.travel_button.emit_signal("pressed")
+	check(main.current_map_id == "m_thach_can", "Trúc Âm exit gate opens Thạch Cạn")
+	check(main.player.position == Vector2(7 * 32, 18 * 32), "Trúc Âm gate arrives at the Thạch Cạn entrance")
+	check(main.map_world.interactables_size() == 5, "Thạch Cạn loads its own interactive map data")
+	var ore_node: MapInteractable = main.map_world.get_interactable("tc.node.iron_ore")
+	check(ore_node != null and main.can_walk(ore_node.position), "Thạch Cạn ore point is reachable")
+	main.player.position = ore_node.position
+	main._action("interact")
+	check(not main.local_map_flags.has("tc.iron_granted"), "Map exploration does not invent a server reward")
+	var co_tinh_gate: MapInteractable = main.map_world.get_interactable("tc.gate.co_tinh")
+	main.player.position = co_tinh_gate.position
+	main._action("interact")
 	await process_frame
 	await process_frame
 	check(main.current_map_id == "m_co_tinh", "Travel action loads Cổ Tỉnh")
+	check(main.player.position == Vector2(11 * 32, 31 * 32), "Thạch Cạn gate arrives at the Cổ Tỉnh entrance")
+	check(main.map_world.interactables_size() == 5, "Cổ Tỉnh loads its own interactive map data")
 	check(main.map_world.areas_size() == 5, "Cổ Tỉnh has five named rooms")
 	check(main.map_world.active_area_name == "Cửa Giếng", "Cổ Tỉnh spawn is in the entrance room")
 	check(main.village_camera.limit_left == 32 and main.village_camera.limit_right == 448, "Cổ Tỉnh camera locks to the current room")
+	var boss_core: MapInteractable = main.map_world.get_interactable("ct.boss.heart_well")
+	check(boss_core != null and main.can_walk(boss_core.position), "Cổ Tỉnh boss arena approach is walkable")
 	main.map_world.update_player_context(Vector2(35 * 32, 8 * 32))
 	check(main.village_camera.limit_left == 32 * 32 and main.village_camera.limit_right == 47 * 32, "Cổ Tỉnh camera follows room transitions")
+	var retreat_gate: MapInteractable = main.map_world.get_interactable("ct.retreat.thach_can")
+	main.player.position = retreat_gate.position
+	main._action("interact")
+	await process_frame
+	await process_frame
+	check(main.current_map_id == "m_thach_can", "Cổ Tỉnh retreat returns to Thạch Cạn")
+	check(main.player.position == Vector2(42 * 32, 24 * 32), "Cổ Tỉnh retreat arrives beside the destination gate")
 	map_panel.open_map()
 	map_panel.route_buttons["m_an_khe"].emit_signal("pressed")
 	map_panel.travel_button.emit_signal("pressed")

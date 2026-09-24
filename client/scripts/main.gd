@@ -25,6 +25,7 @@ var snapshot_age: float = 0.0
 var pending_action: String = ""
 var last_phase: String = ""
 var fighters: Dictionary = {}
+var local_map_flags: Dictionary = {}
 var offline_position := Vector2(768, 576)
 
 func _ready() -> void:
@@ -53,10 +54,12 @@ func _ready() -> void:
 		config.save(identity_path)
 	_update_buttons()
 
-func _load_map(map_id: String) -> bool:
+func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	if world_map == null or not world_map.maps_by_id.has(map_id):
 		return false
-	var data: Dictionary = world_map.maps_by_id[map_id]
+	var data: Dictionary = world_map.maps_by_id[map_id].duplicate(true)
+	if arrival_tiles.size() >= 2:
+		data["spawn_tiles"] = arrival_tiles.duplicate()
 	var next_map := MapWorldScene.instantiate() as GameMap
 	next_map.configure(data, int(world_map.catalog.get("tile_size_px", 32)))
 	if map_world != null:
@@ -64,17 +67,19 @@ func _load_map(map_id: String) -> bool:
 		map_world.queue_free()
 	map_host.add_child(next_map)
 	map_world = next_map
-	player = map_world.get_node("Player") as PixelActor
-	village_camera = map_world.get_node("Player/Camera2D") as Camera2D
+	player = map_world.get_node("Actors/Player") as PixelActor
+	village_camera = map_world.get_node("Actors/Player/Camera2D") as Camera2D
 	current_map_id = map_id
 	offline_position = player.position
 	world_map.set_current_map(map_id)
 	hud.configure_map(data)
 	hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, map_world.active_area_name)
 	hud.get_node("Location/State").text = "An toàn • " + map_world.active_area_name if map_id == "m_an_khe" else map_world.active_area_name
+	var focused: MapInteractable = map_world.update_interaction_focus(player.position)
+	hud.set_interaction_prompt(focused.prompt_text() if focused != null else "")
 	return true
 
-func _travel_to_map(map_id: String) -> void:
+func _travel_to_map(map_id: String, arrival_tiles: Array = []) -> void:
 	if api != null and not api.match_id.is_empty():
 		hud.notify("Không thể chuyển map trong đấu tập.")
 		return
@@ -82,10 +87,14 @@ func _travel_to_map(map_id: String) -> void:
 		world_map.hide()
 		hud.notify("Bạn đang ở " + map_world.map_name + ".")
 		return
-	if _load_map(map_id):
+	if _load_map(map_id, arrival_tiles):
 		world_map.hide()
-		hud.get_node("Quest/Title").text = str(map_world.map_data.get("quest_title", "THÁM HIỂM"))
-		hud.get_node("Quest/Body").text = str(map_world.map_data.get("quest_body", ""))
+		var quest_title := str(map_world.map_data.get("quest_title", "THÁM HIỂM"))
+		var quest_body := str(map_world.map_data.get("quest_body", ""))
+		if map_id == "m_an_khe" and local_map_flags.has("ak.ba_sam_intro"):
+			quest_body = "Đã nhận lời Bà Sâm.\nKhảo sát Ven Suối trong phiên thử cục bộ."
+		hud.get_node("Quest/Title").text = quest_title
+		hud.get_node("Quest/Body").text = quest_body
 		hud.notify("Đã chuyển map cục bộ để thử tuyến. Tiến độ chưa ghi lên server.")
 
 func _action(action: String) -> void:
@@ -133,15 +142,40 @@ func _action(action: String) -> void:
 		"interact":
 			if not api.match_id.is_empty():
 				return
-			if current_map_id == "m_an_khe" and player.position.distance_to(Vector2(286, 440)) < 72:
-				hud.notify("Bà Sâm: Dòng nước đang yếu dần… [hội thoại mẫu]")
-				hud.get_node("Quest/Body").text = "Đã xem lời nhắn Bà Sâm.\nNhiệm vụ chưa được lưu."
-			elif current_map_id != "m_an_khe":
-				hud.notify("NPC, quest và tương tác của map này chưa được kết nối.")
+			if inventory_panel.visible or dock.visible or world_map.visible:
+				return
+			var target: MapInteractable = map_world.update_interaction_focus(player.position)
+			if target == null:
+				hud.notify("Đến gần một điểm tương tác rồi nhấn E hoặc chạm nút tương tác.")
 			else:
-				hud.notify("Đến hiệu thuốc Bà Sâm phía tây bắc, rồi nhấn E.")
+				_interact_with_world_object(target)
 		_:
 			hud.notify("Chức năng chưa mở. Không tiêu hao vật phẩm.")
+
+func _interact_with_world_object(target: MapInteractable) -> void:
+	var details := target.interaction_data
+	if target.action_kind == "gate":
+		var destination := str(details.get("target_map_id", ""))
+		if destination.is_empty():
+			hud.notify("Lối chuyển map chưa có điểm đến.")
+		else:
+			var arrival_tiles: Array = details.get("target_arrival_tiles", [])
+			_travel_to_map(destination, arrival_tiles)
+		return
+	var completion_flag := str(details.get("completion_flag", ""))
+	var already_used := not completion_flag.is_empty() and local_map_flags.has(completion_flag)
+	var message := str(details.get("repeat_message", details.get("message", ""))) if already_used else str(details.get("message", ""))
+	if not completion_flag.is_empty():
+		local_map_flags[completion_flag] = true
+	var next_title := str(details.get("quest_title_after", ""))
+	var next_body := str(details.get("quest_body_after", ""))
+	if not next_title.is_empty():
+		hud.get_node("Quest/Title").text = next_title
+	if not next_body.is_empty():
+		hud.get_node("Quest/Body").text = next_body
+	if message.is_empty():
+		message = "Đã tương tác. Thay đổi chỉ có hiệu lực trong phiên thử cục bộ."
+	hud.notify(message)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -191,6 +225,8 @@ func _physics_process(delta: float) -> void:
 	offline_position = player.position
 	player.present(player.position - old_position, delta)
 	var area_name := map_world.update_player_context(player.position)
+	var focused: MapInteractable = map_world.update_interaction_focus(player.position)
+	hud.set_interaction_prompt(focused.prompt_text() if focused != null else "")
 	hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, area_name)
 	hud.get_node("Location/State").text = "An toàn • " + area_name if current_map_id == "m_an_khe" else area_name
 

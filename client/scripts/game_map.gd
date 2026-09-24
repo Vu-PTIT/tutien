@@ -1,9 +1,11 @@
 class_name GameMap
 extends Node2D
-## Shared runtime for the four prototype maps. Art is a single image; blockers
-## and named areas are catalog data so the route and walkability stay aligned.
+## Shared world runtime for the four maps. The painted map is split into
+## editable tile cells at load time while gameplay objects remain independent scenes.
 
 const TILE_SIZE_DEFAULT := 32
+const INTERACTABLE_SCENE = preload("res://scenes/map_interactable.tscn")
+const WATER_RIPPLE_SCENE = preload("res://scenes/map_water_ripple.tscn")
 
 var map_data: Dictionary = {}
 var map_id: String = ""
@@ -14,8 +16,10 @@ var map_size_px := Vector2(1536, 1152)
 var spawn_position := Vector2.ZERO
 var active_area_id: String = ""
 var active_area_name: String = ""
+var active_interactable: MapInteractable
 var _solid_rects_tiles: Array[Rect2i] = []
 var _areas: Array[Dictionary] = []
+var _interactables: Array[MapInteractable] = []
 
 func configure(data: Dictionary, tile_size: int = TILE_SIZE_DEFAULT) -> void:
 	map_data = data.duplicate(true)
@@ -32,8 +36,8 @@ func configure(data: Dictionary, tile_size: int = TILE_SIZE_DEFAULT) -> void:
 		if values.size() < 4:
 			continue
 		_solid_rects_tiles.append(Rect2i(
-				Vector2i(int(values[0]), int(values[1])),
-				Vector2i(int(values[2]), int(values[3]))
+			Vector2i(int(values[0]), int(values[1])),
+			Vector2i(int(values[2]), int(values[3]))
 		))
 	_areas.clear()
 	for area_value: Variant in map_data.get("areas", []):
@@ -55,22 +59,80 @@ func _ready() -> void:
 		var texture := load(preview_path) as Texture2D
 		if texture != null:
 			background.texture = texture
+	var rasterized := _build_raster_ground_layer(background.texture)
+	background.visible = not rasterized
 	background.position = map_size_px / 2.0
 	if background.texture != null:
 		background.scale = map_size_px / Vector2(background.texture.get_size())
 	_build_location_labels()
 	_build_collision_shapes()
-	var camera: Camera2D = $Player/Camera2D
+	_build_interactables()
+	_build_water_ripples()
+	var camera: Camera2D = $Actors/Player/Camera2D
 	camera.position_smoothing_enabled = false
-	$Player.position = spawn_position
-	if not is_walkable($Player.position):
-		$Player.position = map_size_px / 2.0
-		spawn_position = $Player.position
+	$Actors/Player.position = spawn_position
+	if not is_walkable($Actors/Player.position):
+		$Actors/Player.position = map_size_px / 2.0
+		spawn_position = $Actors/Player.position
 	camera.limit_left = 0
 	camera.limit_top = 0
 	camera.limit_right = int(map_size_px.x)
 	camera.limit_bottom = int(map_size_px.y)
-	_update_area_and_camera($Player.position)
+	_update_area_and_camera($Actors/Player.position)
+	update_interaction_focus($Actors/Player.position)
+
+func _build_raster_ground_layer(source_texture: Texture2D) -> bool:
+	if source_texture == null:
+		return false
+	var image := source_texture.get_image()
+	if image == null or image.is_empty():
+		return false
+	image.resize(int(map_size_px.x), int(map_size_px.y), Image.INTERPOLATE_NEAREST)
+	image.convert(Image.FORMAT_RGBA8)
+	var atlas := TileSetAtlasSource.new()
+	atlas.texture = ImageTexture.create_from_image(image)
+	atlas.texture_region_size = Vector2i(tile_size_px, tile_size_px)
+	for y in range(map_size_tiles.y):
+		for x in range(map_size_tiles.x):
+			atlas.create_tile(Vector2i(x, y))
+	var tile_set := TileSet.new()
+	tile_set.tile_size = Vector2i(tile_size_px, tile_size_px)
+	tile_set.add_source(atlas, 0)
+	var ground: TileMapLayer = $WorldLayers/GroundLayer
+	ground.tile_set = tile_set
+	for y in range(map_size_tiles.y):
+		for x in range(map_size_tiles.x):
+			var cell := Vector2i(x, y)
+			ground.set_cell(cell, 0, cell)
+	return ground.get_used_cells().size() == map_size_tiles.x * map_size_tiles.y
+
+func _build_interactables() -> void:
+	var root: Node2D = $Actors
+	_interactables.clear()
+	for value: Variant in map_data.get("interactables", []):
+		if not value is Dictionary:
+			continue
+		var interactable := INTERACTABLE_SCENE.instantiate() as MapInteractable
+		root.add_child(interactable)
+		interactable.configure(value, tile_size_px)
+		_interactables.append(interactable)
+
+func _build_water_ripples() -> void:
+	var root: Node2D = $AmbientFX
+	for value: Variant in map_data.get("water_ripples", []):
+		if not value is Dictionary:
+			continue
+		var tile_position: Array = value.get("position_tiles", [0, 0])
+		if tile_position.size() < 2:
+			continue
+		var ripple := WATER_RIPPLE_SCENE.instantiate() as MapWaterRipple
+		root.add_child(ripple)
+		ripple.configure(
+			Vector2(float(tile_position[0]), float(tile_position[1])),
+			tile_size_px,
+			str(value.get("color", "#8eeaff")),
+			float(value.get("phase", 0.0))
+		)
 
 func is_walkable(point: Vector2) -> bool:
 	if not Rect2(Vector2.ZERO, map_size_px).has_point(point):
@@ -87,6 +149,28 @@ func update_player_context(point: Vector2) -> String:
 
 func areas_size() -> int:
 	return _areas.size()
+
+func interactables_size() -> int:
+	return _interactables.size()
+
+func get_interactable(entity_id: String) -> MapInteractable:
+	for interactable: MapInteractable in _interactables:
+		if interactable.entity_id == entity_id:
+			return interactable
+	return null
+
+func update_interaction_focus(point: Vector2) -> MapInteractable:
+	var nearest: MapInteractable
+	var nearest_distance := INF
+	for interactable: MapInteractable in _interactables:
+		var distance := point.distance_to(interactable.position)
+		if interactable.is_in_range(point) and distance < nearest_distance:
+			nearest = interactable
+			nearest_distance = distance
+	for interactable: MapInteractable in _interactables:
+		interactable.set_focused(interactable == nearest)
+	active_interactable = nearest
+	return active_interactable
 
 func _build_location_labels() -> void:
 	var root: Node2D = $LocationLabels
@@ -129,7 +213,7 @@ func _update_area_and_camera(point: Vector2) -> void:
 	active_area_id = next_id
 	if str(map_data.get("camera_mode", "map")) != "room_lock":
 		return
-	var camera: Camera2D = $Player/Camera2D
+	var camera: Camera2D = $Actors/Player/Camera2D
 	var room_rect: Rect2i = next_area.get("_rect", Rect2i())
 	camera.limit_left = room_rect.position.x * tile_size_px
 	camera.limit_top = room_rect.position.y * tile_size_px
