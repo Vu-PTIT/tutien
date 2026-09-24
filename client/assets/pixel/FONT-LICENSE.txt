@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: DejaVu fonts
 Upstream-Author: Stepan Roh <src@users.sourceforge.net> (original author),
-                  see /usr/share/doc/fonts-dejavu-core/AUTHORS for full list
+				  see /usr/share/doc/fonts-dejavu-core/AUTHORS for full list
 Source: https://dejavu-fonts.github.io/
 
 Files: *
@@ -52,9 +52,9 @@ License: bitstream-vera
 
 Files: debian/*
 Copyright: (C) 2005-2006 Peter Cernak <pce@users.sourceforge.net> 
-           (C) 2006-2011 Davide Viti <zinosat@tiscali.it>
-           (C) 2011-2013 Christian Perrier <bubulle@debian.org>
-           (C) 2013 Fabian Greffrath <fabian+debian@greffrath.com>
+		   (C) 2006-2011 Davide Viti <zinosat@tiscali.it>
+		   (C) 2011-2013 Christian Perrier <bubulle@debian.org>
+		   (C) 2013 Fabian Greffrath <fabian+debian@greffrath.com>
 License: GPL-2+
  This program is free software; you can redistribute it
  and/or modify it under the terms of the GNU General Public
