@@ -2,20 +2,20 @@ extends Node2D
 ## No @tool runtime simulation: all visual nodes are serialized in .tscn.
 const Api = preload("res://scripts/combat_api.gd")
 const Actor = preload("res://scenes/player.tscn")
+const MapWorldScene = preload("res://scenes/map_world.tscn")
 const ARENA_SCALE := 2.0 / 3.0
 const WALK_SPEED := 72.0
-# Conservative walkable courtyard for the illustrated An Khê background.
-const WALK_AREAS := [
-	Rect2(226, 112, 134, 116), Rect2(186, 145, 226, 82),
-	Rect2(95, 125, 143, 25), Rect2(259, 212, 80, 88),
-	Rect2(351, 105, 79, 46)
-]
 
 @onready var hud: PixelHUD = $Presentation/HUD
 @onready var inventory_panel: InventoryPanel = $Presentation/HUD/Inventory
-@onready var player: PixelActor = $AnKhe/Player
+@onready var map_host: Node2D = $MapHost
 @onready var dock: Panel = $Presentation/HUD/Dock
 @onready var room: LineEdit = $Presentation/HUD/Dock/Room
+@onready var world_map: WorldMapPanel = $Presentation/HUD/WorldMap
+var map_world: GameMap
+var player: PixelActor
+var village_camera: Camera2D
+var current_map_id: String = "m_an_khe"
 var api: CombatApi
 var user_id: String = ""
 var device_id: String = ""
@@ -25,16 +25,20 @@ var snapshot_age: float = 0.0
 var pending_action: String = ""
 var last_phase: String = ""
 var fighters: Dictionary = {}
-var offline_position := Vector2(320, 232)
+var offline_position := Vector2(768, 576)
 
 func _ready() -> void:
 	get_window().min_size = Vector2i(640, 360)
+	_load_map(current_map_id)
+	offline_position = player.position
 	api = Api.new()
 	add_child(api)
 	inventory_panel.api = api
 	api.snapshot_received.connect(_snapshot)
 	api.match_connection_lost.connect(_connection_lost)
 	hud.action_requested.connect(_action)
+	world_map.map_requested.connect(_travel_to_map)
+	world_map.set_current_map(current_map_id)
 	$Arena.hide()
 	var identity_path := "user://identity.cfg"
 	for argument in OS.get_cmdline_user_args():
@@ -49,6 +53,41 @@ func _ready() -> void:
 		config.save(identity_path)
 	_update_buttons()
 
+func _load_map(map_id: String) -> bool:
+	if world_map == null or not world_map.maps_by_id.has(map_id):
+		return false
+	var data: Dictionary = world_map.maps_by_id[map_id]
+	var next_map := MapWorldScene.instantiate() as GameMap
+	next_map.configure(data, int(world_map.catalog.get("tile_size_px", 32)))
+	if map_world != null:
+		map_host.remove_child(map_world)
+		map_world.queue_free()
+	map_host.add_child(next_map)
+	map_world = next_map
+	player = map_world.get_node("Player") as PixelActor
+	village_camera = map_world.get_node("Player/Camera2D") as Camera2D
+	current_map_id = map_id
+	offline_position = player.position
+	world_map.set_current_map(map_id)
+	hud.configure_map(data)
+	hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, map_world.active_area_name)
+	hud.get_node("Location/State").text = "An toàn • " + map_world.active_area_name if map_id == "m_an_khe" else map_world.active_area_name
+	return true
+
+func _travel_to_map(map_id: String) -> void:
+	if api != null and not api.match_id.is_empty():
+		hud.notify("Không thể chuyển map trong đấu tập.")
+		return
+	if map_id == current_map_id:
+		world_map.hide()
+		hud.notify("Bạn đang ở " + map_world.map_name + ".")
+		return
+	if _load_map(map_id):
+		world_map.hide()
+		hud.get_node("Quest/Title").text = str(map_world.map_data.get("quest_title", "THÁM HIỂM"))
+		hud.get_node("Quest/Body").text = str(map_world.map_data.get("quest_body", ""))
+		hud.notify("Đã chuyển map cục bộ để thử tuyến. Tiến độ chưa ghi lên server.")
+
 func _action(action: String) -> void:
 	match action:
 		"inventory":
@@ -57,9 +96,20 @@ func _action(action: String) -> void:
 			elif inventory_panel.visible:
 				inventory_panel.hide()
 			else:
+				world_map.hide()
 				dock.hide()
 				inventory_panel.open_inventory()
+		"map":
+			if not api.match_id.is_empty():
+				hud.notify("Bản đồ tuyến đóng trong đấu tập.")
+			elif world_map.visible:
+				world_map.hide()
+			else:
+				inventory_panel.hide()
+				dock.hide()
+				world_map.open_map()
 		"dock":
+			world_map.hide()
 			inventory_panel.hide()
 			dock.visible = not dock.visible
 		"connect":
@@ -74,7 +124,7 @@ func _action(action: String) -> void:
 		"leave":
 			_leave_match()
 		"attack", "dodge":
-			if inventory_panel.visible or dock.visible:
+			if inventory_panel.visible or dock.visible or world_map.visible:
 				return
 			if api.snapshot.get("phase", "") == "active":
 				pending_action = "sk_basic" if action == "attack" else "sk_dodge"
@@ -83,17 +133,19 @@ func _action(action: String) -> void:
 		"interact":
 			if not api.match_id.is_empty():
 				return
-			if player.position.distance_to(Vector2(166, 139)) < 52:
+			if current_map_id == "m_an_khe" and player.position.distance_to(Vector2(286, 440)) < 72:
 				hud.notify("Bà Sâm: Dòng nước đang yếu dần… [hội thoại mẫu]")
 				hud.get_node("Quest/Body").text = "Đã xem lời nhắn Bà Sâm.\nNhiệm vụ chưa được lưu."
+			elif current_map_id != "m_an_khe":
+				hud.notify("NPC, quest và tương tác của map này chưa được kết nối.")
 			else:
-				hud.notify("Đến cửa hiệu thuốc Bà Sâm ở bên trái, rồi nhấn E.")
+				hud.notify("Đến hiệu thuốc Bà Sâm phía tây bắc, rồi nhấn E.")
 		_:
 			hud.notify("Chức năng chưa mở. Không tiêu hao vật phẩm.")
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if not inventory_panel.visible and not dock.visible:
+		if not inventory_panel.visible and not dock.visible and not world_map.visible:
 			_action("attack")
 		return
 	if not event is InputEventKey or not event.pressed or event.echo:
@@ -101,13 +153,16 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.physical_keycode == KEY_ESCAPE:
 		inventory_panel.hide()
 		dock.hide()
+		world_map.hide()
 		get_viewport().set_input_as_handled()
 		return
 	if room.has_focus():
 		return
 	if event.physical_keycode == KEY_I:
 		_action("inventory")
-	elif not inventory_panel.visible and not dock.visible:
+	elif event.physical_keycode == KEY_M:
+		_action("map")
+	elif not inventory_panel.visible and not dock.visible and not world_map.visible:
 		match event.physical_keycode:
 			KEY_E: _action("interact")
 			KEY_J, KEY_Q: _action("attack")
@@ -115,7 +170,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_1, KEY_2, KEY_R: _action("locked")
 
 func _movement() -> Vector2:
-	if inventory_panel.visible or dock.visible:
+	if inventory_panel.visible or dock.visible or world_map.visible:
 		return Vector2.ZERO
 	return Vector2(
 		float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT)) -
@@ -125,26 +180,25 @@ func _movement() -> Vector2:
 	).limit_length()
 
 func can_walk(at: Vector2) -> bool:
-	for area: Rect2 in WALK_AREAS:
-		if area.has_point(at):
-			return true
-	return false
+	return map_world != null and map_world.is_walkable(at)
+
+func _physics_process(delta: float) -> void:
+	if api == null or map_world == null or not api.match_id.is_empty():
+		return
+	var old_position := player.position
+	player.velocity = _movement() * WALK_SPEED
+	player.move_and_slide()
+	offline_position = player.position
+	player.present(player.position - old_position, delta)
+	var area_name := map_world.update_player_context(player.position)
+	hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, area_name)
+	hud.get_node("Location/State").text = "An toàn • " + area_name if current_map_id == "m_an_khe" else area_name
 
 func _process(delta: float) -> void:
 	if api == null:
 		return
 	var direction := _movement()
-	if api.match_id.is_empty():
-		var old_position := offline_position
-		var step := direction * WALK_SPEED * minf(delta, 0.05)
-		if can_walk(offline_position + Vector2(step.x, 0)):
-			offline_position.x += step.x
-		if can_walk(offline_position + Vector2(0, step.y)):
-			offline_position.y += step.y
-		player.position = offline_position.round()
-		player.present(offline_position - old_position, delta)
-		hud.update_position(player.position)
-	else:
+	if not api.match_id.is_empty():
 		snapshot_age += delta
 		_present_fighters(delta)
 		send_clock += delta
@@ -169,6 +223,7 @@ func _present_fighters(delta: float) -> void:
 		var id := str(p.id)
 		if not fighters.has(id):
 			var actor := Actor.instantiate() as PixelActor
+			actor.get_node("Camera2D").enabled = false
 			$Arena.add_child(actor)
 			actor.position = Vector2(float(p.x), float(p.y)) * ARENA_SCALE
 			if id != user_id:
@@ -213,6 +268,7 @@ func _update_buttons() -> void:
 	dock.get_node("Ready").disabled = busy or not _connected() or not in_match or api.snapshot.get("phase", "") != "waiting"
 	dock.get_node("Leave").disabled = busy or not in_match
 	hud.get_node("BagButton").disabled = busy or in_match
+	hud.get_node("MapButton").disabled = busy or in_match
 
 func _message(message: String) -> void:
 	dock.get_node("Status").text = message
@@ -227,8 +283,10 @@ func _connection_lost() -> void:
 func _snapshot(value: Dictionary) -> void:
 	snapshot_age = 0.0
 	var phase := str(value.phase)
-	$AnKhe.hide()
+	village_camera.enabled = false
+	map_world.hide()
 	$Arena.show()
+	world_map.hide()
 	hud.get_node("Location/Title").text = "VÕ ĐÀI"
 	hud.get_node("Location/State").text = "Đấu tập • không mất đồ"
 	hud.get_node("Minimap").hide()
@@ -254,7 +312,7 @@ func _snapshot(value: Dictionary) -> void:
 			"finished":
 				dock.show()
 				var winner := str(value.get("winner", ""))
-				_message(("Hòa" if winner.is_empty() else ("Bạn thắng" if winner == user_id else "Bạn thua")) + " • Rời trận để trở về làng.")
+				_message(("Hòa" if winner.is_empty() else ("Bạn thắng" if winner == user_id else "Bạn thua")) + " • Rời trận để quay lại map hiện tại.")
 	_update_buttons()
 
 func _connect_backend() -> void:
@@ -320,14 +378,14 @@ func _leave_match() -> void:
 	pending_action = ""
 	last_phase = ""
 	$Arena.hide()
-	$AnKhe.show()
+	map_world.show()
+	village_camera.enabled = true
 	hud.set_health(100)
 	hud.get_node("Minimap").show()
-	hud.get_node("Location/Title").text = "AN KHÊ"
-	hud.get_node("Location/State").text = "Làng khởi đầu • an toàn"
-	hud.get_node("Quest/Title").text = "VIỆC Ở AN KHÊ"
-	hud.get_node("Quest/Body").text = "Ghé hiệu thuốc Bà Sâm.\n[E] Xem lời nhắn tại cửa."
+	hud.configure_map(map_world.map_data)
+	hud.get_node("Quest/Title").text = str(map_world.map_data.get("quest_title", "THÁM HIỂM"))
+	hud.get_node("Quest/Body").text = str(map_world.map_data.get("quest_body", ""))
 	hud.get_node("Mode").text = "ĐÃ KẾT NỐI • đi làng vẫn là bản thử" if _connected() else "BẢN XEM THỬ • OFFLINE"
-	_message("Đã rời trận. Trở về An Khê.")
+	_message("Đã rời trận. Trở lại map hiện tại.")
 	busy = false
 	_update_buttons()

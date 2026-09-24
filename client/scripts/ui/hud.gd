@@ -5,9 +5,10 @@ var toast_time: float = 0.0
 
 func _ready() -> void:
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
+	$MapButton.pressed.connect(func() -> void: action_requested.emit("map"))
 	$SparringButton.pressed.connect(func() -> void: action_requested.emit("dock"))
 	$HelpButton.pressed.connect(func() -> void:
-		notify("WASD: đi • I: túi • E: xem hiệu thuốc • Đấu tập: online"))
+		notify("WASD: đi • M: tuyến map • I: túi • E: tương tác"))
 	for index in range(6):
 		var action_id: String = ["item_heal", "item_herb", "attack", "interact", "locked", "dodge"][index]
 		get_node("Hotbar/Slot%d" % index).pressed.connect(
@@ -38,9 +39,32 @@ func notify(message: String) -> void:
 	$Toast.show()
 	toast_time = 4.0
 
-func update_position(point: Vector2) -> void:
-	$Minimap/Marker.position = Vector2(5, 5) + point / Vector2(640, 360) * Vector2(88, 47)
-	$Minimap/Coordinates.text = "An Khê  (%d, %d)" % [int(point.x / 32), int(point.y / 32)]
+func configure_map(map_data: Dictionary) -> void:
+	var preview_path := str(map_data.get("preview", ""))
+	var texture: Texture2D = load(preview_path) if not preview_path.is_empty() else null
+	$Minimap/Map.texture = texture
+	$Location/Title.text = str(map_data.get("name", "Map")).to_upper()
+	$Location/State.text = str(map_data.get("summary", ""))
+	$Minimap/Coordinates.tooltip_text = str(map_data.get("name", "Map"))
+
+func update_position(
+		point: Vector2,
+		map_size_px: Vector2 = Vector2(640, 360),
+		tile_size_px: int = 32,
+		area_name: String = "") -> void:
+	var map_view: TextureRect = $Minimap/Map
+	var marker: ColorRect = $Minimap/Marker
+	var travel := (map_view.size - marker.size).max(Vector2.ZERO)
+	var normalized := Vector2(
+		clampf(point.x / maxf(map_size_px.x, 1.0), 0.0, 1.0),
+		clampf(point.y / maxf(map_size_px.y, 1.0), 0.0, 1.0)
+	)
+	marker.position = map_view.position + normalized * travel
+	var coordinates := "(%d, %d)" % [
+		int(point.x / maxi(tile_size_px, 1)), int(point.y / maxi(tile_size_px, 1))
+	]
+	$Minimap/Coordinates.text = coordinates
+	$Minimap/Coordinates.tooltip_text = "%s • %s" % [area_name, coordinates] if not area_name.is_empty() else coordinates
 
 func set_health(hp: int) -> void:
 	$Vitals/HP.value = clampi(hp, 0, 100)
