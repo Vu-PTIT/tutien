@@ -310,3 +310,11 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 - Added matching transparent 256×256 props atlases and TileSet resources for An Khê, Trúc Âm, Thạch Cạn and Cổ Tỉnh.
 - Expanded each map layout to use terrain variants plus 10–15 Y-sorted props instead of a minimal repeated-tile presentation.
 - Added static safeguards: terrain/props PNGs must be 256×256 and non-trivially sized; each TileSet must expose 64 cells; each map must declare a substantial props layer.
+
+
+## 2026-09-24 — Fix Godot map parser and restore authored atlas detail
+
+- Reproduced the `variant_index` parse error on Godot 4.6.1; replaced the faulty procedural selector with validated authored cell rows.
+- Restored matching detailed biome terrain and 128 px landmark regions from `c7767a2`; kept TileMap layers, independent props, gates, collision and room camera behavior.
+- Removed painted background fallback/loading, added complete PNG integrity audit and four-map runtime asset checks.
+- See `map-runtime-repair-2026-09-24.md` for asset provenance, checks and remaining art limitations.

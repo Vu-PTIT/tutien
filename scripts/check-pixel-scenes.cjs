@@ -95,13 +95,13 @@ for(const name of ['an_khe','an_khe_world_v1','cultivator','icons']) {
   if(['cultivator','icons'].includes(name)) assert.ok([3,6].includes(png[25]),'Expected transparent PNG atlas: '+name);
 }
 const mapWorldScene=read('scenes/map_world.tscn'), gameMap=read('scripts/game_map.gd');
-assert.ok(mapWorldScene.includes('name="Background" type="Sprite2D"'), 'Original map art remains available as a fallback preview');
+assert.ok(mapWorldScene.includes('name="Background" type="Sprite2D"'), 'Background placeholder stays hidden; painted art is minimap-only');
 assert.ok(mapWorldScene.includes('name="GroundLayer" type="TileMapLayer"'), 'Maps have an editable ground TileMapLayer');
 assert.ok(mapWorldScene.includes('name="DetailLayer" type="TileMapLayer"'), 'Maps have a detail TileMapLayer');
 assert.ok(mapWorldScene.includes('name="ForegroundLayer" type="TileMapLayer"'), 'Maps have a foreground TileMapLayer');
 assert.ok(mapWorldScene.includes('name="Actors" type="Node2D" parent="."') && mapWorldScene.includes('y_sort_enabled = true') && gameMap.includes('var root: Node2D = $Actors'), 'Player and world objects are Y-sorted together');
 assert.ok(gameMap.includes('solid_rects_tiles'), 'Map collision blockers are catalog-backed');
-assert.ok(gameMap.includes('_build_authored_tile_layers()') && gameMap.includes('_fill_layer('), 'Maps build from authored reusable tile layouts');
+assert.ok(gameMap.includes('_build_authored_tile_layers()') && gameMap.includes('_set_atlas_cell('), 'Maps build from authored reusable tile layouts');
 assert.ok(!gameMap.includes('source_texture.get_image()') && !gameMap.includes('atlas.create_tile('), 'Runtime must not slice the painted world PNG into one-off atlas cells');
 for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
   const terrainPng=path.join(root,'assets/pixel/terrain/'+name+'_terrain.png');
@@ -111,8 +111,9 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
   for(const asset of [terrainPng, terrainTres, propsPng, propsTres]) assert.ok(fs.existsSync(asset), 'Missing map atlas resource: '+asset);
   for(const pngPath of [terrainPng, propsPng]) {
     const png=fs.readFileSync(pngPath);
-    assert.equal(png.readUInt32BE(16),256,'Map atlas must be 256 px wide: '+pngPath);
-    assert.equal(png.readUInt32BE(20),256,'Map atlas must be 256 px tall: '+pngPath);
+    const expectedSize = pngPath === propsPng ? 1024 : 256;
+    assert.equal(png.readUInt32BE(16),expectedSize,'Map atlas has wrong size in wide: '+pngPath);
+    assert.equal(png.readUInt32BE(20),expectedSize,'Map atlas has wrong size in tall: '+pngPath);
     assert.ok(png.length>10000,'Map atlas looks suspiciously reduced/truncated: '+pngPath);
   }
   for(const tresPath of [terrainTres, propsTres]) {
@@ -120,9 +121,10 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
     assert.equal((tres.match(/\/0 = 0/g)||[]).length,64,'TileSet must expose 64 atlas cells: '+tresPath);
   }
   const layout=JSON.parse(fs.readFileSync(path.join(root,'data/maps/'+name+'.json'),'utf8'));
+  assert.equal(layout.props_cell_px,128, 'Props must retain 128 px source detail');
   assert.equal(layout.atlas_columns,8,'Terrain atlas must use 8 columns: '+name);
-  assert.ok(layout.tile_set && Array.isArray(layout.regions), 'Missing authored map layout data: '+name);
-  assert.ok(layout.props_atlas && Array.isArray(layout.props) && layout.props.length>=10, 'Map needs a substantial props layer: '+name);
+  assert.ok(layout.tile_set && Array.isArray(layout.ground_rows), 'Missing authored map layout data: '+name);
+  assert.ok(layout.props_atlas && Array.isArray(layout.props) && layout.props.length>=7, 'Map needs a substantial props layer: '+name);
 }
 assert.ok(gameMap.includes('_build_props(layout)') && gameMap.includes('MAP_PROP_SCENE'), 'Map decorative props are data-driven and Y-sorted');
 assert.ok(gameMap.includes('_build_interactables()') && gameMap.includes('_build_water_ripples()'), 'Map POIs and water motion are data-driven');

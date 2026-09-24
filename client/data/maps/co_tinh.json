@@ -1,281 +1,184 @@
 {
-  "version": 2,
+  "version": 3,
   "tile_set": "res://assets/pixel/terrain/co_tinh_terrain.tres",
   "atlas_columns": 8,
+  "ground_rows": [
+    "8BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA9",
+    "A98BA98BA98BA957135713571357135B135713571357135B",
+    "8BA98BA98BA98B6024602460246024692460246024602469",
+    "A98BA98BA98BA971357135713571357B357XYZabcdW1357B",
+    "8BA98BA98BA98B02460bWZcXadY24609460ZabcdWXY24609",
+    "A713571357135713571cXadYbWZ3571B571bcdWXYZa3571B",
+    "8024602460246024602dYbWZcXa46029602dWXYZabc46029",
+    "A135713571357135713WZcXadYb57GHIJG3XYZabcdW5713B",
+    "824602460246GHIJ024XadYbWZc60HIJGH4ZabcdWXY60249",
+    "A35713571357HIJG135YbWZcXad71IJGHI5bcdWXYZa7135B",
+    "846024602460IJGH246ZcXadYbW02JGHIJ6dWXYZabc02469",
+    "A57135713571JGHI357135713571357B357135713571357B",
+    "860246024602GHIJ46024602460246094602460246024609",
+    "A713571357135713571357135713571B571357135713571B",
+    "802460246024602460246024602HIJGHIJGHIJG460246029",
+    "A13571357135713571357135713IJGHIJGHIJGH57135713B",
+    "82460246024602A98BA98BA9024JGHIJGHIJGHI602460249",
+    "A35713571357138BA98BA98B135GHIJGHIJGHIJ71357135B",
+    "84602460246024A98BA98BA9246HIJGHIJGHIJG024602469",
+    "A57135713571358BA98BA98B35713571357135713571357B",
+    "86024602460246A98BA98BA94602460246ghefg246024609",
+    "A71357135713578BA98BA98B5713571357hefgh35713571B",
+    "80246JGHIJ2460A98BA98BA96024602460efghe460246029",
+    "A98BAGHIJG8BA98BA98BA98B7135713571fghef57135713B",
+    "82460HIJGH4602A98BA98BA90246024602ghefg602460249",
+    "A3571IJGHI57138BA98BA98B13571357135713571357135B",
+    "84602460246024A98BA98BA9246024602460246024602469",
+    "A57135713571358BA98BA98B35713571357135713571357B",
+    "86024602460246A98BA98BA9460246024602460246024609",
+    "A71357135713578BA98BA98B57135713571357135713571B",
+    "80246024602460A98BA98BA9602460246024602460246029",
+    "A13571357135718BA98BA98B71357135713571357135713B",
+    "82460246024602A98BA98BA9024602460246024602460249",
+    "A35713571357138BA98BA98B13571357135713571357135B",
+    "84602460246024A98BA98BA9246024602460246024602469",
+    "A98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98B"
+  ],
+  "detail_tiles": [
+    {
+      "position_tiles": [
+        2,
+        6
+      ],
+      "tile": 9
+    },
+    {
+      "position_tiles": [
+        6,
+        20
+      ],
+      "tile": 10
+    },
+    {
+      "position_tiles": [
+        17,
+        3
+      ],
+      "tile": 11
+    },
+    {
+      "position_tiles": [
+        28,
+        12
+      ],
+      "tile": 13
+    },
+    {
+      "position_tiles": [
+        33,
+        4
+      ],
+      "tile": 14
+    },
+    {
+      "position_tiles": [
+        45,
+        6
+      ],
+      "tile": 9
+    },
+    {
+      "position_tiles": [
+        17,
+        12
+      ],
+      "tile": 12
+    },
+    {
+      "position_tiles": [
+        25,
+        20
+      ],
+      "tile": 10
+    },
+    {
+      "position_tiles": [
+        29,
+        30
+      ],
+      "tile": 11
+    },
+    {
+      "position_tiles": [
+        45,
+        31
+      ],
+      "tile": 13
+    }
+  ],
   "props_atlas": "res://assets/pixel/props/co_tinh_props.png",
   "props_columns": 8,
-  "base_tiles": [
-    24,
-    25,
-    26,
-    27,
-    28,
-    29,
-    30,
-    31
-  ],
-  "regions": [
-    {
-      "rect": [
-        0,
-        23,
-        15,
-        13
-      ],
-      "tiles": [
-        40,
-        41,
-        42,
-        43,
-        44,
-        45,
-        46,
-        47
-      ]
-    },
-    {
-      "rect": [
-        15,
-        0,
-        17,
-        36
-      ],
-      "tiles": [
-        24,
-        25,
-        26,
-        27,
-        28,
-        29,
-        30,
-        31
-      ]
-    },
-    {
-      "rect": [
-        32,
-        0,
-        16,
-        36
-      ],
-      "tiles": [
-        24,
-        25,
-        26,
-        27,
-        28,
-        29,
-        30,
-        31
-      ]
-    }
-  ],
-  "detail_regions": [
-    {
-      "rect": [
-        2,
-        5,
-        11,
-        17
-      ],
-      "tiles": [
-        56,
-        57,
-        58,
-        59,
-        60,
-        61,
-        62,
-        63
-      ]
-    },
-    {
-      "rect": [
-        17,
-        2,
-        12,
-        10
-      ],
-      "tiles": [
-        40,
-        41,
-        42,
-        43,
-        44,
-        45,
-        46,
-        47
-      ]
-    },
-    {
-      "rect": [
-        33,
-        3,
-        13,
-        11
-      ],
-      "tiles": [
-        40,
-        41,
-        42,
-        43,
-        44,
-        45,
-        46,
-        47
-      ]
-    },
-    {
-      "rect": [
-        31,
-        21,
-        14,
-        11
-      ],
-      "tiles": [
-        48,
-        49,
-        50,
-        51,
-        52,
-        53,
-        54,
-        55
-      ]
-    }
-  ],
-  "foreground_regions": [
-    {
-      "rect": [
-        0,
-        0,
-        48,
-        2
-      ],
-      "tiles": [
-        56,
-        57,
-        58,
-        59,
-        60,
-        61,
-        62,
-        63
-      ]
-    }
-  ],
+  "props_cell_px": 128,
   "props": [
     {
-      "name": "EntranceShrine",
+      "name": "ct_prop_root_column_west",
       "position_tiles": [
-        11,
-        31
+        2.5,
+        11
       ],
-      "tile": 48,
-      "scale_tiles": [
-        1.2,
-        1.2
-      ]
+      "tile": 48
     },
     {
-      "name": "RootPillarA",
+      "name": "ct_prop_engraved_column",
       "position_tiles": [
-        5,
-        10
+        11.5,
+        11
       ],
-      "tile": 56,
-      "scale_tiles": [
-        1.2,
-        1.6
-      ]
+      "tile": 49
     },
     {
-      "name": "RootPillarB",
+      "name": "ct_prop_balance_altar",
       "position_tiles": [
-        11,
-        18
+        17.5,
+        5
       ],
-      "tile": 57,
-      "scale_tiles": [
-        1.2,
-        1.6
-      ]
+      "tile": 51
     },
     {
-      "name": "BalanceShrine",
+      "name": "ct_prop_formation_lamp",
       "position_tiles": [
-        23,
-        8
-      ],
-      "tile": 50,
-      "scale_tiles": [
-        1.3,
-        1.3
-      ]
-    },
-    {
-      "name": "FormationPillarA",
-      "position_tiles": [
-        36,
+        34.5,
         7
       ],
-      "tile": 58,
-      "scale_tiles": [
-        1.2,
-        1.5
-      ]
+      "tile": 53
     },
     {
-      "name": "FormationPillarB",
+      "name": "ct_prop_ancient_pillar",
       "position_tiles": [
-        42,
-        8
+        42.5,
+        6
       ],
-      "tile": 59,
-      "scale_tiles": [
-        1.2,
-        1.5
-      ]
+      "tile": 55
     },
     {
-      "name": "HeartWell",
+      "name": "ct_prop_heart_well",
       "position_tiles": [
-        36,
-        26
-      ],
-      "tile": 55,
-      "scale_tiles": [
-        1.5,
-        1.5
-      ]
-    },
-    {
-      "name": "RetreatGate",
-      "position_tiles": [
-        8,
-        25
-      ],
-      "tile": 61,
-      "scale_tiles": [
-        1.2,
-        1.4
-      ]
-    },
-    {
-      "name": "RuneA",
-      "position_tiles": [
-        24,
-        7
+        35.5,
+        22
       ],
       "tile": 52
     },
     {
-      "name": "RuneB",
+      "name": "ct_prop_entrance_roots",
       "position_tiles": [
-        38,
-        12
+        4.5,
+        30
       ],
-      "tile": 53
+      "tile": 56
+    },
+    {
+      "name": "ct_prop_jade_statue",
+      "position_tiles": [
+        28.5,
+        5
+      ],
+      "tile": 62
     }
   ]
 }

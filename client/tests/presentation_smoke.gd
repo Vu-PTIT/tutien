@@ -24,6 +24,22 @@ func _capture(filename: String) -> void:
 	var img := root.get_texture().get_image()
 	check(img.save_png(capture_dir.path_join(filename)) == OK, "Capture failed")
 
+func check_map_assets(world: GameMap) -> void:
+	var ground: TileMapLayer = world.get_node("WorldLayers/GroundLayer")
+	check(ground.get_used_cells().size() == world.map_size_tiles.x * world.map_size_tiles.y, "Complete terrain: " + world.map_id)
+	for layer_name in ["GroundLayer", "DetailLayer", "ForegroundLayer"]:
+		var layer: TileMapLayer = world.get_node("WorldLayers/" + layer_name)
+		for cell in layer.get_used_cells():
+			check(layer.get_cell_tile_data(cell) != null, "Valid atlas cell: " + world.map_id)
+	var props_count := 0
+	for actor in world.get_node("Actors").get_children():
+		if actor is MapProp:
+			props_count += 1
+			var texture: AtlasTexture = actor.get_node("Sprite").texture
+			check(texture != null and texture.region.size == Vector2(128, 128), "Landmarks retain full source resolution")
+	check(props_count >= 7, "Map has authored landmarks: " + world.map_id)
+	check(not world.get_node("Background").visible, "No painted PNG fallback: " + world.map_id)
+
 func _run() -> void:
 	var main = Main.instantiate()
 	root.add_child(main)
@@ -31,6 +47,7 @@ func _run() -> void:
 	await process_frame
 	var hud = main.hud
 	var bag: InventoryPanel = main.inventory_panel
+	check_map_assets(main.map_world)
 	check(not main.can_walk(Vector2(240, 304)), "House footprint must block walking")
 	check(main.can_walk(Vector2(768, 576)), "An Khê spawn must be walkable")
 	check(main.map_world.map_size_tiles == Vector2i(48, 36), "An Khê uses the agreed map size")
@@ -69,6 +86,8 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	check(main.current_map_id == "m_truc_am", "Village gate opens its configured destination")
+	check_map_assets(main.map_world)
+	await _capture("truc-am-runtime.png")
 	check(main.player.position == Vector2(5 * 32, 26 * 32), "Village gate arrives at the Trúc Âm entrance")
 	var initial_position: Vector2 = main.player.position
 	check(main.map_world.interactables_size() == 5, "Trúc Âm loads its own interactive map data")
@@ -99,6 +118,8 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	check(main.current_map_id == "m_thach_can", "Trúc Âm exit gate opens Thạch Cạn")
+	check_map_assets(main.map_world)
+	await _capture("thach-can-runtime.png")
 	check(main.player.position == Vector2(7 * 32, 18 * 32), "Trúc Âm gate arrives at the Thạch Cạn entrance")
 	check(main.map_world.interactables_size() == 5, "Thạch Cạn loads its own interactive map data")
 	var ore_node: MapInteractable = main.map_world.get_interactable("tc.node.iron_ore")
@@ -112,6 +133,8 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	check(main.current_map_id == "m_co_tinh", "Travel action loads Cổ Tỉnh")
+	check_map_assets(main.map_world)
+	await _capture("co-tinh-runtime.png")
 	check(main.player.position == Vector2(11 * 32, 31 * 32), "Thạch Cạn gate arrives at the Cổ Tỉnh entrance")
 	check(main.map_world.interactables_size() == 5, "Cổ Tỉnh loads its own interactive map data")
 	check(main.map_world.areas_size() == 5, "Cổ Tỉnh has five named rooms")

@@ -49,7 +49,9 @@ jobs:
         with:
           node-version: '22.14.0'
       - name: Static scene and asset audit
-        run: node scripts/check-pixel-scenes.cjs
+        run: |
+          node scripts/check-png-integrity.cjs
+          node scripts/check-pixel-scenes.cjs
       - name: Install Godot
         env:
           GODOT_VERSION: ${{ matrix.godot }}

@@ -1,357 +1,214 @@
 {
-  "version": 2,
+  "version": 3,
   "tile_set": "res://assets/pixel/terrain/an_khe_terrain.tres",
   "atlas_columns": 8,
-  "props_atlas": "res://assets/pixel/props/an_khe_props.png",
-  "props_columns": 8,
-  "base_tiles": [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7
+  "ground_rows": [
+    "032103210321032103210321032103210321032103210321",
+    "10321032103210321032103210321032103210321Hlgefg2",
+    "2103210321032103210321GH21032103210321032Hkefge3",
+    "3210321032103210321032HI32103210321032103Hlfgef0",
+    "0321032103210321032103IJ03210321032103210Hkgefg1",
+    "1032103210321032103210JG10321032103210321Hlefge2",
+    "2103210321032103210321GH21032103210321032Hkfgef3",
+    "3210321032103210321032HI32103210321032103Hlgefg0",
+    "0321032103210321032103IJ03210321032103210Hkefge1",
+    "1032103210321032103210JG10321032103210321Hlfgef2",
+    "2103210321032103210321GH21032103210321032Hkgefg3",
+    "3210321032103210321032HI32103210321032103Hlefge0",
+    "03210321KLMNKLMNKLMNKLMN03210LMNKLMNKLMN0Hkfgef1",
+    "10321032LMNKLMNKLMNKLMNK10321MNKLMNKLIJK1Hlgefg2",
+    "2103210321032103210321GH2103210321032JG32Hkefge3",
+    "321032103210321032ZbdXHIdXZbdXZ032103GH03Hlfgef0",
+    "032103210321032103acWYacWYacWYa103210HI10Hkgefg1",
+    "103210321032103210bdXZbdXZbdXZJGHIJGHIJGHIlefge2",
+    "210321032103210321cWYacWYacWYaGHIJGHIJGHIJkfgef3",
+    "321032103210321032dXZbdXZbdXZbd032103GH03Hlgefg0",
+    "032103210321032103WYacWYacWYacW103210HI10nopmno1",
+    "103210321032103210XZbdXZbdXZbdX2103210321opmnop2",
+    "2103210321032JG321YacWYacWYacWY3210321032pmnopm3",
+    "3210321032103GH032ZbdXZbdXZbdXZ0321032103mnopmn0",
+    "0321032103210HI10321032103210321032103210nopmno1",
+    "1032103210321IJGHIJGHI3210321032103210321Hlgefg2",
+    "2103210321032JGHIJGHIJ0321032103210321032Hkefge3",
+    "3210321032103GH03210321032103210321032103Hlfgef0",
+    "03210321032103210321032103210321032103210Hkgefg1",
+    "10321032103210321032103210321032103210321Hlefge2",
+    "21032103210321032103210321032103210321032Hkfgef3",
+    "32103210321032103210321032103210321032103Hlgefg0",
+    "03210321032103210321032103210321032103210Hkefge1",
+    "10321032103210321032103210321032103210321Hlfgef2",
+    "21032103210321032103210321032103210321032Hkgefg3",
+    "321032103210321032103210321032103210321032103210"
   ],
-  "regions": [
+  "detail_tiles": [
     {
-      "rect": [
-        20,
-        0,
-        7,
-        36
-      ],
-      "tiles": [
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15
-      ]
-    },
-    {
-      "rect": [
-        0,
-        16,
-        48,
-        5
-      ],
-      "tiles": [
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15
-      ]
-    },
-    {
-      "rect": [
-        42,
-        0,
-        6,
-        36
-      ],
-      "tiles": [
-        16,
-        17,
-        18,
-        19,
-        20,
-        21,
-        22,
-        23
-      ]
-    },
-    {
-      "rect": [
-        17,
-        22,
-        7,
-        9
-      ],
-      "tiles": [
-        32,
-        33,
-        34,
-        35,
-        36,
-        37,
-        38,
-        39
-      ]
-    }
-  ],
-  "detail_regions": [
-    {
-      "rect": [
-        5,
-        5,
-        9,
-        8
-      ],
-      "tiles": [
-        40,
-        41,
-        42,
-        43,
-        44,
-        45,
-        46,
-        47
-      ]
-    },
-    {
-      "rect": [
-        26,
-        4,
-        11,
-        9
-      ],
-      "tiles": [
-        40,
-        41,
-        42,
-        43,
-        44,
-        45,
-        46,
-        47
-      ]
-    },
-    {
-      "rect": [
-        30,
-        13,
-        10,
-        7
-      ],
-      "tiles": [
-        40,
-        41,
-        42,
-        43,
-        44,
-        45,
-        46,
-        47
-      ]
-    },
-    {
-      "rect": [
-        4,
-        23,
-        13,
-        8
-      ],
-      "tiles": [
-        32,
-        33,
-        34,
-        35,
-        36,
-        37,
-        38,
-        39
-      ]
-    },
-    {
-      "rect": [
-        23,
-        23,
-        9,
-        8
-      ],
-      "tiles": [
-        32,
-        33,
-        34,
-        35,
-        36,
-        37,
-        38,
-        39
-      ]
-    }
-  ],
-  "foreground_regions": [
-    {
-      "rect": [
-        0,
-        0,
-        48,
-        2
-      ],
-      "tiles": [
-        56,
-        57,
-        58,
-        59,
-        60,
-        61,
-        62,
-        63
-      ]
-    }
-  ],
-  "props": [
-    {
-      "name": "HouseHerbalist",
       "position_tiles": [
-        8,
-        12
-      ],
-      "tile": 16,
-      "scale_tiles": [
         2,
-        2
-      ]
-    },
-    {
-      "name": "HouseSmith",
-      "position_tiles": [
-        31,
-        12
-      ],
-      "tile": 17,
-      "scale_tiles": [
-        2,
-        2
-      ]
-    },
-    {
-      "name": "HouseWest",
-      "position_tiles": [
-        4,
-        20
-      ],
-      "tile": 18,
-      "scale_tiles": [
-        2,
-        2
-      ]
-    },
-    {
-      "name": "HouseEast",
-      "position_tiles": [
-        37,
-        18
-      ],
-      "tile": 19,
-      "scale_tiles": [
-        2,
-        2
-      ]
-    },
-    {
-      "name": "GardenTreeA",
-      "position_tiles": [
-        12,
-        27
-      ],
-      "tile": 0,
-      "scale_tiles": [
-        1.5,
-        1.5
-      ]
-    },
-    {
-      "name": "GardenTreeB",
-      "position_tiles": [
-        26,
-        29
-      ],
-      "tile": 2,
-      "scale_tiles": [
-        1.5,
-        1.5
-      ]
-    },
-    {
-      "name": "RiverTree",
-      "position_tiles": [
-        40,
-        8
-      ],
-      "tile": 5,
-      "scale_tiles": [
-        1.5,
-        1.5
-      ]
-    },
-    {
-      "name": "VillageSign",
-      "position_tiles": [
-        15,
-        17
-      ],
-      "tile": 24
-    },
-    {
-      "name": "SmithSign",
-      "position_tiles": [
-        31,
-        14
-      ],
-      "tile": 25
-    },
-    {
-      "name": "MarketStall",
-      "position_tiles": [
-        39,
-        21
-      ],
-      "tile": 44,
-      "scale_tiles": [
-        1.4,
-        1.2
-      ]
-    },
-    {
-      "name": "HerbPatch",
-      "position_tiles": [
-        18,
-        25
-      ],
-      "tile": 40
-    },
-    {
-      "name": "HerbPatchB",
-      "position_tiles": [
-        21,
-        25
-      ],
-      "tile": 42
-    },
-    {
-      "name": "VillageWell",
-      "position_tiles": [
-        24,
-        17
-      ],
-      "tile": 48,
-      "scale_tiles": [
-        1.2,
-        1.2
-      ]
-    },
-    {
-      "name": "NorthGate",
-      "position_tiles": [
-        22,
         3
       ],
-      "tile": 56,
-      "scale_tiles": [
-        1.3,
-        1.3
-      ]
+      "tile": 8
+    },
+    {
+      "position_tiles": [
+        15,
+        4
+      ],
+      "tile": 9
+    },
+    {
+      "position_tiles": [
+        18,
+        6
+      ],
+      "tile": 11
+    },
+    {
+      "position_tiles": [
+        39,
+        5
+      ],
+      "tile": 10
+    },
+    {
+      "position_tiles": [
+        3,
+        11
+      ],
+      "tile": 12
+    },
+    {
+      "position_tiles": [
+        12,
+        20
+      ],
+      "tile": 9
+    },
+    {
+      "position_tiles": [
+        17,
+        27
+      ],
+      "tile": 13
+    },
+    {
+      "position_tiles": [
+        32,
+        25
+      ],
+      "tile": 10
+    },
+    {
+      "position_tiles": [
+        39,
+        29
+      ],
+      "tile": 11
+    },
+    {
+      "position_tiles": [
+        19,
+        3
+      ],
+      "tile": 14
+    },
+    {
+      "position_tiles": [
+        35,
+        9
+      ],
+      "tile": 8
+    },
+    {
+      "position_tiles": [
+        2,
+        29
+      ],
+      "tile": 12
+    }
+  ],
+  "props_atlas": "res://assets/pixel/props/an_khe_props.png",
+  "props_columns": 8,
+  "props_cell_px": 128,
+  "props": [
+    {
+      "name": "ak_prop_north_gate",
+      "position_tiles": [
+        22.5,
+        4
+      ],
+      "tile": 55
+    },
+    {
+      "name": "ak_prop_herbalist",
+      "position_tiles": [
+        6.5,
+        10
+      ],
+      "tile": 48
+    },
+    {
+      "name": "ak_prop_guest_house",
+      "position_tiles": [
+        28.5,
+        9
+      ],
+      "tile": 51
+    },
+    {
+      "name": "ak_prop_market_stall",
+      "position_tiles": [
+        38.5,
+        19
+      ],
+      "tile": 50
+    },
+    {
+      "name": "ak_prop_blacksmith",
+      "position_tiles": [
+        32.5,
+        17
+      ],
+      "tile": 52
+    },
+    {
+      "name": "ak_prop_well",
+      "position_tiles": [
+        24.5,
+        28
+      ],
+      "tile": 49
+    },
+    {
+      "name": "ak_prop_medicine_garden",
+      "position_tiles": [
+        6.5,
+        27
+      ],
+      "tile": 56
+    },
+    {
+      "name": "ak_prop_sakura",
+      "position_tiles": [
+        18.5,
+        32
+      ],
+      "tile": 59
+    },
+    {
+      "name": "ak_prop_bamboo",
+      "position_tiles": [
+        2.5,
+        7
+      ],
+      "tile": 61
+    },
+    {
+      "name": "ak_prop_willow",
+      "position_tiles": [
+        39.5,
+        8
+      ],
+      "tile": 63
     }
   ]
 }

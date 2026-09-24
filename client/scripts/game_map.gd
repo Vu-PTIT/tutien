@@ -1,10 +1,11 @@
 class_name GameMap
 extends Node2D
 ## Shared world runtime for the four maps.
-## Gameplay uses reusable 32 px terrain atlases, transparent prop atlases and compact layout data.
-## Painted world PNG files are retained only for preview/minimap/fallback rendering.
+## Gameplay uses reusable 32 px terrain and independent 128 px landmark regions.
+## Painted world PNG files are retained only for the route preview/minimap.
 
 const TILE_SIZE_DEFAULT := 32
+const TILE_SYMBOLS := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"
 const INTERACTABLE_SCENE = preload("res://scenes/map_interactable.tscn")
 const WATER_RIPPLE_SCENE = preload("res://scenes/map_water_ripple.tscn")
 const MAP_PROP_SCENE = preload("res://scenes/map_prop.tscn")
@@ -64,16 +65,10 @@ func configure(data: Dictionary, tile_size: int = TILE_SIZE_DEFAULT) -> void:
 
 func _ready() -> void:
 	var background: Sprite2D = $Background
-	var preview_path := str(map_data.get("preview", ""))
-	if not preview_path.is_empty():
-		var texture := load(preview_path) as Texture2D
-		if texture != null:
-			background.texture = texture
+	background.visible = false
 	var tiled := _build_authored_tile_layers()
-	background.visible = not tiled
-	background.position = map_size_px / 2.0
-	if background.texture != null:
-		background.scale = map_size_px / Vector2(background.texture.get_size())
+	if not tiled:
+		push_error("Cannot build authored TileMap: " + map_id)
 	_build_location_labels()
 	_build_collision_shapes()
 	_build_interactables()
@@ -113,47 +108,46 @@ func _build_authored_tile_layers() -> bool:
 	for layer: TileMapLayer in [ground, detail, foreground]:
 		layer.tile_set = tile_set
 		layer.clear()
-	var base_tiles: Array = layout.get("base_tiles", [int(layout.get("base_tile", 0))])
-	_fill_layer(ground, [{"rect": [0, 0, map_size_tiles.x, map_size_tiles.y], "tiles": base_tiles}], atlas_columns)
-	_fill_layer(ground, layout.get("regions", []), atlas_columns)
-	_fill_layer(detail, layout.get("detail_regions", []), atlas_columns)
-	_fill_layer(foreground, layout.get("foreground_regions", []), atlas_columns)
+	var rows: Array = layout.get("ground_rows", [])
+	if rows.size() != map_size_tiles.y:
+		return false
+	for y in range(map_size_tiles.y):
+		var row := str(rows[y])
+		if row.length() != map_size_tiles.x:
+			return false
+		for x in range(map_size_tiles.x):
+			var tile_index := TILE_SYMBOLS.find(row.substr(x, 1))
+			if not _set_atlas_cell(ground, Vector2i(x, y), tile_index, atlas_columns):
+				return false
+	for value: Dictionary in layout.get("detail_tiles", []):
+		var tile_position: Array = value.get("position_tiles", [])
+		if tile_position.size() != 2:
+			return false
+		if not _set_atlas_cell(detail, Vector2i(int(tile_position[0]), int(tile_position[1])), int(value.get("tile", -1)), atlas_columns):
+			return false
 	_build_props(layout)
 	return ground.get_used_cells().size() == map_size_tiles.x * map_size_tiles.y
 
-func _fill_layer(layer: TileMapLayer, regions: Array, atlas_columns: int) -> void:
-	for value: Variant in regions:
-		if not value is Dictionary:
-			continue
-		var region: Dictionary = value
-		var rect_values: Array = region.get("rect", [])
-		if rect_values.size() < 4:
-			continue
-		var tiles: Array = region.get("tiles", [])
-		if tiles.is_empty():
-			tiles = [int(region.get("tile", 0))]
-		var rect := Rect2i(
-			Vector2i(int(rect_values[0]), int(rect_values[1])),
-			Vector2i(int(rect_values[2]), int(rect_values[3]))
-		)
-		for y in range(rect.position.y, rect.end.y):
-			for x in range(rect.position.x, rect.end.x):
-				var cell := Vector2i(x, y)
-				if cell.x < 0 or cell.y < 0 or cell.x >= map_size_tiles.x or cell.y >= map_size_tiles.y:
-					continue
-				var variant_index := abs(x * 31 + y * 17 + rect.position.x * 7 + rect.position.y * 13) % tiles.size()
-				var tile_index := int(tiles[variant_index])
-				var atlas_coords := Vector2i(
-					tile_index % atlas_columns,
-					floori(float(tile_index) / float(atlas_columns))
-				)
-				layer.set_cell(cell, 0, atlas_coords)
+func _set_atlas_cell(layer: TileMapLayer, cell: Vector2i, tile_index: int, columns: int) -> bool:
+	if tile_index < 0 or not Rect2i(Vector2i.ZERO, map_size_tiles).has_point(cell):
+		return false
+	var coords := Vector2i(tile_index % columns, floori(float(tile_index) / columns))
+	var source := layer.tile_set.get_source(0) as TileSetAtlasSource
+	if source == null or not source.has_tile(coords):
+		return false
+	layer.set_cell(cell, 0, coords)
+	return true
 
 func _build_props(layout: Dictionary) -> void:
 	var atlas_path := str(layout.get("props_atlas", ""))
 	if atlas_path.is_empty():
 		return
 	var columns := maxi(int(layout.get("props_columns", 8)), 1)
+	var cell_px := maxi(int(layout.get("props_cell_px", 128)), 1)
+	var texture := load(atlas_path) as Texture2D
+	if texture == null:
+		push_error("Missing props atlas: " + atlas_path)
+		return
 	var root: Node2D = $Actors
 	_props.clear()
 	for value: Variant in layout.get("props", []):
@@ -161,7 +155,7 @@ func _build_props(layout: Dictionary) -> void:
 			continue
 		var prop := MAP_PROP_SCENE.instantiate() as MapProp
 		root.add_child(prop)
-		prop.configure(value, atlas_path, tile_size_px, columns)
+		prop.configure(value, texture, tile_size_px, columns, cell_px)
 		_props.append(prop)
 
 func _build_interactables() -> void:
