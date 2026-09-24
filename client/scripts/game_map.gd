@@ -1,12 +1,13 @@
 class_name GameMap
 extends Node2D
 ## Shared world runtime for the four maps.
-## Gameplay now uses reusable 32 px TileSet atlases + compact layout data.
+## Gameplay uses reusable 32 px terrain atlases, transparent prop atlases and compact layout data.
 ## Painted world PNG files are retained only for preview/minimap/fallback rendering.
 
 const TILE_SIZE_DEFAULT := 32
 const INTERACTABLE_SCENE = preload("res://scenes/map_interactable.tscn")
 const WATER_RIPPLE_SCENE = preload("res://scenes/map_water_ripple.tscn")
+const MAP_PROP_SCENE = preload("res://scenes/map_prop.tscn")
 
 const MAP_LAYOUTS := {
 	"m_an_khe": "res://data/maps/an_khe.json",
@@ -28,6 +29,7 @@ var active_interactable: MapInteractable
 var _solid_rects_tiles: Array[Rect2i] = []
 var _areas: Array[Dictionary] = []
 var _interactables: Array[MapInteractable] = []
+var _props: Array[MapProp] = []
 
 func configure(data: Dictionary, tile_size: int = TILE_SIZE_DEFAULT) -> void:
 	map_data = data.duplicate(true)
@@ -104,19 +106,22 @@ func _build_authored_tile_layers() -> bool:
 	var tile_set := load(tile_set_path) as TileSet
 	if tile_set == null:
 		return false
+	var atlas_columns := maxi(int(layout.get("atlas_columns", 8)), 1)
 	var ground: TileMapLayer = $WorldLayers/GroundLayer
 	var detail: TileMapLayer = $WorldLayers/DetailLayer
 	var foreground: TileMapLayer = $WorldLayers/ForegroundLayer
 	for layer: TileMapLayer in [ground, detail, foreground]:
 		layer.tile_set = tile_set
 		layer.clear()
-	_fill_layer(ground, [{"rect": [0, 0, map_size_tiles.x, map_size_tiles.y], "tile": int(layout.get("base_tile", 0))}])
-	_fill_layer(ground, layout.get("regions", []))
-	_fill_layer(detail, layout.get("detail_regions", []))
-	_fill_layer(foreground, layout.get("foreground_regions", []))
+	var base_tiles: Array = layout.get("base_tiles", [int(layout.get("base_tile", 0))])
+	_fill_layer(ground, [{"rect": [0, 0, map_size_tiles.x, map_size_tiles.y], "tiles": base_tiles}], atlas_columns)
+	_fill_layer(ground, layout.get("regions", []), atlas_columns)
+	_fill_layer(detail, layout.get("detail_regions", []), atlas_columns)
+	_fill_layer(foreground, layout.get("foreground_regions", []), atlas_columns)
+	_build_props(layout)
 	return ground.get_used_cells().size() == map_size_tiles.x * map_size_tiles.y
 
-func _fill_layer(layer: TileMapLayer, regions: Array) -> void:
+func _fill_layer(layer: TileMapLayer, regions: Array, atlas_columns: int) -> void:
 	for value: Variant in regions:
 		if not value is Dictionary:
 			continue
@@ -124,8 +129,9 @@ func _fill_layer(layer: TileMapLayer, regions: Array) -> void:
 		var rect_values: Array = region.get("rect", [])
 		if rect_values.size() < 4:
 			continue
-		var tile_index := int(region.get("tile", 0))
-		var atlas_coords := Vector2i(tile_index % 4, tile_index / 4)
+		var tiles: Array = region.get("tiles", [])
+		if tiles.is_empty():
+			tiles = [int(region.get("tile", 0))]
 		var rect := Rect2i(
 			Vector2i(int(rect_values[0]), int(rect_values[1])),
 			Vector2i(int(rect_values[2]), int(rect_values[3]))
@@ -135,7 +141,28 @@ func _fill_layer(layer: TileMapLayer, regions: Array) -> void:
 				var cell := Vector2i(x, y)
 				if cell.x < 0 or cell.y < 0 or cell.x >= map_size_tiles.x or cell.y >= map_size_tiles.y:
 					continue
+				var variant_index := abs(x * 31 + y * 17 + rect.position.x * 7 + rect.position.y * 13) % tiles.size()
+				var tile_index := int(tiles[variant_index])
+				var atlas_coords := Vector2i(
+					tile_index % atlas_columns,
+					floori(float(tile_index) / float(atlas_columns))
+				)
 				layer.set_cell(cell, 0, atlas_coords)
+
+func _build_props(layout: Dictionary) -> void:
+	var atlas_path := str(layout.get("props_atlas", ""))
+	if atlas_path.is_empty():
+		return
+	var columns := maxi(int(layout.get("props_columns", 8)), 1)
+	var root: Node2D = $Actors
+	_props.clear()
+	for value: Variant in layout.get("props", []):
+		if not value is Dictionary:
+			continue
+		var prop := MAP_PROP_SCENE.instantiate() as MapProp
+		root.add_child(prop)
+		prop.configure(value, atlas_path, tile_size_px, columns)
+		_props.append(prop)
 
 func _build_interactables() -> void:
 	var root: Node2D = $Actors
@@ -183,6 +210,9 @@ func areas_size() -> int:
 
 func interactables_size() -> int:
 	return _interactables.size()
+
+func props_size() -> int:
+	return _props.size()
 
 func get_interactable(entity_id: String) -> MapInteractable:
 	for interactable: MapInteractable in _interactables:

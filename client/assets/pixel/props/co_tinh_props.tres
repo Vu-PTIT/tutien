@@ -1,8 +1,8 @@
 [gd_resource type="TileSet" load_steps=3 format=3]
 
-[ext_resource type="Texture2D" path="res://assets/pixel/terrain/truc_am_terrain.png" id="1_atlas"]
+[ext_resource type="Texture2D" path="res://assets/pixel/props/co_tinh_props.png" id="1_atlas"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_truc_am_terrain"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_co_tinh_props"]
 texture = ExtResource("1_atlas")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
@@ -72,4 +72,4 @@ texture_region_size = Vector2i(32, 32)
 
 [resource]
 tile_size = Vector2i(32, 32)
-sources/0 = SubResource("TileSetAtlasSource_truc_am_terrain")
+sources/0 = SubResource("TileSetAtlasSource_co_tinh_props")

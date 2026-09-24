@@ -104,11 +104,27 @@ assert.ok(gameMap.includes('solid_rects_tiles'), 'Map collision blockers are cat
 assert.ok(gameMap.includes('_build_authored_tile_layers()') && gameMap.includes('_fill_layer('), 'Maps build from authored reusable tile layouts');
 assert.ok(!gameMap.includes('source_texture.get_image()') && !gameMap.includes('atlas.create_tile('), 'Runtime must not slice the painted world PNG into one-off atlas cells');
 for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
-  assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/'+name+'_terrain.png')), 'Missing reusable terrain atlas: '+name);
-  assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/'+name+'_terrain.tres')), 'Missing TileSet resource: '+name);
+  const terrainPng=path.join(root,'assets/pixel/terrain/'+name+'_terrain.png');
+  const terrainTres=path.join(root,'assets/pixel/terrain/'+name+'_terrain.tres');
+  const propsPng=path.join(root,'assets/pixel/props/'+name+'_props.png');
+  const propsTres=path.join(root,'assets/pixel/props/'+name+'_props.tres');
+  for(const asset of [terrainPng, terrainTres, propsPng, propsTres]) assert.ok(fs.existsSync(asset), 'Missing map atlas resource: '+asset);
+  for(const pngPath of [terrainPng, propsPng]) {
+    const png=fs.readFileSync(pngPath);
+    assert.equal(png.readUInt32BE(16),256,'Map atlas must be 256 px wide: '+pngPath);
+    assert.equal(png.readUInt32BE(20),256,'Map atlas must be 256 px tall: '+pngPath);
+    assert.ok(png.length>10000,'Map atlas looks suspiciously reduced/truncated: '+pngPath);
+  }
+  for(const tresPath of [terrainTres, propsTres]) {
+    const tres=fs.readFileSync(tresPath,'utf8');
+    assert.equal((tres.match(/\/0 = 0/g)||[]).length,64,'TileSet must expose 64 atlas cells: '+tresPath);
+  }
   const layout=JSON.parse(fs.readFileSync(path.join(root,'data/maps/'+name+'.json'),'utf8'));
+  assert.equal(layout.atlas_columns,8,'Terrain atlas must use 8 columns: '+name);
   assert.ok(layout.tile_set && Array.isArray(layout.regions), 'Missing authored map layout data: '+name);
+  assert.ok(layout.props_atlas && Array.isArray(layout.props) && layout.props.length>=10, 'Map needs a substantial props layer: '+name);
 }
+assert.ok(gameMap.includes('_build_props(layout)') && gameMap.includes('MAP_PROP_SCENE'), 'Map decorative props are data-driven and Y-sorted');
 assert.ok(gameMap.includes('_build_interactables()') && gameMap.includes('_build_water_ripples()'), 'Map POIs and water motion are data-driven');
 assert.ok(main.includes('func _travel_to_map(map_id: String, arrival_tiles: Array = [])') && main.includes('target_arrival_tiles'), 'Map gates load their configured arrival point');
 assert.ok(gameMap.includes('room_lock'), 'Cổ Tỉnh camera locks by room');

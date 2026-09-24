@@ -302,3 +302,11 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 - Original `*_world_v1.png` files remain only as route/minimap art and a fallback renderer; they are no longer converted into one-off atlas tiles at runtime.
 - Existing catalog-driven blockers, interactables, gates, water effects, Y-sorted actors and room-lock camera behavior are preserved.
 - Static checks explicitly reject the old `get_image()/atlas.create_tile()` runtime slicing path and require all four terrain/layout resources.
+
+
+### 24/09/2026 — Restore full map atlases after over-optimization
+
+- Replaced the tiny 8-cell terrain atlases with 256×256 terrain atlases exposing 64 reusable 32 px cells per biome.
+- Added matching transparent 256×256 props atlases and TileSet resources for An Khê, Trúc Âm, Thạch Cạn and Cổ Tỉnh.
+- Expanded each map layout to use terrain variants plus 10–15 Y-sorted props instead of a minimal repeated-tile presentation.
+- Added static safeguards: terrain/props PNGs must be 256×256 and non-trivially sized; each TileSet must expose 64 cells; each map must declare a substantial props layer.

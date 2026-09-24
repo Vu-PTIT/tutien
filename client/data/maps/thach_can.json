@@ -1,17 +1,20 @@
 {
-  "version": 1,
+  "version": 2,
   "tile_set": "res://assets/pixel/terrain/thach_can_terrain.tres",
-  "base_tile": 0,
+  "atlas_columns": 8,
+  "props_atlas": "res://assets/pixel/props/thach_can_props.png",
+  "props_columns": 8,
+  "base_tiles": [
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ],
   "regions": [
-    {
-      "rect": [
-        0,
-        0,
-        48,
-        36
-      ],
-      "tile": 0
-    },
     {
       "rect": [
         0,
@@ -19,7 +22,16 @@
         48,
         6
       ],
-      "tile": 1
+      "tiles": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ]
     },
     {
       "rect": [
@@ -28,7 +40,16 @@
         25,
         36
       ],
-      "tile": 2
+      "tiles": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ]
     }
   ],
   "detail_regions": [
@@ -39,7 +60,16 @@
         9,
         7
       ],
-      "tile": 4
+      "tiles": [
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55
+      ]
     },
     {
       "rect": [
@@ -48,7 +78,16 @@
         10,
         10
       ],
-      "tile": 5
+      "tiles": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ]
     },
     {
       "rect": [
@@ -57,7 +96,16 @@
         12,
         9
       ],
-      "tile": 6
+      "tiles": [
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55
+      ]
     }
   ],
   "foreground_regions": [
@@ -68,7 +116,130 @@
         48,
         2
       ],
-      "tile": 7
+      "tiles": [
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63
+      ]
+    }
+  ],
+  "props": [
+    {
+      "name": "RockA",
+      "position_tiles": [
+        9,
+        7
+      ],
+      "tile": 8,
+      "scale_tiles": [
+        1.4,
+        1.4
+      ]
+    },
+    {
+      "name": "RockB",
+      "position_tiles": [
+        13,
+        8
+      ],
+      "tile": 9,
+      "scale_tiles": [
+        1.2,
+        1.2
+      ]
+    },
+    {
+      "name": "RockC",
+      "position_tiles": [
+        30,
+        8
+      ],
+      "tile": 10,
+      "scale_tiles": [
+        1.5,
+        1.5
+      ]
+    },
+    {
+      "name": "OreA",
+      "position_tiles": [
+        31,
+        21
+      ],
+      "tile": 12,
+      "scale_tiles": [
+        1.4,
+        1.4
+      ]
+    },
+    {
+      "name": "OreB",
+      "position_tiles": [
+        35,
+        23
+      ],
+      "tile": 13
+    },
+    {
+      "name": "OreC",
+      "position_tiles": [
+        38,
+        29
+      ],
+      "tile": 14
+    },
+    {
+      "name": "Checkpoint",
+      "position_tiles": [
+        5,
+        31
+      ],
+      "tile": 27
+    },
+    {
+      "name": "FlowPillar",
+      "position_tiles": [
+        42,
+        22
+      ],
+      "tile": 52,
+      "scale_tiles": [
+        1.4,
+        1.7
+      ]
+    },
+    {
+      "name": "MineGate",
+      "position_tiles": [
+        42,
+        24
+      ],
+      "tile": 58,
+      "scale_tiles": [
+        1.3,
+        1.5
+      ]
+    },
+    {
+      "name": "RuinsA",
+      "position_tiles": [
+        25,
+        12
+      ],
+      "tile": 56
+    },
+    {
+      "name": "RuinsB",
+      "position_tiles": [
+        43,
+        30
+      ],
+      "tile": 60
     }
   ]
 }
