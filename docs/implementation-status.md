@@ -1,6 +1,6 @@
 # Tiến độ triển khai và thứ tự mới — cập nhật 24/09/2026
 
-> Ghi chú runtime map 24/09: nhánh `feat/inventory-rewards` hiện có prototype map dùng chung với ground chia ô atlas 32 px lúc chạy, 21 POI cục bộ, điểm đến cổng riêng và smoke test tuyến bốn map. Ground vẫn dựa trên ảnh PNG một lớp; detail/foreground, collision chi tiết, touch HUD, fog-of-war, quest/unlock và lưu trạng thái server chưa hoàn thành. An Khê giữ 48×36; kích thước Trúc Âm, Thạch Cạn và Cổ Tỉnh vẫn chưa chốt.
+> Ghi chú runtime map 26/09: nhánh `feat/inventory-rewards` có bốn layout TileMap từ atlas 32 px và prop riêng 128 px, 21 POI cục bộ, cổng có điểm đến và smoke test tuyến. An Khê đã chỉnh nền/collision, HUD có minimap theo dữ liệu map và bố cục touch prototype. Foreground nghệ thuật đầy đủ, fog-of-war, quest/unlock, lưu trạng thái server và bản xuất mobile chưa hoàn thành. An Khê giữ 48×36; kích thước ba map còn lại vẫn chưa chốt.
 
 Các bảng dưới đây tiếp tục ghi trạng thái tại mốc mã nguồn lịch sử được nêu; ghi chú runtime map phía trên là cập nhật mới nhất.
 
@@ -98,7 +98,7 @@ Trạng thái công bố phải cập nhật theo thao tác Git thực tế, kh�
 
 ### Authored TileMap recovery — 24/09/2026
 
-The four map prototypes now use reusable biome `TileSet` atlases and authored layout JSON for Ground/Detail/Foreground layers. Painted world PNGs are preview/minimap assets only; runtime PNG slicing has been removed. Collision and interaction data remain catalog-driven while terrain presentation is editable at tile level.
+The four map prototypes use reusable biome `TileSet` atlases and authored layout JSON for Ground and sparse Detail layers; the Foreground TileMapLayer is reserved for later authored art. Tall props are separate Y-sorted scenes. Painted world PNGs are route concept previews only; runtime PNG slicing has been removed. Collision and interaction data remain catalog-driven while terrain presentation is editable at tile level.
 
 ### Lát cắt điều khiển và độ sâu An Khê — 26/09/2026
 
@@ -106,5 +106,6 @@ The four map prototypes now use reusable biome `TileSet` atlases and authored la
 - HUD ẩn hotbar PC khi bật touch; các nút gameplay ẩn lúc mở túi, bản đồ hoặc phòng đấu tập. Touch dùng cùng hàm action/movement, không tạo gameplay song song.
 - Vật thể cao có metadata `occlusion` trong JSON map để giảm độ mờ khi che người chơi; bước đầu áp dụng cây ở An Khê. Các công trình và blocker tiếp tục là đối tượng riêng. Tương tác cục bộ kiểm tra đường thẳng không đi xuyên vùng cản.
 - Ảnh runtime CI phát hiện spawn An Khê nằm trên dải nước dù collision cho đi. Ground rows đã được vẽ lại bằng tile sẵn có: quảng trường đá ở giữa, các lối đất tới hiệu thuốc/chợ/cổng, suối liên tục ở mép đông và blocker khớp vùng nước. Blocker của công trình được thu về gần chân vật thể, bỏ tường vô hình ở góc tây nam và thêm chân sạp chợ. Smoke test kiểm tra loại tile tại spawn, suối và các vùng cản.
+- Minimap HUD lấy màu nền, đường, nước, vật cản và điểm tương tác từ cùng JSON layout/catalog với runtime. Ảnh world cũ chỉ còn dùng để xem ý tưởng tuyến trên panel, tránh hiển thị một địa hình khác dưới marker vị trí.
 - Chưa có scene mobile export và playtest trên thiết bị thật. PNG world vẫn chỉ dùng preview/minimap; art props hiện còn nền cỏ/đất trong ô atlas, cần làm cutout trong lượt art tiếp theo.
 - Kiểm tra tĩnh: `node scripts/check-pixel-scenes.cjs` và `node scripts/check-png-integrity.cjs`. Godot import, runtime và `client/tests/presentation_smoke.gd` phải được chạy ở CI sau khi push; không coi kiểm tra tĩnh là bằng chứng chạy engine.

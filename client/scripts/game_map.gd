@@ -2,7 +2,7 @@ class_name GameMap
 extends Node2D
 ## Shared world runtime for the four maps.
 ## Gameplay uses reusable 32 px terrain and independent 128 px landmark regions.
-## Painted world PNG files are retained only for the route preview/minimap.
+## Painted world PNG files are retained only for route concept previews.
 
 const TILE_SIZE_DEFAULT := 32
 const TILE_SYMBOLS := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"

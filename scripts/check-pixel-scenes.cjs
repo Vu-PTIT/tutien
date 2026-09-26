@@ -95,7 +95,7 @@ for(const name of ['an_khe','an_khe_world_v1','cultivator','icons']) {
   if(['cultivator','icons'].includes(name)) assert.ok([3,6].includes(png[25]),'Expected transparent PNG atlas: '+name);
 }
 const mapWorldScene=read('scenes/map_world.tscn'), gameMap=read('scripts/game_map.gd');
-assert.ok(mapWorldScene.includes('name="Background" type="Sprite2D"'), 'Background placeholder stays hidden; painted art is minimap-only');
+assert.ok(mapWorldScene.includes('name="Background" type="Sprite2D"'), 'Background placeholder stays hidden; painted art is route preview only');
 assert.ok(mapWorldScene.includes('name="GroundLayer" type="TileMapLayer"'), 'Maps have an editable ground TileMapLayer');
 assert.ok(mapWorldScene.includes('name="DetailLayer" type="TileMapLayer"'), 'Maps have a detail TileMapLayer');
 assert.ok(mapWorldScene.includes('name="ForegroundLayer" type="TileMapLayer"'), 'Maps have a foreground TileMapLayer');

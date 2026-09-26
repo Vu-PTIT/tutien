@@ -539,7 +539,7 @@ offset_top = 239.0
 offset_right = 375.0
 offset_bottom = 258.0
 mouse_filter = 2
-text = "Đi thử cục bộ • chưa ghi quest/server"
+text = "Ảnh ý tưởng • đi thử cục bộ, chưa ghi server"
 theme_override_font_sizes/font_size = 8
 
 [node name="Travel" type="Button" parent="WorldMap/Window"]

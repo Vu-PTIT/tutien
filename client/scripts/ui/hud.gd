@@ -54,10 +54,64 @@ func notify(message: String) -> void:
 func configure_map(map_data: Dictionary) -> void:
 	var preview_path := str(map_data.get("preview", ""))
 	var texture: Texture2D = load(preview_path) if not preview_path.is_empty() else null
-	$Minimap/Map.texture = texture
+	var authored_map := _build_authored_minimap(map_data)
+	$Minimap/Map.texture = authored_map if authored_map != null else texture
+	$Minimap/Map.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	$Location/Title.text = str(map_data.get("name", "Map")).to_upper()
 	$Location/State.text = str(map_data.get("summary", ""))
 	$Minimap/Coordinates.tooltip_text = str(map_data.get("name", "Map"))
+
+func _build_authored_minimap(data: Dictionary) -> ImageTexture:
+	var layout_path := str(GameMap.MAP_LAYOUTS.get(str(data.get("id", "")), ""))
+	if layout_path.is_empty() or not FileAccess.file_exists(layout_path):
+		return null
+	var file := FileAccess.open(layout_path, FileAccess.READ)
+	if file == null:
+		return null
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if not parsed is Dictionary:
+		return null
+	var layout: Dictionary = parsed
+	var dimensions: Array = data.get("size_tiles", [])
+	if dimensions.size() < 2:
+		return null
+	var width := int(dimensions[0])
+	var height := int(dimensions[1])
+	var rows: Array = layout.get("ground_rows", [])
+	if width <= 0 or height <= 0 or rows.size() != height:
+		return null
+	var image := Image.create(width, height, false, Image.FORMAT_RGBA8)
+	for y in range(height):
+		var row := str(rows[y])
+		if row.length() != width:
+			return null
+		for x in range(width):
+			var tile := GameMap.TILE_SYMBOLS.find(row.substr(x, 1))
+			var color := Color("52794c") # grass
+			if tile >= 16 and tile < 24:
+				color = Color("af865b") # soil paths
+			elif tile >= 24 and tile < 32:
+				color = Color("aba99a") # stone plaza
+			elif tile >= 32 and tile < 40:
+				color = Color("34869b") # water
+			elif tile >= 40 and tile < 48:
+				color = Color("816443") # bridge/fence
+			image.set_pixel(x, y, color)
+	for values: Array in data.get("solid_rects_tiles", []):
+		if values.size() < 4:
+			continue
+		for y in range(maxi(int(values[1]), 0), mini(int(values[1]) + int(values[3]), height)):
+			for x in range(maxi(int(values[0]), 0), mini(int(values[0]) + int(values[2]), width)):
+				if image.get_pixel(x, y).b <= image.get_pixel(x, y).r: # preserve the visible stream
+					image.set_pixel(x, y, Color("314240"))
+	for point: Dictionary in data.get("interactables", []):
+		var tile_position: Array = point.get("position_tiles", [])
+		if tile_position.size() >= 2:
+			var x := int(tile_position[0])
+			var y := int(tile_position[1])
+			if x >= 0 and x < width and y >= 0 and y < height:
+				image.set_pixel(x, y, Color("e7ca7b") if str(point.get("action_kind", "")) == "gate" else Color("e3a98b"))
+	return ImageTexture.create_from_image(image)
 
 func set_interaction_prompt(message: String) -> void:
 	$InteractionHint/Message.text = message
