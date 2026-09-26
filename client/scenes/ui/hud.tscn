@@ -143,6 +143,14 @@ mouse_filter = 2
 text = "An Khê  (10, 7)"
 theme_override_font_sizes/font_size = 8
 
+[node name="LeaveEncounter" type="Button" parent="."]
+visible = false
+offset_left = 540.0
+offset_top = 8.0
+offset_right = 632.0
+offset_bottom = 34.0
+text = "Rời bãi"
+
 [node name="Quest" type="Panel" parent="."]
 offset_left = 488.0
 offset_top = 95.0

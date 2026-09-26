@@ -46,6 +46,11 @@ assert.deepEqual(mapCatalog.maps.map(m=>m.id),['m_an_khe','m_truc_am','m_thach_c
 assert.deepEqual(mapCatalog.maps[0].size_tiles,[48,36]);
 assert.deepEqual(mapCatalog.maps.map(m=>m.areas.length),[1,3,2,5]);
 assert.deepEqual(mapCatalog.maps.slice(1).map(m=>m.size_status),['prototype_canvas_only','prototype_canvas_only','prototype_canvas_only']);
+const trucAm=mapCatalog.maps.find(m=>m.id==='m_truc_am');
+const boarSign=trucAm.interactables.find(p=>p.entity_id==='ta.trail.boar_sign');
+assert.equal(boarSign.action_kind,'encounter','Sơn Trư sign launches the server PvE encounter');
+assert.equal(boarSign.encounter_id,'en_boar');
+assert.deepEqual(boarSign.position_tiles,[35,17],'The encounter entrance belongs to Bãi Sơn Trư');
 for(const map of mapCatalog.maps) {
   assert.ok(map.preview, 'Every route needs a map preview: '+map.id);
   const previewPath=path.join(root,map.preview.replace(/^res:\/\//,''));
@@ -142,6 +147,22 @@ assert.equal(sakuraPng.readUInt32BE(16),128,'Standalone sakura has 128 px width'
 assert.equal(sakuraPng.readUInt32BE(20),128,'Standalone sakura has 128 px height');
 assert.equal(sakuraPng[25],6,'Standalone sakura must have transparent RGBA pixels');
 assert.ok(JSON.parse(read('data/maps/an_khe.json')).props.some(p=>p.name==='ak_prop_sakura' && p.texture_path==='res://assets/pixel/props/an_khe_sakura.png'));
+const sonTruBackground=fs.readFileSync(path.join(root,'assets/pixel/enemies/bai_son_tru.png'));
+assert.equal(sonTruBackground.readUInt32BE(16),960,'Sơn Trư arena artwork matches the server world width');
+assert.equal(sonTruBackground.readUInt32BE(20),540,'Sơn Trư arena artwork matches the server world height');
+const sonTruSprite=fs.readFileSync(path.join(root,'assets/pixel/enemies/son_tru.png'));
+assert.equal(sonTruSprite.readUInt32BE(16),384,'Sơn Trư sprite atlas has three 128 px cells per row');
+assert.equal(sonTruSprite.readUInt32BE(20),256,'Sơn Trư sprite atlas has two rows');
+assert.equal(sonTruSprite[25],6,'Sơn Trư body sheet must have transparent pixels');
+const sonTruQc=JSON.parse(read('assets/pixel/enemies/son_tru.pipeline-meta.json'));
+assert.deepEqual(sonTruQc.edge_touch_frames,[],'Sơn Trư frames must stay inside their cells');
+assert.deepEqual(sonTruQc.empty_frames,[],'Every combat pose must contain the creature');
+const pve=read('scripts/pve_son_tru_actor.gd'), combatApi=read('scripts/combat_api.gd');
+assert.ok(main.includes('_create_son_tru_encounter()') && main.includes('api.match_kind == "pve_son_tru"'), 'Bãi Sơn Trư has a playable encounter entry and renderer');
+assert.ok(combatApi.includes('create_son_tru_encounter') && combatApi.includes('rejoin_current_match'), 'PvE uses the shared socket and reconnect adapter');
+assert.ok(pve.includes('"windup"') && pve.includes('"charge"') && pve.includes('"recover"'), 'Boar sprite follows authoritative combat states');
+const pveServer=fs.readFileSync(path.join(__dirname,'../server/src/pve_son_tru.ts'),'utf8');
+assert.ok(pveServer.includes('PVE_SON_TRU') && pveServer.includes('pveSonTruLineClear'), 'PvE AI and line-of-sight are server-side');
 assert.ok(read('scripts/main.gd').includes('game_input.handle_event(') && !read('scripts/main.gd').includes('KEY_'), 'Gameplay commands are separate from hardcoded PC keys');
 assert.ok(gameMap.includes('_build_interactables()') && gameMap.includes('_build_water_ripples()'), 'Map POIs and water motion are data-driven');
 assert.ok(main.includes('func _travel_to_map(map_id: String, arrival_tiles: Array = [])') && main.includes('target_arrival_tiles'), 'Map gates load their configured arrival point');

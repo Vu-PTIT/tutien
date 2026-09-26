@@ -84,15 +84,18 @@ Quái thường không rơi thẳng linh thạch; tiền đến từ bán vật 
 | Thạch Vệ | 18 / 20 | Phòng thủ phía trước → báo vung 1 giây → đánh → hồi 1,2 giây; chờ/lách sườn |
 | Mộc Tâm | 16 / 12 | Quét, rễ, trụ cấp, cơ hội niêm phong; tổng hợp những gì đã học |
 
-Đòn cơ bản của quái dùng hệ số 1, không bonus; các hitbox, active/recovery và
-sát thương vùng phải được khóa trong catalog triển khai trước khi nhận P1/P5.
+Đòn cơ bản của quái dùng hệ số 1, không bonus. P1 khóa hitbox, active/recovery và
+sát thương Sơn Trư trong `server/src/pve_son_tru.ts`; các quái P2/P5 cần catalog
+và kiểm thử riêng trước khi mở runtime.
 Đề xuất vùng độc: bán kính 1,3 tile, tồn tại 3 giây, tick mỗi giây với hệ số 0,4;
 cùng nguồn không cộng dồn nhiều vùng sát thương lên một mục tiêu trong cùng tick.
 Thạch Vệ giảm 70% sát thương từ cung trước khi đang phòng thủ, không bất tử mọi hướng.
 
-AI tối thiểu: `patrol → notice → chase → windup → attack → recover → return`.
-Sơn Trư thử bán kính phát hiện 5 tile/truy đuổi 10 tile; phải thấy đường hợp lệ,
-không đánh xuyên vách. Thông số này không mặc định áp cho boss.
+AI Sơn Trư P1 chạy theo `idle → notice → chase → windup → charge → recover` ở 20 Hz.
+Bán kính phát hiện 5 tile, truy đuổi tối đa 10 tile; khóa hướng 0,75 giây, lao
+4 tile trong 0,4 giây, hồi 0,8 giây. Vị trí, va chạm, né, sát thương và HP do
+server tính; tảng gỗ chắn đường đi và đường đánh. Chết hồi sinh sau 3 giây, Sơn Trư
+tái xuất sau 45 giây. Bản P1 chỉ thử combat nên không cấp XP, linh thạch hay loot.
 
 ## 6. Encounter hướng dẫn và cày lặp
 

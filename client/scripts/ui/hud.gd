@@ -10,6 +10,7 @@ func _ready() -> void:
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
 	$MapButton.pressed.connect(func() -> void: action_requested.emit("map"))
 	$SparringButton.pressed.connect(func() -> void: action_requested.emit("dock"))
+	$LeaveEncounter.pressed.connect(func() -> void: action_requested.emit("leave"))
 	$HelpButton.pressed.connect(func() -> void:
 		notify("Kéo cần trái để đi • nút phải để tương tác" if touch_layout else "WASD: đi • M: tuyến map • I: túi • E: tương tác"))
 	for index in range(6):
@@ -26,9 +27,9 @@ func _ready() -> void:
 		var button: Button = get_node("Hotbar/Slot%d" % index)
 		button.modulate = Color(0.6, 0.6, 0.6)
 		button.tooltip_text = "Chưa có cơ chế sử dụng. Không trừ vật phẩm."
-	$Hotbar/Slot2.tooltip_text = "Q / J: đánh trong đấu tập online"
+	$Hotbar/Slot2.tooltip_text = "Q / J: đánh trong đấu tập hoặc săn Sơn Trư"
 	$Hotbar/Slot3.tooltip_text = "E / chạm: tương tác với điểm gần nhất"
-	$Hotbar/Slot5.tooltip_text = "Space: né trong đấu tập online"
+	$Hotbar/Slot5.tooltip_text = "Space: né trong đấu tập hoặc săn Sơn Trư"
 
 func _process(delta: float) -> void:
 	$ModalShade.visible = $Inventory.visible or $Dock.visible

@@ -7,10 +7,16 @@ function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkr
   initializer.registerRpc("inventory_get", inventoryGetRpc);
   initializer.registerRpc("inventory_claim_starter", inventoryClaimStarterRpc);
   initializer.registerRpc("combat_create", combatCreateRpc);
+  initializer.registerRpc("pve_son_tru_create", pveSonTruCreateRpc);
   initializer.registerMatch("sparring", {
     matchInit: combatInit, matchJoinAttempt: combatJoinAttempt, matchJoin: combatJoin,
     matchLeave: combatLeave, matchLoop: combatLoop, matchTerminate: combatTerminate,
     matchSignal: combatSignal
+  });
+  initializer.registerMatch("pve_son_tru", {
+    matchInit: pveSonTruInit, matchJoinAttempt: pveSonTruJoinAttempt, matchJoin: pveSonTruJoin,
+    matchLeave: pveSonTruLeave, matchLoop: pveSonTruLoop, matchTerminate: pveSonTruTerminate,
+    matchSignal: pveSonTruSignal
   });
   initializer.registerRpc("social_find_player", socialFindPlayerRpc);
   initializer.registerRpc("social_group_create", groupCreateRpc);
@@ -53,4 +59,3 @@ function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkr
   initializer.registerBeforeWriteStorageObjects(denyNativeWrite);
   initializer.registerBeforeDeleteStorageObjects(denyNativeWrite);
 }
-
