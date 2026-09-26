@@ -1,6 +1,6 @@
 # Nhật ký phát triển dự án Tu Tiên
 
-> Các mục bên dưới là mốc lịch sử tại ngày ghi trong từng mục, gồm trạng thái nhánh/PR đã cũ. Trạng thái tích hợp mới xem `implementation-status.md` và mục cuối của nhật ký.
+> Các mục bên dưới là mốc lịch sử tại ngày ghi trong từng mục, gồm trạng thái nhánh/PR đã cũ. Trạng thái tích hợp mới xem `implementation-status.md`.
 
 **Repository:** [`Vu-PTIT/tutien`](https://github.com/Vu-PTIT/tutien)<br>
 **Ngày rà soát:** 24/09/2026<br>
@@ -301,7 +301,7 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 
 - Replaced the runtime PNG-slicing prototype with reusable 32 px biome terrain atlases for An Khê, Trúc Âm, Thạch Cạn and Cổ Tỉnh.
 - Added compact map layout data under `client/data/maps/`; `GameMap` now populates Ground/Detail/Foreground `TileMapLayer` nodes from these layouts and `TileSet` resources.
-- Original `*_world_v1.png` files remain only as route/minimap art and a fallback renderer; they are no longer converted into one-off atlas tiles at runtime.
+- At this historical commit, `*_world_v1.png` was retained as route/minimap art and fallback; the fallback and PNG minimap were later removed from runtime.
 - Existing catalog-driven blockers, interactables, gates, water effects, Y-sorted actors and room-lock camera behavior are preserved.
 - Static checks explicitly reject the old `get_image()/atlas.create_tile()` runtime slicing path and require all four terrain/layout resources.
 
@@ -325,3 +325,11 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 
 - Standardized Godot version to 4.6.1 across `client/project.godot`, `.github/workflows/ci.yml` (both server integration and client offline suites), and documentation (`README.md`, `combat-prototype.md`, `social-backend.md`, `inventory-and-rewards.md`, `ui-product-slice.md`).
 - Eliminated dual-version matrix and version flip-flopping between 4.4 and 4.6 caused by local Godot 4.6.1 editor auto-updates.
+
+## 26/09/2026 — PR #3 gom nền map, giao diện và điều khiển
+
+- `feat/inventory-rewards` là head tích hợp của PR #3; PR #2 combat đã nằm trong lịch sử nhánh này nên không nhập riêng hai lần.
+- An Khê đã nắn sân/đường/suối, blocker công trình và sạp, gốc cây anh đào có va chạm; cây là sprite RGBA tách nền và prop cao giảm che nhân vật. Cổng và 21 POI vẫn là tương tác cục bộ.
+- Minimap lấy JSON địa hình/POI, HUD có bố cục touch landscape và lệnh từ InputMap dùng chung cho bàn phím, chuột, nút và cần ảo.
+- Đối chiếu `feat/economy-balance-v1` trước khi nhập: `starter:v1` 12 Linh Thạch có receipt, đề xuất 120 là source v2 riêng; 150 definition ở nhánh kinh tế chỉ là design, không đưa vào runtime. Xem `economy-branch-review-2026-09-26.md`.
+- CI Godot 4.6.1 chạy smoke bốn map và lưu screenshot desktop/touch; QA nhìn bằng ảnh thật để sửa lời nhiệm vụ bị cắt ở Thạch Cạn/Cổ Tỉnh.

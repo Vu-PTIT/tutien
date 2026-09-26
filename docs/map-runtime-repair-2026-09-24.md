@@ -2,6 +2,8 @@
 
 Base: `be86b86e7057d27410d001e0f1de22e427feb0cd`, branch `feat/inventory-rewards`.
 
+Current runtime note (26/09): the painted world PNGs are route concept previews only; the HUD minimap is derived from authored tiles/catalog, and there is no painted background fallback. An Khê's sakura is now a transparent cutout; most other atlas regions still include ground patches.
+
 ## Reproduced failure
 
 Godot 4.6.1 failed to parse `game_map.gd:144`: it could not infer the type of
@@ -32,7 +34,7 @@ reviewed, rather than replacing it with low-detail procedural shapes.
 The runtime validates every requested atlas cell and prop region. It loads the
 shared prop texture once per map, retains nearest filtering and clipped atlas
 sampling, and no longer eagerly loads a painted background or silently falls
-back to it. Painted world images remain route/minimap references only.
+back to it. Painted world images remain route concept references only.
 
 ## Regression checks
 

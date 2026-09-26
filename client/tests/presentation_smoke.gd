@@ -24,6 +24,18 @@ func _capture(filename: String) -> void:
 	var img := root.get_texture().get_image()
 	check(img.save_png(capture_dir.path_join(filename)) == OK, "Capture failed")
 
+func _capture_touch_layout(main, filename: String) -> void:
+	main.touch_layout_enabled = true
+	main.hud.set_touch_layout(true)
+	await process_frame
+	await _capture(filename)
+	main.touch_layout_enabled = false
+	main.hud.set_touch_layout(false)
+
+func check_quest_visible(hud: PixelHUD) -> void:
+	var body: Label = hud.get_node("Quest/Body")
+	check(body.get_visible_line_count() == body.get_line_count(), "Quest text must fit the HUD on " + hud.get_node("Location/Title").text)
+
 func check_map_assets(world: GameMap) -> void:
 	var ground: TileMapLayer = world.get_node("WorldLayers/GroundLayer")
 	check(ground.get_used_cells().size() == world.map_size_tiles.x * world.map_size_tiles.y, "Complete terrain: " + world.map_id)
@@ -70,6 +82,7 @@ func _run() -> void:
 	main.map_world.update_player_context(main.player.position)
 	check(hud.get_node("Quest/Body").text.contains("nhấn E hoặc Chạm"), "Initial objective reads map data and includes touch input")
 	check(hud.get_node("Quest/Body").autowrap_mode == TextServer.AUTOWRAP_WORD, "Long quest objectives wrap inside the HUD panel")
+	check_quest_visible(hud)
 	check(not main.map_world._has_clear_interaction_path(Vector2(8 * 32, 5 * 32), Vector2(8 * 32, 13 * 32)), "Building collision also blocks interactions through its walls")
 	var sakura: MapProp = main.map_world.get_node("Actors/ak_prop_sakura") as MapProp
 	check(not sakura.get_node("Sprite").texture is AtlasTexture, "Sakura uses an independent transparent cutout")
@@ -140,6 +153,14 @@ func _run() -> void:
 	check(minimap_image.get_pixel(24, 18).r > 0.6, "Stone plaza is visible on the true minimap")
 	check(minimap_image.get_pixel(44, 18).b > minimap_image.get_pixel(44, 18).r, "Stream is blue on the true minimap")
 	await _capture("an-khe-runtime.png")
+	main.player.position = Vector2(19 * 32, 31 * 32)
+	main.map_world.update_player_context(main.player.position)
+	await process_frame
+	await _capture("an-khe-sakura-behind.png")
+	main.player.position = Vector2(19 * 32, 34 * 32)
+	main.map_world.update_player_context(main.player.position)
+	await process_frame
+	await _capture("an-khe-sakura-front.png")
 	var herbalist: MapInteractable = main.map_world.get_interactable("ak.npc.ba_sam")
 	check(herbalist != null, "Herbalist has a stable map entity id")
 	main.player.position = herbalist.position
@@ -156,7 +177,9 @@ func _run() -> void:
 	await process_frame
 	check(main.current_map_id == "m_truc_am", "Village gate opens its configured destination")
 	check_map_assets(main.map_world)
+	check_quest_visible(hud)
 	await _capture("truc-am-runtime.png")
+	await _capture_touch_layout(main, "truc-am-touch-runtime.png")
 	check(main.player.position == Vector2(5 * 32, 26 * 32), "Village gate arrives at the Trúc Âm entrance")
 	var initial_position: Vector2 = main.player.position
 	check(main.map_world.interactables_size() == 5, "Trúc Âm loads its own interactive map data")
@@ -188,7 +211,9 @@ func _run() -> void:
 	await process_frame
 	check(main.current_map_id == "m_thach_can", "Trúc Âm exit gate opens Thạch Cạn")
 	check_map_assets(main.map_world)
+	check_quest_visible(hud)
 	await _capture("thach-can-runtime.png")
+	await _capture_touch_layout(main, "thach-can-touch-runtime.png")
 	check(main.player.position == Vector2(7 * 32, 18 * 32), "Trúc Âm gate arrives at the Thạch Cạn entrance")
 	check(main.map_world.interactables_size() == 5, "Thạch Cạn loads its own interactive map data")
 	var ore_node: MapInteractable = main.map_world.get_interactable("tc.node.iron_ore")
@@ -203,7 +228,9 @@ func _run() -> void:
 	await process_frame
 	check(main.current_map_id == "m_co_tinh", "Travel action loads Cổ Tỉnh")
 	check_map_assets(main.map_world)
+	check_quest_visible(hud)
 	await _capture("co-tinh-runtime.png")
+	await _capture_touch_layout(main, "co-tinh-touch-runtime.png")
 	check(main.player.position == Vector2(11 * 32, 31 * 32), "Thạch Cạn gate arrives at the Cổ Tỉnh entrance")
 	check(main.map_world.interactables_size() == 5, "Cổ Tỉnh loads its own interactive map data")
 	check(main.map_world.areas_size() == 5, "Cổ Tỉnh has five named rooms")

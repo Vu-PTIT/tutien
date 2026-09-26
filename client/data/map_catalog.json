@@ -199,7 +199,7 @@
 	  "summary": "Quặng • địa hình chiến đấu",
 	  "details": "Hai khu: Ngoại Vi và Mỏ Cũ. Lối mỏ, vách đá và trụ chuyển dòng là blocker prototype; chưa có quái hoặc điều kiện quest phía server.",
 	  "quest_title": "KHẢO SÁT THẠCH CẠN",
-	  "quest_body": "Ngoại Vi và Mỏ Cũ đã có nền đi thử.\nQuặng và encounter chưa kết nối.",
+	  "quest_body": "Thử đường Ngoại Vi–Mỏ Cũ.\nQuặng và quái chưa mở.",
 	  "preview": "res://assets/pixel/thach_can_world_v1.png",
 	  "interactables": [
 		{
@@ -282,7 +282,7 @@
 	  "summary": "Bí cảnh instance • boss chương đầu",
 	  "details": "Năm phòng cố định: Cửa Giếng, Hành Lang Rễ, Buồng Cân Mạch, Nhà Trận và Tâm Giếng. Mở chỉ để test bố cục; quyền vào thật cần server xác nhận.",
 	  "quest_title": "BÍ CẢNH CỔ TỈNH",
-	  "quest_body": "Năm phòng có camera khóa theo phòng.\nBoss và điều kiện vào chưa kết nối.",
+	  "quest_body": "Thử tuyến năm phòng.\nBoss và cửa chờ server.",
 	  "preview": "res://assets/pixel/co_tinh_world_v1.png",
 	  "interactables": [
 		{

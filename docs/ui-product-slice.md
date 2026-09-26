@@ -1,6 +1,6 @@
 # Thiết kế lại giao diện pixel — 21/09/2026
 
-**Cập nhật map:** 23/09/2026
+**Cập nhật runtime:** 26/09/2026
 
 Thay bản procedural sơ sài bằng tài nguyên hình ảnh và scene Godot có thể
 chỉnh trực tiếp. Định hướng từ **Tu Tiên Pixel RPG Concept Sheet**: làng An Khê,
@@ -12,11 +12,14 @@ minimap, thanh phím tắt và túi đồ dạng lưới.
 - `client/scenes/main.tscn`: ghép làng, đấu trường và HUD. Không còn `@tool`
   vẽ một giao diện giả khác với lúc chạy game.
 - `client/scenes/map_world.tscn`, `client/scripts/game_map.gd`: scene dùng chung;
-  đọc nền, spawn, zone/phòng, blocker và giới hạn camera từ catalog map.
+  nạp Ground/Detail từ atlas + layout JSON; spawn, zone/phòng, blocker và camera
+  đọc từ catalog. Prop đứng riêng trong Actors có Y-sort.
 - `client/scenes/player.tscn`, `client/scripts/pixel_actor.gd`: atlas nhân vật
   RGBA bốn hướng, bốn frame/hướng; bóng riêng.
 - `client/scenes/ui/hud.tscn`: HP, linh lực, địa danh, minimap, lời nhắn,
-  sáu ô phím tắt, bảng kết nối, túi đồ và sơ đồ tuyến map.
+  sáu ô phím tắt PC, nút cảm ứng landscape, bảng kết nối, túi đồ và sơ đồ tuyến.
+- `client/scripts/game_input.gd`: InputMap chuyển bàn phím/chuột/cần ảo thành
+  lệnh di chuyển, đánh, né và tương tác chung cho cùng scene.
 - `client/data/map_catalog.json`, `client/scripts/ui/world_map_panel.gd`:
   bốn map, ảnh preview và overlay chọn tuyến; nút **Đi thử map này** tải scene
   cục bộ để kiểm tra, chưa kiểm tra quyền vào phía server.
@@ -54,27 +57,29 @@ tắt Use External Editor hoặc chọn executable thật thay vì shortcut `.ln
 ## Giới hạn
 
 - Đây là thiết kế lại phần trình bày, chưa phải game hoàn chỉnh.
-- Bốn map dùng ảnh nền pixel, **chưa phải TileMap/tileset tách lớp**. Blocker
-  là hình chữ nhật thô, chưa khớp từng bụi cây/hàng rào hoặc xử lý che khuất.
+- Bốn map đã dùng TileMapLayer và atlas địa hình 32 px; Detail còn thưa và
+  Foreground TileMapLayer chưa có art đầy đủ. An Khê đã nắn blocker công trình,
+  nước, sạp và gốc cây anh đào; prop cao Y-sort/fade khi che nhân vật. Ba map
+  còn lại vẫn cần rà va chạm từng vật thể. PNG world chỉ làm preview tuyến.
 - Atlas tạo bằng AI cần nghiệm thu từng frame và chuẩn hóa lưới pixel trước
   phát hành. Nearest không thay thế việc chỉnh pixel thủ công.
 - Đấu trường còn nền lưới đơn giản, chưa có đồ họa hoàn thiện.
 - Route map có bốn preview và chuyển scene cục bộ; HUD/minimap theo map, tọa độ tile và tên zone/phòng. Cổ Tỉnh đổi giới hạn camera khi vào phòng khác.
-- Quy chuẩn chi tiết và phần chưa triển khai ở [04-world-and-maps.md](game-design/04-world-and-maps.md). Server unlock, quest, NPC/PvE, TileMap, va chạm chi tiết, fog-of-war và HUD mobile chưa được nối.
+- Quy chuẩn chi tiết và phần chưa triển khai ở [04-world-and-maps.md](game-design/04-world-and-maps.md). Server unlock, quest, NPC/PvE, fog-of-war, mobile safe-area/export và playtest thiết bị thật chưa được nối.
 - Không thêm PvE, dùng/trang bị đồ, trồng trọt hoặc nhiệm vụ lưu trữ.
 - Không tự gán linh lực đầy/Luyện Khí khi thiếu dữ liệu. Túi thật xóa dữ liệu
   mẫu trước khi tải tài sản từ server.
 
-## Kiểm chứng lần sửa này
+## Kiểm chứng lịch sử và hiện tại
 
 - `node scripts/check-pixel-scenes.cjs`: đạt; kiểm resource, node parent,
   catalog/preview bốn map, spawn không nằm trong blocker, 24 ô, hotbar,
   cấu hình pixel và atlas. Đây không phải parser GDScript.
 - `npm test --prefix server`: 64/64 đạt; không thay thế test client.
-- Godot executable **không có trong môi trường sửa hiện tại**, nên smoke runtime
-  chưa chạy. Không kế thừa kết quả Godot/CI của commit cũ cho lần viết lại này.
+- Mốc 21/09 chưa chạy được Godot tại chỗ. Trên nhánh tích hợp hiện tại, CI
+  Godot 4.6.1 import, chạy smoke bốn map và chụp screenshot viewport thật.
 - `presentation_smoke.gd` bao phủ chuyển bốn map, số zone/phòng, spawn,
-	  minimap, blocker và camera khóa phòng; cần chạy bằng Godot để xác nhận.
+  minimap, blocker và camera khóa phòng; CI chạy bằng Godot 4.6.1.
 
 Chạy trên máy có Godot:
 

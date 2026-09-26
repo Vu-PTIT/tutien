@@ -24,6 +24,7 @@ const COMMANDS := ["inventory", "map", "interact", "attack", "dodge", "locked"]
 var last_touch_aim := Vector2.RIGHT
 
 func _ready() -> void:
+	var needs_mouse_attack := not InputMap.has_action("attack")
 	for action: String in KEY_BINDINGS:
 		if InputMap.has_action(action):
 			continue
@@ -32,9 +33,10 @@ func _ready() -> void:
 			var binding := InputEventKey.new()
 			binding.physical_keycode = key
 			InputMap.action_add_event(action, binding)
-	var mouse_attack := InputEventMouseButton.new()
-	mouse_attack.button_index = MOUSE_BUTTON_LEFT
-	InputMap.action_add_event("attack", mouse_attack)
+	if needs_mouse_attack:
+		var mouse_attack := InputEventMouseButton.new()
+		mouse_attack.button_index = MOUSE_BUTTON_LEFT
+		InputMap.action_add_event("attack", mouse_attack)
 
 func movement(touch_direction: Vector2) -> Vector2:
 	return (Input.get_vector("move_left", "move_right", "move_up", "move_down") + touch_direction).limit_length()
