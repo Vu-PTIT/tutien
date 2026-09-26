@@ -121,7 +121,7 @@
     {
       "name": "tc_prop_mine_entrance",
       "position_tiles": [41, 22],
-      "tile": 44
+      "texture_path": "res://assets/pixel/props/thach_can_mine_entrance.png"
     },
     {
       "name": "tc_prop_ore_vein",

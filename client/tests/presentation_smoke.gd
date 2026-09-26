@@ -225,6 +225,9 @@ func _run() -> void:
 	await process_frame
 	check(main.current_map_id == "m_thach_can", "Trúc Âm exit gate opens Thạch Cạn")
 	check_map_assets(main.map_world)
+	var mine_entrance: MapProp = main.map_world.get_node("Actors/tc_prop_mine_entrance") as MapProp
+	check(mine_entrance != null and not mine_entrance.get_node("Sprite").texture is AtlasTexture, "Thạch Cạn mine entrance uses its own cutout")
+	check(mine_entrance.get_node("Sprite").texture.get_image().detect_alpha() != Image.ALPHA_NONE, "Thạch Cạn mine entrance cutout retains alpha")
 	var flow_pillar: MapProp = main.map_world.get_node("Actors/tc_prop_flow_pillar") as MapProp
 	check(flow_pillar != null and not flow_pillar.get_node("Sprite").texture is AtlasTexture, "Thạch Cạn flow pillar uses its own cutout")
 	check(flow_pillar.get_node("Sprite").texture.get_image().detect_alpha() != Image.ALPHA_NONE, "Thạch Cạn flow pillar cutout retains alpha")

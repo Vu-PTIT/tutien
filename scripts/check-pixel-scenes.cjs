@@ -61,7 +61,6 @@ const expectedPropTiles={
   },
   m_thach_can:{
     tc_prop_outer_cliff:9,
-    tc_prop_mine_entrance:44,
     tc_prop_ore_vein:51,
     tc_prop_mine_support:45,
     tc_prop_rest_cart:59,
@@ -74,6 +73,7 @@ const expectedPropTiles={
 };
 const generatedMapProps={
   ak_prop_blacksmith:'res://assets/pixel/props/an_khe_blacksmith.png',
+  tc_prop_mine_entrance:'res://assets/pixel/props/thach_can_mine_entrance.png',
   tc_prop_flow_pillar:'res://assets/pixel/props/thach_can_flow_pillar.png'
 };
 const trucAm=mapCatalog.maps.find(m=>m.id==='m_truc_am');
