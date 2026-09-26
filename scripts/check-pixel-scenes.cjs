@@ -78,7 +78,9 @@ for(const map of mapCatalog.maps) {
   const walkable=(x,y)=>x>=0&&x<map.size_tiles[0]&&y>=0&&y<map.size_tiles[1]
     && !hasManualBlock(x,y)
     && (!solidTileIds.has(terrainAt(x,y))||hasTerrainException(x,y));
+  const actorFootprintWalkable=(x,y)=>walkable(x-1,y-1)&&walkable(x,y-1)&&walkable(x-1,y)&&walkable(x,y);
   assert.ok(walkable(spawnX,spawnY),'Map spawn is walkable over its authored terrain: '+map.id);
+  assert.ok(actorFootprintWalkable(spawnX,spawnY),'Map spawn has clearance for the player collider: '+map.id);
   for(const [x,y,w,h] of layout.collision_walkable_rects_tiles||[]) {
     assert.ok(x>=0&&y>=0&&w>0&&h>0&&x+w<=map.size_tiles[0]&&y+h<=map.size_tiles[1],
       'Walkable terrain exception stays inside its map: '+map.id);
@@ -123,10 +125,14 @@ for(const map of mapCatalog.maps) {
       const targetLayout=layoutByMapId.get(poi.target_map_id);
       assert.ok(target && Number.isInteger(ax) && Number.isInteger(ay), 'Gate needs a known map and arrival tile: '+poi.entity_id);
       assert.ok(ax>=0 && ax<target.size_tiles[0] && ay>=0 && ay<target.size_tiles[1], 'Gate arrival is outside destination map: '+poi.entity_id);
-      const targetBlockedByManual=target.solid_rects_tiles.some(rect=>inRect(ax,ay,rect));
-      const targetTile=tileSymbols.indexOf(targetLayout.ground_rows[ay][ax]);
-      const targetTerrainException=(targetLayout.collision_walkable_rects_tiles||[]).some(rect=>inRect(ax,ay,rect));
-      assert.ok(!targetBlockedByManual&&(!new Set(targetLayout.solid_tile_ids||[]).has(targetTile)||targetTerrainException), 'Gate arrival is blocked: '+poi.entity_id);
+      const targetSolidTileIds=new Set(targetLayout.solid_tile_ids||[]);
+      const targetWalkable=(tx,ty)=>tx>=0&&tx<target.size_tiles[0]&&ty>=0&&ty<target.size_tiles[1]
+        && !target.solid_rects_tiles.some(rect=>inRect(tx,ty,rect))
+        && (!targetSolidTileIds.has(tileSymbols.indexOf(targetLayout.ground_rows[ty][tx]))
+          || (targetLayout.collision_walkable_rects_tiles||[]).some(rect=>inRect(tx,ty,rect)));
+      assert.ok(targetWalkable(ax,ay), 'Gate arrival is blocked: '+poi.entity_id);
+      assert.ok([[ax-1,ay-1],[ax,ay-1],[ax-1,ay],[ax,ay]].every(([x,y])=>targetWalkable(x,y)),
+        'Gate arrival has clearance for the player collider: '+poi.entity_id);
       assert.ok(target.areas.some(area=>{const [sx,sy,w,h]=area.rect_tiles;return ax>=sx&&ax<sx+w&&ay>=sy&&ay<sy+h;}), 'Gate arrival is outside named destination areas: '+poi.entity_id);
     }
   }

@@ -12,7 +12,7 @@ Giữ map runtime dạng Godot `TileMapLayer` 32 px, props Y-sort riêng, POI/ga
 - Trúc Âm có dòng suối rộng hai tile chạy ngang dưới cầu hiện có. Ba shimmer được chuyển lên ô nước.
 - Điểm tương tác bàn cân và bảng trận Cổ Tỉnh được dời khỏi nước tới lối khô; các điểm tương tác chính được căn lại gần prop nhìn thấy.
 - FX ở Thạch Cạn và Cổ Tỉnh được đặt lại trên tile nước hoặc mạch sáng.
-- Kiểm tra tĩnh duyệt đường 4 hướng từ spawn tới mọi POI và điểm đến của gate, đồng thời kiểm tra collision terrain, vùng cầu, ripple và liên kết POI–prop.
+- Kiểm tra tĩnh duyệt đường 4 hướng từ spawn tới mọi POI và điểm đến của gate, đồng thời kiểm tra vùng trống quanh spawn/điểm đến cho collider người chơi, collision terrain, vùng cầu, FX và liên kết POI–prop.
 
 ## Còn phải làm trước khi gọi là map hoàn thiện
 
@@ -20,6 +20,6 @@ Các atlas prop vẫn chứa nền cảnh 128×128 quanh phần lớn vật th�
 
 ## Kiểm tra
 
-- `node scripts/check-pixel-scenes.cjs` — đạt; kiểm tra đủ tile, terrain collision, spawn/POI walkable và reachable, gate arrival, ripple và prop links.
+- `node scripts/check-pixel-scenes.cjs` — đạt; kiểm tra đủ tile, terrain collision, khoảng trống collider ở spawn/gate, POI walkable và reachable, FX và prop links.
 - `git diff --check` — đạt.
 - Chưa chạy `presentation_smoke.gd` tại máy làm việc vì không có binary Godot; CI của repo dùng Godot 4.6.1 để kiểm tra runtime.

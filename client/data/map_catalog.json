@@ -175,7 +175,7 @@
 		  "action_kind": "gate",
 		  "action_label": "Đi tới Thạch Cạn",
 		  "target_map_id": "m_thach_can",
-		  "target_arrival_tiles": [7, 18],
+		  "target_arrival_tiles": [9, 18],
 		  "icon": "res://assets/pixel/icon_14.tres"
 		}
 	  ],
@@ -203,7 +203,7 @@
 	  "size_tiles": [48, 36],
 	  "size_status": "prototype_canvas_only",
 	  "camera_mode": "map",
-	  "spawn_tiles": [7, 18],
+	  "spawn_tiles": [9, 18],
 	  "summary": "Quặng • địa hình chiến đấu",
 	  "details": "Hai khu: Ngoại Vi và Mỏ Cũ. Lối mỏ, vách đá và trụ chuyển dòng là blocker prototype; chưa có quái hoặc điều kiện quest phía server.",
 	  "quest_title": "KHẢO SÁT THẠCH CẠN",

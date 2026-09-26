@@ -218,7 +218,7 @@ func _run() -> void:
 	check_quest_visible(hud)
 	await _capture("thach-can-runtime.png")
 	await _capture_touch_layout(main, "thach-can-touch-runtime.png")
-	check(main.player.position == Vector2(7 * 32, 18 * 32), "Trúc Âm gate arrives at the Thạch Cạn entrance")
+	check(main.player.position == Vector2(9 * 32, 18 * 32), "Trúc Âm gate arrives on a clear Thạch Cạn entrance tile")
 	check(main.map_world.interactables_size() == 5, "Thạch Cạn loads its own interactive map data")
 	check(not main.can_walk(Vector2(5 * 32, 17 * 32)), "Thạch Cạn void terrain blocks walking")
 	var ore_node: MapInteractable = main.map_world.get_interactable("tc.node.iron_ore")
