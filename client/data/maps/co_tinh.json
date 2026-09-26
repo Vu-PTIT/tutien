@@ -115,6 +115,7 @@
   "props_atlas": "res://assets/pixel/props/co_tinh_props.png",
   "props_columns": 8,
   "props_cell_px": 128,
+  "solid_tile_ids": [32, 33, 34, 35, 36, 37, 38, 39],
   "props": [
     {
       "name": "ct_prop_root_column_west",
@@ -134,18 +135,12 @@
     },
     {
       "name": "ct_prop_balance_altar",
-      "position_tiles": [
-        17.5,
-        5
-      ],
+      "position_tiles": [22.5, 10],
       "tile": 51
     },
     {
       "name": "ct_prop_formation_lamp",
-      "position_tiles": [
-        34.5,
-        7
-      ],
+      "position_tiles": [37.5, 10],
       "tile": 53
     },
     {
@@ -158,18 +153,12 @@
     },
     {
       "name": "ct_prop_heart_well",
-      "position_tiles": [
-        35.5,
-        22
-      ],
+      "position_tiles": [35.5, 25],
       "tile": 52
     },
     {
       "name": "ct_prop_entrance_roots",
-      "position_tiles": [
-        4.5,
-        30
-      ],
+      "position_tiles": [10.5, 30],
       "tile": 56
     },
     {

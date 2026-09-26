@@ -30,8 +30,8 @@
     "03omno274567456189AB89AB89AB8LMNKLMNKLMNKLM52349",
     "21mnoGHIJKLGHIJ39AB89AB89AB89AB7345234523452345B",
     "03nomHIJKLGHIJK1AB89AB89AB89AB854523452345234529",
-    "21omno0674567453B89AB89AB89AB897523452345234523B",
-    "03mnom274567456189AB89AB89AB89A52345234523452349",
+    "2WXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXB",
+    "0WXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWX9",
     "21fgeI04567456739AB89AB89AB89AB7345234523452345B",
     "03gefJ2567456741AB89AB89AB89AB854523452345234529",
     "21efgH0674567453B89AB89AB89AB897523452345234523B",
@@ -122,6 +122,8 @@
   "props_atlas": "res://assets/pixel/props/truc_am_props.png",
   "props_columns": 8,
   "props_cell_px": 128,
+  "solid_tile_ids": [32, 33, 34, 35, 36, 37, 38, 39],
+  "collision_walkable_rects_tiles": [[2, 27, 4, 2]],
   "props": [
     {
       "name": "ta_prop_entry_bridge",
@@ -150,10 +152,7 @@
     },
     {
       "name": "ta_prop_stone_grove",
-      "position_tiles": [
-        35.5,
-        8
-      ],
+      "position_tiles": [27.5, 17],
       "tile": 56
     },
     {
@@ -166,10 +165,7 @@
     },
     {
       "name": "ta_prop_herb_pocket",
-      "position_tiles": [
-        35.5,
-        26
-      ],
+      "position_tiles": [5.5, 17],
       "tile": 52
     },
     {
