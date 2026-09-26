@@ -79,6 +79,8 @@ func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	offline_position = player.position
 	world_map.set_current_map(map_id)
 	hud.configure_map(data)
+	hud.get_node("Quest/Title").text = str(data.get("quest_title", "THÁM HIỂM"))
+	hud.get_node("Quest/Body").text = str(data.get("quest_body", ""))
 	hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, map_world.active_area_name)
 	hud.get_node("Location/State").text = "An toàn • " + map_world.active_area_name if map_id == "m_an_khe" else map_world.active_area_name
 	var focused: MapInteractable = map_world.update_interaction_focus(player.position)

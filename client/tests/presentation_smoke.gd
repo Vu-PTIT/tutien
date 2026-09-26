@@ -62,6 +62,11 @@ func _run() -> void:
 	check(not main.map_world.get_node("Background").visible, "Tile layer replaces the full-screen map sprite at runtime")
 	check(main.map_world.get_node("WorldLayers/ForegroundLayer") is TileMapLayer, "Map has a dedicated foreground tile layer")
 	check(main.map_world.interactables_size() == 6, "An Khê loads six data-driven interactive points")
+	check(not main.map_world.get_node("LocationLabels/Landmark_1").visible, "Far landmark labels do not clutter the An Khê HUD")
+	main.map_world.update_player_context(Vector2(30 * 32, 13 * 32))
+	check(main.map_world.get_node("LocationLabels/Landmark_1").visible, "Landmark label appears when the player approaches")
+	main.map_world.update_player_context(main.player.position)
+	check(hud.get_node("Quest/Body").text.contains("nhấn E hoặc Chạm"), "Initial objective reads map data and includes touch input")
 	check(not main.map_world._has_clear_interaction_path(Vector2(8 * 32, 5 * 32), Vector2(8 * 32, 13 * 32)), "Building collision also blocks interactions through its walls")
 	var sakura: MapProp = main.map_world.get_node("Actors/ak_prop_sakura") as MapProp
 	main.map_world.update_player_context(Vector2(19 * 32, 31 * 32))

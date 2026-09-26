@@ -85,6 +85,7 @@ func _ready() -> void:
 	camera.limit_bottom = int(map_size_px.y)
 	_update_area_and_camera($Actors/Player.position)
 	_update_prop_occlusion($Actors/Player.position)
+	_update_location_labels($Actors/Player.position)
 	update_interaction_focus($Actors/Player.position)
 
 func _build_authored_tile_layers() -> bool:
@@ -199,6 +200,7 @@ func is_walkable(point: Vector2) -> bool:
 func update_player_context(point: Vector2) -> String:
 	_update_area_and_camera(point)
 	_update_prop_occlusion(point)
+	_update_location_labels(point)
 	return active_area_name
 
 func _update_prop_occlusion(point: Vector2) -> void:
@@ -254,7 +256,10 @@ func _build_location_labels() -> void:
 		var label := Label.new()
 		label.name = "Landmark_" + str(root.get_child_count())
 		label.text = str(landmark.get("name", ""))
-		label.position = Vector2(float(tile_position[0]), float(tile_position[1])) * tile_size_px
+		var world_point := Vector2(float(tile_position[0]), float(tile_position[1])) * tile_size_px
+		label.position = world_point
+		label.set_meta("world_point", world_point)
+		label.visible = false
 		label.offset_left -= 55.0
 		label.offset_right += 55.0
 		label.offset_top -= 10.0
@@ -265,6 +270,13 @@ func _build_location_labels() -> void:
 		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		label.z_index = 20
 		root.add_child(label)
+
+func _update_location_labels(point: Vector2) -> void:
+	for node: Node in $LocationLabels.get_children():
+		var label := node as Label
+		if label != null:
+			var anchor: Vector2 = label.get_meta("world_point", Vector2.ZERO)
+			label.visible = point.distance_to(anchor) <= tile_size_px * 5.0
 
 func _update_area_and_camera(point: Vector2) -> void:
 	var tile_point := Vector2i(floori(point.x / tile_size_px), floori(point.y / tile_size_px))
