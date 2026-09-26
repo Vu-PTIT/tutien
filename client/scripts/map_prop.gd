@@ -11,6 +11,8 @@ func configure(data: Dictionary, texture: Texture2D, tile_size_px: int, atlas_co
 	name = str(data.get("name", "MapProp"))
 	var tile_position: Array = data.get("position_tiles", [0, 0])
 	position = (Vector2(float(tile_position[0]), float(tile_position[1])) + Vector2(0.5, 1.0)) * tile_size_px
+	# Floor-level props such as bridges must render below the actor standing on them.
+	z_index = -1 if str(data.get("depth_policy", "")) == "below_actors" else 0
 	var sprite_texture: Texture2D = texture
 	var standalone_path := str(data.get("texture_path", ""))
 	if not standalone_path.is_empty():

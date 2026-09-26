@@ -177,6 +177,8 @@ func _run() -> void:
 	await process_frame
 	check(main.current_map_id == "m_truc_am", "Village gate opens its configured destination")
 	check_map_assets(main.map_world)
+	var entry_bridge: MapProp = main.map_world.get_node("Actors/ta_prop_entry_bridge") as MapProp
+	check(entry_bridge.z_index < main.player.z_index, "Entry bridge renders below the player at Trúc Âm spawn")
 	check_quest_visible(hud)
 	await _capture("truc-am-runtime.png")
 	await _capture_touch_layout(main, "truc-am-touch-runtime.png")
