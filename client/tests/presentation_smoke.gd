@@ -287,6 +287,8 @@ func _run() -> void:
 	check(main.dock.get_node("Create").disabled, "Cannot create without connection")
 	main._action("inventory")
 	check(not main.dock.visible and bag.visible, "Only one modal open")
+	main._action("inventory")
+	check(not bag.visible, "Close the inventory before capturing the Sơn Trư encounter")
 	var atlas := load("res://assets/pixel/cultivator.png") as Texture2D
 	check(atlas.get_image().detect_alpha() != Image.ALPHA_NONE, "Sprite must be transparent")
 	check(main._load_map("m_truc_am"), "Load Trúc Âm for the PvE entrance check")
