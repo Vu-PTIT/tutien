@@ -129,7 +129,8 @@
         3.5,
         27
       ],
-      "tile": 40
+      "tile": 40,
+      "depth_policy": "below_actors"
     },
     {
       "name": "ta_prop_lightning_bamboo",
