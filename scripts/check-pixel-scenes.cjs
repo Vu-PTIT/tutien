@@ -46,12 +46,19 @@ assert.deepEqual(mapCatalog.maps.map(m=>m.id),['m_an_khe','m_truc_am','m_thach_c
 assert.deepEqual(mapCatalog.maps[0].size_tiles,[48,36]);
 assert.deepEqual(mapCatalog.maps.map(m=>m.areas.length),[1,3,2,5]);
 assert.deepEqual(mapCatalog.maps.slice(1).map(m=>m.size_status),['prototype_canvas_only','prototype_canvas_only','prototype_canvas_only']);
+const tileSymbols='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_';
+const layoutByMapId=new Map(mapCatalog.maps.map(map=>[
+  map.id,
+  JSON.parse(fs.readFileSync(path.join(root,'data/maps/'+map.id.slice(2)+'.json'),'utf8'))
+]));
+const reachableByMapId=new Map();
 const trucAm=mapCatalog.maps.find(m=>m.id==='m_truc_am');
 const boarSign=trucAm.interactables.find(p=>p.entity_id==='ta.trail.boar_sign');
 assert.equal(boarSign.action_kind,'encounter','Sơn Trư sign launches the server PvE encounter');
 assert.equal(boarSign.encounter_id,'en_boar');
 assert.deepEqual(boarSign.position_tiles,[35,17],'The encounter entrance belongs to Bãi Sơn Trư');
 for(const map of mapCatalog.maps) {
+  const layout=layoutByMapId.get(map.id);
   assert.ok(map.preview, 'Every route needs a map preview: '+map.id);
   const previewPath=path.join(root,map.preview.replace(/^res:\/\//,''));
   assert.ok(fs.existsSync(previewPath), 'Missing map preview asset: '+map.preview);
@@ -60,8 +67,35 @@ for(const map of mapCatalog.maps) {
   assert.equal(png.readUInt32BE(16),1448);
   assert.equal(png.readUInt32BE(20),1086);
   const [spawnX,spawnY]=map.spawn_tiles;
-  assert.ok(!map.solid_rects_tiles.some(([x,y,w,h])=>spawnX>=x&&spawnX<x+w&&spawnY>=y&&spawnY<y+h),
-    'Map spawn is blocked: '+map.id);
+  assert.equal(layout.ground_rows.length,map.size_tiles[1],'Terrain height matches map catalog: '+map.id);
+  assert.ok(layout.ground_rows.every(row=>row.length===map.size_tiles[0]&&[...row].every(symbol=>tileSymbols.indexOf(symbol)>=0)),
+    'Terrain rows use valid atlas symbols and match map width: '+map.id);
+  const solidTileIds=new Set(layout.solid_tile_ids||[]);
+  const terrainAt=(x,y)=>tileSymbols.indexOf(layout.ground_rows[y][x]);
+  const inRect=(x,y,[rx,ry,rw,rh])=>x>=rx&&x<rx+rw&&y>=ry&&y<ry+rh;
+  const hasManualBlock=(x,y)=>map.solid_rects_tiles.some(rect=>inRect(x,y,rect));
+  const hasTerrainException=(x,y)=>(layout.collision_walkable_rects_tiles||[]).some(rect=>inRect(x,y,rect));
+  const walkable=(x,y)=>x>=0&&x<map.size_tiles[0]&&y>=0&&y<map.size_tiles[1]
+    && !hasManualBlock(x,y)
+    && (!solidTileIds.has(terrainAt(x,y))||hasTerrainException(x,y));
+  assert.ok(walkable(spawnX,spawnY),'Map spawn is walkable over its authored terrain: '+map.id);
+  for(const [x,y,w,h] of layout.collision_walkable_rects_tiles||[]) {
+    assert.ok(x>=0&&y>=0&&w>0&&h>0&&x+w<=map.size_tiles[0]&&y+h<=map.size_tiles[1],
+      'Walkable terrain exception stays inside its map: '+map.id);
+    let overlapsSolidTerrain=false;
+    for(let ty=y;ty<y+h;ty++) for(let tx=x;tx<x+w;tx++) overlapsSolidTerrain ||= solidTileIds.has(terrainAt(tx,ty));
+    assert.ok(overlapsSolidTerrain,'Walkable terrain exception must cross blocked terrain: '+map.id);
+  }
+  const reachable=new Set([`${spawnX},${spawnY}`]);
+  const queue=[[spawnX,spawnY]];
+  for(let i=0;i<queue.length;i++) {
+    const [x,y]=queue[i];
+    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+      const nx=x+dx,ny=y+dy,key=`${nx},${ny}`;
+      if(walkable(nx,ny)&&!reachable.has(key)) { reachable.add(key);queue.push([nx,ny]); }
+    }
+  }
+  reachableByMapId.set(map.id,reachable);
   assert.ok(map.areas.some(area=>{
     const [x,y,w,h]=area.rect_tiles;
     return spawnX>=x&&spawnX<x+w&&spawnY>=y&&spawnY<y+h;
@@ -74,20 +108,39 @@ for(const map of mapCatalog.maps) {
     assert.ok(poi.icon && fs.existsSync(path.join(root,poi.icon.replace(/^res:\/\//,''))), 'Missing POI icon for '+poi.entity_id);
     const [x,y]=poi.position_tiles;
     assert.ok(x>=0 && x<map.size_tiles[0] && y>=0 && y<map.size_tiles[1], 'POI outside map: '+poi.entity_id);
-    assert.ok(!map.solid_rects_tiles.some(([sx,sy,w,h])=>x>=sx&&x<sx+w&&y>=sy&&y<sy+h), 'POI is inside a blocker: '+poi.entity_id);
+    assert.ok(walkable(Math.floor(x),Math.floor(y)), 'POI is blocked by authored terrain or a manual blocker: '+poi.entity_id);
+    assert.ok(reachable.has(`${Math.floor(x)},${Math.floor(y)}`), 'POI is unreachable from its map spawn: '+poi.entity_id);
+    if(poi.visual_prop_id) {
+      const prop=layout.props.find(candidate=>candidate.name===poi.visual_prop_id);
+      assert.ok(prop,'POI references an existing visual prop: '+poi.entity_id);
+      const [px,py]=prop.position_tiles;
+      const distance=Math.hypot(x-px,y-(py+0.5));
+      assert.ok(distance<=3.2,'POI sits near its visible prop anchor: '+poi.entity_id+' ('+distance.toFixed(1)+' tiles)');
+    }
     if(poi.action_kind==='gate') {
       const [ax,ay]=poi.target_arrival_tiles||[];
       const target=mapCatalog.maps.find(candidate=>candidate.id===poi.target_map_id);
+      const targetLayout=layoutByMapId.get(poi.target_map_id);
       assert.ok(target && Number.isInteger(ax) && Number.isInteger(ay), 'Gate needs a known map and arrival tile: '+poi.entity_id);
       assert.ok(ax>=0 && ax<target.size_tiles[0] && ay>=0 && ay<target.size_tiles[1], 'Gate arrival is outside destination map: '+poi.entity_id);
-      assert.ok(!target.solid_rects_tiles.some(([sx,sy,w,h])=>ax>=sx&&ax<sx+w&&ay>=sy&&ay<sy+h), 'Gate arrival is blocked: '+poi.entity_id);
+      const targetBlockedByManual=target.solid_rects_tiles.some(rect=>inRect(ax,ay,rect));
+      const targetTile=tileSymbols.indexOf(targetLayout.ground_rows[ay][ax]);
+      const targetTerrainException=(targetLayout.collision_walkable_rects_tiles||[]).some(rect=>inRect(ax,ay,rect));
+      assert.ok(!targetBlockedByManual&&(!new Set(targetLayout.solid_tile_ids||[]).has(targetTile)||targetTerrainException), 'Gate arrival is blocked: '+poi.entity_id);
       assert.ok(target.areas.some(area=>{const [sx,sy,w,h]=area.rect_tiles;return ax>=sx&&ax<sx+w&&ay>=sy&&ay<sy+h;}), 'Gate arrival is outside named destination areas: '+poi.entity_id);
     }
   }
   for(const ripple of map.water_ripples||[]) {
     const [x,y]=ripple.position_tiles;
     assert.ok(x>=0 && x<map.size_tiles[0] && y>=0 && y<map.size_tiles[1], 'Water ripple outside map: '+map.id);
+    assert.ok(terrainAt(x,y)>=32&&terrainAt(x,y)<40,'Water ripple aligns with water terrain: '+map.id);
   }
+}
+for(const map of mapCatalog.maps) for(const poi of map.interactables) {
+  if(poi.action_kind!=='gate') continue;
+  const [arrivalX,arrivalY]=poi.target_arrival_tiles;
+  assert.ok(reachableByMapId.get(poi.target_map_id).has(`${arrivalX},${arrivalY}`),
+    'Gate arrival is reachable from the destination spawn: '+poi.entity_id);
 }
 assert.ok(read('project.godot').includes('window/stretch/scale_mode="integer"'));
 assert.ok(read('project.godot').includes('window/size/viewport_width=640'));
@@ -125,7 +178,7 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
     const tres=fs.readFileSync(tresPath,'utf8');
     assert.equal((tres.match(/\/0 = 0/g)||[]).length,64,'TileSet must expose 64 atlas cells: '+tresPath);
   }
-  const layout=JSON.parse(fs.readFileSync(path.join(root,'data/maps/'+name+'.json'),'utf8'));
+  const layout=layoutByMapId.get('m_'+name);
   assert.equal(layout.props_cell_px,128, 'Props must retain 128 px source detail');
   assert.equal(layout.atlas_columns,8,'Terrain atlas must use 8 columns: '+name);
   assert.ok(layout.tile_set && Array.isArray(layout.ground_rows), 'Missing authored map layout data: '+name);
@@ -169,5 +222,5 @@ assert.ok(main.includes('func _travel_to_map(map_id: String, arrival_tiles: Arra
 assert.ok(gameMap.includes('room_lock'), 'Cổ Tỉnh camera locks by room');
 assert.ok(read('scripts/ui/world_map_panel.gd').includes('signal map_requested'), 'Route panel emits travel requests');
 assert.ok(main.includes('world_map.map_requested.connect(_travel_to_map)'), 'Main connects map travel');
-console.log('PASS static scene audit: '+scenes+' scenes, '+references+' resource references, 24 inventory slots, 6 hotbar buttons, real PNG assets.');
+console.log('PASS static map and scene audit: '+scenes+' scenes, '+references+' resource references, terrain collision, walkable POIs, reachable gates, aligned ripples, real PNG assets.');
 console.log('Not a GDScript parser or Godot runtime test. Run presentation_smoke.gd in Godot.');

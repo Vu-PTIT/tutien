@@ -129,6 +129,7 @@
   "props_atlas": "res://assets/pixel/props/an_khe_props.png",
   "props_columns": 8,
   "props_cell_px": 128,
+  "solid_tile_ids": [32, 33, 34, 35, 36, 37, 38, 39],
   "props": [
     {
       "name": "ak_prop_north_gate",

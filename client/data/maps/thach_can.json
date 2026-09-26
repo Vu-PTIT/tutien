@@ -108,6 +108,7 @@
   "props_atlas": "res://assets/pixel/props/thach_can_props.png",
   "props_columns": 8,
   "props_cell_px": 128,
+  "solid_tile_ids": [22, 23, 30, 31],
   "props": [
     {
       "name": "tc_prop_outer_cliff",
@@ -119,18 +120,12 @@
     },
     {
       "name": "tc_prop_mine_entrance",
-      "position_tiles": [
-        21.5,
-        11
-      ],
+      "position_tiles": [41, 22],
       "tile": 52
     },
     {
       "name": "tc_prop_ore_vein",
-      "position_tiles": [
-        29.5,
-        7
-      ],
+      "position_tiles": [30.5, 20],
       "tile": 62
     },
     {
@@ -143,10 +138,7 @@
     },
     {
       "name": "tc_prop_rest_cart",
-      "position_tiles": [
-        9.5,
-        30
-      ],
+      "position_tiles": [4.5, 30],
       "tile": 61
     },
     {
@@ -159,10 +151,7 @@
     },
     {
       "name": "tc_prop_flow_pillar",
-      "position_tiles": [
-        27.5,
-        33
-      ],
+      "position_tiles": [41.5, 21],
       "tile": 54
     }
   ]

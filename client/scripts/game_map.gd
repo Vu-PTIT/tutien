@@ -28,6 +28,8 @@ var active_area_id: String = ""
 var active_area_name: String = ""
 var active_interactable: MapInteractable
 var _solid_rects_tiles: Array[Rect2i] = []
+var _collision_walkable_rects_tiles: Array[Rect2i] = []
+var _solid_terrain_cells: Dictionary = {}
 var _areas: Array[Dictionary] = []
 var _interactables: Array[MapInteractable] = []
 var _props: Array[MapProp] = []
@@ -43,6 +45,8 @@ func configure(data: Dictionary, tile_size: int = TILE_SIZE_DEFAULT) -> void:
 	var spawn_tiles: Array = map_data.get("spawn_tiles", [1, 1])
 	spawn_position = Vector2(float(spawn_tiles[0]), float(spawn_tiles[1])) * tile_size_px
 	_solid_rects_tiles.clear()
+	_collision_walkable_rects_tiles.clear()
+	_solid_terrain_cells.clear()
 	for values: Array in map_data.get("solid_rects_tiles", []):
 		if values.size() < 4:
 			continue
@@ -113,6 +117,18 @@ func _build_authored_tile_layers() -> bool:
 	var rows: Array = layout.get("ground_rows", [])
 	if rows.size() != map_size_tiles.y:
 		return false
+	_solid_terrain_cells.clear()
+	_collision_walkable_rects_tiles.clear()
+	var solid_tile_ids: Dictionary = {}
+	for value: Variant in layout.get("solid_tile_ids", []):
+		solid_tile_ids[int(value)] = true
+	for values: Array in layout.get("collision_walkable_rects_tiles", []):
+		if values.size() < 4:
+			continue
+		_collision_walkable_rects_tiles.append(Rect2i(
+			Vector2i(int(values[0]), int(values[1])),
+			Vector2i(int(values[2]), int(values[3]))
+		))
 	for y in range(map_size_tiles.y):
 		var row := str(rows[y])
 		if row.length() != map_size_tiles.x:
@@ -121,6 +137,8 @@ func _build_authored_tile_layers() -> bool:
 			var tile_index := TILE_SYMBOLS.find(row.substr(x, 1))
 			if not _set_atlas_cell(ground, Vector2i(x, y), tile_index, atlas_columns):
 				return false
+			if solid_tile_ids.has(tile_index):
+				_solid_terrain_cells[Vector2i(x, y)] = true
 	for value: Dictionary in layout.get("detail_tiles", []):
 		var tile_position: Array = value.get("position_tiles", [])
 		if tile_position.size() != 2:
@@ -195,7 +213,15 @@ func is_walkable(point: Vector2) -> bool:
 	for tile_rect: Rect2i in _solid_rects_tiles:
 		if tile_rect.has_point(tile_point):
 			return false
+	if _solid_terrain_cells.has(tile_point) and not _is_terrain_walkable_exception(tile_point):
+		return false
 	return true
+
+func _is_terrain_walkable_exception(tile_point: Vector2i) -> bool:
+	for tile_rect: Rect2i in _collision_walkable_rects_tiles:
+		if tile_rect.has_point(tile_point):
+			return true
+	return false
 
 func update_player_context(point: Vector2) -> String:
 	_update_area_and_camera(point)
@@ -304,8 +330,46 @@ func _update_area_and_camera(point: Vector2) -> void:
 
 func _build_collision_shapes() -> void:
 	var root: Node2D = $CollisionRoot
-	for index in range(_solid_rects_tiles.size()):
-		var tile_rect: Rect2i = _solid_rects_tiles[index]
+	var blocked_cells: Dictionary = {}
+	for tile_rect: Rect2i in _solid_rects_tiles:
+		for y in range(tile_rect.position.y, tile_rect.end.y):
+			for x in range(tile_rect.position.x, tile_rect.end.x):
+				blocked_cells[Vector2i(x, y)] = true
+	for cell: Vector2i in _solid_terrain_cells.keys():
+		if not _is_terrain_walkable_exception(cell):
+			blocked_cells[cell] = true
+
+	# Merge adjacent blocked cells into larger physics rectangles to keep the
+	# authored terrain collision precise without creating one body per tile.
+	var active_runs: Dictionary = {}
+	var merged_rects: Array[Rect2i] = []
+	for y in range(map_size_tiles.y):
+		var next_runs: Dictionary = {}
+		var x := 0
+		while x < map_size_tiles.x:
+			if not blocked_cells.has(Vector2i(x, y)):
+				x += 1
+				continue
+			var run_start := x
+			while x < map_size_tiles.x and blocked_cells.has(Vector2i(x, y)):
+				x += 1
+			var run_key := Vector2i(run_start, x - run_start)
+			var tile_rect: Rect2i
+			if active_runs.has(run_key):
+				tile_rect = active_runs[run_key]
+				tile_rect = Rect2i(tile_rect.position, tile_rect.size + Vector2i(0, 1))
+			else:
+				tile_rect = Rect2i(Vector2i(run_start, y), Vector2i(x - run_start, 1))
+			next_runs[run_key] = tile_rect
+		for run_key: Vector2i in active_runs:
+			if not next_runs.has(run_key):
+				merged_rects.append(active_runs[run_key])
+		active_runs = next_runs
+	for run_key: Vector2i in active_runs:
+		merged_rects.append(active_runs[run_key])
+
+	for index in range(merged_rects.size()):
+		var tile_rect: Rect2i = merged_rects[index]
 		var body := StaticBody2D.new()
 		body.name = "Blocker_%02d" % index
 		body.collision_layer = 1

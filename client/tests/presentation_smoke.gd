@@ -63,7 +63,7 @@ func _run() -> void:
 	check(not main.can_walk(Vector2(240, 304)), "House footprint must block walking")
 	check(main.can_walk(Vector2(768, 576)), "An Khê spawn must be walkable")
 	check(main.map_world.map_size_tiles == Vector2i(48, 36), "An Khê uses the agreed map size")
-	check(main.map_world.get_node("CollisionRoot").get_child_count() == 13, "An Khê blockers follow landmark footprints and the east stream")
+	check(main.map_world._solid_terrain_cells.has(Vector2i(44, 18)) and not main.can_walk(Vector2(44 * 32, 18 * 32)), "An Khê water terrain generates collision")
 	check(not main.can_walk(Vector2(19.5 * 32, 32.5 * 32)), "Sakura trunk has a compact footprint")
 	check(main.can_walk(Vector2(18.5 * 32, 32.5 * 32)), "Player can pass beside the sakura canopy")
 	check(main.can_walk(Vector2(10 * 32, 8 * 32)) and main.can_walk(Vector2(2 * 32, 17 * 32)), "Old oversized invisible building blockers are gone")
@@ -186,6 +186,8 @@ func _run() -> void:
 	var initial_position: Vector2 = main.player.position
 	check(main.map_world.interactables_size() == 5, "Trúc Âm loads its own interactive map data")
 	check(main.map_world.get_node("AmbientFX").get_child_count() == 3, "Trúc Âm loads its water highlights")
+	check(not main.can_walk(Vector2(12 * 32, 27 * 32)), "Trúc Âm river terrain blocks walking")
+	check(main.can_walk(Vector2(3 * 32, 27 * 32)), "The entry bridge keeps its authored walkable deck")
 	main._action("map")
 	await process_frame
 	check(map_panel.visible, "Map action opens route panel")
@@ -218,6 +220,7 @@ func _run() -> void:
 	await _capture_touch_layout(main, "thach-can-touch-runtime.png")
 	check(main.player.position == Vector2(7 * 32, 18 * 32), "Trúc Âm gate arrives at the Thạch Cạn entrance")
 	check(main.map_world.interactables_size() == 5, "Thạch Cạn loads its own interactive map data")
+	check(not main.can_walk(Vector2(5 * 32, 17 * 32)), "Thạch Cạn void terrain blocks walking")
 	var ore_node: MapInteractable = main.map_world.get_interactable("tc.node.iron_ore")
 	check(ore_node != null and main.can_walk(ore_node.position), "Thạch Cạn ore point is reachable")
 	main.player.position = ore_node.position
@@ -237,6 +240,9 @@ func _run() -> void:
 	check(main.map_world.interactables_size() == 5, "Cổ Tỉnh loads its own interactive map data")
 	check(main.map_world.areas_size() == 5, "Cổ Tỉnh has five named rooms")
 	check(main.map_world.active_area_name == "Cửa Giếng", "Cổ Tỉnh spawn is in the entrance room")
+	check(not main.can_walk(Vector2(24 * 32, 7 * 32)), "Cổ Tỉnh water terrain blocks walking")
+	check(main.can_walk(main.map_world.get_interactable("ct.mach_ban.balance").position), "Cổ Tỉnh balance point is on a dry approach")
+	check(main.can_walk(main.map_world.get_interactable("ct.formation.panel").position), "Cổ Tỉnh formation panel is on a dry approach")
 	check(main.village_camera.limit_left == 32 and main.village_camera.limit_right == 448, "Cổ Tỉnh camera locks to the current room")
 	var boss_core: MapInteractable = main.map_world.get_interactable("ct.boss.heart_well")
 	check(boss_core != null and main.can_walk(boss_core.position), "Cổ Tỉnh boss arena approach is walkable")

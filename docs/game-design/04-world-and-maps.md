@@ -12,15 +12,15 @@ Các điểm đã kiểm tra trong repo:
 
 - `client/scenes/map_world.tscn` dùng chung cho bốn map; `client/scripts/game_map.gd` nạp nền, spawn, khu/phòng, blocker và chế độ camera từ `client/data/map_catalog.json`.
 - `client/data/maps/*.json` đặt từng ô Ground 32×32 từ `TileSet` địa hình tái sử dụng; Detail có tile trang trí thưa. Foreground TileMapLayer được dành cho art sau này. Công trình/cây là prop Y-sort riêng; cây anh đào An Khê có sprite RGBA tách nền, vùng cản ở gốc và giảm opacity khi che nhân vật. PNG world sơn tay chỉ là ảnh concept trên panel tuyến.
-- Catalog định nghĩa 21 POI có `entity_id` ổn định trên bốn map. Scene POI dùng chung hiển thị nhãn, biểu tượng và gợi ý tương tác; các điểm nước có shimmer riêng. Cổng có vị trí đến ở map đích để chuyến đi/về khớp lối nối.
+- Catalog định nghĩa 21 POI có `entity_id` ổn định trên bốn map. Scene POI dùng chung hiển thị nhãn, biểu tượng và gợi ý tương tác; hiệu ứng môi trường đặt trên tile nước hoặc mạch sáng tương ứng. Cổng có vị trí đến ở map đích để chuyến đi/về khớp lối nối.
 - Hành động NPC, dịch vụ, đọc dấu vết, dò Mạch Bàn, khảo sát node và checkpoint mới chỉ đổi thông báo/cờ trong phiên cục bộ. Chúng không mở quest thật, cấp vật phẩm, lưu tiến độ hay xác nhận quyền vào map.
-- `Camera2D` theo người chơi ở map dã ngoại; Cổ Tỉnh đổi giới hạn camera theo phòng. An Khê đã nắn blocker công trình, suối, sạp chợ và gốc cây theo nền nhìn thấy; các map còn lại vẫn cần nắn sát prop.
+- `Camera2D` theo người chơi ở map dã ngoại; Cổ Tỉnh đổi giới hạn camera theo phòng. Collision kết hợp vùng cản landmark với loại tile đặc: nước và hố không đi xuyên được; cầu Trúc Âm có vùng mặt cầu được đi qua. Điểm tương tác quan trọng đã đặt lại cạnh prop và trên ô khô.
 - Route có thể tải map cục bộ. Đây là luồng test client; cổng server, checkpoint, quest, NPC, PvE, fog-of-war và lưu trạng thái chưa được nối.
 - `client/scripts/ui/hud.gd` vẽ minimap từ ô địa hình, blocker và POI của runtime; `M` mở overlay tuyến, `Esc` đóng.
 - Overlay đọc bốn map và ảnh preview từ `client/data/map_catalog.json`; chọn thẻ để xem, bấm **Đi thử map này** để đổi scene cục bộ. Server chưa xác nhận quyền vào.
 - Tài liệu cũ ghi kích thước 64×48, 96×96, 80×64 và 64×64 tile; các số này đã lỗi thời so với quy chuẩn mới bên dưới.
 
-Vì vậy, phần đang có là **prototype trình bày và đi thử tuyến bốn map**. Terrain vẫn là atlas 32 px cố định; foreground chỉ mới xử lý bằng Y-sort/fade cho vật thể cao và chưa được phủ art đầy đủ. Cần tiếp tục tinh chỉnh va chạm ở ba map dã ngoại/hầm và nối luật mở khóa gameplay với server.
+Vì vậy, phần đang có là **prototype trình bày và đi thử tuyến bốn map**. Terrain vẫn là atlas 32 px cố định; foreground chỉ mới xử lý bằng Y-sort/fade cho vật thể cao và chưa được phủ art đầy đủ. Các sheet prop hiện vẫn có nền vuông dính theo ô atlas, thấy rõ thành mảng cỏ/đá quanh vật thể; cần một lượt art riêng để thay bằng prop RGBA tách nền trước khi xem là đạt chuẩn phát hành. Ba map ngoài An Khê vẫn giữ trạng thái canvas prototype 48×36, chưa chốt kích thước thiết kế.
 
 ## 2. Quy chuẩn nền tảng
 
