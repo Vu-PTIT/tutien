@@ -125,6 +125,15 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
   assert.equal(layout.atlas_columns,8,'Terrain atlas must use 8 columns: '+name);
   assert.ok(layout.tile_set && Array.isArray(layout.ground_rows), 'Missing authored map layout data: '+name);
   assert.ok(layout.props_atlas && Array.isArray(layout.props) && layout.props.length>=7, 'Map needs a substantial props layer: '+name);
+  if(name==='an_khe') {
+    const symbols='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_';
+    const tileAt=(x,y)=>symbols.indexOf(layout.ground_rows[y][x]);
+    assert.ok(tileAt(24,18)>=24 && tileAt(24,18)<32, 'An Khê spawn must be a stone plaza, not painted water');
+    for(const ripple of mapCatalog.maps[0].water_ripples) {
+      const [x,y]=ripple.position_tiles;
+      assert.ok(tileAt(x,y)>=32 && tileAt(x,y)<40, 'Stream ripple must align with water terrain');
+    }
+  }
 }
 assert.ok(gameMap.includes('_build_props(layout)') && gameMap.includes('MAP_PROP_SCENE'), 'Map decorative props are data-driven and Y-sorted');
 assert.ok(gameMap.includes('_build_interactables()') && gameMap.includes('_build_water_ripples()'), 'Map POIs and water motion are data-driven');
