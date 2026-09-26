@@ -1,10 +1,10 @@
 # Tiến độ triển khai và thứ tự mới — cập nhật 26/09/2026
 
-> P0 và P0.5 đã được tích hợp vào `main` qua PR #3–#4. Mốc code nền đang dùng là `674f52bcfe1936643f1efd83e03453554167b2bc`; bốn map, HUD và điều khiển keyboard/touch dùng chung đã có. Nhánh P1 hiện triển khai encounter Sơn Trư authoritative trong một match PvE riêng.
+> P0 và P0.5 đã được tích hợp qua PR #3–#4. P1 Sơn Trư đã vào `main` qua PR #5, merge commit `7a03d69ff881466b3ae8a173050b6455777c55d1`. Mốc nguồn hiện tại đã có bốn map, HUD/điều khiển keyboard-touch dùng chung và encounter PvE authoritative.
 
 ## 1. Mốc mã nguồn đã đối chiếu
 
-`main` bắt đầu từ commit `674f52bcfe1936643f1efd83e03453554167b2bc`. P0 đã gom nền `feat/inventory-rewards` và đối chiếu riêng nhánh economy; P0.5 đã sửa tuyến map, occlusion cây/cầu, HUD và input mobile tối thiểu. Nhật ký nguồn và giới hạn còn lại: [đối chiếu nhánh kinh tế](economy-branch-review-2026-09-26.md), [lịch sử dự án](project-history.md).
+`main` tích hợp nền P0/P0.5 từ commit `674f52bcfe1936643f1efd83e03453554167b2bc` và P1 tại merge commit `7a03d69ff881466b3ae8a173050b6455777c55d1`. P0 đã gom nền `feat/inventory-rewards` và đối chiếu riêng nhánh economy; P0.5 đã sửa tuyến map, occlusion cây/cầu, HUD và input mobile tối thiểu. Nhật ký nguồn và giới hạn còn lại: [đối chiếu nhánh kinh tế](economy-branch-review-2026-09-26.md), [lịch sử dự án](project-history.md).
 
 Không coi ảnh PNG world là runtime TileMap; bốn map đang dựng từ tile atlas/layout JSON. Mobile export, safe-area và playtest thiết bị thật vẫn chưa nghiệm thu.
 
@@ -16,7 +16,7 @@ Không coi ảnh PNG world là runtime TileMap; bốn map đang dựng từ tile
 | Đấu tập authoritative hai người | Có prototype, snapshot, đánh/né, vòng đời và reconnect; không kinh tế |
 | Tài sản nhân vật | Có schema 2, catalog 24 ID, túi 24 ô, starter và receipt chống cấp trùng |
 | Dùng/trang bị đồ | Chưa có runtime |
-| PvE Sơn Trư P1 | Match riêng authoritative: notice/chase, telegraph 0,75 s, lao 4 tile, hồi 0,8 s, né/phản công, chết/reset, reconnect 10 s; không ghi XP/loot |
+| PvE Sơn Trư P1 | Đã merge PR #5; match riêng authoritative: notice/chase, telegraph 0,75 s, lao 4 tile, hồi 0,8 s, né/phản công, chết/reset, reconnect 10 s; không ghi XP/loot |
 | Tu vi/đột phá | Chưa có runtime |
 | Node, vườn, craft, shop | Chưa có runtime |
 | Quest/chương/bản đồ gameplay | Có bốn map runtime; quest/unlock/server save chưa có |
@@ -31,7 +31,7 @@ Các mốc mới kế thừa nền đã có, không làm lại combat/tài sản
 
 | Mốc | Phạm vi đủ để chơi thử | Phụ thuộc | Điều kiện chuyển bước |
 | --- | --- | --- | --- |
-| P1 — một Sơn Trư | Bãi QA tại dấu vết Trúc Âm; AI, báo đòn/lao/hồi thế, chết/reset, sprite/map và touch | Combat authoritative hiện tại | Unit + Godot/Nakama smoke đạt; người chơi đọc đòn/né/phản công; không cấp XP/loot |
+| P1 — một Sơn Trư | Hoàn thành qua PR #5: bãi QA tại dấu vết Trúc Âm; AI, báo đòn/lao/hồi thế, chết/reset, sprite/map và touch | Combat authoritative hiện tại | Đạt: unit + Godot/Nakama smoke; kiểm tra ảnh PC/mobile; không cấp XP/loot |
 | P2 — chuyến săn có thành quả | Outcome bền vững, XP tối thiểu, loot, equip/consume/dọn túi, checkpoint/hồi phục | P1 + nền tài sản | Reward đúng một lần; túi đầy giữ chờ; restart còn dữ liệu; đồ thực sự có tác dụng |
 | P3 — mở đầu nhân vật | Quest runtime tối thiểu 001–003, dẫn khí, Phi Nhận, UI mục tiêu | P2 + progression transaction | Tài khoản mới mortal → LK1, không cấp đồ/XP bằng lệnh tay |
 | P4 — vòng Trúc Âm | Node, shop nhỏ, garden/craft, 004–006, Độc Chu, đột phá tầng 2 | P3 + UI/kinh tế nhất quán | Chuẩn bị → đi rừng/đường tránh → về → mở Hộ Thân, có nguồn thay thế |
@@ -59,13 +59,14 @@ Không bắt đầu encounter thưởng mới khi còn settlement chờ đầy t
 
 ## 5. Bằng chứng kiểm thử
 
-Các dòng sau là kết quả lịch sử của những mốc đã merge, không phải kết quả chạy cho P1.
 Mốc combat trước đó đạt 42/42 unit test; Godot 4.6.1 import/chạy scene.
 Mốc tài sản có 64 unit test và CI run
 [35566231466](https://github.com/Vu-PTIT/tutien/actions/runs/35566231466)
 thành công trên `a0ad66e`, gồm Nakama/PostgreSQL, inventory/restart, social và Godot.
 
-P1 hiện thêm unit test cho encounter và cấu hình Godot/Nakama smoke cùng capture desktop/touch trong CI; chỉ đánh dấu đạt sau khi workflow chạy thành công.
+P1 có 75/75 server unit test và 32/32 progression design test. CI run
+[36248004949](https://github.com/Vu-PTIT/tutien/actions/runs/36248004949)
+thành công trên head `6fea7b9`: Nakama smoke cho encounter/reconnect/profile, Godot 4.6.1 import/runtime/presentation và ảnh capture desktop/touch đều đạt.
 
 ## 6. Tài liệu sản phẩm
 
