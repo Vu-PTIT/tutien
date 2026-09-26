@@ -130,11 +130,12 @@
 		{
 		  "entity_id": "ta.trail.boar_sign",
 		  "display_name": "Dấu vết Sơn Trư",
-		  "position_tiles": [24, 16],
+		  "position_tiles": [35, 17],
 		  "interaction_radius_tiles": 1.8,
-		  "action_kind": "read",
-		  "action_label": "Quan sát dấu vết",
-		  "message": "Dấu đất bị cày xới cho thấy Sơn Trư thường lao thẳng. Giữ khoảng trống để né ngang.",
+		  "action_kind": "encounter",
+		  "action_label": "Đối mặt Sơn Trư",
+		  "encounter_id": "en_boar",
+		  "message": "Bãi Sơn Trư: đọc hướng gầm, né ngang cú lao rồi phản công khi nó hồi thế.",
 		  "icon": "res://assets/pixel/icon_15.tres"
 		},
 		{

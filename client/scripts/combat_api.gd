@@ -4,6 +4,7 @@ extends SocialApi
 signal snapshot_received(snapshot: Dictionary)
 signal match_connection_lost
 var match_id: String = ""
+var match_kind: String = ""
 var epoch: String = ""
 var input_sequence: int = 0
 var last_tick: int = -1
@@ -30,29 +31,55 @@ func create_sparring() -> Dictionary:
 		return result
 	return await join_sparring(str(result.matchId))
 
+func create_son_tru_encounter() -> Dictionary:
+	if not match_id.is_empty():
+		return {"error": "Leave the current encounter first"}
+	var result := await call_rpc("pve_son_tru_create", {"consent": true})
+	if result.has("error"):
+		return result
+	return await _join_mode(str(result.matchId), "pve_son_tru")
+
 func join_sparring(id: String) -> Dictionary:
+	return await _join_mode(id, "sparring")
+
+func join_son_tru_encounter(id: String) -> Dictionary:
+	return await _join_mode(id, "pve_son_tru")
+
+func rejoin_current_match() -> Dictionary:
+	if match_id.is_empty() or match_kind.is_empty():
+		return {"error": "No encounter to resume"}
+	return await _join_mode(match_id, match_kind, true)
+
+func _join_mode(id: String, mode: String, preserve_on_error: bool = false) -> Dictionary:
 	if _joining or (not match_id.is_empty() and match_id != id):
 		return {"error": "Already joining or in another match"}
 	_joining = true
 	match_id = id
+	match_kind = mode
 	epoch = ""
 	last_tick = -1
 	input_sequence = 0
 	snapshot = {}
-	var result := await _socket_request({"match_join": {"match_id": id, "metadata": {"consent": "true", "version": "1"}}})
+	var metadata := {"consent": "true", "mode": mode, "version": "1"}
+	var result := await _socket_request({"match_join": {"match_id": id, "metadata": metadata}})
 	_joining = false
-	if result.has("error"):
+	if result.has("error") and not preserve_on_error:
 		match_id = ""
+		match_kind = ""
 	return result
 
-func leave_sparring() -> Dictionary:
+func leave_current_match() -> Dictionary:
 	var id := match_id
 	match_id = ""
+	match_kind = ""
 	epoch = ""
 	snapshot = {}
 	if id.is_empty():
 		return {}
 	return await _socket_request({"match_leave": {"match_id": id}})
+
+func leave_sparring() -> Dictionary:
+	return await leave_current_match()
 
 func send_input(move: Vector2, aim: Vector2, action: String = "") -> Error:
 	if match_id.is_empty() or epoch.is_empty() or _socket == null or _socket.get_ready_state() != WebSocketPeer.STATE_OPEN:

@@ -16,7 +16,7 @@ function setup() {
   const scope = vm.createContext({});
   vm.runInContext(fs.readFileSync('build/index.js', 'utf8'), scope);
   scope.InitModule({}, {}, {}, new Proxy({}, {get: (_, method) => (...args) => {
-    const key = method === 'registerRpc' ? args[0] : method === 'registerRtBefore' ? `rt:${args[0]}` : method;
+    const key = method === 'registerRpc' ? args[0] : method === 'registerMatch' ? `match:${args[0]}` : method === 'registerRtBefore' ? `rt:${args[0]}` : method;
     assert.equal(handlers[key], undefined, `duplicate registration: ${key}`);
     handlers[key] = args.at(-1);
   }}));

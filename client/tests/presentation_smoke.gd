@@ -287,8 +287,40 @@ func _run() -> void:
 	check(main.dock.get_node("Create").disabled, "Cannot create without connection")
 	main._action("inventory")
 	check(not main.dock.visible and bag.visible, "Only one modal open")
+	main._action("inventory")
+	check(not bag.visible, "Close the inventory before capturing the Sơn Trư encounter")
 	var atlas := load("res://assets/pixel/cultivator.png") as Texture2D
 	check(atlas.get_image().detect_alpha() != Image.ALPHA_NONE, "Sprite must be transparent")
+	check(main._load_map("m_truc_am"), "Load Trúc Âm for the PvE entrance check")
+	var boar_sign: MapInteractable = main.map_world.get_interactable("ta.trail.boar_sign")
+	check(boar_sign != null and boar_sign.action_kind == "encounter", "Sơn Trư sign starts a server encounter")
+	check(boar_sign != null and main.can_walk(boar_sign.position), "Bãi Sơn Trư sign is on the walkable path")
+	if boar_sign != null:
+		check(main.map_world.update_player_context(boar_sign.position) == "Bãi Sơn Trư", "Encounter entrance is in the Bãi Sơn Trư area")
+		main.player.position = boar_sign.position
+		main._action("interact")
+		check(not main.local_map_flags.has("ta.trail.boar_sign"), "Opening the encounter does not create local reward progress")
+	main.user_id = "qa_player"
+	main.api.match_id = "pve-preview"
+	main.api.match_kind = "pve_son_tru"
+	var pve_preview := {
+		"version": 1, "mode": "pve_son_tru", "epoch": "preview", "tick": 12, "phase": "active", "phaseAt": 0,
+		"rules": {"tickRate": 20, "chargeDistance": 128, "obstacles": [{"id":"fallen_log", "x":450, "y":256, "w":112, "h":24, "spriteTile":59}]},
+		"players": [{"id":"qa_player", "x":280, "y":340, "hp":100, "faceX":1, "faceY":0, "mode":"idle", "since":0}],
+		"boar": {"id":"en_boar", "x":690, "y":300, "hp":60, "maxHp":60, "faceX":-1, "faceY":0, "mode":"windup", "since":0}
+	}
+	main.api.snapshot = pve_preview
+	main._snapshot(pve_preview)
+	main._process(0.1)
+	await process_frame
+	check(main.map_world.visible == false and main.get_node("Arena").visible, "Encounter shows the authored combat clearing")
+	check(main.son_tru_actor != null and main.hud.get_node("LeaveEncounter").visible, "Sơn Trư sprite and exit control are visible")
+	check(main.hud.get_node("Location/Title").text == "BÃI SƠN TRƯ", "Encounter HUD names the combat location")
+	await _capture("son-tru-runtime.png")
+	await _capture_touch_layout(main, "son-tru-touch-runtime.png")
+	main.api.match_id = ""
+	main.api.match_kind = ""
+	await main._leave_match()
 	main.queue_free()
 	await process_frame
 	print("Presentation smoke: ", "PASS" if failures == 0 else "FAIL", " (", failures, " failures)")

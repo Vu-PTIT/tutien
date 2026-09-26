@@ -1,18 +1,12 @@
 # Tiến độ triển khai và thứ tự mới — cập nhật 26/09/2026
 
-> Mốc tích hợp PR #3: bốn layout TileMap từ atlas 32 px, prop Y-sort riêng, 21 POI cục bộ, cổng có điểm đến và smoke test tuyến. An Khê có nền/collision chỉnh theo ảnh runtime, minimap từ dữ liệu map, sprite cây tách nền, gốc cây có va chạm và bố cục touch thử nghiệm. Bàn phím/chuột và cảm ứng dùng chung `GameInput`/InputMap. Foreground toàn map, fog-of-war, quest/unlock server, lưu trạng thái và bản xuất mobile chưa hoàn thành. An Khê giữ 48×36; kích thước ba map còn lại chưa chốt.
-
-Các mục 1, 5–7 bên dưới ghi lại ảnh chụp lịch sử của các mốc cũ; xem ghi chú trên và [đối chiếu nhánh kinh tế](economy-branch-review-2026-09-26.md) để xác định trạng thái tích hợp hiện tại.
+> P0 và P0.5 đã được tích hợp vào `main` qua PR #3–#4. Mốc code nền đang dùng là `674f52bcfe1936643f1efd83e03453554167b2bc`; bốn map, HUD và điều khiển keyboard/touch dùng chung đã có. Nhánh P1 hiện triển khai encounter Sơn Trư authoritative trong một match PvE riêng.
 
 ## 1. Mốc mã nguồn đã đối chiếu
 
-`main` tại `94fca39c358340273d6f6de16675d93d539fdc00`.
-Nhánh feature đang kế thừa combat/tài sản:
-`feat/inventory-rewards` tại `05f5dd0eb9df36d5790e268879b8fbe3699994ea`.
-Tại lúc kiểm tra, nhánh này chưa được merge vào `main`.
+`main` bắt đầu từ commit `674f52bcfe1936643f1efd83e03453554167b2bc`. P0 đã gom nền `feat/inventory-rewards` và đối chiếu riêng nhánh economy; P0.5 đã sửa tuyến map, occlusion cây/cầu, HUD và input mobile tối thiểu. Nhật ký nguồn và giới hạn còn lại: [đối chiếu nhánh kinh tế](economy-branch-review-2026-09-26.md), [lịch sử dự án](project-history.md).
 
-Backend xã hội và thiết kế v2 đã ở main. Combat/tài sản đang ở nhánh feature.
-Không lấy mô tả trong hội thoại hoặc file thiết kế làm bằng chứng code đã triển khai.
+Không coi ảnh PNG world là runtime TileMap; bốn map đang dựng từ tile atlas/layout JSON. Mobile export, safe-area và playtest thiết bị thật vẫn chưa nghiệm thu.
 
 ## 2. Có và chưa có
 
@@ -22,12 +16,11 @@ Không lấy mô tả trong hội thoại hoặc file thiết kế làm bằng c
 | Đấu tập authoritative hai người | Có prototype, snapshot, đánh/né, vòng đời và reconnect; không kinh tế |
 | Tài sản nhân vật | Có schema 2, catalog 24 ID, túi 24 ô, starter và receipt chống cấp trùng |
 | Dùng/trang bị đồ | Chưa có runtime |
-| PvE/AI/encounter/loot | Chưa có runtime |
+| PvE Sơn Trư P1 | Match riêng authoritative: notice/chase, telegraph 0,75 s, lao 4 tile, hồi 0,8 s, né/phản công, chết/reset, reconnect 10 s; không ghi XP/loot |
 | Tu vi/đột phá | Chưa có runtime |
 | Node, vườn, craft, shop | Chưa có runtime |
-| Quest/chương/bản đồ gameplay | Có thiết kế; chưa có luồng chơi hoàn chỉnh |
-| Bản cập nhật tiến trình 21/09 | Tài liệu + dữ liệu mẫu + validator, không đổi các trạng thái trên |
-| Cross-platform PC + mobile 22/09 | Có plan kiến trúc/UI/input; nay có lát cắt InputMap/touch HUD, chưa có mobile export |
+| Quest/chương/bản đồ gameplay | Có bốn map runtime; quest/unlock/server save chưa có |
+| Cross-platform PC + mobile | Cùng action/movement trên keyboard/mouse và touch ngang; chưa có mobile export hoặc thiết bị thật |
 
 Chi tiết: [combat](combat-prototype.md), [tài sản](inventory-and-rewards.md),
 [nhật ký](project-history.md), [đặc tả mới](game-design/progression-pve-spec.md).
@@ -38,13 +31,13 @@ Các mốc mới kế thừa nền đã có, không làm lại combat/tài sản
 
 | Mốc | Phạm vi đủ để chơi thử | Phụ thuộc | Điều kiện chuyển bước |
 | --- | --- | --- | --- |
-| P1 — một Sơn Trư | Khu QA, AI, báo đòn/lao/hồi thế, chết/reset | Combat authoritative hiện tại | Người chơi đọc đòn/né/phản công; server xác nhận; chưa giả là có reward |
+| P1 — một Sơn Trư | Bãi QA tại dấu vết Trúc Âm; AI, báo đòn/lao/hồi thế, chết/reset, sprite/map và touch | Combat authoritative hiện tại | Unit + Godot/Nakama smoke đạt; người chơi đọc đòn/né/phản công; không cấp XP/loot |
 | P2 — chuyến săn có thành quả | Outcome bền vững, XP tối thiểu, loot, equip/consume/dọn túi, checkpoint/hồi phục | P1 + nền tài sản | Reward đúng một lần; túi đầy giữ chờ; restart còn dữ liệu; đồ thực sự có tác dụng |
 | P3 — mở đầu nhân vật | Quest runtime tối thiểu 001–003, dẫn khí, Phi Nhận, UI mục tiêu | P2 + progression transaction | Tài khoản mới mortal → LK1, không cấp đồ/XP bằng lệnh tay |
 | P4 — vòng Trúc Âm | Node, shop nhỏ, garden/craft, 004–006, Độc Chu, đột phá tầng 2 | P3 + UI/kinh tế nhất quán | Chuẩn bị → đi rừng/đường tránh → về → mở Hộ Thân, có nguồn thay thế |
 | P5 — chương đầu | 007–012, Thạch Cạn/Cổ Tỉnh, quái/công thức còn lại, tầng 3–4 | P4 | Solo/co-op, hạ/niêm phong, đủ XP và không kẹt; đo nhịp/tiêu hao thật |
 
-CP-1 đến CP-3 của G0.5 phải đủ trước khi P1 được xem là hoàn thành; CP-4 phải đi cùng P2 vì inventory cần hai layout dùng chung presenter/state.
+P0.5 đã cung cấp input, HUD và map để gắn encounter. P2 vẫn cần CP-4 vì inventory/reward cần layout chờ, receipt và settlement.
 
 P2 có thể dùng fixture Luyện Khí trong test; không thay trạng thái người chơi thật
 hoặc thêm debug grant RPC vào production. P4 phải có bán da/mua nước/thuốc và craft,
@@ -64,39 +57,23 @@ Shop/craft/consume và đột phá phải có capacity, validation, CAS/replay v
 mất acknowledgement. Đồng bộ timer spawn/node/plot và quyền chuyển map/epoch.
 Không bắt đầu encounter thưởng mới khi còn settlement chờ đầy túi.
 
-## 5. Bằng chứng kiểm thử đã ghi trước cập nhật
+## 5. Bằng chứng kiểm thử
 
-Mốc combat local từng đạt 42/42 unit test; Godot 4.6.1 import/chạy scene.
-Mốc tài sản đã ghi 64 unit test và CI run
+Các dòng sau là kết quả lịch sử của những mốc đã merge, không phải kết quả chạy cho P1.
+Mốc combat trước đó đạt 42/42 unit test; Godot 4.6.1 import/chạy scene.
+Mốc tài sản có 64 unit test và CI run
 [35566231466](https://github.com/Vu-PTIT/tutien/actions/runs/35566231466)
 thành công trên `a0ad66e`, gồm Nakama/PostgreSQL, inventory/restart, social và Godot.
-Đây là kết quả **lịch sử của mốc đó**, không phải lần chạy lại do sửa tài liệu này.
 
-Bản cập nhật hiện tại chỉ có validator thiết kế và bài tự kiểm của validator.
-Kết quả đóng gói được ghi trong báo cáo bàn giao, không thay thế combat/network/
-storage smoke hoặc playtest.
+P1 hiện thêm unit test cho encounter và cấu hình Godot/Nakama smoke cùng capture desktop/touch trong CI; chỉ đánh dấu đạt sau khi workflow chạy thành công.
 
-## 6. Tài liệu và việc còn thiếu
+## 6. Tài liệu sản phẩm
 
-Bộ v2 tại mốc nguồn có 00–07 và README; 08–15 cùng `mvp.catalog.json`/
-`validate_design.py` vẫn chưa có. Mục lục mới không dẫn người đọc bắt đầu ở file thiếu.
+Các số kinh tế và tiến trình lấy từ [đặc tả PvE](game-design/progression-pve-spec.md) và JSON thiết kế. P1 chỉ triển khai giao chiến Sơn Trư; settlement thưởng, quest và lưu world vẫn thuộc P2 trở đi.
 
-Bổ sung hiện tại:
-`game-design/progression-pve-spec.md`, `game-design/progression-references.md`,
-`design-samples/progression-pve.v1.json`, `scripts/validate_progression_design.py`
-và `scripts/test_progression_design.py`.
-Đây là tài liệu/công cụ thiết kế, không là content loader Godot/Nakama.
+## 7. Giới hạn hiện tại
 
-## 7. Lịch sử giới hạn xuất bản/kiểm thử
-
-Ở lần triển khai tài sản trước, push từng cần xác nhận riêng; live PostgreSQL local
-không chạy được và CI ban đầu chưa có kết quả. Sau khi người dùng xác nhận push,
-nhánh đã có trên GitHub và CI được ghi ở mục 5. Không dùng cảnh báo cũ để kết luận
-inventory hiện chưa từng qua integration test.
-
-Bản sửa tiến trình lần này được chuẩn bị thành gói áp dụng vào mốc nguồn.
-Việc sửa nội dung gói không tự đồng nghĩa đã commit, push, tạo PR hoặc merge Git.
-Trạng thái công bố phải cập nhật theo thao tác Git thực tế, không đánh dấu trước.
+P2 phải nối `encounterId/outcome` → settlement bền vững → receipt/inventory. Không cho combat tự ghi XP, linh thạch hoặc item rời khỏi transaction.
 
 
 ### Authored TileMap recovery — 24/09/2026

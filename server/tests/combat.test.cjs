@@ -5,9 +5,10 @@ const fs = require('node:fs');
 function harness() {
   const scope = vm.createContext({});
   vm.runInContext(fs.readFileSync('build/index.js','utf8'),scope);
-  let match; const rpcs = {};
+  const matches = {}; const rpcs = {};
   scope.InitModule({}, {}, {}, new Proxy({}, {get: (_, method) => method === 'registerRpc'
-    ? (id, fn) => {rpcs[id]=fn;} : method === 'registerMatch' ? (_, fn)=>{match=fn;} : ()=>{}}));
+    ? (id, fn) => {rpcs[id]=fn;} : method === 'registerMatch' ? (id, fn)=>{matches[id]=fn;} : ()=>{}}));
+  const match = matches.sparring;
   const nk = {uuidv4:()=> 'epoch', binaryToString: b=>Buffer.from(b).toString()};
   const snapshots=[];
   const dispatcher={broadcastMessage:(_,data)=>snapshots.push(JSON.parse(data)),matchKick:()=>{}};

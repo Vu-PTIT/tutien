@@ -96,7 +96,7 @@ Tổng hành trình mẫu:
 
 <!-- generated:milestones -->
 | Mốc | Quest XP | XP ngoài quest | Dư trước | Tiêu đột phá | Dư sau |
-| --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- |
 | to_stage_2 | 200 | 100 | 0 | 300 | 0 |
 | to_stage_3 | 600 | 150 | 0 | 600 | 150 |
 | to_stage_4 | 650 | 200 | 150 | 1000 | 0 |
