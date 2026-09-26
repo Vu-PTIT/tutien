@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 [ext_resource type="Theme" path="res://themes/tutien_theme.tres" id="theme"]
 [ext_resource type="Texture2D" path="res://assets/pixel/hero_idle.tres" id="hero"]
 [ext_resource type="Texture2D" path="res://assets/pixel/an_khe_world_v1.png" id="map"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory.tscn" id="bag"]
 [ext_resource type="Script" path="res://scripts/ui/world_map_panel.gd" id="map_panel_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/touch_controls.tscn" id="touch_controls"]
 
 [node name="HUD" type="Control"]
 offset_left = 0.0
@@ -547,3 +548,5 @@ offset_top = 237.0
 offset_right = 532.0
 offset_bottom = 263.0
 text = "Đi thử map này"
+
+[node name="TouchControls" parent="." instance=ExtResource("touch_controls")]

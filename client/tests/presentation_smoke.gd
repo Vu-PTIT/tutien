@@ -58,12 +58,57 @@ func _run() -> void:
 	check(not main.map_world.get_node("Background").visible, "Tile layer replaces the full-screen map sprite at runtime")
 	check(main.map_world.get_node("WorldLayers/ForegroundLayer") is TileMapLayer, "Map has a dedicated foreground tile layer")
 	check(main.map_world.interactables_size() == 6, "An Khê loads six data-driven interactive points")
+	check(not main.map_world._has_clear_interaction_path(Vector2(8 * 32, 5 * 32), Vector2(8 * 32, 13 * 32)), "Building collision also blocks interactions through its walls")
+	var sakura: MapProp = main.map_world.get_node("Actors/ak_prop_sakura") as MapProp
+	main.map_world.update_player_context(Vector2(19 * 32, 31 * 32))
+	check(sakura.get_node("Sprite").modulate.a < 1.0, "Tall An Khê prop fades when it covers the player")
+	main.map_world.update_player_context(Vector2(19 * 32, 34 * 32))
+	check(sakura.get_node("Sprite").modulate.a == 1.0, "Tall prop returns to full opacity in front of player")
 	check(main.map_world.get_node("AmbientFX").get_child_count() == 3, "An Khê loads animated water highlights")
 	check(main.village_camera.enabled, "Camera follows the village player")
 	check(main.village_camera.limit_right == 1536 and main.village_camera.limit_bottom == 1152, "Camera clamps to An Khê world bounds")
 	check(bag.slot_buttons.size() == 24, "Inventory requires exactly 24 visual slots")
 	check(hud.get_node("Hotbar").get_child_count() == 12, "Six buttons + six key labels")
 	check(not bag.visible and not main.dock.visible, "Modals start closed")
+	main.touch_layout_enabled = true
+	hud.set_touch_layout(true)
+	var touch: TouchControls = hud.touch_controls
+	check(touch.visible and not hud.get_node("Hotbar").visible, "Touch layout shows controls without desktop hotbar")
+	var finger_down := InputEventScreenTouch.new()
+	finger_down.index = 2
+	finger_down.pressed = true
+	finger_down.position = TouchControls.JOYSTICK_CENTER
+	touch._input(finger_down)
+	var finger_drag := InputEventScreenDrag.new()
+	finger_drag.index = 2
+	finger_drag.position = TouchControls.JOYSTICK_CENTER + Vector2(48, 0)
+	touch._input(finger_drag)
+	check(touch.direction.x > 0.9 and main._movement().x > 0.9, "Touch drag drives the shared movement vector")
+	var other_finger := InputEventScreenTouch.new()
+	other_finger.index = 3
+	other_finger.pressed = true
+	other_finger.position = Vector2(585, 300)
+	touch._input(other_finger)
+	check(touch.direction.x > 0.9, "Second touch does not steal joystick movement")
+	var finger_up := InputEventScreenTouch.new()
+	finger_up.index = 2
+	finger_up.pressed = false
+	touch._input(finger_up)
+	check(touch.direction == Vector2.ZERO, "Releasing the joystick stops movement")
+	touch.set_combat_mode(true)
+	check(touch.get_node("Attack").visible and not touch.get_node("Interact").visible, "Sparring presents touch combat actions")
+	touch._input(finger_down)
+	touch._input(finger_drag)
+	touch.set_combat_mode(true)
+	check(touch.direction.x > 0.9, "Repeated server snapshots must not reset the combat joystick")
+	main.dock.show()
+	await process_frame
+	check(not touch.visible and touch.direction == Vector2.ZERO, "Opening a modal releases touch movement")
+	main.dock.hide()
+	await process_frame
+	touch.set_combat_mode(false)
+	main.touch_layout_enabled = false
+	hud.set_touch_layout(false)
 	var map_panel: WorldMapPanel = hud.get_node("WorldMap")
 	check(not map_panel.visible, "World map starts closed")
 	check(map_panel.map_entries.size() == 4, "World map reads the four-map MVP catalog")

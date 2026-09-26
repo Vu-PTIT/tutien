@@ -15,11 +15,12 @@ Xem [hướng dẫn API và kết nối Godot](docs/social-backend.md).
 ```sh
 git clone https://github.com/Vu-PTIT/tutien.git
 cd tutien
+git switch feat/inventory-rewards
 docker compose up --build -d
 ```
 
-3. Import `client/project.godot` trong Godot, nhấn **F6/F5** chạy scene/project.
-4. Di chuyển bằng **WASD / phím mũi tên**. Mở **Đấu tập → Kết nối**, tạo hoặc vào phòng đấu tập, cả hai bấm **Sẵn sàng**. **Q/J/chuột trái** đánh, **Space** né theo hướng chuột. Backend chưa bật thì vẫn di chuyển offline trong sân An Khê được.
+3. Import `client/project.godot` trong Godot, nhấn **F6/F5** chạy scene/project. Chạy với `--touch-preview` hoặc nhấn **F9** trong bản PC để thử bố cục cảm ứng màn hình ngang; trên thiết bị mobile, bố cục này tự bật.
+4. Di chuyển bằng **WASD / phím mũi tên**, hoặc kéo cần trái ở chế độ cảm ứng. Nút bên phải tương tác với điểm gần nhất; trong đấu tập nó chuyển thành **Đánh / Né**, hướng đòn lấy theo hướng di chuyển gần nhất. Mở **Đấu tập → Kết nối**, tạo hoặc vào phòng đấu tập, cả hai bấm **Sẵn sàng**. Trên PC, **Q/J/chuột trái** đánh, **Space** né theo hướng chuột. Backend chưa bật thì vẫn đi khám phá An Khê offline được.
    Xem [cách mở hai tài khoản/cửa sổ và luật đấu tập](docs/combat-prototype.md).
 5. Ngoài trận, bấm **Túi [I]**; **Esc** đóng. Chưa kết nối chỉ hiển thị mẫu có nhãn, không lưu và không nhận thưởng. Sau kết nối mới xem tài sản và nhận vật tư khởi đầu một lần. Xem [hợp đồng inventory/reward](docs/inventory-and-rewards.md).
 6. Kiểm tra backend: `docker compose ps`, `docker compose logs nakama`. Sau khi backend healthy: `node scripts/smoke.mjs`.
@@ -47,11 +48,12 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 
 ## Phạm vi bản base
 
-Giao diện được thiết kế lại với nền làng, atlas pixel, theme xanh đen/đồng,
-HUD và túi dùng chung scene editor/runtime. Nền làng là ảnh minh họa, chưa
-phải TileMap hoàn chỉnh. Xem [thiết kế và kiểm chứng](docs/ui-product-slice.md)
-và [bố cục tĩnh](docs/ui-previews/README.md). Lần viết lại UI này chưa được
-xác nhận chạy qua Godot/CI; không dùng kết quả commit cũ thay thế.
+Giao diện dùng atlas pixel, theme xanh đen/đồng, HUD và túi dạng scene Godot.
+Bốn map đang dựng từ atlas địa hình 32 px và vật thể 128 px riêng trong runtime;
+PNG world dùng cho preview/minimap. An Khê có vật thể cao mờ đi khi che người chơi,
+vùng cản ngăn tương tác xuyên tường. Bố cục cảm ứng là prototype cho màn hình ngang,
+chưa phải bản xuất Android đã nghiệm thu. Xem [thiết kế và kiểm chứng](docs/ui-product-slice.md)
+và [trạng thái triển khai](docs/implementation-status.md).
 
 Đã có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**: di chuyển, vật cản, đánh thường, né, HP, kết thúc và reconnect ngắn. Đấu tập không tác động tài sản/hồ sơ. Đã có inventory 24 ô, catalog vật phẩm, migration hồ sơ và gói khởi đầu chống nhận trùng. **Chưa có quái, dùng/trang bị vật phẩm, trồng trọt, giao dịch, PvP mở, đồ họa hoàn chỉnh hoặc bản xuất Android/Windows.**
 

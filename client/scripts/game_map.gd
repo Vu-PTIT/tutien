@@ -84,6 +84,7 @@ func _ready() -> void:
 	camera.limit_right = int(map_size_px.x)
 	camera.limit_bottom = int(map_size_px.y)
 	_update_area_and_camera($Actors/Player.position)
+	_update_prop_occlusion($Actors/Player.position)
 	update_interaction_focus($Actors/Player.position)
 
 func _build_authored_tile_layers() -> bool:
@@ -197,7 +198,12 @@ func is_walkable(point: Vector2) -> bool:
 
 func update_player_context(point: Vector2) -> String:
 	_update_area_and_camera(point)
+	_update_prop_occlusion(point)
 	return active_area_name
+
+func _update_prop_occlusion(point: Vector2) -> void:
+	for prop: MapProp in _props:
+		prop.update_player_occlusion(point)
 
 func areas_size() -> int:
 	return _areas.size()
@@ -219,13 +225,22 @@ func update_interaction_focus(point: Vector2) -> MapInteractable:
 	var nearest_distance := INF
 	for interactable: MapInteractable in _interactables:
 		var distance := point.distance_to(interactable.position)
-		if interactable.is_in_range(point) and distance < nearest_distance:
+		if interactable.is_in_range(point) and distance < nearest_distance and _has_clear_interaction_path(point, interactable.position):
 			nearest = interactable
 			nearest_distance = distance
 	for interactable: MapInteractable in _interactables:
 		interactable.set_focused(interactable == nearest)
 	active_interactable = nearest
 	return active_interactable
+
+func _has_clear_interaction_path(from: Vector2, to: Vector2) -> bool:
+	# A nearby object must not be usable through the solid footprint of a building.
+	var distance := from.distance_to(to)
+	var samples := ceili(distance / (tile_size_px / 4.0))
+	for step in range(1, samples):
+		if not is_walkable(from.lerp(to, float(step) / samples)):
+			return false
+	return true
 
 func _build_location_labels() -> void:
 	var root: Node2D = $LocationLabels

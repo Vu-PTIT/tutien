@@ -98,4 +98,12 @@ Trạng thái công bố phải cập nhật theo thao tác Git thực tế, kh�
 
 ### Authored TileMap recovery — 24/09/2026
 
-The four map prototypes now use reusable biome `TileSet` atlases and authored layout JSON for Ground/Detail/Foreground layers. Painted world PNGs are preview/minimap/fallback assets only; runtime PNG slicing has been removed. Collision and interaction data remain catalog-driven while terrain presentation is editable at tile level.
+The four map prototypes now use reusable biome `TileSet` atlases and authored layout JSON for Ground/Detail/Foreground layers. Painted world PNGs are preview/minimap assets only; runtime PNG slicing has been removed. Collision and interaction data remain catalog-driven while terrain presentation is editable at tile level.
+
+### Lát cắt điều khiển và độ sâu An Khê — 26/09/2026
+
+- PC giữ WASD/phím mũi tên và chuột; màn hình ngang mobile dùng cần trái, nút tương tác ở map và Đánh/Né trong đấu tập. `--touch-preview` hoặc F9 xem bố cục trên PC. Hướng đánh touch lấy từ hướng di chuyển gần nhất; chưa có cần ngắm độc lập.
+- HUD ẩn hotbar PC khi bật touch; các nút gameplay ẩn lúc mở túi, bản đồ hoặc phòng đấu tập. Touch dùng cùng hàm action/movement, không tạo gameplay song song.
+- Vật thể cao có metadata `occlusion` trong JSON map để giảm độ mờ khi che người chơi; bước đầu áp dụng cây ở An Khê. Các công trình và blocker tiếp tục là đối tượng riêng. Tương tác cục bộ kiểm tra đường thẳng không đi xuyên vùng cản.
+- Chưa có scene mobile export và playtest trên thiết bị thật. PNG world vẫn chỉ dùng preview/minimap; art props hiện còn nền cỏ/đất trong ô atlas, cần làm cutout trong lượt art tiếp theo.
+- Kiểm tra tĩnh: `node scripts/check-pixel-scenes.cjs` và `node scripts/check-png-integrity.cjs`. Godot import, runtime và `client/tests/presentation_smoke.gd` phải được chạy ở CI sau khi push; không coi kiểm tra tĩnh là bằng chứng chạy engine.

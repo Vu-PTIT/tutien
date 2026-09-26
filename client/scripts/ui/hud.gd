@@ -2,13 +2,16 @@ class_name PixelHUD
 extends Control
 signal action_requested(action: String)
 var toast_time: float = 0.0
+var touch_layout: bool = false
+
+@onready var touch_controls: TouchControls = $TouchControls
 
 func _ready() -> void:
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
 	$MapButton.pressed.connect(func() -> void: action_requested.emit("map"))
 	$SparringButton.pressed.connect(func() -> void: action_requested.emit("dock"))
 	$HelpButton.pressed.connect(func() -> void:
-		notify("WASD: đi • M: tuyến map • I: túi • E: tương tác"))
+		notify("Kéo cần trái để đi • nút phải để tương tác" if touch_layout else "WASD: đi • M: tuyến map • I: túi • E: tương tác"))
 	for index in range(6):
 		var action_id: String = ["item_heal", "item_herb", "attack", "interact", "locked", "dodge"][index]
 		get_node("Hotbar/Slot%d" % index).pressed.connect(
@@ -29,9 +32,18 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	$ModalShade.visible = $Inventory.visible or $Dock.visible
+	touch_controls.set_controls_visible(touch_layout and not $Inventory.visible and not $Dock.visible and not $WorldMap.visible)
 	if toast_time > 0:
 		toast_time -= delta
 		$Toast.visible = toast_time > 0
+
+func set_touch_layout(enabled: bool) -> void:
+	touch_layout = enabled
+	$Hotbar.visible = not enabled
+	$Controls.visible = not enabled
+	$HelpButton.position = Vector2(8, 170) if enabled else Vector2(8, 328)
+	$HelpButton.text = "Hướng dẫn" if enabled else "Hướng dẫn / trạng thái"
+	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not $WorldMap.visible)
 
 func notify(message: String) -> void:
 	$Toast/Message.text = message

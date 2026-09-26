@@ -12,6 +12,7 @@ const WALK_SPEED := 72.0
 @onready var dock: Panel = $Presentation/HUD/Dock
 @onready var room: LineEdit = $Presentation/HUD/Dock/Room
 @onready var world_map: WorldMapPanel = $Presentation/HUD/WorldMap
+@onready var touch_controls: TouchControls = $Presentation/HUD/TouchControls
 var map_world: GameMap
 var player: PixelActor
 var village_camera: Camera2D
@@ -27,6 +28,8 @@ var last_phase: String = ""
 var fighters: Dictionary = {}
 var local_map_flags: Dictionary = {}
 var offline_position := Vector2(768, 576)
+var touch_layout_enabled := false
+var last_touch_aim := Vector2.RIGHT
 
 func _ready() -> void:
 	get_window().min_size = Vector2i(640, 360)
@@ -38,6 +41,9 @@ func _ready() -> void:
 	api.snapshot_received.connect(_snapshot)
 	api.match_connection_lost.connect(_connection_lost)
 	hud.action_requested.connect(_action)
+	touch_controls.action_requested.connect(_action)
+	touch_layout_enabled = OS.has_feature("mobile") or OS.get_cmdline_user_args().has("--touch-preview")
+	hud.set_touch_layout(touch_layout_enabled)
 	world_map.map_requested.connect(_travel_to_map)
 	world_map.set_current_map(current_map_id)
 	$Arena.hide()
@@ -178,7 +184,7 @@ func _interact_with_world_object(target: MapInteractable) -> void:
 	hud.notify(message)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+	if not touch_layout_enabled and event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if not inventory_panel.visible and not dock.visible and not world_map.visible:
 			_action("attack")
 		return
@@ -188,6 +194,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		inventory_panel.hide()
 		dock.hide()
 		world_map.hide()
+		get_viewport().set_input_as_handled()
+		return
+	if event.physical_keycode == KEY_F9:
+		touch_layout_enabled = not touch_layout_enabled
+		hud.set_touch_layout(touch_layout_enabled)
 		get_viewport().set_input_as_handled()
 		return
 	if room.has_focus():
@@ -206,12 +217,13 @@ func _unhandled_input(event: InputEvent) -> void:
 func _movement() -> Vector2:
 	if inventory_panel.visible or dock.visible or world_map.visible:
 		return Vector2.ZERO
-	return Vector2(
+	var keyboard := Vector2(
 		float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT)) -
 		float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),
 		float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN)) -
 		float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP))
 	).limit_length()
+	return (keyboard + touch_controls.direction).limit_length()
 
 func can_walk(at: Vector2) -> bool:
 	return map_world != null and map_world.is_walkable(at)
@@ -234,6 +246,8 @@ func _process(delta: float) -> void:
 	if api == null:
 		return
 	var direction := _movement()
+	if touch_layout_enabled and direction.length_squared() > 0.01:
+		last_touch_aim = direction.normalized()
 	if not api.match_id.is_empty():
 		snapshot_age += delta
 		_present_fighters(delta)
@@ -241,7 +255,7 @@ func _process(delta: float) -> void:
 		if send_clock >= 0.05:
 			send_clock = 0.0
 			var origin := _local_server_position()
-			var aim := (get_global_mouse_position() / ARENA_SCALE - origin).normalized()
+			var aim := last_touch_aim if touch_layout_enabled else (get_global_mouse_position() / ARENA_SCALE - origin).normalized()
 			api.send_input(direction, aim, pending_action)
 			pending_action = ""
 		if snapshot_age > 2.0:
@@ -322,6 +336,7 @@ func _snapshot(value: Dictionary) -> void:
 	village_camera.enabled = false
 	map_world.hide()
 	$Arena.show()
+	touch_controls.set_combat_mode(true)
 	world_map.hide()
 	hud.get_node("Location/Title").text = "VÕ ĐÀI"
 	hud.get_node("Location/State").text = "Đấu tập • không mất đồ"
@@ -415,6 +430,7 @@ func _leave_match() -> void:
 	last_phase = ""
 	$Arena.hide()
 	map_world.show()
+	touch_controls.set_combat_mode(false)
 	village_camera.enabled = true
 	hud.set_health(100)
 	hud.get_node("Minimap").show()

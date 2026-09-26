@@ -192,7 +192,8 @@
         18.5,
         32
       ],
-      "tile": 59
+      "tile": 59,
+      "occlusion": {"policy": "fade_when_behind", "radius_tiles": 1.7, "height_tiles": 3.5, "opacity": 0.56}
     },
     {
       "name": "ak_prop_bamboo",
@@ -208,7 +209,8 @@
         39.5,
         8
       ],
-      "tile": 63
+      "tile": 63,
+      "occlusion": {"policy": "fade_when_behind", "radius_tiles": 1.8, "height_tiles": 3.5, "opacity": 0.56}
     }
   ]
 }

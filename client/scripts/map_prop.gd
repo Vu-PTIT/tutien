@@ -3,6 +3,9 @@ extends Node2D
 ## A Y-sorted landmark. Source resolution is independent of the movement grid.
 
 @onready var sprite: Sprite2D = $Sprite
+var occlusion_radius_px := 0.0
+var occlusion_height_px := 0.0
+var occluded_alpha := 1.0
 
 func configure(data: Dictionary, texture: Texture2D, tile_size_px: int, atlas_columns: int = 8, cell_px: int = 128) -> void:
 	name = str(data.get("name", "MapProp"))
@@ -27,3 +30,17 @@ func configure(data: Dictionary, texture: Texture2D, tile_size_px: int, atlas_co
 	var scale_tiles: Array = data.get("scale_tiles", [1, 1])
 	if scale_tiles.size() >= 2:
 		sprite.scale = Vector2(float(scale_tiles[0]), float(scale_tiles[1]))
+	var occlusion: Dictionary = data.get("occlusion", {})
+	if str(occlusion.get("policy", "")) == "fade_when_behind":
+		occlusion_radius_px = float(occlusion.get("radius_tiles", 1.5)) * tile_size_px
+		occlusion_height_px = float(occlusion.get("height_tiles", 3.0)) * tile_size_px
+		occluded_alpha = clampf(float(occlusion.get("opacity", 0.55)), 0.2, 1.0)
+
+func update_player_occlusion(player_feet: Vector2) -> void:
+	if occlusion_radius_px <= 0.0:
+		return
+	var behind := absf(player_feet.x - position.x) < occlusion_radius_px \
+		and player_feet.y < position.y and player_feet.y > position.y - occlusion_height_px
+	var tint := sprite.modulate
+	tint.a = occluded_alpha if behind else 1.0
+	sprite.modulate = tint
