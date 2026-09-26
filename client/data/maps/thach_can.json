@@ -116,17 +116,17 @@
         6.5,
         7
       ],
-      "tile": 53
+      "tile": 9
     },
     {
       "name": "tc_prop_mine_entrance",
       "position_tiles": [41, 22],
-      "tile": 52
+      "tile": 44
     },
     {
       "name": "tc_prop_ore_vein",
       "position_tiles": [30.5, 20],
-      "tile": 62
+      "tile": 51
     },
     {
       "name": "tc_prop_mine_support",
@@ -134,12 +134,12 @@
         35.5,
         16
       ],
-      "tile": 60
+      "tile": 45
     },
     {
       "name": "tc_prop_rest_cart",
       "position_tiles": [4.5, 30],
-      "tile": 61
+      "tile": 59
     },
     {
       "name": "tc_prop_deep_crystal",
@@ -147,12 +147,12 @@
         39.5,
         29
       ],
-      "tile": 63
+      "tile": 62
     },
     {
       "name": "tc_prop_flow_pillar",
       "position_tiles": [41.5, 21],
-      "tile": 54
+      "texture_path": "res://assets/pixel/props/thach_can_flow_pillar.png"
     }
   ]
 }

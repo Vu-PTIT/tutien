@@ -12,14 +12,15 @@ Giữ map runtime dạng Godot `TileMapLayer` 32 px, props Y-sort riêng, POI/ga
 - Trúc Âm có dòng suối rộng hai tile chạy ngang dưới cầu hiện có. Ba shimmer được chuyển lên ô nước.
 - Điểm tương tác bàn cân và bảng trận Cổ Tỉnh được dời khỏi nước tới lối khô; các điểm tương tác chính được căn lại gần prop nhìn thấy.
 - FX ở Thạch Cạn và Cổ Tỉnh được đặt lại trên tile nước hoặc mạch sáng.
+- Rà từng ô atlas đã phát hiện một số tile ID không khớp tên prop ở Trúc Âm và Thạch Cạn; đã đổi sang ô tre, suối, vách đá, cửa mỏ, chống hầm, xe quặng và mạch tinh thạch tương ứng. Lò rèn An Khê và trụ Mạch Bàn Thạch Cạn đã có cutout RGBA riêng kèm prompt nguồn.
 - Kiểm tra tĩnh duyệt đường 4 hướng từ spawn tới mọi POI và điểm đến của gate, đồng thời kiểm tra vùng trống quanh spawn/điểm đến cho collider người chơi, collision terrain, vùng cầu, FX và liên kết POI–prop.
 
 ## Còn phải làm trước khi gọi là map hoàn thiện
 
-Các atlas prop vẫn chứa nền cảnh 128×128 quanh phần lớn vật thể. Khi đặt vào map, nền này tạo thành các ô vuông cỏ/đá dễ thấy. Terrain cũng lặp họa tiết khá dày, nhất là Thạch Cạn. Đây là vấn đề art P1 còn mở: tạo prop cutout RGBA riêng theo silhouette, giữ chi tiết hiện có, đặt lại các object Y-sort và rà ảnh ở khung chơi 640×360 cùng layout mobile. Lượt sửa này không thay artwork vì cần một pass asset riêng và QA trực quan sau khi xuất lại.
+Phần lớn prop vẫn lấy từ atlas có nền cảnh 128×128 quanh vật thể nên tạo mảng ô vuông cỏ/đá khi đặt vào map. Hai prop cutout mới xử lý lò rèn và trụ chuyển dòng trước; cần tiếp tục tách hoặc thay các cây lớn, cổng và landmark tương tác còn lại, rồi rà ảnh ở khung 640×360 cùng layout mobile. Terrain cũng lặp họa tiết khá dày, nhất là Thạch Cạn.
 
 ## Kiểm tra
 
 - `node scripts/check-pixel-scenes.cjs` — đạt; kiểm tra đủ tile, terrain collision, khoảng trống collider ở spawn/gate, POI walkable và reachable, FX và prop links.
 - `git diff --check` — đạt.
-- Chưa chạy `presentation_smoke.gd` tại máy làm việc vì không có binary Godot; CI của repo dùng Godot 4.6.1 để kiểm tra runtime.
+- Chưa chạy `presentation_smoke.gd` tại máy làm việc vì không có binary Godot; CI của repo dùng Godot 4.6.1 để kiểm tra runtime và xuất ảnh desktop/touch.

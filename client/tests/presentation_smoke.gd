@@ -60,6 +60,9 @@ func _run() -> void:
 	var hud = main.hud
 	var bag: InventoryPanel = main.inventory_panel
 	check_map_assets(main.map_world)
+	var blacksmith: MapProp = main.map_world.get_node("Actors/ak_prop_blacksmith") as MapProp
+	check(blacksmith != null and not blacksmith.get_node("Sprite").texture is AtlasTexture, "An Khê forge uses its own transparent cutout")
+	check(blacksmith.get_node("Sprite").texture.get_image().detect_alpha() != Image.ALPHA_NONE, "An Khê forge cutout retains alpha")
 	check(not main.can_walk(Vector2(240, 304)), "House footprint must block walking")
 	check(main.can_walk(Vector2(768, 576)), "An Khê spawn must be walkable")
 	check(main.map_world.map_size_tiles == Vector2i(48, 36), "An Khê uses the agreed map size")
@@ -153,6 +156,13 @@ func _run() -> void:
 	check(minimap_image.get_pixel(24, 18).r > 0.6, "Stone plaza is visible on the true minimap")
 	check(minimap_image.get_pixel(44, 18).b > minimap_image.get_pixel(44, 18).r, "Stream is blue on the true minimap")
 	await _capture("an-khe-runtime.png")
+	var village_spawn: Vector2 = main.player.position
+	main.player.position = blacksmith.position + Vector2(0, 32)
+	main.map_world.update_player_context(main.player.position)
+	await process_frame
+	await _capture("an-khe-blacksmith-runtime.png")
+	main.player.position = village_spawn
+	main.map_world.update_player_context(main.player.position)
 	main.player.position = Vector2(19 * 32, 31 * 32)
 	main.map_world.update_player_context(main.player.position)
 	await process_frame
@@ -215,9 +225,18 @@ func _run() -> void:
 	await process_frame
 	check(main.current_map_id == "m_thach_can", "Trúc Âm exit gate opens Thạch Cạn")
 	check_map_assets(main.map_world)
+	var flow_pillar: MapProp = main.map_world.get_node("Actors/tc_prop_flow_pillar") as MapProp
+	check(flow_pillar != null and not flow_pillar.get_node("Sprite").texture is AtlasTexture, "Thạch Cạn flow pillar uses its own cutout")
+	check(flow_pillar.get_node("Sprite").texture.get_image().detect_alpha() != Image.ALPHA_NONE, "Thạch Cạn flow pillar cutout retains alpha")
 	check_quest_visible(hud)
 	await _capture("thach-can-runtime.png")
 	await _capture_touch_layout(main, "thach-can-touch-runtime.png")
+	main.player.position = flow_pillar.position + Vector2(0, 32)
+	main.map_world.update_player_context(main.player.position)
+	await process_frame
+	await _capture("thach-can-flow-pillar-runtime.png")
+	main.player.position = Vector2(9 * 32, 18 * 32)
+	main.map_world.update_player_context(main.player.position)
 	check(main.player.position == Vector2(9 * 32, 18 * 32), "Trúc Âm gate arrives on a clear Thạch Cạn entrance tile")
 	check(main.map_world.interactables_size() == 5, "Thạch Cạn loads its own interactive map data")
 	check(not main.can_walk(Vector2(5 * 32, 17 * 32)), "Thạch Cạn void terrain blocks walking")

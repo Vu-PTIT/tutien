@@ -140,7 +140,7 @@
         10.5,
         7
       ],
-      "tile": 52
+      "tile": 49
     },
     {
       "name": "ta_prop_deep_bamboo",
@@ -148,7 +148,7 @@
         21.5,
         6
       ],
-      "tile": 53
+      "tile": 48
     },
     {
       "name": "ta_prop_stone_grove",
@@ -174,7 +174,7 @@
         41.5,
         17
       ],
-      "tile": 62
+      "tile": 61
     }
   ]
 }

@@ -169,7 +169,7 @@
         32.5,
         17
       ],
-      "tile": 52
+      "texture_path": "res://assets/pixel/props/an_khe_blacksmith.png"
     },
     {
       "name": "ak_prop_well",

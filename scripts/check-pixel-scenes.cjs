@@ -52,6 +52,30 @@ const layoutByMapId=new Map(mapCatalog.maps.map(map=>[
   JSON.parse(fs.readFileSync(path.join(root,'data/maps/'+map.id.slice(2)+'.json'),'utf8'))
 ]));
 const reachableByMapId=new Map();
+const expectedPropTiles={
+  m_truc_am:{
+    ta_prop_lightning_bamboo:49,
+    ta_prop_deep_bamboo:48,
+    ta_prop_herb_pocket:52,
+    ta_prop_well_spring:61
+  },
+  m_thach_can:{
+    tc_prop_outer_cliff:9,
+    tc_prop_mine_entrance:44,
+    tc_prop_ore_vein:51,
+    tc_prop_mine_support:45,
+    tc_prop_rest_cart:59,
+    tc_prop_deep_crystal:62
+  },
+  m_co_tinh:{
+    ct_prop_jade_crystal_cluster:55,
+    ct_prop_mossy_rock_cluster:62
+  }
+};
+const generatedMapProps={
+  ak_prop_blacksmith:'res://assets/pixel/props/an_khe_blacksmith.png',
+  tc_prop_flow_pillar:'res://assets/pixel/props/thach_can_flow_pillar.png'
+};
 const trucAm=mapCatalog.maps.find(m=>m.id==='m_truc_am');
 const boarSign=trucAm.interactables.find(p=>p.entity_id==='ta.trail.boar_sign');
 assert.equal(boarSign.action_kind,'encounter','Sơn Trư sign launches the server PvE encounter');
@@ -189,6 +213,30 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
   assert.equal(layout.atlas_columns,8,'Terrain atlas must use 8 columns: '+name);
   assert.ok(layout.tile_set && Array.isArray(layout.ground_rows), 'Missing authored map layout data: '+name);
   assert.ok(layout.props_atlas && Array.isArray(layout.props) && layout.props.length>=7, 'Map needs a substantial props layer: '+name);
+  for(const prop of layout.props) {
+    if(prop.texture_path) {
+      const assetPath=path.join(root,prop.texture_path.replace('res://',''));
+      assert.ok(fs.existsSync(assetPath),'Missing standalone prop texture: '+prop.name);
+      const png=fs.readFileSync(assetPath);
+      assert.equal(png.readUInt32BE(16),128,'Standalone map prop width: '+prop.name);
+      assert.equal(png.readUInt32BE(20),128,'Standalone map prop height: '+prop.name);
+      assert.equal(png[25],6,'Standalone map prop must have RGBA transparency: '+prop.name);
+    } else {
+      assert.ok(Number.isInteger(prop.tile)&&prop.tile>=0&&prop.tile<64,'Atlas prop must reference a valid cell: '+prop.name);
+    }
+  }
+  for(const [propName,tileIndex] of Object.entries(expectedPropTiles['m_'+name]||{})) {
+    const prop=layout.props.find(candidate=>candidate.name===propName);
+    assert.ok(prop,'Expected named landmark prop: '+propName);
+    assert.equal(prop.tile,tileIndex,'Landmark prop must use the reviewed matching atlas cell: '+propName);
+  }
+  for(const [propName,texturePath] of Object.entries(generatedMapProps)) {
+    const prop=layout.props.find(candidate=>candidate.name===propName);
+    if(!prop) continue;
+    assert.equal(prop.texture_path,texturePath,'Landmark must use its generated transparent cutout: '+propName);
+    const promptPath=path.join(root,texturePath.replace('res://','').replace('.png','.prompt.txt'));
+    assert.ok(fs.existsSync(promptPath),'Generated prop keeps its prompt provenance: '+propName);
+  }
   if(name==='an_khe') {
     const symbols='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_';
     const tileAt=(x,y)=>symbols.indexOf(layout.ground_rows[y][x]);
