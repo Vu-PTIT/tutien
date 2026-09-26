@@ -1,25 +1,17 @@
 const getProfile: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) {
-  if (!ctx.userId) throw { code: 16, message: "Authentication required" };
-  const id = { collection: "characters", key: "main", userId: ctx.userId };
-  let rows = nk.storageRead([id]);
-  if (rows.length) return JSON.stringify(rows[0].value);
-  const profile = { schemaVersion: 1, realm: "pham_nhan", level: 1, spiritStones: 0 };
-  try {
-    // Create-only version prevents concurrent requests from resetting progress.
-    nk.storageWrite([{
-      collection: id.collection, key: id.key, userId: id.userId,
-      value: profile, version: "*", permissionRead: 1, permissionWrite: 0
-    }]);
-  } catch (error) {
-    rows = nk.storageRead([id]);
-    if (rows.length) return JSON.stringify(rows[0].value);
-    throw error;
-  }
-  return JSON.stringify(profile);
+  return JSON.stringify(loadCharacter(nk, authenticated(ctx)).state);
 };
 
 function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkruntime.Nakama, initializer: nkruntime.Initializer): void {
   initializer.registerRpc("get_profile", getProfile);
+  initializer.registerRpc("inventory_get", inventoryGetRpc);
+  initializer.registerRpc("inventory_claim_starter", inventoryClaimStarterRpc);
+  initializer.registerRpc("combat_create", combatCreateRpc);
+  initializer.registerMatch("sparring", {
+    matchInit: combatInit, matchJoinAttempt: combatJoinAttempt, matchJoin: combatJoin,
+    matchLeave: combatLeave, matchLoop: combatLoop, matchTerminate: combatTerminate,
+    matchSignal: combatSignal
+  });
   initializer.registerRpc("social_find_player", socialFindPlayerRpc);
   initializer.registerRpc("social_group_create", groupCreateRpc);
   initializer.registerRpc("social_group_action", groupActionRpc);

@@ -1,138 +1,184 @@
-# 06 — Nhiệm vụ, lựa chọn và sự kiện
+# 06 — Nhiệm vụ, phần thưởng và tiến trình chương đầu
 
-**Phạm vi MVP:** 12 nhiệm vụ chính + 6 nhiệm vụ phụ.  
-**Mục tiêu:** nhiệm vụ dạy hệ thống, tạo quyết định và liên kết với thế giới; không chỉ tăng số quái phải giết.
+**Cập nhật:** 21/09/2026. **Phạm vi:** 12 quest chính + 6 quest phụ.
+Nhiệm vụ dạy cơ chế và mở mục tiêu, không chỉ yêu cầu tăng số quái phải giết.
+Các bảng XP/tiền bên dưới lấy từ [JSON chung](../../design-samples/progression-pve.v1.json).
 
-## 1. Máy trạng thái nhiệm vụ
+## 1. Máy trạng thái
 
 `locked → available → accepted → objectives_complete → reward_committed`.
 
-`abandoned` chỉ dùng cho nhiệm vụ phụ có thể nhận lại. Nhiệm vụ chính không xóa cờ lựa chọn khi người chơi bấm hủy theo dõi. “Không theo dõi” là trạng thái UI, không phải hủy quest.
-
-Mỗi objective có ID ổn định, loại event và điều kiện. Hoàn thành mục tiêu không đồng nghĩa đã nhận thưởng; giao dịch nhận thưởng là bước riêng, có receipt và cờ vĩnh viễn.
+Hoàn thành mục tiêu chưa đồng nghĩa nhận thưởng. Mỗi objective có ID, event tin cậy
+và điều kiện. Quest chính không xóa lựa chọn khi bỏ theo dõi; đó chỉ là UI.
+`abandoned` dùng cho quest phụ nhận lại được, không xóa source đã claim.
 
 ## 2. Mười hai nhiệm vụ chính
 
-| ID / tên | Điều kiện | Hành động và cơ chế được dạy | Kết quả chính |
-|---|---|---|---|
-| `q_main_001` Việc ở An Khê | Nhân vật mới | Nói chuyện Bà Sâm, nhận việc tại trạm | Mở journal và mục tiêu khảo sát |
-| `q_main_002` Dấu nước lạ | 001 | Theo Lục Vi tới dấu suối, nhận Mạch Bàn, dò hai điểm | Mở `sk_scan`, thu mẫu nước |
-| `q_main_003` Hơi thở đầu tiên | 002 | Thực hành dẫn khí tại hub bằng tương tác hướng dẫn | Luyện Khí 1, `insight.breath_control`, Phi Nhận |
-| `q_main_004` Một khoảnh đất nhỏ | 003 | Trồng mẻ hướng dẫn và thu Cam Lộ | Mở vườn; mẻ đầu trưởng thành 60 giây |
-| `q_main_005` Không đi tay không | 004 | Luyện và mang một Hồi Nguyên Hoàn; không bắt buộc uống nếu chưa mất HP | `insight.first_craft`, mở công thức cơ bản |
-| `q_main_006` Lối rừng bị cấm | 005 | Vượt một encounter Sơn Trư hoặc dùng tuyến tránh đã dò | Mở đường tới Thạch Cạn |
-| `q_main_007` Chữ trong sổ đá | 006 | Tìm sổ ghi và mảnh dấu ở Thạch Cạn | Đủ thông tin về chuyển dòng |
-| `q_main_008` Nói với ai | 007 | Chọn trình kín hoặc công khai chứng cứ | Cờ `choice.evidence`, đổi phản ứng NPC |
-| `q_main_009` Chìa của người giữ giếng | 008 | Gặp Tống Đức, đối chiếu sơ đồ, nhận quyền tiếp cận | Mở cổng Cổ Tỉnh |
-| `q_main_010` Chuẩn bị một đường về | 009 | Kiểm tra loadout, xem checkpoint, chọn vào solo/co-op | Hướng dẫn rút lui, không buộc tiêu phù |
-| `q_main_011` Mộc Tâm Thủ Trận | 010 | Hoàn thành boss bằng hạ tâm trận hoặc niêm phong | Cờ giải quyết encounter, không chọn hộ đồng đội |
-| `q_main_012` Dòng nước trở lại | 011 | Về hub, xác nhận kết quả và nói chuyện người liên quan | `story.ch1.complete`, cho phép đột phá tầng 4 |
+| ID | Hành động | Mở khóa / cờ / lưu ý |
+| --- | --- | --- |
+| `q_main_001` | Nhận việc ở An Khê, gặp Bà Sâm/trạm | Journal và mục tiêu khảo sát |
+| `q_main_002` | Theo Lục Vi, nhận Mạch Bàn, dò hai dấu nước | `sk_scan`, mẫu nước; dạy né an toàn; chưa farm XP |
+| `q_main_003` | Thực hành dẫn khí tại hub | Luyện Khí 1, `cp_tuc_mach`, Phi Nhận, `insight.breath_control` |
+| `q_main_004` | Trồng/thu mẻ Cam Lộ hướng dẫn | Vườn; boost một mẻ 60 giây, không thể lặp bằng client flag |
+| `q_main_005` | Luyện một Hồi Nguyên Hoàn và mang theo | `rc_heal`, `insight.first_craft`; không buộc uống khi đầy HP |
+| `q_main_006` | Vượt Sơn Trư hoặc tuyến tránh đã dò | Mở Thạch Cạn; hai cách cùng XP/tiền quest |
+| `q_main_007` | Tìm sổ ghi và mảnh dấu ở Thạch Cạn | Thông tin chuyển dòng, vật tư quest |
+| `q_main_008` | Trình kín hoặc công khai chứng cứ | `choice.evidence`, phản ứng NPC, cùng ngân sách thưởng |
+| `q_main_009` | Đối chiếu sơ đồ với Tống Đức | Quyền Cổ Tỉnh bền vững, chìa không là khóa duy nhất |
+| `q_main_010` | Xem loadout/checkpoint, chọn solo hoặc co-op | Công thức phù thoát; không buộc dùng/tiêu phù |
+| `q_main_011` | Hạ tâm trận hoặc niêm phong | Nhận kết quả boss hợp lệ, lưu phương án giải quyết |
+| `q_main_012` | Về hub xác nhận kết quả với NPC | `story.ch1.complete`, cho phép đột phá tầng 4 |
 
-001–012 là chuỗi khung. Những nhánh giải quyết trong 006, 008 và 011 được lưu bằng flags/objectives, không tách thành những quest chính loại trừ nhau khiến catalog khó kiểm soát.
+001–012 là chuỗi chính: mỗi quest cần quest trước đã `reward_committed`.
+Lựa chọn ở 006/008/011 nằm trong flags/objectives, không tạo chuỗi quest loại trừ
+khiến kiểm tra phụ thuộc khó hơn. Không gắn thêm yêu cầu “phải ở tầng X” cho toàn
+bộ chuỗi; mức tầng trên bản đồ là khuyến nghị ngoài các cổng đã định nghĩa.
 
-### Mốc thời lượng cần thử
+`q_main_003`: chuyển realm, cấp XP/kỹ năng/cờ cùng giao dịch.
+`q_main_005`: mở công thức đủ sớm để làm objective; nhận cờ lĩnh ngộ khi reward
+được commit, không yêu cầu đã có cờ đó mới được học/luyện công thức.
+Không dùng quest unlock làm vòng phụ thuộc tự khóa.
 
-001–005 hướng tới phiên đầu khoảng 30 phút. Toàn chương dự kiến kiểm chứng ở khoảng 2–4 giờ chơi chủ động, không phải lịch chờ cây hoặc cam kết nội dung. Nếu người mới bị giữ ở một ngưỡng XP quá lâu, điều chỉnh nguồn XP trước khi thêm daily.
+## 3. Phần thưởng chính
 
-## 3. Sáu nhiệm vụ phụ
+<!-- generated:quests -->
+| ID | Nhiệm vụ | XP một lần | Linh thạch một lần |
+| --- | --- | --- | --- |
+| `q_main_001` | Việc ở An Khê | 0 | 0 |
+| `q_main_002` | Dấu nước lạ | 0 | 0 |
+| `q_main_003` | Hơi thở đầu tiên | 40 | 0 |
+| `q_main_004` | Một khoảnh đất nhỏ | 60 | 0 |
+| `q_main_005` | Không đi tay không | 100 | 20 |
+| `q_main_006` | Lối rừng bị cấm | 120 | 6 |
+| `q_main_007` | Chữ trong sổ đá | 180 | 8 |
+| `q_main_008` | Nói với ai | 120 | 0 |
+| `q_main_009` | Chìa của người giữ giếng | 180 | 8 |
+| `q_main_010` | Chuẩn bị một đường về | 100 | 0 |
+| `q_main_011` | Mộc Tâm Thủ Trận | 250 | 12 |
+| `q_main_012` | Dòng nước trở lại | 300 | 16 |
+<!-- /generated:quests -->
 
-| ID | Tên / mở sau | Nội dung | Giá trị ngoài tiền |
-|---|---|---|---|
-| `q_side_001` | Cầu qua suối / 002 | Góp trúc và giúp sửa cầu | Đường về ngắn hơn |
-| `q_side_002` | Đất chưa hiểu cây / 004 | Trồng loại cây thứ hai, đọc kết quả | Dạy khác biệt thời gian trồng |
-| `q_side_003` | Tiếng động trong khe / 006 | Quan sát Thạch Vệ từ vị trí an toàn | Dạy nhìn đòn trước khi đánh |
-| `q_side_004` | Lời hẹn của người thợ / 007 | Mang quặng cho Đỗ Khê | Mở công thức Thanh Thiết Kiếm |
-| `q_side_005` | Giá một lời đồn / 008 | Kiểm chứng hai lời kể trái nhau | Journal ghi nguồn tin đáng tin hơn |
-| `q_side_006` | Sau trận nước đục / 012 | Hỗ trợ sửa chữa hoặc khảo sát tùy kết cục | Thế giới phản hồi lựa chọn |
+Tổng XP chính 1.450. Tiền là ngân sách thử mới, tổng 70 linh thạch, không phải
+kết quả economy đã đo. Công pháp/Mạch Bàn/quyền vào map luôn bảo đảm, không random.
 
-Không có nhiệm vụ phụ nào là điều kiện kín cho quest chính. Công thức kiếm có thể mở bằng trả phí nghiên cứu thông thường nếu không làm nhiệm vụ 004; không để thiếu DPS bắt buộc vì bỏ side quest.
+Quyền học công thức/skill cấp một lần và có nguồn riêng. Đủ mục tiêu nhưng túi
+đầy thì không tiêu vật tư nhiệm vụ/claim trước; giữ ở `objectives_complete`.
+Vật phẩm quest không bán/tặng/rơi khi chết; tái cấp cần bảo đảm không nhân bản.
 
-## 4. Objective theo event, không theo lời client
+## 4. Phân bổ XP theo chặng
 
-| Objective type | Event đáng tin | Điều không chấp nhận |
-|---|---|---|
-| `talk_to_npc` | Tương tác NPC đúng map/khoảng cách đã xác nhận | Client gửi “đã nói chuyện” không có kiểm tra |
-| `inspect_poi` | Server xác nhận scan đúng điểm | Sửa vị trí hoặc tự cung cấp kết quả scan |
-| `collect_item` | Inventory đã có vật phẩm hợp lệ | Client khai số lượng tùy ý |
-| `craft_recipe` | Giao dịch craft thành công | Bấm nút chế tạo nhưng giao dịch thất bại |
-| `complete_encounter` | Encounter settlement phía server | Client báo boss chết |
-| `choose_branch` | Chọn trong trạng thái quest hợp lệ | Sửa nhánh sau khi thưởng đã commit |
-| `enter_area` | Authoritative map/trigger event | Teleport cục bộ client |
-| `cultivation_milestone` | Giao dịch tiến trình thành công | Client sửa cảnh giới |
+<!-- generated:milestones -->
+| Mốc | Quest XP | XP ngoài quest | Dư trước | Tiêu đột phá | Dư sau |
+| --- | --- | --- | --- | --- | --- |
+| to_stage_2 | 200 | 100 | 0 | 300 | 0 |
+| to_stage_3 | 600 | 150 | 0 | 600 | 150 |
+| to_stage_4 | 650 | 200 | 150 | 1000 | 0 |
+<!-- /generated:milestones -->
 
-Event chứa `eventId`, `characterId`, `eventType`, `sourceId`, `occurredAt`, `contentVersion`. Không đưa event gameplay nguyên bản cho client gọi như RPC công khai.
+003–005 cấp 200, thêm 100 từ hoạt động để thử mở tầng 2.
+006–009 cấp 600, lộ trình mẫu có thêm 150 và giữ làm dự trữ sau tầng 3.
+010–012 cấp 650, thêm 200 và dùng 150 dự trữ để đủ tầng 4.
+Người làm thêm quest phụ hoặc farm lặp có thể lên sớm; đây là tuyến kiểm chứng,
+không một bộ điều kiện cứng bắt người chơi phải nhận đúng thứ tự XP ngoài quest.
 
-## 5. Phần thưởng
+Encounter boss và reward quest là hai nguồn có chủ đích: 100 và 250 XP.
+Không thưởng hai encounter khi vừa hạ vừa kích hoạt niêm phong cùng lượt.
+Tầng 4 dừng XP mới; báo trước, vẫn có phần thưởng vật liệu/tiền được định nghĩa
+riêng của nội dung, không đổi XP thành tiền theo tỷ lệ.
 
-Quest chính có XP, lượng linh thạch nhỏ và mở khóa. Phần thưởng dạy cơ chế phải bảo đảm nhận được: công pháp nhập môn, Mạch Bàn và quyền vào Cổ Tỉnh không phụ thuộc loot ngẫu nhiên.
+## 5. Sáu nhiệm vụ phụ
 
-Cờ lĩnh ngộ cấp tại giao dịch nhận thưởng tương ứng. Sau `q_main_005` đã có `insight.first_craft`; không đợi `q_main_007` mới cấp cờ này.
+| ID | Mở sau | Hành động / giá trị ngoài XP |
+| --- | --- | --- |
+| `q_side_001` Cầu qua suối | 002 | Góp 3 trúc từ tuyến an toàn, mở đường về ngắn hơn |
+| `q_side_002` Đất chưa hiểu cây | 004 | Trồng cây thứ hai, hiểu thời gian; không là điều kiện chính |
+| `q_side_003` Tiếng động trong khe | 006 | Quan sát Thạch Vệ từ điểm an toàn, học hướng phòng thủ |
+| `q_side_004` Lời hẹn của người thợ | 007 | Mang ít nhất 3 quặng chứng thực nguồn, không tiêu quặng; mở `rc_sword` |
+| `q_side_005` Giá một lời đồn | 008 | Kiểm chứng hai lời kể, ghi nguồn tin trong journal |
+| `q_side_006` Sau trận nước đục | 012 | Sửa chữa/khảo sát theo kết cục, cho thấy thế giới phản hồi |
 
-XP mẫu cho 003–012 lần lượt: 40, 60, 100, 120, 180, 120, 180, 100, 250, 300. Tổng 1.450 XP; còn phần để đạt các ngưỡng 1.900 XP đến tầng 4 đến từ encounter, khám phá và side quest. XP nhận lúc phàm nhân được giữ như dự trữ nhưng 001–002 không cần cấp XP.
+Bỏ side quest kiếm có thể trả phí nghiên cứu công thức cho Đỗ Khê bằng tiền thường.
+Không bắt tiêu vật liệu chế tạo hai lần để vừa mở công thức vừa làm đồ.
+Side quest sau chương không có XP nhưng vẫn có tác dụng kể chuyện.
+Chưa cấp tiền lặp riêng cho các side quest trong bảng dữ liệu thử này.
 
-Đây là cấu hình prototype. Phải đo thời gian thực tế thay vì suy luận XP tự động đồng nghĩa với số giờ chơi.
+## 6. Khám phá và phương án ít giao tranh
 
-## 6. Nhánh lựa chọn cụ thể
+<!-- generated:sources -->
+| Nguồn | XP mẫu | Ghi nhận |
+| --- | --- | --- |
+| `poi_truc_am_route` | 30 | Một lần / nhân vật |
+| `poi_thach_can_ledger_view` | 20 | Một lần / nhân vật |
+| `poi_co_tinh_flow` | 20 | Một lần / nhân vật |
+| `poi_safe_bank` | 25 | Một lần / nhân vật |
+| `poi_old_camp` | 25 | Một lần / nhân vật |
+| `q_side_001` | 50 | Một lần / nhiệm vụ |
+| `q_side_002` | 50 | Một lần / nhiệm vụ |
+| `q_side_003` | 40 | Một lần / nhiệm vụ |
+| `q_side_004` | 50 | Một lần / nhiệm vụ |
+| `q_side_005` | 40 | Một lần / nhiệm vụ |
+| `q_side_006` | 0 | Một lần / nhiệm vụ |
+<!-- /generated:sources -->
 
-### Chứng cứ `choice.evidence`
+Các POI chỉ thưởng lần đầu/nhân vật; scan lại hoặc reconnect không đặt lại cờ.
+`poi_safe_bank`/`poi_old_camp` khác hai điểm hướng dẫn quest 002; mở sau dẫn khí.
+`q_side_001` + hai POI an toàn cho 100 XP thay thế chặng đầu mà không cần đợi cây
+Tĩnh Tâm. Thu trước khi nhận quest phụ được kiểm bằng inventory và quyền nộp hợp lệ.
 
-`private_review`: nộp riêng cho Tạ Nghiêm và yêu cầu đối chiếu.  
-`public_notice`: đưa thông tin cho dân làng cùng bằng chứng đọc được.
+Đường tránh `q_main_006` không cần giết con Sơn Trư đang chặn tuyến thẳng.
+Không vì thiếu encounter XP mà lén giảm phần thưởng quest đường tránh.
+Toàn chương vẫn có thử thách Cổ Tỉnh, không hứa một tuyến hoàn toàn phi chiến đấu.
 
-Hai nhánh có cùng mở khóa chính và ngân sách thưởng. Khác người cung cấp gợi ý tiếp theo. Không có nhánh thưởng cả tín nhiệm của mọi bên.
+## 7. Event và ghi tiến độ
 
-### Kết trận `choice.array`
+| Objective | Event đáng tin | Điều bị từ chối |
+| --- | --- | --- |
+| `talk_to_npc` | Đúng NPC/map/khoảng cách | Client tự khai đã nói |
+| `inspect_poi` | Server xác nhận scan điểm | Client gửi vị trí/kết quả giả |
+| `collect_item` | Inventory có tài sản hợp lệ | Tự gửi số lượng |
+| `craft_recipe` | Craft đã commit | Click nút nhưng giao dịch thất bại |
+| `complete_encounter` | Outcome/settlement bền vững | Client báo quái/boss chết |
+| `choose_branch` | Quest có lựa chọn hợp lệ | Sửa nhánh sau claim |
+| `enter_area` | Map/trigger authoritative | Teleport cục bộ |
+| `cultivation_milestone` | Giao dịch tu luyện thành công | Client sửa tầng |
 
-`destroy_core`: phá tâm trận sau khi boss được xử lý.  
-`seal_flow`: hoàn thành thao tác niêm phong khi điều kiện encounter đủ.
+Event gồm `eventId`, `characterId`, `eventType`, `sourceId`, `occurredAt`,
+`contentVersion`. Không tạo RPC công khai nhận event đáng tin tùy ý từ client.
+Tách objective-complete và reward-committed, nhưng cả hai có khả năng phục hồi
+sau restart. Outcome chưa lưu không được dùng để hứa chắc phần thưởng.
 
-Việc phối hợp chiến đấu là chung; journal cá nhân chỉ ghi lựa chọn tương thích với kết quả encounter mà nhân vật tham dự. Khi về làng, người chơi xác nhận cách trình bày, không đảo ngược thực tế boss đã xảy ra.
+## 8. Các nhánh
 
-## 7. Chống kẹt tiến trình
+`choice.evidence`: `private_review` trình riêng Tạ Nghiêm hoặc `public_notice`
+công khai chứng cứ. Cùng ngân sách chính, khác nguồn gợi ý/tín nhiệm; không thưởng
+tối đa với tất cả bên cùng lúc.
 
-Vật phẩm quest không bán, không rơi khi chết, không tặng. Nếu bắt buộc thu hồi vật phẩm, dùng trạng thái quest có thể tái cấp chính xác một bản.
+`choice.array`: `destroy_core` hoặc `seal_flow`. Encounter là thực tế chung;
+journal cá nhân lưu lựa chọn tương thích, không cho người về làng đổi boss đã xảy ra.
+Không chọn hộ đồng đội hoặc chuyển nhánh để claim lần nữa.
 
-Túi đầy khi thưởng: MVP hiển thị cần dọn chỗ và giữ quest ở `objectives_complete`; không trừ nguyên liệu/nộp quest trước rồi mới phát hiện hết ô. Chưa cần hệ mail quà để vá lỗi.
+## 9. Co-op, reconnect, túi đầy
 
-Rời party giữa quest không xóa tiến độ riêng. Boss đã hoàn thành nhưng mất mạng trước nói chuyện kết thúc: được về nhận thưởng qua cờ encounter đã lưu. Chết hoặc rời trước khi đủ điều kiện tham gia không tự được cấp công lao.
+Có mặt trong instance, đóng góp hành động hợp lệ và không bỏ trước settlement,
+trừ reconnect grace được server xác nhận. Hỗ trợ/khiên tính, không chỉ last-hit.
+Người AFK ngoài cửa không nhận công lao. XP, túi, cờ lựa chọn là của từng nhân vật.
 
-## 8. Co-op và credit
+Rời party không mất quest cá nhân. Boss đã xong nhưng mất mạng trước nộp:
+đọc lại outcome/cờ và nhận đúng một lần. Túi đầy giữ kết quả và quyền claim,
+không tiêu vật tư/cho reward nửa chừng. Dọn túi rồi retry bằng receipt/source cũ.
 
-MVP dùng credit tham dự encounter: có mặt trong instance, đã tham gia ít nhất một hành động hợp lệ và không rời trước settlement, trừ reconnect grace được server xác nhận. Hành động hỗ trợ/khiên cũng tính, không chỉ sát thương.
+## 10. Nhịp nội dung và sự kiện
 
-Không dùng đòn cuối làm điều kiện duy nhất. Không cho nhân vật AFK ngoài cửa nhận thưởng chính.
+001–005 hướng tới phần đầu khoảng 30 phút; chương đầu thử 2–4 giờ chơi chủ động.
+Đo thời gian tìm đường, đọc UI, chuẩn bị, combat và chờ; không ép bằng lịch cây.
+Khi thiếu XP ở một điểm, sửa nguồn hoặc mục tiêu trước khi thêm daily.
 
-Quest trồng/craft và lựa chọn hội thoại vẫn cá nhân. Party không dùng chung inventory hoặc XP.
-
-## 9. Hợp đồng dữ liệu quest mẫu
-
-```json
-{
-  "id": "q_main_005",
-  "chapterId": "ch_01",
-  "requiredQuestIds": ["q_main_004"],
-  "giverNpcId": "npc_ba_sam",
-  "objectives": [
-    {"id": "craft_one", "type": "craft_recipe", "targetId": "rc_heal", "count": 1}
-  ],
-  "reward": {
-    "cultivationXp": 100,
-    "spiritStones": 20,
-    "flags": ["insight.first_craft"]
-  },
-  "repeatable": false,
-  "contentVersion": "mvp-design-1"
-}
-```
-
-Số tiền minh họa là một đề xuất; catalog mẫu lưu cấu trúc thưởng XP chính và mở khóa. Trước khi runtime sử dụng phải bổ sung, khóa và kiểm thử toàn bộ budget kinh tế.
-
-## 10. Sự kiện thế giới
-
-MVP chưa có live event theo giờ. Chỉ có sự kiện nội dung kích hoạt bởi quest và encounter.
-
-Alpha có thể thêm đoàn hàng, mạch linh khí bất ổn hoặc một yêu thú xuất hiện trên tuyến phụ. Sự kiện không giữ vật liệu duy nhất cho tiến trình chính. Người vào muộn phải biết điều kiện tham dự và phần thưởng.
+MVP không có event theo giờ thật. Alpha có thể thêm đoàn hàng/mạch khí bất ổn,
+nhưng nguyên liệu tiến trình chính luôn có nguồn thay thế, không phải canh nửa đêm.
 
 ## 11. Nghiệm thu
 
-Kiểm tra toàn bộ chuỗi từ tài khoản mới; cả nhánh kín/công khai, phá/niêm phong; túi đầy; chết; reconnect; bỏ side quest; co-op khác tiến độ; hai lần claim cùng/different operation ID; migration đổi text không làm mất quest; không có chu trình điều kiện trong catalog.
+Chạy từ tài khoản mới cả tuyến thẳng/tránh, kín/công khai, phá/niêm phong;
+bỏ side quest kiếm; co-op khác tiến độ; đầy túi; chết; reconnect; retry cùng/khác
+operation ID; migration đổi text không đổi ID tiến trình; không có chu trình
+quest/công thức/đột phá. Validator chỉ kiểm thiết kế; các ca runtime phải chạy thật.

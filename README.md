@@ -9,7 +9,7 @@ Xem [hướng dẫn API và kết nối Godot](docs/social-backend.md).
 
 ## Chạy nhanh trên Windows
 
-1. Cài **Godot 4.4.1 Standard**, **Docker Desktop** (Linux containers). Node.js **22.14.0** chỉ cần khi sửa/test server ngoài Docker.
+1. Cài **Godot 4.6.1 Standard**, **Docker Desktop** (Linux containers). Node.js **22.14.0** chỉ cần khi sửa/test server ngoài Docker.
 2. Clone repo và khởi động backend:
 
 ```sh
@@ -18,9 +18,11 @@ cd tutien
 docker compose up --build -d
 ```
 
-3. Import `client/project.godot` trong Godot, nhấn **F6/F5** chạy scene/project.
-4. Di chuyển bằng **WASD / phím mũi tên**. Nhấn **Connect local backend** để đăng nhập thiết bị và tạo/đọc hồ sơ từ server. Backend chưa bật thì vẫn di chuyển offline được.
-5. Kiểm tra backend: `docker compose ps`, `docker compose logs nakama`. Sau khi backend healthy: `node scripts/smoke.mjs`.
+3. Import `client/project.godot` trong Godot, nhấn **F6/F5** chạy scene/project. Chạy với `--touch-preview` hoặc nhấn **F9** trong bản PC để thử bố cục cảm ứng màn hình ngang; trên thiết bị mobile, bố cục này tự bật.
+4. Di chuyển bằng **WASD / phím mũi tên**, hoặc kéo cần trái ở chế độ cảm ứng. Nút bên phải tương tác với điểm gần nhất; trong đấu tập nó chuyển thành **Đánh / Né**, hướng đòn lấy theo hướng di chuyển gần nhất. Mở **Đấu tập → Kết nối**, tạo hoặc vào phòng đấu tập, cả hai bấm **Sẵn sàng**. Trên PC, **Q/J/chuột trái** đánh, **Space** né theo hướng chuột. Backend chưa bật thì vẫn đi khám phá An Khê offline được.
+   Xem [cách mở hai tài khoản/cửa sổ và luật đấu tập](docs/combat-prototype.md).
+5. Ngoài trận, bấm **Túi [I]**; **Esc** đóng. Chưa kết nối chỉ hiển thị mẫu có nhãn, không lưu và không nhận thưởng. Sau kết nối mới xem tài sản và nhận vật tư khởi đầu một lần. Xem [hợp đồng inventory/reward](docs/inventory-and-rewards.md).
+6. Kiểm tra backend: `docker compose ps`, `docker compose logs nakama`. Sau khi backend healthy: `node scripts/smoke.mjs`.
 
 ```sh
 cd server
@@ -32,7 +34,9 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 
 ## Cấu trúc
 
-- `client/`: scene Godot, nhân vật hình tạm, di chuyển, đăng nhập HTTP và đọc hồ sơ.
+- `client/`: scene làng/HUD/túi chỉnh được trong editor, atlas nhân vật/icon, đăng nhập, đấu tập, snapshot và HP.
+- `client/scripts/combat_api.gd`: adapter trận đấu dùng chung kết nối với `SocialApi`.
+- `server/src/combat.ts`: mô phỏng authoritative 20 Hz, hai người, đánh thường/né và vòng đời trận.
 - `server/`: runtime TypeScript ES5, hồ sơ và backend tài khoản/bạn bè/chat/nhóm, kiểm thử phân quyền và ghi đồng thời.
 - `client/scripts/social_api.gd`: lớp HTTP/WebSocket cho các màn hình tương tác sau này.
 - `docs/social-backend.md`: API, mô hình dữ liệu, quy tắc và giới hạn phiên bản.
@@ -43,9 +47,17 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 
 ## Phạm vi bản base
 
-Đã có khung chạy offline và kết nối backend local. **Chưa có đồng bộ nhiều người, PvP, quái, trồng trọt, giao dịch, đồ họa hoàn chỉnh hoặc bản xuất Android/Windows.** Di chuyển hiện ở client và không lưu; hồ sơ do server tạo, client không được ghi trực tiếp. API không nhận tiền/cấp độ từ client.
+Giao diện dùng atlas pixel, theme xanh đen/đồng, HUD và túi dạng scene Godot.
+Bốn map đang dựng từ atlas địa hình 32 px và vật thể 128 px riêng trong runtime;
+PNG world chỉ dùng làm ảnh ý tưởng ở panel tuyến, minimap đọc layout thật. An Khê có vật thể cao mờ đi khi che người chơi,
+sprite cây anh đào tách nền và va chạm gốc cây, vùng cản ngăn tương tác xuyên tường. Bàn phím/chuột và cảm ứng đi qua cùng lớp lệnh InputMap; bố cục cảm ứng là prototype cho màn hình ngang,
+chưa phải bản xuất Android đã nghiệm thu. Xem [thiết kế và kiểm chứng](docs/ui-product-slice.md)
+và [trạng thái triển khai](docs/implementation-status.md).
 
-Bước tiếp theo: authoritative match hai người, kiểm tra tốc độ di chuyển, một kỹ năng do server tính sát thương; sau đó mới làm tài sản và vòng chơi.
+Đã có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**: di chuyển, vật cản, đánh thường, né, HP, kết thúc và reconnect ngắn. Đấu tập không tác động tài sản/hồ sơ. Đã có inventory 24 ô, catalog vật phẩm, migration hồ sơ và gói khởi đầu chống nhận trùng. **Chưa có quái, dùng/trang bị vật phẩm, trồng trọt, giao dịch, PvP mở, đồ họa hoàn chỉnh hoặc bản xuất Android/Windows.**
+
+Xem [tiến độ và thứ tự triển khai](docs/implementation-status.md), [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md). Bước kế tiếp sau nghiệm thu tài sản: encounter PvE Sơn Trư và cấp loot qua giao dịch đã kiểm chứng, rồi vòng chơi tài nguyên.
+Xem [nhật ký phát triển và lịch sử Git](docs/project-history.md) để biết các mốc đã commit, trạng thái sản phẩm và thứ tự làm tiếp theo.
 
 ## Môi trường phát triển
 
@@ -58,6 +70,6 @@ lưu trong `server/vendor` kèm giấy phép. Không dùng API Node.js trong run
 
 ## Tài liệu chính thức
 
-- https://docs.godotengine.org/en/4.4/
+- https://docs.godotengine.org/en/4.6/
 - https://heroiclabs.com/docs/nakama/getting-started/install/docker/
 - https://heroiclabs.com/docs/nakama/server-framework/typescript-runtime/

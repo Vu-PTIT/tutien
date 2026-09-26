@@ -1,0 +1,218 @@
+{
+  "version": 3,
+  "tile_set": "res://assets/pixel/terrain/an_khe_terrain.tres",
+  "atlas_columns": 8,
+  "ground_rows": [
+    "121100100002000112202112000200100100020001223002",
+    "001201100202000310121120120210110000001010aWXYZ0",
+    "012100031120001200021GGGGG0020000010210200aXYZW0",
+    "102111200020010001300GGGIG3120110010120213aYZWX0",
+    "300203302220002220302GGGGH0020300022002030aZWXY0",
+    "030010100100110120000HIGHG2111010012102102aWXYZ0",
+    "022000200130220000000GHIGH1011001000000021aXYZW0",
+    "100102001013110110100JHGGG1020001300002131aYZWX1",
+    "010100010002010101330HGHIG0003002002001100aZWXY3",
+    "001032010200100001000GGGHH2000000300111002aWXYZ0",
+    "301000102020000101213HIGJH0002022100002100aXYZW1",
+    "110000000000030002001GJHHH3131201200001100aYZWX0",
+    "02230202GGJIGHGHGGIGJHJGGGGGGJHGGGGGHGHI03aZWXY1",
+    "30101010JHGGHHGGHGJGHIJGHGGGGIGGJJJHGGGH03aWXYZ0",
+    "10021100HGHGGHGGGIIHGGHGJHJGJGGGJGGHGGGJ00aXYZW3",
+    "20302211000010000QPOQRRQPPQRRQ200011202010aYZWX0",
+    "00000110001210300PQRPOOPQQPOOP012122000111aZWXY0",
+    "22013000020003120ORQOPPORROPPO000202110000aWXYZ1",
+    "22000100JGHGHHJJGROPRQQROORQQRGJ0103100010aXYZW0",
+    "32000011GGGGJGIGGQPOQRRQPPQRRQGG0012103100aYZWX3",
+    "20001010GGHHGGHHGPQRPOOPQQPOOPIJGGIGGGGHHJaZWXY0",
+    "01201110GJHIGIGGGORQOPPORROPPOJHIGGHJGGJGGaWXYZ2",
+    "20113012230000300ROPRQQROORQQRJGIGGHGGJGGJaXYZW0",
+    "00001200010203100QPOQRRQPPQRRQ0GGGGGGGGH10aYZWX0",
+    "0301110100120000GPQRPOOPQQPOOP0GIHHIJGHH00aZWXY2",
+    "0020113010031000GHGGIGG10013001IGGIIHGGG10aWXYZ0",
+    "0110112200110010GGHJGIH00100030GGGJHGGJI10aXYZW0",
+    "0020100321020201HGGGGHG0001003002102210000aYZWX2",
+    "0020000100111200JIGGGIG2032020220300300002aZWXY3",
+    "1010122103011000023GJHH2101010202010000012aWXYZ0",
+    "1001010010110010000HGIG1001002023010203000aXYZW1",
+    "3002000100003000120HIGI2101031323010001203aYZWX0",
+    "2110012100110011013JIGI0201000000002200000aZWXY0",
+    "0003200301021002000JGGI1200001030000100001aWXYZ0",
+    "0103002010022200000GGJJ0110001001011102001aXYZW0",
+    "200000210002000311000230020001000100000010000000"
+  ],
+  "detail_tiles": [
+    {
+      "position_tiles": [
+        2,
+        3
+      ],
+      "tile": 8
+    },
+    {
+      "position_tiles": [
+        15,
+        4
+      ],
+      "tile": 9
+    },
+    {
+      "position_tiles": [
+        18,
+        6
+      ],
+      "tile": 11
+    },
+    {
+      "position_tiles": [
+        39,
+        5
+      ],
+      "tile": 10
+    },
+    {
+      "position_tiles": [
+        3,
+        11
+      ],
+      "tile": 12
+    },
+    {
+      "position_tiles": [
+        12,
+        20
+      ],
+      "tile": 9
+    },
+    {
+      "position_tiles": [
+        17,
+        27
+      ],
+      "tile": 13
+    },
+    {
+      "position_tiles": [
+        32,
+        25
+      ],
+      "tile": 10
+    },
+    {
+      "position_tiles": [
+        39,
+        29
+      ],
+      "tile": 11
+    },
+    {
+      "position_tiles": [
+        19,
+        3
+      ],
+      "tile": 14
+    },
+    {
+      "position_tiles": [
+        35,
+        9
+      ],
+      "tile": 8
+    },
+    {
+      "position_tiles": [
+        2,
+        29
+      ],
+      "tile": 12
+    }
+  ],
+  "props_atlas": "res://assets/pixel/props/an_khe_props.png",
+  "props_columns": 8,
+  "props_cell_px": 128,
+  "props": [
+    {
+      "name": "ak_prop_north_gate",
+      "position_tiles": [
+        22.5,
+        4
+      ],
+      "tile": 55
+    },
+    {
+      "name": "ak_prop_herbalist",
+      "position_tiles": [
+        6.5,
+        10
+      ],
+      "tile": 48
+    },
+    {
+      "name": "ak_prop_guest_house",
+      "position_tiles": [
+        28.5,
+        9
+      ],
+      "tile": 51
+    },
+    {
+      "name": "ak_prop_market_stall",
+      "position_tiles": [
+        38.5,
+        19
+      ],
+      "tile": 50
+    },
+    {
+      "name": "ak_prop_blacksmith",
+      "position_tiles": [
+        32.5,
+        17
+      ],
+      "tile": 52
+    },
+    {
+      "name": "ak_prop_well",
+      "position_tiles": [
+        24.5,
+        28
+      ],
+      "tile": 49
+    },
+    {
+      "name": "ak_prop_medicine_garden",
+      "position_tiles": [
+        6.5,
+        27
+      ],
+      "tile": 56
+    },
+    {
+      "name": "ak_prop_sakura",
+      "position_tiles": [
+        18.5,
+        32
+      ],
+      "tile": 59,
+      "texture_path": "res://assets/pixel/props/an_khe_sakura.png",
+      "foot_padding_px": 6,
+      "occlusion": {"policy": "fade_when_behind", "radius_tiles": 1.7, "height_tiles": 3.5, "opacity": 0.56}
+    },
+    {
+      "name": "ak_prop_bamboo",
+      "position_tiles": [
+        2.5,
+        7
+      ],
+      "tile": 61
+    },
+    {
+      "name": "ak_prop_willow",
+      "position_tiles": [
+        39.5,
+        8
+      ],
+      "tile": 63,
+      "occlusion": {"policy": "fade_when_behind", "radius_tiles": 1.8, "height_tiles": 3.5, "opacity": 0.56}
+    }
+  ]
+}

@@ -1,124 +1,210 @@
-# 07 — Vườn linh thảo, chế tạo và kinh tế
+# 07 — Vườn, chế tạo và đầu ra của chiến lợi phẩm
 
-**Mục tiêu:** đời sống cung cấp sự chuẩn bị cho hành trình, không trở thành hệ thống chờ vô hạn hoặc nguồn nhân tiền.
+**Cập nhật:** 21/09/2026. **Trạng thái:** thiết kế kinh tế prototype.
+Giá, loot và công thức lấy từ [JSON chung](../../design-samples/progression-pve.v1.json).
+Không coi kết quả tính một chuyến là bằng chứng economy đã cân bằng.
 
 ## 1. Vòng tài nguyên
 
-Khám phá → tìm giống/nguyên liệu → trồng và chế tạo → mang vật tư đi → vượt thử thách → nhận tri thức và nguồn mới → cải thiện phương án chuẩn bị.
+Mục tiêu → chọn nơi tìm → đánh/thu thập → sở hữu thành quả qua settlement →
+về làng bán/chế tạo/đổi trang bị → chuẩn bị chuyến sau → vượt thử thách mới.
 
-Người không thích làm vườn có thể mua lượng vật tư cơ bản từ NPC bằng thu nhập chơi bình thường. Vườn tạo khả năng tự chủ và tối ưu chi phí, không phải nghĩa vụ đăng nhập tưới cây mỗi vài giờ.
+Vườn giảm phụ thuộc và tạo nhịp nghỉ. Người không thích trồng có thể mua lượng
+hồi phục cơ bản từ NPC bằng tiền chơi. Nghỉ tại hub miễn phí; luôn có tuyến thu thập
+không đòi thuốc. Không tạo vòng “thua mất hết nên không còn khả năng chơi”.
+
+Hồi Nguyên Hoàn chỉ hồi HP, không tăng tu vi. Vườn hỗ trợ survival; XP đến từ quest,
+khám phá và encounter, không từ vòng trồng/craft/uống lặp.
 
 ## 2. Vườn MVP
 
-Sáu ô đất cá nhân, hiển thị dạng UI ở An Khê. Mỗi ô có một cây; mỗi lượt trồng dùng một hạt giống và một đơn vị nước. Không có mùa vụ, thời tiết gây chết cây, sâu bệnh phá toàn bộ vườn hoặc người khác lấy trộm.
+Sáu ô cá nhân tại An Khê, mỗi lượt dùng một hạt và một nước.
+Không mùa làm chết cây, tưới bắt buộc nhiều lần, trộm cây hoặc phá vườn.
 
-### Ba loại cây
+<!-- generated:crops -->
+| Cây | Thời gian thường | Sản lượng | Sản phẩm |
+| --- | --- | --- | --- |
+| `crop_cam_lo` | 20 phút | 4 | `it_herb_cam_lo` |
+| `crop_tinh_tam` | 45 phút | 4 | `it_herb_tinh_tam` |
+| `crop_ich_khi` | 60 phút | 4 | `it_herb_ich_khi` |
+<!-- /generated:crops -->
 
-| ID cây | Hạt / sản phẩm | Thời gian thường | Sản lượng cơ bản | Dùng vào |
-|---|---|---:|---:|---|
-| `crop_cam_lo` | Cam Lộ | 20 phút | 4 | Đan hồi phục |
-| `crop_tinh_tam` | Tĩnh Tâm | 45 phút | 4 | Đan linh lực, phù thoát |
-| `crop_ich_khi` | Ích Khí | 60 phút | 4 | Đan linh lực |
-
-Mẻ hướng dẫn trong `q_main_004` trưởng thành 60 giây. Server cấp boost một lần, gắn với quest và ô trồng cụ thể; không có biến `tutorial=true` để client tự gửi.
-
-Cây sẵn sàng sẽ chờ người chơi thu, không hỏng vì đăng nhập muộn. Offline vẫn tăng trưởng vì server so sánh thời gian, không vì client chạy mô phỏng.
-
-## 3. Trạng thái cây và thời gian
+Mẻ hướng dẫn quest 004 chín sau 60 giây; boost do server gắn một lần với
+quest/ô/planting ID. Không nhận flag tutorial do client tự gửi.
+Cây chín chờ thu, không hỏng vì người chơi nghỉ. Thời gian do server:
+`remaining = max(0, readyAt - serverNow)`; client chỉ vẽ bộ đếm.
 
 `empty → growing → ready → harvested → empty`.
+Lưu `plotId`, `cropId`, `plantedAt`, `readyAt`, `plantingId`, `boostSource`,
+`stateVersion`. Thu hoạch kiểm thời gian/chủ/quyền/túi, thêm sản phẩm và đổi trạng
+thái ô cùng giao dịch. Túi đầy không mất cây; click lại không thu hai lần.
 
-Dữ liệu ô gồm `plotId`, `cropId`, `plantedAt`, `readyAt`, `plantingId`, `boostSource`, `stateVersion`. Không lưu một progress phần trăm do client cập nhật.
+## 3. Danh mục 24 ID — nguồn và mục đích
 
-`remaining = max(0, readyAt - serverNow)`. Client nội suy bộ đếm chỉ để hiển thị; nhận lại giờ chuẩn sau reconnect.
+| Nhóm | ID | Nguồn / đầu ra MVP |
+| --- | --- | --- |
+| Hạt Cam Lộ | `it_seed_cam_lo` | Starter/NPC → trồng |
+| Cam Lộ | `it_herb_cam_lo` | Node/vườn → hồi phục hoặc bán |
+| Hạt Tĩnh Tâm | `it_seed_tinh_tam` | NPC → trồng |
+| Tĩnh Tâm | `it_herb_tinh_tam` | Node/vườn → đan linh lực/phù thoát hoặc bán |
+| Hạt Ích Khí | `it_seed_ich_khi` | NPC → trồng |
+| Ích Khí | `it_herb_ich_khi` | Node/vườn → đan linh lực hoặc bán |
+| Nước | `it_water` | NPC/node → trồng/luyện hồi phục |
+| Trúc | `it_bamboo` | Tuyến an toàn → cầu/kiếm/phù thoát hoặc bán |
+| Quặng | `it_iron` | Thạch Cạn/node/Kẻ Rình Đường → kiếm hoặc bán |
+| Linh sa | `it_spirit_dust` | Thạch Vệ/boss → phù hộ thân hoặc bán |
+| Tơ nhện | `it_spider_silk` | Độc Chu → phù hộ thân hoặc bán |
+| Da Sơn Trư | `it_boar_hide` | Sơn Trư → bán NPC, tạo tiền chuẩn bị |
+| Độc tố | `it_venom` | ID dự trữ, **không phát loot** khi chưa có công dụng |
+| Hồi phục | `it_heal_pill` | Starter/craft/NPC → hồi HP; không XP |
+| Đan linh lực | `it_qi_pill` | Craft → hồi linh lực |
+| Phù hộ thân | `it_ward_talisman` | Craft → khiên |
+| Phù thoát | `it_escape_talisman` | Craft → về checkpoint hợp lệ |
+| Kiếm | `it_iron_sword` | Craft → +4 attack |
+| Áo | `it_cloth_armor` | Starter → +5 defense |
+| Mạch Bàn | `it_mach_ban` | Quest 002 → công cụ dò; không bán |
+| Mẫu nước | `it_water_sample` | Quest 002 → tiến trình |
+| Sổ ghi | `it_ledger` | Quest 007 → chứng cứ |
+| Mảnh trận | `it_array_shard` | Quest 007 → dấu/sơ đồ |
+| Chìa | `it_well_key` | Quest 009 → công cụ kể chuyện/quyền vào |
 
-Thu hoạch hợp lệ phải đồng thời: xác nhận chủ sở hữu, đủ thời gian, ô chưa được thu, đủ chỗ túi; thêm sản phẩm và chuyển trạng thái ô trong cùng giao dịch. Double-click không thu hai lần.
+Không tạo ID thứ 25 chỉ để có “token đột phá”. Linh thạch là số dư nguyên, không là
+item. Túi 24 ô, stack nguyên liệu/tiêu hao 99; gear/tool có instance ID.
+Vật tư quest và Mạch Bàn gắn nhân vật, không bán/tặng. Các món chưa có giá không
+được RPC tự suy ra giá hoặc cho bán mặc định.
 
-## 4. Danh mục 24 vật phẩm MVP
+## 4. Năm công thức
 
-| Nhóm | ID |
-|---|---|
-| Sáu hạt/cây | `it_seed_cam_lo`, `it_herb_cam_lo`, `it_seed_tinh_tam`, `it_herb_tinh_tam`, `it_seed_ich_khi`, `it_herb_ich_khi` |
-| Nước và vật liệu | `it_water`, `it_bamboo`, `it_iron`, `it_spirit_dust`, `it_spider_silk`, `it_boar_hide`, `it_venom` |
-| Bốn đồ tiêu hao | `it_heal_pill`, `it_qi_pill`, `it_ward_talisman`, `it_escape_talisman` |
-| Trang bị/công cụ | `it_iron_sword`, `it_cloth_armor`, `it_mach_ban` |
-| Bốn đồ tiến trình | `it_water_sample`, `it_ledger`, `it_array_shard`, `it_well_key` |
+<!-- generated:recipes -->
+| Công thức | Nguyên liệu | Phí linh thạch | Thành phẩm |
+| --- | --- | --- | --- |
+| `rc_heal` | `it_herb_cam_lo` ×2, `it_water` ×1 | 2 | `it_heal_pill` ×1 |
+| `rc_qi` | `it_herb_ich_khi` ×2, `it_herb_tinh_tam` ×1 | 3 | `it_qi_pill` ×1 |
+| `rc_ward` | `it_spider_silk` ×2, `it_spirit_dust` ×1 | 4 | `it_ward_talisman` ×1 |
+| `rc_sword` | `it_iron` ×6, `it_bamboo` ×2 | 8 | `it_iron_sword` ×1 |
+| `rc_escape` | `it_herb_tinh_tam` ×2, `it_bamboo` ×1 | 4 | `it_escape_talisman` ×1 |
+<!-- /generated:recipes -->
 
-Linh thạch là số dư tiền tệ nguyên, không thêm một item vào danh mục trên. Không có kim cương hoặc tiền premium trong MVP.
+MVP chế tạo tại trạm, kết quả bảo đảm. Animation 2–3 giây không quyết định thành
+công; không hàng chờ nhiều giờ. Lượng mẻ là số nguyên 1–10; kiểm toàn bộ nguyên
+liệu, phí và túi trước khi commit, không làm một nửa.
 
-Vật phẩm tiến trình và Mạch Bàn gắn nhân vật, không bán. Trang bị có instance ID; stack nguyên liệu có giới hạn 99. Túi mẫu 24 ô, nhưng số định nghĩa vật phẩm không đồng nghĩa mỗi loại chỉ dùng một ô.
+`rc_heal` mở để thực hiện quest 005; cờ lĩnh ngộ được cấp khi nhận thưởng quest.
+`rc_qi`/`rc_ward` nghiên cứu ở Bà Sâm sau tầng 2, giá thử 8 linh thạch mỗi công thức.
+`rc_sword` mở miễn phí qua side 004 hoặc nghiên cứu 12 ở Đỗ Khê sau main 007.
+`rc_escape` mở trong chuẩn bị Cổ Tỉnh tại main 010.
+Linh sa cho phù đến từ Thạch Vệ/boss; Hộ Thân kỹ năng đã là lựa chọn phòng vệ trước
+đó, không khóa người chơi vì chưa có phù.
 
-## 5. Năm công thức
+## 5. Bảng giá NPC thử nghiệm
 
-| ID | Nguyên liệu | Phí linh thạch | Kết quả |
-|---|---|---:|---|
-| `rc_heal` | 2 Cam Lộ + 1 nước | 2 | 1 Hồi Nguyên Hoàn |
-| `rc_qi` | 2 Ích Khí + 1 Tĩnh Tâm | 3 | 1 Ích Khí Tán |
-| `rc_ward` | 2 tơ nhện + 1 linh sa | 4 | 1 Hộ Thân Phù |
-| `rc_sword` | 6 thiết quặng + 2 trúc | 8 | 1 Thanh Thiết Kiếm |
-| `rc_escape` | 2 Tĩnh Tâm + 1 trúc | 4 | 1 Thoát Thân Phù |
+“NPC bán” là người chơi trả tiền; “NPC mua” là người chơi nhận tiền.
+Đây là tập shop tối thiểu phục vụ vòng chơi mới, không phải thị trường người chơi.
 
-MVP chế tạo tại trạm, kết quả bảo đảm. Giao dịch tức thời; hoạt ảnh 2–3 giây chỉ là trình bày và không được client dùng để quyết định kết quả. Không có job nền chế tạo hoặc hàng đợi nhiều giờ trong MVP.
+<!-- generated:shop -->
+| Vật phẩm | NPC bán cho người chơi | NPC mua từ người chơi |
+| --- | --- | --- |
+| `it_bamboo` | Không bán | 1 |
+| `it_boar_hide` | Không bán | 3 |
+| `it_escape_talisman` | Không bán | 2 |
+| `it_heal_pill` | 8 | 2 |
+| `it_herb_cam_lo` | Không bán | 1 |
+| `it_herb_ich_khi` | Không bán | 1 |
+| `it_herb_tinh_tam` | Không bán | 1 |
+| `it_iron` | Không bán | 1 |
+| `it_qi_pill` | Không bán | 2 |
+| `it_seed_cam_lo` | 3 | Không mua |
+| `it_seed_ich_khi` | 3 | Không mua |
+| `it_seed_tinh_tam` | 3 | Không mua |
+| `it_spider_silk` | Không bán | 1 |
+| `it_spirit_dust` | Không bán | 1 |
+| `it_ward_talisman` | Không bán | 2 |
+| `it_water` | 1 | Không mua |
+<!-- /generated:shop -->
 
-Làm nhiều món gửi `quantity` nguyên trong khoảng 1–10; server nhân toàn bộ chi phí và kiểm tra túi trước. Không xử lý nửa mẻ mà UI báo đủ mẻ.
+Các giá mới như da 3, mua hồi phục 8 và phí nghiên cứu là giả thuyết cần playtest.
+Vật phẩm không trong bảng: chưa cho mua/bán. Không nhận `price` từ client.
 
-## 6. Mở công thức
+Hạt 3 + nước 1 cho 4 cây; bán thô 4 cây × 1 = 4, không lời tiền trước các chi phí
+khác. NPC mua chế phẩm thấp hơn giá trị đầu vào/phí; không có vòng mua–chế–bán
+sinh tiền vô hạn. Nguyên liệu khai thác rồi bán là đổi thời gian thành tiền.
+Không được từ đây suy ra mọi tuyến đều đáng chơi hoặc economy tự cân bằng.
 
-Hồi phục mở trong nhiệm vụ 005. Đan linh lực và phù hộ thân mở qua giao dịch nghiên cứu tại Bà Sâm khi đến Luyện Khí 2. Kiếm mở qua side quest 004 hoặc học ở Đỗ Khê bằng khoản phí thường đã công bố. Phù thoát mở khi chuẩn bị vào Cổ Tỉnh.
+## 6. Gói khởi đầu — giữ nguyên implementation
 
-Không để nhân vật thiếu tiền sau thất bại thì không có cách hồi phục: nghỉ tại hub miễn phí, vẫn có tuyến thu thập không cần đồ tiêu hao.
+`starter:v1`: 12 linh thạch, 2 hạt Cam Lộ, 4 nước, 2 Hồi Nguyên Hoàn, 1 áo vải.
+Không đổi source/version để cấp lại đồ; không tặng Mạch Bàn trước quest.
+Đây là gói đã định nghĩa ở mốc nguồn, còn consume/equip/garden chưa có runtime.
 
-## 7. Giá và mục đích kinh tế
+Mẻ hướng dẫn dùng một hạt/nước, thu 4 Cam Lộ; một viên hồi phục dùng 2 Cam Lộ,
+1 nước, phí 2. Dù vẫn còn thuốc starter, quest 005 dạy tự luyện một viên;
+không buộc uống khi đầy HP hoặc vứt viên cũ.
 
-Giá mẫu để bắt đầu kiểm thử: hạt giống 3 linh thạch, nước 1, NPC mua linh thảo 1/đơn vị; sản lượng 4 làm trồng rồi bán thô không tự tạo lợi nhuận tiền tệ trước các chi phí khác.
+## 7. Một chuyến Trúc Âm và kiểm tra tiêu hao
 
-NPC mua lại chế phẩm với giá thấp hơn tổng chi phí mua nguyên liệu và phí chế tạo. Với nguyên liệu tự khai thác, bán là đổi công sức thành tiền, không phải arbitrage mua–chế–bán vô hạn.
+Mẫu gộp: 4 Sơn Trư + 2 Độc Chu; thu 4 Cam Lộ. Có 4 da + 2 tơ.
+Bán da được 12; mua 2 nước hết 2; phí luyện hai viên hết 4; tiền ròng +6.
+Sau bán/mua/craft có 2 tơ và 2 viên **mới tạo**.
 
-Không dùng giá này làm “giá thị trường chính thức”. Toàn bộ bảng shop cần khóa trong catalog runtime trước khi triển khai; JSON đính kèm chưa bao phủ danh sách mua/bán đầy đủ.
+Không cộng tiền quest hoặc starter vào dòng thu lặp. Bảng kiểm tiêu hao:
 
-## 8. Nguồn và nơi tiêu
+| Viên đã dùng trong chuyến | Viên mới tạo | Chênh số viên so với đầu chuyến | Tiền ròng trước mua bù |
+| --- | --- | --- | --- |
+| 0 | 2 | +2 | +6 |
+| 1 | 2 | +1 | +6 |
+| 2 | 2 | 0 | +6 |
+| 3 | 2 | -1 | +6 |
 
-| Nguồn linh thạch | Giới hạn thiết kế |
-|---|---|
-| Quest một lần | Có cờ claim vĩnh viễn |
-| Hợp đồng thu thập lặp sau chương đầu | Đo linh thạch/phút, không tạo bằng thao tác UI trống |
-| Bán vật liệu NPC | Giá server, không nhận giá client |
+Ở dòng cuối, mua bù 1 viên giá 8 làm dòng tiền thành -2.
+Đây là tình huống cần xử lý bằng độ khó, nguồn, cách chơi hoặc giá; không giấu nó
+bằng cách tính gói một lần thành thu nhập mỗi chuyến. Nhiều tử vong/dùng thuốc hơn
+càng cần ghi nhận; không khẳng định tự duy trì cho mọi người.
 
-| Nơi tiêu | Nguyên tắc |
-|---|---|
-| Hạt/nước, nghiên cứu công thức | Chi phí đoán được |
-| Phí chế tạo | Đi cùng thành quả rõ ràng |
-| Dịch vụ di chuyển tương lai | Không thu phí điểm hồi sinh thiết yếu |
-| Tiện ích vườn Alpha | Nâng sự tiện lợi, không làm tài khoản mới hết đường chơi |
+Mua sẵn hai viên bằng tiền bán 4 da tốn 16 trong khi thu 12; tuyến không làm vườn
+không nhất thiết mua nổi hai viên mỗi chuyến. Viên mua sẵn là tùy chọn, còn nghỉ
+miễn phí/thu Cam Lộ an toàn vẫn phải đủ để phục hồi khả năng chơi. Playtest riêng
+người dùng 0–3 viên và người bỏ garden trước khi chốt shop.
 
-MVP chưa có thuế chợ, bảo trì công trình, trả lãi, phí kho bang hoặc cơ chế đánh vào người nghỉ chơi.
+## 8. Nguồn và chỗ tiêu tiền
 
-### Kịch bản budget một chuyến mẫu
+Nguồn một lần: quest chính (bảng ở 06). Nguồn lặp: bán nguyên liệu thật.
+Hợp đồng lặp chỉ cân nhắc sau chương; chưa định nghĩa một máy sinh tiền bằng click UI.
 
-Thu nhập giả lập 60 linh thạch; mua 4 hạt = 12, 4 nước để trồng = 4, 2 nước để luyện = 2, luyện hai hồi phục = 4, học/tích lũy cho mục tiêu = 20. Tổng sử dụng 42, còn 18.
+Chỗ tiêu: nước/hạt/thuốc mua sẵn, nghiên cứu, craft. Không phí hồi sinh thiết yếu,
+thuế người nghỉ chơi, sửa đồ bắt buộc, lãi/kho bang hoặc premium currency.
+Quest phụ/cơ duyên mở thông tin hoặc cách chơi; không bắt rơi cực hiếm để lên tầng.
 
-Đây là một phép tính thiết kế, không phải dữ liệu chơi thực tế. Phải ghi nguồn thu cụ thể trong playtest, tránh giả định mọi người tự kiếm được 60 trong cùng thời gian.
+## 9. Giao dịch và nguồn thưởng
 
-## 9. Tài nguyên hiếm và cơ duyên
+Dùng một lớp kinh tế chung cho nhận thưởng, mua/bán, craft, dùng đồ, thu hoạch,
+equip và tiến trình. Tiền/túi/profile cần cùng giao dịch nhất quán; không sửa wallet
+và inventory ở hai RPC rồi gọi đó là atomic.
 
-Nguyên liệu bắt buộc cho progression phải có nguồn bảo đảm hoặc tích lũy đổi. Alpha có thể thêm drop hiếm mang tính sưu tập/biến thể build, nhưng không dùng một drop quá hiếm để khóa Trúc Cơ.
+Operation ID + fingerprint + revision kiểm replay; source receipt chặn đổi ID để
+nhận lại cùng nguồn. Không xóa receipt một lần bằng TTL tùy tiện.
+Encounter outcome và reward snapshot phải bền vững; xem [đặc tả](progression-pve-spec.md).
+Túi đầy giữ settlement chờ, không mất loot; chặn tạo thêm encounter thưởng mới đến
+khi xử lý để không biến pending rewards thành kho vô hạn.
 
-Mạch Bàn giúp đọc nơi có nguồn hoặc điều kiện mở cửa; không tự tăng số tiền phát ra. “Cơ duyên” có thể là thông tin, công thức, một lựa chọn an toàn hơn hoặc quan hệ.
+### Dọn túi luôn có đường thực hiện
 
-## 10. Chống mất và nhân đôi tài sản
+Ngoài bán NPC, inventory phải có thao tác hủy vật phẩm thông thường sau xác nhận,
+server kiểm ID/số lượng và receipt. Cấm hủy Mạch Bàn, vật phẩm quest và món đang
+trang bị; có thể tháo món thường trước khi hủy. Không phụ thuộc mọi loại vật phẩm
+đều có giá bán. Tính năng này nằm trong P2 cùng equip/consume, tránh kẹt thưởng khi
+túi chỉ chứa kiếm, hạt hoặc nước mà shop chưa mua. Hủy không phát XP/tiền, không thể
+hoàn tác; UI phải hiển thị rõ món và số lượng. Kiểm thử đầy cả 24 ô bằng món không
+bán được, dọn một ô rồi nhận settlement đúng một lần.
 
-Mỗi thao tác craft, mua, bán, thu hoạch, nhận thưởng và nâng tiến trình phải đi qua một dịch vụ kinh tế chung. Không để mỗi module tự sửa túi theo một quy tắc khác nhau.
+## 10. Giao dịch người chơi chưa bật
 
-Một thao tác có `operationId`, dấu vân tay payload, phiên bản trạng thái và kết quả đã commit. Cùng ID với payload khác phải báo lỗi. ID khác cũng không được nhận lại cùng một plot/quest/encounter đã hoàn thành.
+Chỉ triển khai sau audit escrow, khóa món, xác nhận lại khi thay đổi, timeout,
+mất mạng và audit hai phía. Không chuyển tiền/đồ bằng “trừ A rồi cộng B” qua hai
+RPC không nhất quán. Metadata `bound` chưa phải hệ thống giao dịch đã hoàn chỉnh.
 
-MVP lưu tiền và túi trong cùng trạng thái gameplay; không trộn lệnh sửa Nakama wallet rời với sửa inventory rồi gọi đó là atomic. Thiết kế lưu cụ thể tại 10.
+## 11. Nghiệm thu
 
-## 11. Giao dịch người chơi: chưa bật trong MVP
-
-Trước khi mở cần escrow, khóa đồ được đề nghị, xác nhận lại sau mọi thay đổi, hết hạn, xử lý mất mạng và audit hai phía. Không triển khai bằng “trừ A rồi cộng B” qua hai RPC không cùng giao dịch.
-
-Vật tư nhiệm vụ không giao dịch. Chuyển quà giữa tài khoản, kho bang và chợ phải là các hạng mục riêng có threat model.
-
-## 12. Nghiệm thu
-
-Không thể thu hai lần, craft âm nguyên liệu, giả giá bán, mua đồ với số âm, tràn số lượng, đổi giờ để thu sớm, mất vật tư vì túi đầy hoặc nhận lại đồ tiến trình. Chạy kiểm thử cạnh tranh và restart thật. Người chơi vẫn tiếp tục được sau khi dùng hết vật tư.
+Kiểm thu/craft/mua/bán/dùng không nhân đôi hoặc âm số; không bán đồ quest; không
+giả giá/đổi giờ để thu sớm; chặn integer overflow; túi đầy không mất nguyên liệu;
+reconnect/restart phục hồi đúng. Chạy từ lúc hết tiền/thuốc để chứng minh còn đường
+chơi. Validator số học không thay kiểm thử cạnh tranh PostgreSQL hoặc playtest economy.

@@ -1,0 +1,184 @@
+{
+  "version": 3,
+  "tile_set": "res://assets/pixel/terrain/co_tinh_terrain.tres",
+  "atlas_columns": 8,
+  "ground_rows": [
+    "8BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA9",
+    "A98BA98BA98BA957135713571357135B135713571357135B",
+    "8BA98BA98BA98B6024602460246024692460246024602469",
+    "A98BA98BA98BA971357135713571357B357XYZabcdW1357B",
+    "8BA98BA98BA98B02460bWZcXadY24609460ZabcdWXY24609",
+    "A713571357135713571cXadYbWZ3571B571bcdWXYZa3571B",
+    "8024602460246024602dYbWZcXa46029602dWXYZabc46029",
+    "A135713571357135713WZcXadYb57GHIJG3XYZabcdW5713B",
+    "824602460246GHIJ024XadYbWZc60HIJGH4ZabcdWXY60249",
+    "A35713571357HIJG135YbWZcXad71IJGHI5bcdWXYZa7135B",
+    "846024602460IJGH246ZcXadYbW02JGHIJ6dWXYZabc02469",
+    "A57135713571JGHI357135713571357B357135713571357B",
+    "860246024602GHIJ46024602460246094602460246024609",
+    "A713571357135713571357135713571B571357135713571B",
+    "802460246024602460246024602HIJGHIJGHIJG460246029",
+    "A13571357135713571357135713IJGHIJGHIJGH57135713B",
+    "82460246024602A98BA98BA9024JGHIJGHIJGHI602460249",
+    "A35713571357138BA98BA98B135GHIJGHIJGHIJ71357135B",
+    "84602460246024A98BA98BA9246HIJGHIJGHIJG024602469",
+    "A57135713571358BA98BA98B35713571357135713571357B",
+    "86024602460246A98BA98BA94602460246ghefg246024609",
+    "A71357135713578BA98BA98B5713571357hefgh35713571B",
+    "80246JGHIJ2460A98BA98BA96024602460efghe460246029",
+    "A98BAGHIJG8BA98BA98BA98B7135713571fghef57135713B",
+    "82460HIJGH4602A98BA98BA90246024602ghefg602460249",
+    "A3571IJGHI57138BA98BA98B13571357135713571357135B",
+    "84602460246024A98BA98BA9246024602460246024602469",
+    "A57135713571358BA98BA98B35713571357135713571357B",
+    "86024602460246A98BA98BA9460246024602460246024609",
+    "A71357135713578BA98BA98B57135713571357135713571B",
+    "80246024602460A98BA98BA9602460246024602460246029",
+    "A13571357135718BA98BA98B71357135713571357135713B",
+    "82460246024602A98BA98BA9024602460246024602460249",
+    "A35713571357138BA98BA98B13571357135713571357135B",
+    "84602460246024A98BA98BA9246024602460246024602469",
+    "A98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98B"
+  ],
+  "detail_tiles": [
+    {
+      "position_tiles": [
+        2,
+        6
+      ],
+      "tile": 9
+    },
+    {
+      "position_tiles": [
+        6,
+        20
+      ],
+      "tile": 10
+    },
+    {
+      "position_tiles": [
+        17,
+        3
+      ],
+      "tile": 11
+    },
+    {
+      "position_tiles": [
+        28,
+        12
+      ],
+      "tile": 13
+    },
+    {
+      "position_tiles": [
+        33,
+        4
+      ],
+      "tile": 14
+    },
+    {
+      "position_tiles": [
+        45,
+        6
+      ],
+      "tile": 9
+    },
+    {
+      "position_tiles": [
+        17,
+        12
+      ],
+      "tile": 12
+    },
+    {
+      "position_tiles": [
+        25,
+        20
+      ],
+      "tile": 10
+    },
+    {
+      "position_tiles": [
+        29,
+        30
+      ],
+      "tile": 11
+    },
+    {
+      "position_tiles": [
+        45,
+        31
+      ],
+      "tile": 13
+    }
+  ],
+  "props_atlas": "res://assets/pixel/props/co_tinh_props.png",
+  "props_columns": 8,
+  "props_cell_px": 128,
+  "props": [
+    {
+      "name": "ct_prop_root_column_west",
+      "position_tiles": [
+        2.5,
+        11
+      ],
+      "tile": 48
+    },
+    {
+      "name": "ct_prop_engraved_column",
+      "position_tiles": [
+        11.5,
+        11
+      ],
+      "tile": 49
+    },
+    {
+      "name": "ct_prop_balance_altar",
+      "position_tiles": [
+        17.5,
+        5
+      ],
+      "tile": 51
+    },
+    {
+      "name": "ct_prop_formation_lamp",
+      "position_tiles": [
+        34.5,
+        7
+      ],
+      "tile": 53
+    },
+    {
+      "name": "ct_prop_ancient_pillar",
+      "position_tiles": [
+        42.5,
+        6
+      ],
+      "tile": 55
+    },
+    {
+      "name": "ct_prop_heart_well",
+      "position_tiles": [
+        35.5,
+        22
+      ],
+      "tile": 52
+    },
+    {
+      "name": "ct_prop_entrance_roots",
+      "position_tiles": [
+        4.5,
+        30
+      ],
+      "tile": 56
+    },
+    {
+      "name": "ct_prop_jade_statue",
+      "position_tiles": [
+        28.5,
+        5
+      ],
+      "tile": 62
+    }
+  ]
+}

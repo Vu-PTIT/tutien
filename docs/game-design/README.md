@@ -1,80 +1,87 @@
-# Tu Tiên — Bộ thiết kế và kế hoạch triển khai v2
+# Tu Tiên — Thiết kế sản phẩm và tiến trình PvE
 
-**Ngày biên soạn:** 16/09/2026  
-**Trạng thái:** Đề xuất thiết kế để triển khai; không phải thông báo tính năng đã có.  
-**Nền dự án:** Godot + GDScript / Nakama + TypeScript / PostgreSQL.  
-**Định hướng người dùng:** 2D đời sống–khám phá, có cày cuốc, PvP và cộng đồng; phát triển theo tinh thần Phàm Nhân Tu Tiên.
+**Bản cập nhật:** 23/09/2026, bổ sung layout map prototype dùng chung cho PC + mobile.
+**Mốc đối chiếu:** `feat/inventory-rewards` tại `05f5dd0eb9df36d5790e268879b8fbe3699994ea`.
+**Trạng thái:** tài liệu triển khai + số liệu thử, không phải PvE/tu luyện đã chạy.
+**Nền dự án:** Godot/GDScript, Nakama/TypeScript, PostgreSQL.
 
-> Một tán tu bình thường tích lũy năng lực bằng hiểu biết, chuẩn bị và lựa chọn đúng; xây được nơi an thân, rồi bước vào những cuộc tranh đoạt lớn hơn.
+> Một người bình thường tiến thân bằng hiểu biết, chuẩn bị và lựa chọn:
+> biết cần gì, đi đâu để kiếm, dùng thành quả vào đâu và mở được khả năng gì mới.
 
-## 1. Phạm vi rà soát và giới hạn
+## 1. Đọc theo thứ tự mới
 
-Đã đọc README trên `main`, tài liệu `docs/social-backend.md` và cấu hình TypeScript trên `feat/social-backend`, đối chiếu cây thư mục của hai nhánh, cùng tài liệu công nghệ Markdown trước đây trong Library.
+Bắt đầu từ [đặc tả tiến trình/PvE](progression-pve-spec.md), rồi
+[tiến độ và mốc triển khai](../implementation-status.md). Sau đó đọc phần chuyên môn.
+Không bắt đầu bằng file 12/14 chưa có trên Git.
 
-Ở những nguồn truy cập được, chưa tìm thấy bộ Markdown nhân vật/story/map/sức mạnh được nhắc đến trong cuộc trò chuyện ngày 16/09. Vì vậy, đây là **bộ tài liệu bổ sung dựa trên nền đã kiểm tra**, không khẳng định đã chỉnh từng dòng của những file chưa truy cập được.
+| Tài liệu đang dùng | Vai trò |
+| --- | --- |
+| [00 — review/quyết định](00-review-and-decisions.md) | Quyết định v2 và ghi chú cập nhật; giữ lịch sử |
+| [01 — tầm nhìn/vòng chơi](01-vision-and-core-loop.md) | Lời hứa sản phẩm, nhịp phiên và giới hạn |
+| [02 — nhân vật/tu luyện](02-character-and-cultivation.md) | Nguồn tu vi, điều kiện, dư XP và đột phá |
+| [03 — chiến đấu](03-combat-skills-and-artifacts.md) | Kỹ năng, AI, quái/loot, dùng đồ, settlement |
+| [04 — bản đồ](04-world-and-maps.md) | World topology, nguồn tài nguyên, tuyến tránh và respawn |
+| [Map layout spec](map-layout-spec.md) | Kích thước tile, POI, spawn, camera, mobile-safe layout và thứ tự dựng prototype |
+| [05 — truyện](05-story-bible.md) | Thế giới/NPC/xung đột; không viết lại trong cập nhật này |
+| [06 — nhiệm vụ](06-quests-and-events.md) | Chuỗi 12 + 6 quest, ngân sách XP/tiền, nhánh và chống kẹt |
+| [07 — kinh tế/chế tạo](07-garden-crafting-and-economy.md) | Đầu ra loot, 24 ID, vườn, 5 công thức và giá thử |
+| [08 — PC + mobile](08-cross-platform-pc-mobile.md) | Kiến trúc dùng chung, input, responsive UI, safe area, camera, DoD và G0.5 |
+| [Đặc tả tiến trình/PvE](progression-pve-spec.md) | Nối mọi mảng thành hành trình và mốc P1–P5 |
+| [Nguồn tham khảo](progression-references.md) | Cơ chế game tham khảo, phạm vi nguồn và diễn giải riêng |
+| [Nhật ký](../project-history.md) | Mốc code/CI đã ghi và lần sửa thiết kế hiện tại |
 
-Gói này không thay mã nguồn, không ghi đè tài liệu gốc, không tự merge hai nhánh. Những tên riêng, cốt truyện, vật phẩm và thông số gameplay mới đều là đề xuất cho game, không phải thông tin chính thức của phim.
+## 2. Phân biệt code với thiết kế
 
-## 2. Đọc theo mục tiêu
+Mốc nguồn có backend xã hội, prototype đấu tập hai người và nền inventory/reward.
+Chưa có PvE, consume/equip/craft, vườn, quest runtime hoặc tu luyện. Xem
+[tiến độ](../implementation-status.md), [combat](../combat-prototype.md) và
+[tài sản](../inventory-and-rewards.md).
 
-| File | Nội dung chính | Người dùng chính |
-|---|---|---|
-| [00-review-and-decisions.md](00-review-and-decisions.md) | Hiện trạng, khoảng trống, quyết định thiết kế, cách ghép tài liệu | Chủ dự án |
-| [01-vision-and-core-loop.md](01-vision-and-core-loop.md) | Bản sắc, vòng chơi, phạm vi từng bản, phiên chơi mẫu | Toàn đội |
-| [02-character-and-cultivation.md](02-character-and-cultivation.md) | Tạo nhân vật, linh căn, tu vi, cảnh giới, đột phá | Gameplay |
-| [03-combat-skills-and-artifacts.md](03-combat-skills-and-artifacts.md) | Chiến đấu, kỹ năng, pháp khí, chỉ số, AI, chống gian lận | Gameplay / server |
-| [04-world-and-maps.md](04-world-and-maps.md) | Bốn map MVP, tuyến đường, phân vùng rủi ro, chuyển map | Level design |
-| [05-story-bible.md](05-story-bible.md) | Thế giới, xung đột, sáu NPC, chương đầu và hướng dài hạn | Narrative |
-| [06-quests-and-events.md](06-quests-and-events.md) | 12 nhiệm vụ chính, 6 nhiệm vụ phụ, nhánh lựa chọn và lưu tiến độ | Content / server |
-| [07-garden-crafting-and-economy.md](07-garden-crafting-and-economy.md) | Vườn linh thảo, năm công thức, nguồn–chỗ tiêu tài nguyên | Economy |
-| [08-sects-social-and-pvp.md](08-sects-social-and-pvp.md) | Tông môn NPC, nhóm người chơi, tổ đội, chat, luật PvP | Social |
-| [09-ui-art-and-audio.md](09-ui-art-and-audio.md) | Màn hình, luồng thao tác, đồ họa, âm thanh, Android | Client / art |
-| [10-architecture-and-data.md](10-architecture-and-data.md) | Module, lưu trạng thái, mạng, giao dịch nguyên tử, mở rộng | Engineering |
-| [11-content-pipeline.md](11-content-pipeline.md) | ID, dữ liệu mẫu, quy trình thêm nội dung và phiên bản | Engineering / content |
-| [12-roadmap-and-backlog.md](12-roadmap-and-backlog.md) | Mốc bàn giao, thứ tự phụ thuộc, đầu việc có tiêu chí xong | Producer |
-| [13-testing-and-operations.md](13-testing-and-operations.md) | Kiểm thử gameplay, mạng, tài sản, vận hành và playtest | QA / server |
-| [14-vertical-slice-walkthrough.md](14-vertical-slice-walkthrough.md) | Kịch bản demo 30 phút và bộ nghiệm thu xuyên hệ thống | Toàn đội |
-| [15-sources-and-change-log.md](15-sources-and-change-log.md) | Nguồn, phạm vi xác minh, nhật ký thay đổi | Toàn đội |
+Một bảng JSON/Markdown hoặc unit test số học **không** làm tính năng gameplay trở
+thành đã triển khai. Không coi code trên nhánh feature là đã merge vào `main`.
 
-**Bắt đầu:** 00 → 01 → 14 → 12. Khi triển khai một hệ thống, đọc file chuyên môn tương ứng.
+Các phần 08–15, `design-samples/mvp.catalog.json` và `scripts/validate_design.py`
+được nhắc ở gói v2 cũ chưa có tại mốc nguồn. Không dùng chúng làm liên kết đọc bắt
+buộc hoặc ghi nhận đã có công cụ. Bản cập nhật này bổ sung các file **tên mới** bên
+dưới, không giả vờ khôi phục nguyên gói còn thiếu.
 
-## 3. Những con số thống nhất trong toàn bộ gói
+## 3. Phạm vi giữ nguyên
 
-Các con số dưới đây là **mục tiêu prototype cần playtest**, không phải benchmark hoặc dự báo doanh thu.
+Phàm nhân → Luyện Khí 1–4; bốn nhóm khu vực chính (hub/PvE/dungeon/instance) được chia thành các zone phù hợp; 12 quest chính + 6 phụ;
+3 loại quái thường + tinh anh + boss; 6 hành động; 3 ô trang bị chiến đấu;
+6 ô vườn, 3 cây, 5 công thức và 24 ID item. Co-op mục tiêu 2 người.
+PvP là đấu tập đồng thuận, không XP/tiền/loot; không chợ người chơi hoặc cửa hàng thật.
 
-| Hạng mục | MVP đề xuất |
-|---|---|
-| Cảnh giới có gameplay | Phàm nhân trong phần mở đầu; Luyện Khí tầng 1–4 |
-| Thế giới | 4 map gameplay; vườn là giao diện ô đất riêng tại hub, không tính thành map thứ năm |
-| Nội dung | 6 NPC có tên; 12 nhiệm vụ chính; 6 nhiệm vụ phụ |
-| Kẻ địch | 3 loại thường + 1 loại tinh anh + 1 boss |
-| Kỹ năng | 6 hành động định nghĩa: đánh thường, né, 3 kỹ năng chủ động, dò mạch |
-| Trang bị chiến đấu | 1 pháp khí chính, 1 giáp, 1 hộ cụ; Mạch Bàn là công cụ riêng |
-| Vườn | 6 ô đất; 3 loại cây |
-| Chế tạo | 5 công thức; 24 định nghĩa vật phẩm |
-| Nhóm chơi | Tối đa 2 người trong thử nghiệm online MVP |
-| PvP | Đấu tập đồng thuận, không rơi đồ, không thưởng tiền; không phải PvP mở |
-| Kỹ thuật | Thử tick server 20 Hz, snapshot 10 Hz; phải đo rồi mới giữ hoặc đổi |
-| Thương mại | Chưa có cửa hàng tiền thật, chợ người chơi hay đấu giá |
+Không mở rộng số lượng hệ thống để che vòng chơi chưa rõ.
+Mọi con số mới là giá trị khởi đầu cho test, không benchmark.
 
-## 4. Quy ước trạng thái
+## 4. Nguồn số và kiểm tra
 
-- **HIỆN CÓ:** có dấu vết trong mã/tài liệu đã đọc; mức kiểm thử được ghi riêng.
-- **MVP:** phạm vi nhỏ nhất để kiểm chứng vòng chơi.
-- **ALPHA:** mở rộng sau khi MVP qua cổng nghiệm thu.
-- **SAU ALPHA:** chỉ định hướng; không đưa vào critical path hiện tại.
-- **ĐỀ XUẤT:** lựa chọn đang dùng để cụ thể hóa kế hoạch, chưa coi là quyết định đã được chủ dự án phê duyệt.
-
-Không đánh dấu một đầu việc hoàn tất chỉ vì đã có Markdown, dữ liệu mẫu hoặc unit test giả lập.
-
-## 5. Dữ liệu và cách sử dụng gói
-
-[`design-samples/mvp.catalog.json`](../../design-samples/mvp.catalog.json) mô tả danh mục mẫu và quan hệ giữa các thực thể. [`scripts/validate_design.py`](../../scripts/validate_design.py) kiểm tra cấu trúc, tham chiếu, chu trình nhiệm vụ và các giới hạn MVP. Đây là công cụ kiểm tra **thiết kế**, chưa phải trình nạp nội dung của Godot hoặc Nakama.
-
-Từ thư mục gốc của gói:
+[JSON tiến trình](../../design-samples/progression-pve.v1.json) là nguồn số duy nhất
+của cập nhật này. Nó **không** được import trực tiếp vào runtime.
+Các bảng MD có marker `generated` được đồng bộ từ JSON.
 
 ```sh
-python scripts/validate_design.py
+python scripts/validate_progression_design.py
+python scripts/test_progression_design.py
 ```
 
-Khi đưa vào repo: thêm `docs/game-design/`, `design-samples/` và script kiểm tra trên một nhánh tài liệu riêng. Giữ `README.md` gốc và `docs/social-backend.md`; chỉ thêm liên kết tới bộ thiết kế. Xem hướng dẫn chi tiết ở file 00.
+Sau khi chủ đích đổi JSON:
+
+```sh
+python scripts/validate_progression_design.py --write-tables
+python scripts/test_progression_design.py
+```
+
+Validator kiểm ID/tham chiếu, quest không vòng lặp, XP ba chặng, nguồn thay thế,
+loot/công thức/shop, số học chuyến đi và đồng bộ bảng. Không kiểm gameplay/network
+thật hoặc hiệu suất. Chạy lại unit/integration runtime khi bắt đầu triển khai P1–P5.
+
+## 5. Thứ tự sản xuất mới
+
+P1: một Sơn Trư đọc đòn được → P2: chuyến săn có XP/loot lưu được và dùng/equip
+có tác dụng → P3: tài khoản mới từ phàm nhân tới Phi Nhận → P4: chuẩn bị/Trúc Âm/
+trở về/Hộ Thân → P5: chương Thạch Cạn/Cổ Tỉnh và tầng 3–4.
+
+Giữ các gate nghiệm thu combat/tài sản đã làm. Không thêm tông môn, cảnh giới hoặc
+map trước khi đi hết vòng chơi bằng tài khoản mới, không cấp tay đồ/XP.

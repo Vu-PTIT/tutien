@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/map_interactable.gd" id="script"]
+[ext_resource type="Theme" path="res://themes/tutien_theme.tres" id="theme"]
+[ext_resource type="Texture2D" path="res://assets/pixel/icon_11.tres" id="icon"]
+
+[sub_resource type="CircleShape2D" id="InteractionRange"]
+radius = 56.0
+
+[node name="MapInteractable" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+monitoring = true
+script = ExtResource("script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("InteractionRange")
+
+[node name="Marker" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, -28)
+scale = Vector2(0.08, 0.08)
+texture_filter = 1
+texture = ExtResource("icon")
+
+[node name="Title" type="Label" parent="."]
+visible = false
+offset_left = -80.0
+offset_top = -52.0
+offset_right = 80.0
+offset_bottom = -39.0
+mouse_filter = 2
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme = ExtResource("theme")

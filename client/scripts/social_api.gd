@@ -5,6 +5,7 @@ extends Node
 
 signal chat_message_received(message: Dictionary)
 signal notification_received(notification: Dictionary)
+signal match_data_received(message: Dictionary)
 signal socket_closed
 
 @export var base_url: String = "http://127.0.0.1:7350"
@@ -219,6 +220,8 @@ func _process(delta: float) -> void:
 		var cid := str(value.get("cid", ""))
 		if _pending.has(cid):
 			_replies[cid] = value
+		if value.has("match_data"):
+			match_data_received.emit(value.match_data)
 		if value.has("channel_message"):
 			chat_message_received.emit(value.channel_message)
 		if value.has("notifications"):
