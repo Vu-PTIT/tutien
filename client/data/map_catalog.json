@@ -236,7 +236,7 @@
 		{
 		  "entity_id": "tc.mach_ban.flow_pillar",
 		  "display_name": "Trụ chuyển dòng",
-		  "position_tiles": [42, 22],
+		  "position_tiles": [42, 18],
 		  "interaction_radius_tiles": 1.8,
 		  "action_kind": "scan",
 		  "action_label": "Đọc trụ chuyển dòng",

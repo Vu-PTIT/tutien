@@ -228,6 +228,7 @@ func _run() -> void:
 	var flow_pillar: MapProp = main.map_world.get_node("Actors/tc_prop_flow_pillar") as MapProp
 	check(flow_pillar != null and not flow_pillar.get_node("Sprite").texture is AtlasTexture, "Thạch Cạn flow pillar uses its own cutout")
 	check(flow_pillar.get_node("Sprite").texture.get_image().detect_alpha() != Image.ALPHA_NONE, "Thạch Cạn flow pillar cutout retains alpha")
+	check(main.can_walk(flow_pillar.position), "Thạch Cạn flow pillar is reachable on dry ground")
 	check_quest_visible(hud)
 	await _capture("thach-can-runtime.png")
 	await _capture_touch_layout(main, "thach-can-touch-runtime.png")

@@ -151,7 +151,7 @@
     },
     {
       "name": "tc_prop_flow_pillar",
-      "position_tiles": [41.5, 21],
+      "position_tiles": [42, 17],
       "texture_path": "res://assets/pixel/props/thach_can_flow_pillar.png"
     }
   ]

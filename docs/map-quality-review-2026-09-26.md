@@ -12,7 +12,7 @@ Giữ map runtime dạng Godot `TileMapLayer` 32 px, props Y-sort riêng, POI/ga
 - Trúc Âm có dòng suối rộng hai tile chạy ngang dưới cầu hiện có. Ba shimmer được chuyển lên ô nước.
 - Điểm tương tác bàn cân và bảng trận Cổ Tỉnh được dời khỏi nước tới lối khô; các điểm tương tác chính được căn lại gần prop nhìn thấy.
 - FX ở Thạch Cạn và Cổ Tỉnh được đặt lại trên tile nước hoặc mạch sáng.
-- Rà từng ô atlas đã phát hiện một số tile ID không khớp tên prop ở Trúc Âm và Thạch Cạn; đã đổi sang ô tre, suối, vách đá, cửa mỏ, chống hầm, xe quặng và mạch tinh thạch tương ứng. Lò rèn An Khê và trụ Mạch Bàn Thạch Cạn đã có cutout RGBA riêng kèm prompt nguồn.
+- Rà từng ô atlas đã phát hiện một số tile ID không khớp tên prop ở Trúc Âm và Thạch Cạn; đã đổi sang ô tre, suối, vách đá, cửa mỏ, chống hầm, xe quặng và mạch tinh thạch tương ứng. Lò rèn An Khê và trụ Mạch Bàn Thạch Cạn đã có cutout RGBA riêng kèm prompt nguồn. Trụ được đặt tách khỏi cửa mỏ để hai landmark không che lẫn nhau.
 - Kiểm tra tĩnh duyệt đường 4 hướng từ spawn tới mọi POI và điểm đến của gate, đồng thời kiểm tra vùng trống quanh spawn/điểm đến cho collider người chơi, collision terrain, vùng cầu, FX và liên kết POI–prop.
 
 ## Còn phải làm trước khi gọi là map hoàn thiện
