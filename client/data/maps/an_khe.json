@@ -193,6 +193,8 @@
         32
       ],
       "tile": 59,
+      "texture_path": "res://assets/pixel/props/an_khe_sakura.png",
+      "foot_padding_px": 6,
       "occlusion": {"policy": "fade_when_behind", "radius_tiles": 1.7, "height_tiles": 3.5, "opacity": 0.56}
     },
     {

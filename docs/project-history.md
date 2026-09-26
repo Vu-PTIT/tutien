@@ -1,5 +1,7 @@
 # Nhật ký phát triển dự án Tu Tiên
 
+> Các mục bên dưới là mốc lịch sử tại ngày ghi trong từng mục, gồm trạng thái nhánh/PR đã cũ. Trạng thái tích hợp mới xem `implementation-status.md` và mục cuối của nhật ký.
+
 **Repository:** [`Vu-PTIT/tutien`](https://github.com/Vu-PTIT/tutien)<br>
 **Ngày rà soát:** 24/09/2026<br>
 **Nhánh ghi nhật ký:** `feat/inventory-rewards`
@@ -323,4 +325,3 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 
 - Standardized Godot version to 4.6.1 across `client/project.godot`, `.github/workflows/ci.yml` (both server integration and client offline suites), and documentation (`README.md`, `combat-prototype.md`, `social-backend.md`, `inventory-and-rewards.md`, `ui-product-slice.md`).
 - Eliminated dual-version matrix and version flip-flopping between 4.4 and 4.6 caused by local Godot 4.6.1 editor auto-updates.
-

@@ -1,26 +1,26 @@
 # 04 — Thế giới, map và giao diện khám phá
 
-**Cập nhật:** 24/09/2026
+**Cập nhật runtime:** 26/09/2026
 
 **Trạng thái:** Runtime prototype có lớp ground dạng atlas ô 32 px, 21 điểm tương tác dùng chung và cổng vào/ra có điểm đến riêng. Nội dung và quyền mở map vẫn là cục bộ, chưa do server xác nhận.
 
 ## 1. Rà soát bản hiện tại
 
-Prototype có bốn nền pixel, một scene map dùng chung, camera theo nhân vật, minimap động, blocker chữ nhật và route để đi thử giữa các map. An Khê dùng kích thước đã chốt 48×36 tile (1536×1152 world pixels). Ba map còn lại tạm dùng canvas prototype 48×36 để thử bố cục; metadata đánh dấu kích thước này chưa chốt.
+Prototype có bốn TileMap từ atlas địa hình tái sử dụng, một scene map dùng chung, camera theo nhân vật, minimap đọc cùng JSON layout, collision/POI độc lập với ảnh và cổng đi thử. An Khê dùng kích thước đã chốt 48×36 tile (1536×1152 world pixels). Ba map còn lại tạm dùng canvas prototype 48×36 để thử bố cục; metadata đánh dấu kích thước này chưa chốt.
 
 Các điểm đã kiểm tra trong repo:
 
 - `client/scenes/map_world.tscn` dùng chung cho bốn map; `client/scripts/game_map.gd` nạp nền, spawn, khu/phòng, blocker và chế độ camera từ `client/data/map_catalog.json`.
-- Khi chạy, ảnh PNG được resize theo kích thước map rồi chia thành ô atlas 32×32 trong `GroundLayer`. Cách này giữ nguyên art hiện có và cho phép thay từng ô; đây là cầu nối runtime, chưa phải tileset terrain có thể tái sử dụng. `DetailLayer` và `ForegroundLayer` hiện là khung rỗng.
+- `client/data/maps/*.json` đặt từng ô Ground 32×32 từ `TileSet` địa hình tái sử dụng; Detail có tile trang trí thưa. Foreground TileMapLayer được dành cho art sau này. Công trình/cây là prop Y-sort riêng; cây anh đào An Khê có sprite RGBA tách nền, vùng cản ở gốc và giảm opacity khi che nhân vật. PNG world sơn tay chỉ là ảnh concept trên panel tuyến.
 - Catalog định nghĩa 21 POI có `entity_id` ổn định trên bốn map. Scene POI dùng chung hiển thị nhãn, biểu tượng và gợi ý tương tác; các điểm nước có shimmer riêng. Cổng có vị trí đến ở map đích để chuyến đi/về khớp lối nối.
 - Hành động NPC, dịch vụ, đọc dấu vết, dò Mạch Bàn, khảo sát node và checkpoint mới chỉ đổi thông báo/cờ trong phiên cục bộ. Chúng không mở quest thật, cấp vật phẩm, lưu tiến độ hay xác nhận quyền vào map.
-- `Camera2D` theo người chơi ở map dã ngoại; Cổ Tỉnh đổi giới hạn camera theo phòng. Blocker chữ nhật là ước lượng, chưa khớp chi tiết cảnh vật.
+- `Camera2D` theo người chơi ở map dã ngoại; Cổ Tỉnh đổi giới hạn camera theo phòng. An Khê đã nắn blocker công trình, suối, sạp chợ và gốc cây theo nền nhìn thấy; các map còn lại vẫn cần nắn sát prop.
 - Route có thể tải map cục bộ. Đây là luồng test client; cổng server, checkpoint, quest, NPC, PvE, fog-of-war và lưu trạng thái chưa được nối.
-- `client/scripts/ui/hud.gd` tính minimap theo kích thước world và tile size; `M` mở overlay tuyến, `Esc` đóng.
+- `client/scripts/ui/hud.gd` vẽ minimap từ ô địa hình, blocker và POI của runtime; `M` mở overlay tuyến, `Esc` đóng.
 - Overlay đọc bốn map và ảnh preview từ `client/data/map_catalog.json`; chọn thẻ để xem, bấm **Đi thử map này** để đổi scene cục bộ. Server chưa xác nhận quyền vào.
 - Tài liệu cũ ghi kích thước 64×48, 96×96, 80×64 và 64×64 tile; các số này đã lỗi thời so với quy chuẩn mới bên dưới.
 
-Vì vậy, phần đang có là **prototype trình bày và đi thử tuyến bốn map**. Ground đang lấy từ raster art cũ; chưa có terrain nhiều lớp, foreground che nhân vật, collision được nắn theo địa hình hoặc luật mở khóa gameplay.
+Vì vậy, phần đang có là **prototype trình bày và đi thử tuyến bốn map**. Terrain vẫn là atlas 32 px cố định; foreground chỉ mới xử lý bằng Y-sort/fade cho vật thể cao và chưa được phủ art đầy đủ. Cần tiếp tục tinh chỉnh va chạm ở ba map dã ngoại/hầm và nối luật mở khóa gameplay với server.
 
 ## 2. Quy chuẩn nền tảng
 

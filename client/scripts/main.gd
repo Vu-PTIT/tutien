@@ -3,6 +3,7 @@ extends Node2D
 const Api = preload("res://scripts/combat_api.gd")
 const Actor = preload("res://scenes/player.tscn")
 const MapWorldScene = preload("res://scenes/map_world.tscn")
+const InputScript = preload("res://scripts/game_input.gd")
 const ARENA_SCALE := 2.0 / 3.0
 const WALK_SPEED := 72.0
 
@@ -29,10 +30,13 @@ var fighters: Dictionary = {}
 var local_map_flags: Dictionary = {}
 var offline_position := Vector2(768, 576)
 var touch_layout_enabled := false
-var last_touch_aim := Vector2.RIGHT
+var game_input: GameInput
 
 func _ready() -> void:
 	get_window().min_size = Vector2i(640, 360)
+	game_input = InputScript.new() as GameInput
+	add_child(game_input)
+	game_input.action_requested.connect(_action)
 	_load_map(current_map_id)
 	offline_position = player.position
 	api = Api.new()
@@ -41,7 +45,7 @@ func _ready() -> void:
 	api.snapshot_received.connect(_snapshot)
 	api.match_connection_lost.connect(_connection_lost)
 	hud.action_requested.connect(_action)
-	touch_controls.action_requested.connect(_action)
+	touch_controls.action_requested.connect(game_input.request_action)
 	touch_layout_enabled = OS.has_feature("mobile") or OS.get_cmdline_user_args().has("--touch-preview")
 	hud.set_touch_layout(touch_layout_enabled)
 	world_map.map_requested.connect(_travel_to_map)
@@ -107,6 +111,13 @@ func _travel_to_map(map_id: String, arrival_tiles: Array = []) -> void:
 
 func _action(action: String) -> void:
 	match action:
+		"close":
+			inventory_panel.hide()
+			dock.hide()
+			world_map.hide()
+		"touch_preview":
+			touch_layout_enabled = not touch_layout_enabled
+			hud.set_touch_layout(touch_layout_enabled)
 		"inventory":
 			if not api.match_id.is_empty():
 				hud.notify("Túi đồ bị khóa trong đấu tập.")
@@ -186,46 +197,13 @@ func _interact_with_world_object(target: MapInteractable) -> void:
 	hud.notify(message)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not touch_layout_enabled and event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if not inventory_panel.visible and not dock.visible and not world_map.visible:
-			_action("attack")
-		return
-	if not event is InputEventKey or not event.pressed or event.echo:
-		return
-	if event.physical_keycode == KEY_ESCAPE:
-		inventory_panel.hide()
-		dock.hide()
-		world_map.hide()
+	if game_input.handle_event(event, touch_layout_enabled, room.has_focus()):
 		get_viewport().set_input_as_handled()
-		return
-	if event.physical_keycode == KEY_F9:
-		touch_layout_enabled = not touch_layout_enabled
-		hud.set_touch_layout(touch_layout_enabled)
-		get_viewport().set_input_as_handled()
-		return
-	if room.has_focus():
-		return
-	if event.physical_keycode == KEY_I:
-		_action("inventory")
-	elif event.physical_keycode == KEY_M:
-		_action("map")
-	elif not inventory_panel.visible and not dock.visible and not world_map.visible:
-		match event.physical_keycode:
-			KEY_E: _action("interact")
-			KEY_J, KEY_Q: _action("attack")
-			KEY_SPACE: _action("dodge")
-			KEY_1, KEY_2, KEY_R: _action("locked")
 
 func _movement() -> Vector2:
 	if inventory_panel.visible or dock.visible or world_map.visible:
 		return Vector2.ZERO
-	var keyboard := Vector2(
-		float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT)) -
-		float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),
-		float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN)) -
-		float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP))
-	).limit_length()
-	return (keyboard + touch_controls.direction).limit_length()
+	return game_input.movement(touch_controls.direction)
 
 func can_walk(at: Vector2) -> bool:
 	return map_world != null and map_world.is_walkable(at)
@@ -248,8 +226,7 @@ func _process(delta: float) -> void:
 	if api == null:
 		return
 	var direction := _movement()
-	if touch_layout_enabled and direction.length_squared() > 0.01:
-		last_touch_aim = direction.normalized()
+	game_input.aim(direction, touch_layout_enabled, Vector2.RIGHT, Vector2.ZERO)
 	if not api.match_id.is_empty():
 		snapshot_age += delta
 		_present_fighters(delta)
@@ -257,7 +234,7 @@ func _process(delta: float) -> void:
 		if send_clock >= 0.05:
 			send_clock = 0.0
 			var origin := _local_server_position()
-			var aim := last_touch_aim if touch_layout_enabled else (get_global_mouse_position() / ARENA_SCALE - origin).normalized()
+			var aim := game_input.aim(direction, touch_layout_enabled, get_global_mouse_position() / ARENA_SCALE, origin)
 			api.send_input(direction, aim, pending_action)
 			pending_action = ""
 		if snapshot_age > 2.0:

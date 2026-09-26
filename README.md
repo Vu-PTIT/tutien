@@ -15,7 +15,6 @@ Xem [hướng dẫn API và kết nối Godot](docs/social-backend.md).
 ```sh
 git clone https://github.com/Vu-PTIT/tutien.git
 cd tutien
-git switch feat/inventory-rewards
 docker compose up --build -d
 ```
 
@@ -51,7 +50,7 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 Giao diện dùng atlas pixel, theme xanh đen/đồng, HUD và túi dạng scene Godot.
 Bốn map đang dựng từ atlas địa hình 32 px và vật thể 128 px riêng trong runtime;
 PNG world chỉ dùng làm ảnh ý tưởng ở panel tuyến, minimap đọc layout thật. An Khê có vật thể cao mờ đi khi che người chơi,
-vùng cản ngăn tương tác xuyên tường. Bố cục cảm ứng là prototype cho màn hình ngang,
+sprite cây anh đào tách nền và va chạm gốc cây, vùng cản ngăn tương tác xuyên tường. Bàn phím/chuột và cảm ứng đi qua cùng lớp lệnh InputMap; bố cục cảm ứng là prototype cho màn hình ngang,
 chưa phải bản xuất Android đã nghiệm thu. Xem [thiết kế và kiểm chứng](docs/ui-product-slice.md)
 và [trạng thái triển khai](docs/implementation-status.md).
 

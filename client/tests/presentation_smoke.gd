@@ -35,8 +35,8 @@ func check_map_assets(world: GameMap) -> void:
 	for actor in world.get_node("Actors").get_children():
 		if actor is MapProp:
 			props_count += 1
-			var texture: AtlasTexture = actor.get_node("Sprite").texture
-			check(texture != null and texture.region.size == Vector2(128, 128), "Landmarks retain full source resolution")
+			var texture: Texture2D = actor.get_node("Sprite").texture
+			check(texture != null and texture.get_size() == Vector2(128, 128), "Landmarks retain full source resolution")
 	check(props_count >= 7, "Map has authored landmarks: " + world.map_id)
 	check(not world.get_node("Background").visible, "No painted PNG fallback: " + world.map_id)
 
@@ -51,7 +51,9 @@ func _run() -> void:
 	check(not main.can_walk(Vector2(240, 304)), "House footprint must block walking")
 	check(main.can_walk(Vector2(768, 576)), "An Khê spawn must be walkable")
 	check(main.map_world.map_size_tiles == Vector2i(48, 36), "An Khê uses the agreed map size")
-	check(main.map_world.get_node("CollisionRoot").get_child_count() == 12, "An Khê blockers follow landmark footprints and the east stream")
+	check(main.map_world.get_node("CollisionRoot").get_child_count() == 13, "An Khê blockers follow landmark footprints and the east stream")
+	check(not main.can_walk(Vector2(19.5 * 32, 32.5 * 32)), "Sakura trunk has a compact footprint")
+	check(main.can_walk(Vector2(18.5 * 32, 32.5 * 32)), "Player can pass beside the sakura canopy")
 	check(main.can_walk(Vector2(10 * 32, 8 * 32)) and main.can_walk(Vector2(2 * 32, 17 * 32)), "Old oversized invisible building blockers are gone")
 	check(not main.can_walk(Vector2(38 * 32, 18 * 32)), "Market stall has a physical footprint")
 	check(main.player is CharacterBody2D, "Village player uses physics movement")
@@ -70,6 +72,8 @@ func _run() -> void:
 	check(hud.get_node("Quest/Body").autowrap_mode == TextServer.AUTOWRAP_WORD, "Long quest objectives wrap inside the HUD panel")
 	check(not main.map_world._has_clear_interaction_path(Vector2(8 * 32, 5 * 32), Vector2(8 * 32, 13 * 32)), "Building collision also blocks interactions through its walls")
 	var sakura: MapProp = main.map_world.get_node("Actors/ak_prop_sakura") as MapProp
+	check(not sakura.get_node("Sprite").texture is AtlasTexture, "Sakura uses an independent transparent cutout")
+	check(sakura.get_node("Sprite").texture.get_image().detect_alpha() != Image.ALPHA_NONE, "Sakura cutout has an alpha channel")
 	main.map_world.update_player_context(Vector2(19 * 32, 31 * 32))
 	check(sakura.get_node("Sprite").modulate.a < 1.0, "Tall An Khê prop fades when it covers the player")
 	main.map_world.update_player_context(Vector2(19 * 32, 34 * 32))
@@ -80,6 +84,10 @@ func _run() -> void:
 	check(bag.slot_buttons.size() == 24, "Inventory requires exactly 24 visual slots")
 	check(hud.get_node("Hotbar").get_child_count() == 12, "Six buttons + six key labels")
 	check(not bag.visible and not main.dock.visible, "Modals start closed")
+	Input.action_press("move_right")
+	check(main._movement().x > 0.9, "Keyboard InputMap action drives shared movement")
+	Input.action_release("move_right")
+	check(main._movement() == Vector2.ZERO, "Releasing keyboard action stops movement")
 	main.touch_layout_enabled = true
 	hud.set_touch_layout(true)
 	var touch: TouchControls = hud.touch_controls
@@ -94,6 +102,7 @@ func _run() -> void:
 	finger_drag.position = TouchControls.JOYSTICK_CENTER + Vector2(48, 0)
 	touch._input(finger_drag)
 	check(touch.direction.x > 0.9 and main._movement().x > 0.9, "Touch drag drives the shared movement vector")
+	check(main.game_input.aim(main._movement(), true, Vector2.ZERO, Vector2.ZERO).x > 0.9, "Touch direction drives the shared aim command")
 	var other_finger := InputEventScreenTouch.new()
 	other_finger.index = 3
 	other_finger.pressed = true

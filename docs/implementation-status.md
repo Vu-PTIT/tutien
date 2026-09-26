@@ -1,8 +1,8 @@
-# Tiến độ triển khai và thứ tự mới — cập nhật 24/09/2026
+# Tiến độ triển khai và thứ tự mới — cập nhật 26/09/2026
 
-> Ghi chú runtime map 26/09: nhánh `feat/inventory-rewards` có bốn layout TileMap từ atlas 32 px và prop riêng 128 px, 21 POI cục bộ, cổng có điểm đến và smoke test tuyến. An Khê đã chỉnh nền/collision, HUD có minimap theo dữ liệu map và bố cục touch prototype. Foreground nghệ thuật đầy đủ, fog-of-war, quest/unlock, lưu trạng thái server và bản xuất mobile chưa hoàn thành. An Khê giữ 48×36; kích thước ba map còn lại vẫn chưa chốt.
+> Mốc tích hợp PR #3: bốn layout TileMap từ atlas 32 px, prop Y-sort riêng, 21 POI cục bộ, cổng có điểm đến và smoke test tuyến. An Khê có nền/collision chỉnh theo ảnh runtime, minimap từ dữ liệu map, sprite cây tách nền, gốc cây có va chạm và bố cục touch thử nghiệm. Bàn phím/chuột và cảm ứng dùng chung `GameInput`/InputMap. Foreground toàn map, fog-of-war, quest/unlock server, lưu trạng thái và bản xuất mobile chưa hoàn thành. An Khê giữ 48×36; kích thước ba map còn lại chưa chốt.
 
-Các bảng dưới đây tiếp tục ghi trạng thái tại mốc mã nguồn lịch sử được nêu; ghi chú runtime map phía trên là cập nhật mới nhất.
+Các mục 1, 5–7 bên dưới ghi lại ảnh chụp lịch sử của các mốc cũ; xem ghi chú trên và [đối chiếu nhánh kinh tế](economy-branch-review-2026-09-26.md) để xác định trạng thái tích hợp hiện tại.
 
 ## 1. Mốc mã nguồn đã đối chiếu
 
@@ -26,7 +26,8 @@ Không lấy mô tả trong hội thoại hoặc file thiết kế làm bằng c
 | Tu vi/đột phá | Chưa có runtime |
 | Node, vườn, craft, shop | Chưa có runtime |
 | Quest/chương/bản đồ gameplay | Có thiết kế; chưa có luồng chơi hoàn chỉnh |
-| Bản cập nhật tiến trình 21/09 | Tài liệu + dữ liệu mẫu + validator, không đổi các trạng thái trên |\n| Cross-platform PC + mobile 22/09 | Có plan kiến trúc/UI/input; chưa phải runtime mobile đã hoàn thành |
+| Bản cập nhật tiến trình 21/09 | Tài liệu + dữ liệu mẫu + validator, không đổi các trạng thái trên |
+| Cross-platform PC + mobile 22/09 | Có plan kiến trúc/UI/input; nay có lát cắt InputMap/touch HUD, chưa có mobile export |
 
 Chi tiết: [combat](combat-prototype.md), [tài sản](inventory-and-rewards.md),
 [nhật ký](project-history.md), [đặc tả mới](game-design/progression-pve-spec.md).
@@ -43,7 +44,9 @@ Các mốc mới kế thừa nền đã có, không làm lại combat/tài sản
 | P4 — vòng Trúc Âm | Node, shop nhỏ, garden/craft, 004–006, Độc Chu, đột phá tầng 2 | P3 + UI/kinh tế nhất quán | Chuẩn bị → đi rừng/đường tránh → về → mở Hộ Thân, có nguồn thay thế |
 | P5 — chương đầu | 007–012, Thạch Cạn/Cổ Tỉnh, quái/công thức còn lại, tầng 3–4 | P4 | Solo/co-op, hạ/niêm phong, đủ XP và không kẹt; đo nhịp/tiêu hao thật |
 
-CP-1 đến CP-3 của G0.5 phải đủ trước khi P1 được xem là hoàn thành; CP-4 phải đi cùng P2 vì inventory cần hai layout dùng chung presenter/state.\n\nP2 có thể dùng fixture Luyện Khí trong test; không thay trạng thái người chơi thật
+CP-1 đến CP-3 của G0.5 phải đủ trước khi P1 được xem là hoàn thành; CP-4 phải đi cùng P2 vì inventory cần hai layout dùng chung presenter/state.
+
+P2 có thể dùng fixture Luyện Khí trong test; không thay trạng thái người chơi thật
 hoặc thêm debug grant RPC vào production. P4 phải có bán da/mua nước/thuốc và craft,
 không nghiệm thu economy khi loot chỉ nằm trong túi.
 
@@ -108,5 +111,6 @@ The four map prototypes use reusable biome `TileSet` atlases and authored layout
 - Ảnh runtime CI phát hiện spawn An Khê nằm trên dải nước dù collision cho đi. Ground rows đã được vẽ lại bằng tile sẵn có: quảng trường đá ở giữa, các lối đất tới hiệu thuốc/chợ/cổng, suối liên tục ở mép đông và blocker khớp vùng nước. Blocker của công trình được thu về gần chân vật thể, bỏ tường vô hình ở góc tây nam và thêm chân sạp chợ. Smoke test kiểm tra loại tile tại spawn, suối và các vùng cản.
 - Minimap HUD lấy màu nền, đường, nước, vật cản và điểm tương tác từ cùng JSON layout/catalog với runtime. Ảnh world cũ chỉ còn dùng để xem ý tưởng tuyến trên panel, tránh hiển thị một địa hình khác dưới marker vị trí.
 - Nhãn địa danh chỉ hiện khi đến gần (5 tile); mục tiêu khởi đầu đọc từ catalog thay vì text tĩnh trong scene, nên PC và touch có cùng lời hướng dẫn đúng.
-- Chưa có scene mobile export và playtest trên thiết bị thật. PNG world vẫn chỉ dùng preview/minimap; art props hiện còn nền cỏ/đất trong ô atlas, cần làm cutout trong lượt art tiếp theo.
+- Chưa có scene mobile export, safe-area theo notch và playtest trên thiết bị thật. PNG world chỉ dùng preview tuyến; minimap lấy ô runtime. Phần lớn art props vẫn còn nền cỏ/đất trong ô atlas; cây anh đào An Khê là cutout đầu tiên.
+- `client/scripts/game_input.gd` gom bind phím trong InputMap và đổi keyboard/mouse/touch thành action, movement, aim chung. `main.gd` chỉ xử lý lệnh semantic; phím có thể đổi ở InputMap mà không sửa gameplay.
 - Kiểm tra tĩnh: `node scripts/check-pixel-scenes.cjs` và `node scripts/check-png-integrity.cjs`. Godot import, runtime và `client/tests/presentation_smoke.gd` phải được chạy ở CI sau khi push; không coi kiểm tra tĩnh là bằng chứng chạy engine.

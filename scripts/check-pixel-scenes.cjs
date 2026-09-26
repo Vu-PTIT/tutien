@@ -136,6 +136,13 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
   }
 }
 assert.ok(gameMap.includes('_build_props(layout)') && gameMap.includes('MAP_PROP_SCENE'), 'Map decorative props are data-driven and Y-sorted');
+const sakura=path.join(root,'assets/pixel/props/an_khe_sakura.png');
+const sakuraPng=fs.readFileSync(sakura);
+assert.equal(sakuraPng.readUInt32BE(16),128,'Standalone sakura has 128 px width');
+assert.equal(sakuraPng.readUInt32BE(20),128,'Standalone sakura has 128 px height');
+assert.equal(sakuraPng[25],6,'Standalone sakura must have transparent RGBA pixels');
+assert.ok(JSON.parse(read('data/maps/an_khe.json')).props.some(p=>p.name==='ak_prop_sakura' && p.texture_path==='res://assets/pixel/props/an_khe_sakura.png'));
+assert.ok(read('scripts/main.gd').includes('game_input.handle_event(') && !read('scripts/main.gd').includes('KEY_'), 'Gameplay commands are separate from hardcoded PC keys');
 assert.ok(gameMap.includes('_build_interactables()') && gameMap.includes('_build_water_ripples()'), 'Map POIs and water motion are data-driven');
 assert.ok(main.includes('func _travel_to_map(map_id: String, arrival_tiles: Array = [])') && main.includes('target_arrival_tiles'), 'Map gates load their configured arrival point');
 assert.ok(gameMap.includes('room_lock'), 'Cổ Tỉnh camera locks by room');
