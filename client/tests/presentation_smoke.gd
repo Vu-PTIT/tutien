@@ -107,6 +107,7 @@ func _run() -> void:
 	main.dock.hide()
 	await process_frame
 	touch.set_combat_mode(false)
+	await _capture("an-khe-touch-runtime.png")
 	main.touch_layout_enabled = false
 	hud.set_touch_layout(false)
 	var map_panel: WorldMapPanel = hud.get_node("WorldMap")

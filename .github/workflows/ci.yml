@@ -70,3 +70,13 @@ jobs:
         run: |
           timeout 90 /tmp/godot/engine --headless --path client --script res://tests/presentation_smoke.gd 2>&1 | tee /tmp/presentation.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/presentation.log
+      - name: Capture actual Godot layout on desktop and touch
+        run: |
+          mkdir -p /tmp/tutien-previews
+          timeout 90 xvfb-run -a /tmp/godot/engine --path client --script res://tests/presentation_smoke.gd -- --capture-dir=/tmp/tutien-previews
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-layout-previews
+          path: /tmp/tutien-previews/*.png
+          if-no-files-found: warn
