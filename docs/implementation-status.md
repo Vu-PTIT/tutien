@@ -1,6 +1,6 @@
 # Tiến độ triển khai và thứ tự mới — cập nhật 27/09/2026
 
-> P2 đang ở PR #8 (`feat/p2-son-tru-settlement` → `main`), trên nền `5d45df9` (P1 đã merge qua PR #5–#6). Server build và 80/80 unit test đạt; scene audit gồm 11 scene/79 resource refs và 22 PNG qua kiểm tra tĩnh. Sơ đồ tuyến đã đổi sang một panorama nối bốn khu. GitHub Actions run #125 đạt toàn bộ gate Docker/Nakama/PostgreSQL và Godot 4.6.1, gồm inventory/settlement, combat/PvE, presentation và ảnh desktop/touch. PR chưa merge; playtest trên thiết bị thật vẫn còn.
+> P2 nằm ở PR #8 (`feat/p2-son-tru-settlement` → `main`), head `e8348b8`, trên nền `5d45df9` (P1 đã merge qua PR #5–#6). Server build và 80/80 unit test đạt; scene audit gồm 11 scene/79 resource refs và 22 PNG qua kiểm tra tĩnh. Sơ đồ tuyến là một panorama nối bốn khu. GitHub Actions run #127 đạt các gate Docker/Nakama/PostgreSQL và Godot 4.6.1, gồm inventory/settlement, combat/PvE, presentation và ảnh desktop/touch. PR còn mở, chưa merge; playtest thiết bị thật vẫn còn.
 
 Nền map trước đó gồm bốn layout TileMap từ atlas 32 px, prop Y-sort riêng, 21 POI cục bộ, cổng có điểm đến và smoke test tuyến. An Khê có nền/collision chỉnh theo ảnh runtime, minimap từ dữ liệu map, sprite cây tách nền, gốc cây có va chạm và bố cục touch thử nghiệm. Bàn phím/chuột và cảm ứng dùng chung `GameInput`/InputMap. Foreground toàn map, fog-of-war, quest/unlock server, lưu trạng thái map và bản xuất mobile chưa hoàn thành.
 
@@ -8,7 +8,7 @@ Nền map trước đó gồm bốn layout TileMap từ atlas 32 px, prop Y-sort
 
 - `main` tại `5d45df95b278583b688f2cefa16260dbe3eae3b9` đã có P1 Sơn Trư và tài liệu nghiệm thu; P2 tiếp tục trên nhánh feature riêng.
 - P2 gồm profile schema 3 và migration schema 2, equip/use/discard server-side, trận solo Sơn Trư authoritative, XP/loot, settlement outbox chờ nhận khi đầy túi, HP checkpoint và HUD dùng cùng input PC/touch.
-- Commit triển khai P2 chính là `14ee8fa`, kèm sửa lối vào map và cập nhật tài liệu; nhánh đã push và PR #8 đang mở, chưa merge. Kết quả unit/static local không thay cho integration smoke hoặc Godot runtime.
+- P2 gồm các commit trên nhánh đã push; head hiện tại là `e8348b8`, PR #8 đang mở và chưa merge. CI run #127 xác nhận integration/runtime; người chơi vẫn cần playtest trên thiết bị thật.
 - Không nhập `feat/economy-balance-v1` vào runtime; xem [đối chiếu nhánh kinh tế](economy-branch-review-2026-09-26.md).
 
 ## 2. Có và chưa có
@@ -34,8 +34,8 @@ Chi tiết: [combat](combat-prototype.md), [tài sản/P2](inventory-and-rewards
 | Mốc | Trạng thái | Phạm vi/điều kiện |
 | --- | --- | --- |
 | P1 — một Sơn Trư | Runtime đã có trong lát cắt P2 | Đọc đòn/né/phản công; server xác nhận |
-| P2 — chuyến săn có thành quả | Code và unit gate hoàn thành; Docker/Godot CI còn chờ | Nhận đúng một lần; đầy túi giữ thưởng; restart còn; đồ và HP có tác dụng/lưu |
-| P3 — mở đầu nhân vật | Chưa làm | Quest runtime 001–003, dẫn khí, Phi Nhận, UI mục tiêu; tài khoản mới mortal → LK1 |
+| P2 — chuyến săn có thành quả | CI hoàn tất trên PR #8; PR chưa merge | Nhận đúng một lần; đầy túi giữ thưởng; restart còn; đồ và HP có tác dụng/lưu |
+| P3 — mở đầu nhân vật | Chưa làm; là mốc kế tiếp sau P2 | Quest runtime 001–003, dẫn khí, Phi Nhận, UI mục tiêu; tài khoản mới mortal → LK1 |
 | P4 — vòng Trúc Âm | Chưa làm | Node, shop nhỏ, garden/craft, 004–006, Độc Chu và đột phá tầng 2 |
 | P5 — chương đầu | Chưa làm | 007–012, Thạch Cạn/Cổ Tỉnh, quái/công thức còn lại, tầng 3–4 |
 
@@ -62,10 +62,11 @@ cùng lệnh. `scripts/inventory-smoke.mjs` đã được mở rộng cho Docker
 PostgreSQL, migration schema 2, equip/use/discard, đầy túi và settlement restart.
 `client/tests/inventory_smoke.gd` kiểm tra panel nhận starter và trang bị;
 `client/tests/combat_smoke.gd` còn mở trận PvE thật để kiểm tra tell/lao/hồi thế.
-Môi trường local hiện không có Docker hoặc Godot executable. GitHub Actions run #125
+Môi trường local hiện không có Docker hoặc Godot executable. GitHub Actions run
+[36304883102](https://github.com/Vu-PTIT/tutien/actions/runs/36304883102) (#127)
 đã chạy thành công Docker/Nakama/PostgreSQL, Godot 4.6.1 import/runtime, smoke UI,
-inventory settlement và trận combat/PvE. Run trước đó phát hiện lỗi capture và auth
-quota; hai lỗi đã được sửa trước run nghiệm thu này.
+inventory settlement và trận combat/PvE. Run #125 là kết quả trước đó; các lỗi
+capture, auth quota và presentation phát hiện trong những lượt CI trước đã được sửa.
 
 Mốc combat local từng đạt 42/42 unit test; Godot 4.6.1 import/chạy scene.
 Mốc tài sản đã ghi 64 unit test và CI run
@@ -73,8 +74,9 @@ Mốc tài sản đã ghi 64 unit test và CI run
 thành công trên `a0ad66e`, gồm Nakama/PostgreSQL, inventory/restart, social và Godot.
 Đây là kết quả **lịch sử của mốc đó**, không phải lần chạy lại do sửa tài liệu này.
 
-Các kết quả trên của commit cũ là lịch sử, không thay thế gate của working tree
-P2 hoặc playtest thiết bị. CI live smoke sẽ kiểm tra server/client adapter; nó cũng
+Các kiểm tra local trong turn rà soát này đạt: `npm test --prefix server` 80/80,
+scene audit 11 scene/79 refs và PNG integrity 22/22. Godot/Docker không có sẵn tại
+local; CI run #127 là bằng chứng runtime/integration cho head hiện tại. Kết quả này
 không thay cho playtest mobile thật.
 
 ## 6. Tài liệu và việc còn thiếu
@@ -95,10 +97,14 @@ không chạy được và CI ban đầu chưa có kết quả. Sau khi người
 nhánh đã có trên GitHub và CI được ghi ở mục 5. Không dùng cảnh báo cũ để kết luận
 inventory hiện chưa từng qua integration test.
 
-Bản P2 đã được push lên `feat/p2-son-tru-settlement` và có PR #8 vào `main`, trên
-nền `5d45df9`. Workflow ban đầu phát hiện lỗi suy luận kiểu GDScript và smoke UI;
-đã sửa lỗi parser, các lỗi presentation/inventory còn lại đang được xử lý trên PR.
-Chỉ đánh dấu P2 được nghiệm thu sau khi CI Godot/Nakama/PostgreSQL đạt.
+P2 đã được push lên `feat/p2-son-tru-settlement` và có PR #8 vào `main`, trên nền
+`5d45df9`. Head `e8348b8` có CI run #127 xanh; PR vẫn mở và chưa merge. P2 đạt
+điều kiện CI, còn playtest thiết bị là phần xác nhận tiếp theo.
+
+P3 phải bắt đầu bằng hợp đồng event thế giới đáng tin cậy: NPC/POI và chuyển map
+hiện vẫn được điều khiển cục bộ. Không cấp XP, vật phẩm hoặc mở cảnh giới từ một
+event vị trí do client tự khai. Sau khi có nguồn event server-authoritative, triển
+khai chuỗi 001–003, commit realm/skill/insight cùng thưởng một lần, rồi nối UI mục tiêu.
 
 
 ### Authored TileMap recovery — 24/09/2026

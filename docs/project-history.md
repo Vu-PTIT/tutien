@@ -347,7 +347,7 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 
 ## 27/09/2026 — Nối sơ đồ tuyến và giữ settlement khi storage tạm lỗi
 
-- Nhánh P2 đã rebase trên `main` `5d45df9` và commit local `14ee8fa`; chưa push hoặc merge.
+- Snapshot trước khi push: nhánh P2 đã rebase trên `main` `5d45df9`, commit `14ee8fa`.
 - Thay bốn nút vuông/chevron trên overlay bằng panorama tổng quan liền mạch; tên vùng và điểm chọn là Control riêng đặt trên từng đoạn tuyến. Preview từng map và chuyển map cục bộ vẫn còn.
 - Tái sử dụng map TileMap/props/cổng hiện có, phông đấu trường và sprite Sơn Trư; không tạo lại các map gameplay hay nhân vật.
 - Settlement polling giữ nguyên `reward_pending` khi storage read tạm lỗi; test kiểm tra phục hồi sau khi backend đọc lại được.
@@ -358,4 +358,4 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 - Mở PR #8 `feat/p2-son-tru-settlement` → `main`; GitHub tree được đối chiếu trùng với tree local, đủ 41 file thay đổi.
 - CI xác nhận server build/unit, Docker/Nakama setup và test social chạy; Godot 4.6.1 phát hiện biến `protected` cần kiểu tường minh. Bản sửa đã đưa lên PR.
 - Lần chạy tiếp theo còn bắt được alias mutable giữa `selected_slot` và dữ liệu túi demo cùng phép so sánh `Vector2`/`Vector2i`; đã sửa hai lỗi và thêm thông tin lỗi rõ hơn cho inventory smoke.
-- GitHub Actions run #125 đã qua inventory settlement, combat/PvE, presentation và Godot 4.6.1; PR #8 vẫn mở, chưa merge. Playtest trên mobile/thiết bị thật còn lại.
+- GitHub Actions run #127 (`36304883102`) đã qua inventory settlement, combat/PvE, presentation và Godot 4.6.1; PR #8 vẫn mở, chưa merge. Playtest trên mobile/thiết bị thật còn lại.

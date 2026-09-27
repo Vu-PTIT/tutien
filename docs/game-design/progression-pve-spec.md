@@ -1,7 +1,7 @@
 # Đặc tả tiến trình và vòng PvE — bản cập nhật 21/09/2026
 
 **Phạm vi:** sửa thiết kế trên nền `feat/inventory-rewards` tại `05f5dd0eb9df36d5790e268879b8fbe3699994ea`.
-**Trạng thái tài liệu:** các ghi chú “chưa triển khai” bên dưới mô tả snapshot thiết kế ngày 21/09. P1/P2 có runtime trong working tree hiện tại; xem [tiến độ triển khai](../implementation-status.md) và [hợp đồng P2](../inventory-and-rewards.md). Chưa có kết quả live CI hoặc playtest thiết bị cho working tree đó.
+**Trạng thái tài liệu:** các ghi chú “chưa triển khai” bên dưới mô tả snapshot thiết kế ngày 21/09. P1/P2 có runtime trên nhánh PR #8; head `e8348b8` đã qua CI run #127. Xem [tiến độ triển khai](../implementation-status.md) và [hợp đồng P2](../inventory-and-rewards.md). Playtest thiết bị thật chưa hoàn tất.
 **Bản dữ liệu:** `progression-pve-prototype-1`.
 
 ## 1. Quyết định sản phẩm
