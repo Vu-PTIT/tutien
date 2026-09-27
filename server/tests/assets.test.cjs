@@ -109,3 +109,53 @@ test('same operation is scoped to each authenticated account',()=>{
   const s=setup();claim(s);const other=s.rpc('inventory_claim_starter',{operationId:op},'22222222-2222-4222-8222-222222222222');
   assert.equal(other.replayed,false);assert.equal(other.profile.spiritStones,12);
 });
+function luyenKhi(s, stage=1) {
+  const profile=s.rpc('get_profile');profile.realm='luyen_khi';profile.realmStage=stage;
+  s.put(profile);return profile;
+}
+test('repeatable XP caps at two next thresholds; stage four and mortal keep loot without XP',()=>{
+  const one=setup();luyenKhi(one,1);
+  const first=grant(one,'repeatable_xp_001','pve:boar:one',{spiritStones:0,cultivationXp:700,items:[{itemId:'it_boar_hide',quantity:1}]});
+  assert.equal(first.profile.cultivationXp,600);assert.equal(first.receipt.granted.cultivationXp,600);
+  const two=setup();luyenKhi(two,2);
+  const second=grant(two,'repeatable_xp_002','pve:boar:two',{spiritStones:0,cultivationXp:1500,items:[{itemId:'it_boar_hide',quantity:1}]});
+  assert.equal(second.profile.cultivationXp,1200);assert.equal(second.receipt.granted.cultivationXp,1200);
+  const four=setup();luyenKhi(four,4);
+  const max=grant(four,'repeatable_xp_004','pve:boar:four',{spiritStones:0,cultivationXp:10,items:[{itemId:'it_boar_hide',quantity:1}]});
+  assert.equal(max.profile.cultivationXp,0);assert.equal(max.receipt.granted.cultivationXp,0);
+  assert.equal(max.profile.inventory[0].itemId,'it_boar_hide');
+  const mortal=setup();
+  const training=grant(mortal,'repeatable_xp_000','pve:boar:mortal',{spiritStones:0,cultivationXp:10,items:[{itemId:'it_boar_hide',quantity:1}]});
+  assert.equal(training.profile.cultivationXp,0);
+});
+test('equip toggles server-owned instances and has idempotent mutation receipts',()=>{
+  const s=setup();
+  const starter=claim(s),armor=starter.profile.inventory.find(item=>item.itemId==='it_cloth_armor');
+  const equipped=s.rpc('inventory_equip',{operationId:'equip_armor_001',instanceId:armor.instanceId});
+  assert.equal(equipped.profile.equipped.armor,armor.instanceId);assert.equal(equipped.replayed,false);
+  const revision=equipped.profile.revision;
+  const replay=s.rpc('inventory_equip',{operationId:'equip_armor_001',instanceId:armor.instanceId});
+  assert.equal(replay.replayed,true);assert.equal(replay.profile.revision,revision);
+  const removed=s.rpc('inventory_equip',{operationId:'unequip_armor_001',instanceId:armor.instanceId});
+  assert.equal(removed.profile.equipped.armor,'');
+});
+test('healing consumes one Hồi Nguyên Hoàn, respects HP cap and replays once',()=>{
+  const s=setup();claim(s);const p=s.state();p.hp=65;s.put(p);
+  const healed=s.rpc('inventory_use',{operationId:'use_heal_001',itemId:'it_heal_pill'});
+  assert.equal(healed.profile.hp,100);assert.equal(healed.profile.inventory.find(item=>item.itemId==='it_heal_pill').quantity,1);
+  const replay=s.rpc('inventory_use',{operationId:'use_heal_001',itemId:'it_heal_pill'});
+  assert.equal(replay.replayed,true);assert.equal(replay.profile.hp,100);
+  rejectsCode(()=>s.rpc('inventory_use',{operationId:'use_heal_002',itemId:'it_heal_pill'}),9);
+});
+test('discard removes only requested ordinary items and protects bound/equipped gear',()=>{
+  const s=setup();claim(s);
+  const first=s.rpc('inventory_discard',{operationId:'discard_water_01',itemId:'it_water',quantity:2});
+  assert.equal(first.profile.inventory.find(item=>item.itemId==='it_water').quantity,2);
+  const armor=s.state().inventory.find(item=>item.itemId==='it_cloth_armor');
+  s.rpc('inventory_equip',{operationId:'equip_armor_002',instanceId:armor.instanceId});
+  rejectsCode(()=>s.rpc('inventory_discard',{operationId:'discard_armor_01',itemId:'it_cloth_armor',quantity:1,instanceId:armor.instanceId}),9);
+  const profile=s.state();grant(s,'grant_bound_01','fixture:quest',{spiritStones:0,items:[{itemId:'it_mach_ban',quantity:1}]});
+  const bound=s.state().inventory.find(item=>item.itemId==='it_mach_ban');
+  rejectsCode(()=>s.rpc('inventory_discard',{operationId:'discard_bound_01',itemId:'it_mach_ban',quantity:1,instanceId:bound.instanceId}),9);
+  assert.equal(s.state().spiritStones,profile.spiritStones);
+});

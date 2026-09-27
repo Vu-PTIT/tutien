@@ -1,7 +1,7 @@
 # Đặc tả tiến trình và vòng PvE — bản cập nhật 21/09/2026
 
 **Phạm vi:** sửa thiết kế trên nền `feat/inventory-rewards` tại `05f5dd0eb9df36d5790e268879b8fbe3699994ea`.
-**Trạng thái:** thiết kế để triển khai, chưa phải tính năng runtime hoặc kết quả playtest.
+**Trạng thái tài liệu:** các ghi chú “chưa triển khai” bên dưới mô tả snapshot thiết kế ngày 21/09. P1/P2 có runtime trên nhánh PR #8; head `e8348b8` đã qua CI run #127. Xem [tiến độ triển khai](../implementation-status.md) và [hợp đồng P2](../inventory-and-rewards.md). Playtest thiết bị thật chưa hoàn tất.
 **Bản dữ liệu:** `progression-pve-prototype-1`.
 
 ## 1. Quyết định sản phẩm
@@ -21,8 +21,10 @@ không thêm ba thanh XP mới. Không có “cấp nhân vật” trùng chức
 
 ## 2. Phân biệt hiện có và sẽ làm
 
-Mốc nguồn đã có backend xã hội, đấu tập authoritative và nền inventory/reward.
-PvE, dùng/trang bị đồ, quest và tu luyện chưa được triển khai ở mốc này.
+Tại snapshot thiết kế, mốc nguồn có backend xã hội, đấu tập authoritative và nền
+inventory/reward; PvE và dùng/trang bị đồ chưa được triển khai. Working tree P2 đã
+thêm Sơn Trư solo, reward XP/loot, equip/consume/dọn túi và settlement bền vững;
+quest runtime, tu luyện/đột phá vẫn ở mốc sau.
 Xem [tiến độ](../implementation-status.md) và [hợp đồng tài sản](../inventory-and-rewards.md).
 
 Không đổi combat đấu tập hiện hành chỉ vì bảng thiết kế này có thêm chỉ số quái.

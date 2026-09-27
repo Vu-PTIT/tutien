@@ -32,7 +32,7 @@ jobs:
           timeout 120 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/social_smoke.gd
       - name: Test inventory panel against Nakama
         run: timeout 90 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/inventory_smoke.gd
-      - name: Test two-player combat against Nakama
+      - name: Test sparring and solo PvE against Nakama
         run: timeout 90 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/combat_smoke.gd
       - name: Test Sơn Trư PvE encounter against Nakama
         run: timeout 90 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/pve_son_tru_smoke.gd

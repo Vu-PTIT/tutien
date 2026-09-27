@@ -134,7 +134,8 @@ Không được từ đây suy ra mọi tuyến đều đáng chơi hoặc econo
 
 `starter:v1`: 12 linh thạch, 2 hạt Cam Lộ, 4 nước, 2 Hồi Nguyên Hoàn, 1 áo vải.
 Không đổi source/version để cấp lại đồ; không tặng Mạch Bàn trước quest.
-Đây là gói đã định nghĩa ở mốc nguồn, còn consume/equip/garden chưa có runtime.
+Đây là gói giữ nguyên từ mốc nguồn. P2 hiện đã có equip/consume/dọn túi; garden,
+craft và mua bán chưa có runtime.
 
 Mẻ hướng dẫn dùng một hạt/nước, thu 4 Cam Lộ; một viên hồi phục dùng 2 Cam Lộ,
 1 nước, phí 2. Dù vẫn còn thuốc starter, quest 005 dạy tự luyện một viên;

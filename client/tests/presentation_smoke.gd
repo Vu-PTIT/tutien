@@ -32,6 +32,42 @@ func _capture_touch_layout(main, filename: String) -> void:
 	main.touch_layout_enabled = false
 	main.hud.set_touch_layout(false)
 
+func _capture_son_tru_preview(main) -> void:
+	main.inventory_panel.hide()
+	main.dock.hide()
+	main.api.match_kind = "pve_son_tru"
+	main.api.match_id = "presentation-preview"
+	main.user_id = "presentation-player"
+	main.api.snapshot = {
+		"version": 1, "mode": "pve_son_tru", "epoch": "preview", "tick": 20, "phase": "active",
+		"players": [{"id": main.user_id, "x": 405, "y": 390, "hp": 82, "faceX": 1, "faceY": 0}],
+		"boar": {"id": "en_boar", "x": 690, "y": 390, "hp": 60, "maxHp": 60, "faceX": -1, "faceY": 0, "mode": "tell"}
+	}
+	main._snapshot(main.api.snapshot)
+	main._present_fighters(0.05)
+	await process_frame
+	check(main.get_node("Arena/SonTruBackground").texture != null, "Sơn Trư arena uses its generated map art")
+	check(main.boar_sprite.visible and main.boar_sprite.texture.get_size() == Vector2(128, 128), "PVE encounter presents the transparent boar sprite")
+	check(main.boar_sprite.position.distance_to(Vector2(446, 234)) < 0.01, "Server boar position maps into the arena viewport")
+	check(main.hud.get_node("Location/Title").text == "BÃI SƠN TRƯ", "PvE HUD identifies the hunting area")
+	await _capture("son-tru-runtime.png")
+	await _capture_touch_layout(main, "son-tru-touch-runtime.png")
+	for actor: Node2D in main.fighters.values():
+		actor.queue_free()
+	main.fighters.clear()
+	main.api.match_id = ""
+	main.api.match_kind = ""
+	main.api.snapshot = {}
+	main.last_phase = ""
+	main.boar_sprite.hide()
+	main.get_node("Arena").hide()
+	main.map_world.show()
+	main.village_camera.enabled = true
+	main.touch_controls.set_combat_mode(false)
+	main.hud.get_node("Minimap").show()
+	main.hud.configure_map(main.map_world.map_data)
+	main._update_buttons()
+
 func check_quest_visible(hud: PixelHUD) -> void:
 	var body: Label = hud.get_node("Quest/Body")
 	check(body.get_visible_line_count() == body.get_line_count(), "Quest text must fit the HUD on " + hud.get_node("Location/Title").text)
@@ -146,6 +182,11 @@ func _run() -> void:
 	check(not map_panel.visible, "World map starts closed")
 	check(map_panel.map_entries.size() == 4, "World map reads the four-map MVP catalog")
 	check(map_panel.route_buttons.size() == 4, "World map route has four selectable maps")
+	check(map_panel.route_overview.texture != null, "World map displays one continuous route overview")
+	check(map_panel.route_buttons["m_an_khe"].position.x < map_panel.route_buttons["m_truc_am"].position.x and
+		map_panel.route_buttons["m_truc_am"].position.x < map_panel.route_buttons["m_thach_can"].position.x and
+		map_panel.route_buttons["m_thach_can"].position.x < map_panel.route_buttons["m_co_tinh"].position.x,
+		"Route map selection points follow the connected journey order")
 	check(map_panel.travel_button != null, "World map has a local travel action")
 	check(hud.get_node("Vitals/Qi").value == 0, "Do not invent a Qi value")
 	var minimap_image: Image = hud.get_node("Minimap/Map").texture.get_image()
@@ -189,6 +230,7 @@ func _run() -> void:
 	main._action("map")
 	await process_frame
 	check(map_panel.visible, "Map action opens route panel")
+	await _capture("world-route-overview.png")
 	map_panel.route_buttons["m_truc_am"].emit_signal("pressed")
 	check(map_panel.selected_id == "m_truc_am", "Route selection updates selected map")
 	check(map_panel.info.text.contains("Ven Suối"), "Map selection shows zone information")
@@ -287,40 +329,9 @@ func _run() -> void:
 	check(main.dock.get_node("Create").disabled, "Cannot create without connection")
 	main._action("inventory")
 	check(not main.dock.visible and bag.visible, "Only one modal open")
-	main._action("inventory")
-	check(not bag.visible, "Close the inventory before capturing the Sơn Trư encounter")
+	await _capture_son_tru_preview(main)
 	var atlas := load("res://assets/pixel/cultivator.png") as Texture2D
 	check(atlas.get_image().detect_alpha() != Image.ALPHA_NONE, "Sprite must be transparent")
-	check(main._load_map("m_truc_am"), "Load Trúc Âm for the PvE entrance check")
-	var boar_sign: MapInteractable = main.map_world.get_interactable("ta.trail.boar_sign")
-	check(boar_sign != null and boar_sign.action_kind == "encounter", "Sơn Trư sign starts a server encounter")
-	check(boar_sign != null and main.can_walk(boar_sign.position), "Bãi Sơn Trư sign is on the walkable path")
-	if boar_sign != null:
-		check(main.map_world.update_player_context(boar_sign.position) == "Bãi Sơn Trư", "Encounter entrance is in the Bãi Sơn Trư area")
-		main.player.position = boar_sign.position
-		main._action("interact")
-		check(not main.local_map_flags.has("ta.trail.boar_sign"), "Opening the encounter does not create local reward progress")
-	main.user_id = "qa_player"
-	main.api.match_id = "pve-preview"
-	main.api.match_kind = "pve_son_tru"
-	var pve_preview := {
-		"version": 1, "mode": "pve_son_tru", "epoch": "preview", "tick": 12, "phase": "active", "phaseAt": 0,
-		"rules": {"tickRate": 20, "chargeDistance": 128, "obstacles": [{"id":"fallen_log", "x":450, "y":256, "w":112, "h":24, "spriteTile":59}]},
-		"players": [{"id":"qa_player", "x":280, "y":340, "hp":100, "faceX":1, "faceY":0, "mode":"idle", "since":0}],
-		"boar": {"id":"en_boar", "x":690, "y":300, "hp":60, "maxHp":60, "faceX":-1, "faceY":0, "mode":"windup", "since":0}
-	}
-	main.api.snapshot = pve_preview
-	main._snapshot(pve_preview)
-	main._process(0.1)
-	await process_frame
-	check(main.map_world.visible == false and main.get_node("Arena").visible, "Encounter shows the authored combat clearing")
-	check(main.son_tru_actor != null and main.hud.get_node("LeaveEncounter").visible, "Sơn Trư sprite and exit control are visible")
-	check(main.hud.get_node("Location/Title").text == "BÃI SƠN TRƯ", "Encounter HUD names the combat location")
-	await _capture("son-tru-runtime.png")
-	await _capture_touch_layout(main, "son-tru-touch-runtime.png")
-	main.api.match_id = ""
-	main.api.match_kind = ""
-	await main._leave_match()
 	main.queue_free()
 	await process_frame
 	print("Presentation smoke: ", "PASS" if failures == 0 else "FAIL", " (", failures, " failures)")

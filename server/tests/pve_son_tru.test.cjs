@@ -2,169 +2,259 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const fs = require('node:fs');
+const {randomUUID, createHash} = require('node:crypto');
 
-function harness() {
-  const scope = vm.createContext({});
+const OWNER = '11111111-1111-4111-8111-111111111111';
+const clone = value => JSON.parse(JSON.stringify(value));
+
+function harness(rows = new Map()) {
+  const rpcHandlers = {}, matches = {}, scope = vm.createContext({});
   vm.runInContext(fs.readFileSync('build/index.js', 'utf8'), scope);
-  const matches = {}, rpcs = {};
   scope.InitModule({}, {}, {}, new Proxy({}, {get: (_, method) => method === 'registerRpc'
-    ? (id, fn) => {rpcs[id] = fn;} : method === 'registerMatch'
-      ? (id, fn) => {matches[id] = fn;} : () => {}}));
-  const match = matches.pve_son_tru;
-  const writes = [], snapshots = [], kicked = [];
-  const rows = new Map();
+    ? (name, fn) => { rpcHandlers[name] = fn; }
+    : method === 'registerMatch' ? (name, handler) => { matches[name] = handler; } : () => {}}));
+  let serial = 0, matchId = '', matchParams = null, tick = 0, seq = 0;
+  const signals = [];
   const key = row => `${row.userId}/${row.collection}/${row.key}`;
   const nk = {
-    uuidv4: () => 'pve-epoch', binaryToString: value => Buffer.from(value).toString(),
-    storageRead: ids => ids.flatMap(id => rows.has(key(id)) ? [rows.get(key(id))] : []),
-    storageWrite: values => values.map(value => {writes.push(value); rows.set(key(value), {...value, version:'1'}); return {version:'1'};}),
-    matchCreate: (name, params) => {assert.equal(name, 'pve_son_tru'); assert.equal(params.owner, 'a'); return 'son-tru-room';}
+    storageRead(ids) { return ids.flatMap(id => rows.has(key(id)) ? [clone(rows.get(key(id)))] : []); },
+    storageWrite(writes) {
+      for (const write of writes) {
+        const old = rows.get(key(write));
+        if ((write.version === '*' && old) || (write.version !== '*' && write.version !== old?.version)) throw Error('CAS conflict');
+      }
+      return writes.map(write => {
+        const version = String(++serial);
+        rows.set(key(write), clone({...write, version}));
+        return {version};
+      });
+    },
+    uuidv4: randomUUID,
+    sha256Hash: value => createHash('sha256').update(value).digest('hex'),
+    binaryToString: value => Buffer.from(value).toString(),
+    matchCreate(name, params) { assert.equal(name, 'pve_son_tru'); matchParams = clone(params); matchId = 'son-tru-match'; return matchId; },
+    matchGet(id) { return id === matchId ? {matchId: id} : null; },
+    matchSignal(id, data) { signals.push({id, value: JSON.parse(data)}); return true; }
   };
-  const dispatcher = {broadcastMessage: (_op, data) => snapshots.push(JSON.parse(data)), matchKick: values => kicked.push(...values)};
-  const state = match.matchInit({}, {}, nk, {owner:'a'}).state;
-  let tick = 0, seq = 0;
-  const presence = (id='a', session=id) => ({userId:id, sessionId:session, username:id, node:'test'});
-  const metadata = {consent:'true', mode:'pve_son_tru', version:'1'};
-  const join = (id='a', session=id, info=metadata) => {
-    const value = presence(id, session);
-    const result = match.matchJoinAttempt({}, {}, nk, dispatcher, tick, state, value, info);
-    if (result.accept) match.matchJoin({}, {}, nk, dispatcher, tick, state, [value]);
+  const rpc = (name, payload = {}, userId = OWNER) => JSON.parse(rpcHandlers[name]({userId}, {}, nk, JSON.stringify(payload)));
+  const put = profile => {
+    const request = {collection: 'characters', key: 'main', userId: OWNER};
+    const old = rows.get(key(request));
+    return nk.storageWrite([{...request, value: clone(profile), version: old ? old.version : '*', permissionRead: 1, permissionWrite: 0}]);
+  };
+  const presence = (userId = OWNER, sessionId = 'session-1') => ({userId, sessionId, username: 'tester', node: 'test'});
+  const snapshots = [], dispatcher = {broadcastMessage: (_op, data) => snapshots.push(JSON.parse(data)), matchKick: () => {}};
+  let state;
+  const init = (options = {}) => {
+    state = matches.pve_son_tru.matchInit({}, {}, nk, {owner: OWNER, encounterId: randomUUID(), rewardEligible: true, initialHp: 100, ...options}).state;
+    tick = 0; seq = 0;
+    return state;
+  };
+  const join = (who = OWNER, session = 'session-1', metadata = {consent: 'true', mode: 'pve_son_tru', version: '1'}) => {
+    const person = presence(who, session);
+    const result = matches.pve_son_tru.matchJoinAttempt({}, {}, nk, dispatcher, tick, state, person, metadata);
+    if (result.accept) matches.pve_son_tru.matchJoin({}, {}, nk, dispatcher, tick, state, [person]);
     return result.accept;
   };
-  const message = (id='a', extra={}, session=id) => ({sender:presence(id, session), opCode:1,
-    data:Buffer.from(JSON.stringify({epoch:'pve-epoch', seq:++seq, moveX:0, moveY:0, aimX:1, aimY:0, action:'', ...extra}))});
-  const step = (messages=[]) => match.matchLoop({}, {}, nk, dispatcher, ++tick, state, messages);
-  const steps = count => {for (let i=0;i<count;i++) step();};
-  const leave = (id='a', session=id) => match.matchLeave({}, {}, nk, dispatcher, tick, state, [presence(id, session)]);
-  return {scope, match, rpcs, nk, dispatcher, state, writes, snapshots, kicked, presence, join, message, step, steps, leave, get tick(){return tick;}};
+  const message = (extra = {}, who = OWNER, session = 'session-1') => ({
+    sender: presence(who, session), opCode: 1,
+    data: Buffer.from(JSON.stringify({epoch: state.epoch, seq: ++seq, moveX: 0, moveY: 0, aimX: 1, aimY: 0, action: '', ...extra}))
+  });
+  const step = (messages = []) => {
+    tick++;
+    return matches.pve_son_tru.matchLoop({}, {}, nk, dispatcher, tick, state, messages);
+  };
+  const steps = count => { for (let i = 0; i < count; i++) step(); };
+  return {rows, scope, rpcHandlers, matches, nk, rpc, put, init, join, message, step, steps, dispatcher, snapshots, signals,
+    get state() { return state; }, get tick() { return tick; }, get matchParams() { return matchParams; }};
 }
 
-test('PvE creation requires authenticated opt-in and fixes the encounter owner server-side', () => {
+function profileFor(h, realm = 'luyen_khi') {
+  const profile = h.rpc('get_profile');
+  profile.realm = realm;
+  profile.realmStage = realm === 'luyen_khi' ? 1 : 0;
+  profile.hp = 73;
+  h.put(profile);
+  return profile;
+}
+
+test('PvE creation requires consent, derives owner and combat stats from the server profile, and resumes the owner match', () => {
   const h = harness();
-  assert.throws(() => h.rpcs.pve_son_tru_create({}, {}, {}, '{}'), error => error.code === 16);
-  assert.throws(() => h.rpcs.pve_son_tru_create({userId:'a'}, {}, h.nk, '{"consent":false}'), error => error.code === 3);
-  const result = JSON.parse(h.rpcs.pve_son_tru_create({userId:'a'}, {}, h.nk, '{"consent":true,"owner":"b","enemy":"forged"}'));
-  assert.deepEqual(result, {matchId:'son-tru-room', version:1, mode:'pve_son_tru', encounter:'en_boar'});
-  assert(h.writes.every(write => write.collection === 'social_limits'), 'Creation only writes the request quota, not player rewards');
+  assert.throws(() => h.rpc('pve_son_tru_create', {consent: true}, ''), error => error.code === 16);
+  assert.throws(() => h.rpc('pve_son_tru_create', {consent: true, owner: 'victim'}), error => error.code === 3);
+  profileFor(h);
+  h.rpc('inventory_claim_starter', {operationId: 'starter_claim_001'});
+  h.scope.grantReward(h.nk, OWNER, 'grant_sword_001', 'fixture:sword', {spiritStones: 0, items: [{itemId: 'it_iron_sword', quantity: 1}]});
+  const sword = h.rpc('inventory_get').profile.inventory.find(item => item.itemId === 'it_iron_sword');
+  const armor = h.rpc('inventory_get').profile.inventory.find(item => item.itemId === 'it_cloth_armor');
+  h.rpc('inventory_equip', {operationId: 'equip_sword_001', instanceId: sword.instanceId});
+  h.rpc('inventory_equip', {operationId: 'equip_armor_001', instanceId: armor.instanceId});
+  const result = h.rpc('pve_son_tru_create', {consent: true});
+  assert.equal(result.matchId, 'son-tru-match');
+  assert.equal(result.mode, 'pve_son_tru');
+  assert.equal(h.matchParams.owner, OWNER);
+  assert.equal(h.matchParams.initialHp, 73);
+  assert.equal(h.matchParams.attack, 21);
+  assert.equal(h.matchParams.defense, 20);
+  assert.equal(h.rpc('pve_son_tru_create', {consent: true}).resumed, true);
 });
 
-test('join requires exact owner consent and protocol; duplicate, guest and expired reconnections are rejected', () => {
+test('admission is owner-only and requires explicit PvE protocol consent', () => {
   const h = harness();
-  assert.equal(h.join('a','a',{}), false);
-  assert.equal(h.join('b'), false);
-  assert.equal(h.join('a'), true);
-  assert.equal(h.join('a','second-session'), false);
-  h.leave(); h.state.player.disconnectedAt = h.tick - 200;
-  assert.equal(h.join('a','new-session'), false);
+  const state = h.init();
+  assert.equal(h.join(OWNER, 'bad', {}), false);
+  assert.equal(h.join('22222222-2222-4222-8222-222222222222'), false);
+  assert.equal(h.join(), true);
+  assert.equal(state.phase, 'active');
+  assert.equal(h.join(OWNER, 'second-session'), false);
 });
 
-test('boar notices within five tiles, locks its tell direction, charges for four tiles, then recovers', () => {
-  const h = harness(); h.join();
-  const p = h.state.player, b = h.state.boar;
-  p.x = 540; p.y = 300; b.x = 680; b.y = 300;
-  h.step(); assert.equal(b.mode, 'notice');
-  h.steps(8); assert.equal(b.mode, 'chase');
-  h.step(); assert.equal(b.mode, 'windup');
-  assert.equal(b.faceX, -1); assert.equal(b.faceY, 0);
-  p.x = 540; p.y = 370; // The telegraph keeps its locked heading even if the target moves.
-  h.steps(14); assert.equal(b.mode, 'windup');
-  h.step(); assert.equal(b.mode, 'charge');
-  assert.equal(b.x, 680, 'The first charge step follows the locked windup');
-  assert.equal(b.faceX, -1);
-  h.steps(8); assert.equal(b.mode, 'recover');
-  assert.equal(b.x, 552);
-  assert.equal(p.hp, 100, 'The locked line missed the moved player');
+test('movement is server-limited and forged, stale or out-of-range messages do not move the player', () => {
+  const h = harness();
+  const state = h.init();
+  h.join();
+  const p = state.player, x = p.x, y = p.y;
+  h.step([h.message({moveX: 1, moveY: 1})]);
+  assert(Math.abs(Math.hypot(p.x - x, p.y - y) - 9) < 1e-8);
+  const moved = {x: p.x, y: p.y};
+  h.step([h.message({moveX: 0, moveY: 0}), h.message({moveX: 1}, OWNER, 'forged-session'), h.message({moveX: 2})]);
+  h.step([{sender: {userId: OWNER, sessionId: 'session-1'}, opCode: 1, data: Buffer.from('{bad')}]);
+  assert.equal(p.x, moved.x);
+  assert.equal(p.y, moved.y);
 });
 
-test('a perpendicular dodge during the 0.75 second tell leaves the player outside the charge lane', () => {
-  const h = harness(); h.join();
-  const p = h.state.player, b = h.state.boar;
-  p.x = 540; p.y = 300; b.x = 680; b.y = 300;
-  h.step(); h.steps(8); h.step(); assert.equal(b.mode, 'windup');
-  h.step([h.message('a',{moveY:1,action:'sk_dodge'})]);
-  h.steps(38);
-  assert.equal(p.hp, 100);
-  assert(p.y > 350, 'Dodge follows the movement direction so mobile and keyboard controls can evade sideways');
-  assert.equal(b.mode, 'chase');
-});
-
-test('charge collision is authoritative, invulnerability avoids damage, and defeat resets both actors', () => {
-  const h = harness(); h.join();
-  const p = h.state.player, b = h.state.boar;
-  p.x = 470; p.y = 300; p.hp = 9;
-  b.x = 500; b.y = 300; b.faceX = -1; b.faceY = 0; b.mode = 'charge'; b.since = h.tick;
+test('boar gives a readable tell, charges authoritatively, and its hit can be avoided by distance', () => {
+  const h = harness();
+  const state = h.init();
+  h.join();
+  state.player.x = 510;
+  state.boar.x = 690;
   h.step();
-  assert.equal(p.hp, 0); assert.equal(h.state.phase, 'defeated');
-  h.steps(59); assert.equal(h.state.phase, 'defeated');
+  assert.equal(state.boar.mode, 'tell');
   h.step();
-  assert.equal(h.state.phase, 'active'); assert.equal(p.hp, 100); assert.equal(b.hp, 60);
-  assert.equal(p.x, 280); assert.equal(b.x, 690);
-
-  const dodge = harness(); dodge.join();
-  const dp = dodge.state.player, db = dodge.state.boar;
-  dp.x = 470; dp.y = 300; db.x = 500; db.y = 300; db.faceX = -1; db.faceY = 0; db.mode = 'charge'; db.since = dodge.tick;
-  dp.mode = 'dodging'; dp.since = dodge.tick; dp.dodgeX = 0; dp.dodgeY = 1;
-  dodge.step();
-  assert.equal(dp.hp, 100);
+  assert.equal(h.snapshots.at(-1).boar.mode, 'tell');
+  h.steps(15);
+  assert.equal(state.boar.mode, 'charging');
+  h.steps(15);
+  assert.equal(state.boar.mode, 'recover');
+  assert.equal(state.player.hp, 100);
+  assert.equal(state.boar.hp, 60);
 });
 
-test('basic attacks only damage the boar during its recovery opening, with server damage and one hit per swing', () => {
-  const h = harness(); h.join();
-  const p = h.state.player, b = h.state.boar;
-  p.x = 380; p.y = 350; b.x = 420; b.y = 350; b.hp = 60; b.mode = 'recover'; b.since = h.tick;
-  h.step([h.message('a',{action:'sk_basic',damage:999})]); h.steps(2);
-  assert.equal(b.hp, 60);
-  h.step(); assert.equal(b.hp, 45);
-  h.steps(6); assert.equal(b.hp, 45);
+test('verified LK victory saves one immutable reward; full bag keeps it pending across restart until claim', () => {
+  const h = harness();
+  const profile = profileFor(h);
+  const swordId = randomUUID();
+  profile.inventory = Array.from({length: 23}, () => ({itemId: 'it_water', quantity: 99}));
+  profile.inventory.push({itemId: 'it_iron_sword', quantity: 1, instanceId: swordId});
+  profile.equipped = {weapon: swordId, armor: ''};
+  h.put(profile);
+  h.rpc('pve_son_tru_create', {consent: true});
+  assert.equal(h.matchParams.attack, 21);
+  const encounterId = h.matchParams.encounterId;
+  const state = h.init(h.matchParams);
+  h.join();
+  state.player.x = 635; state.player.y = 390;
+  state.boar.x = 690; state.boar.y = 390; state.boar.mode = 'recover'; state.boar.since = 0;
+  for (let hit = 0; hit < 3; hit++) {
+    state.boar.mode = 'recover'; state.boar.since = h.tick;
+    h.step([h.message({action: 'sk_basic'})]);
+    h.steps(13);
+  }
+  assert.equal(state.boar.hp, 0);
+  assert.equal(state.phase, 'reward_pending');
+  assert.equal(state.settlementStatus, 'pending');
+  const inventory = h.rpc('inventory_get');
+  assert.equal(inventory.pendingSettlement.generation, 1);
+  assert.equal(inventory.pendingSettlement.reward.cultivationXp, 10);
+  assert.equal(inventory.pendingSettlement.reward.items[0].itemId, 'it_boar_hide');
+  assert.throws(() => h.rpc('pve_son_tru_claim_pending'), error => error.code === 8);
+  assert.throws(() => h.rpc('pve_son_tru_create', {consent: true}), error => error.code === 8);
 
-  p.mode = 'idle'; p.attackAt = h.tick; p.hitBoar = false;
-  b.mode = 'windup'; b.since = h.tick;
-  h.step([h.message('a',{action:'sk_basic'})]); h.steps(3);
-  assert.equal(b.hp, 45, 'Attacks cannot skip the counterattack window');
+  h.rpc('inventory_discard', {operationId: 'discard_stack_001', itemId: 'it_water', quantity: 99});
+  const restarted = harness(h.rows);
+  const claim = restarted.rpc('pve_son_tru_claim_pending');
+  assert.equal(claim.pending, false);
+  assert.equal(claim.replayed, false);
+  assert.equal(claim.profile.cultivationXp, 10);
+  assert.equal(claim.profile.inventory.at(-1).itemId, 'it_boar_hide');
+  assert.equal(restarted.rpc('inventory_get').pendingSettlement, null);
+  assert.equal(restarted.signals[0].value.action, 'reward_claimed');
+  assert.equal(restarted.signals[0].value.encounterId, encounterId);
+  const replay = restarted.rpc('pve_son_tru_claim_pending');
+  assert.equal(replay.pending, false);
+  assert.equal(replay.receipt, undefined);
+  assert.equal([...h.rows.values()].filter(row => row.collection === 'asset_receipts' && row.value.sourceId.includes(encounterId)).length, 2);
+  const outcome = [...h.rows.values()].find(row => row.collection === 'pve_settlements' && row.key === `outcome:${encounterId}:1`);
+  assert.equal(outcome.value.status, 'settled');
 });
 
-test('server collision prevents crossing arena bounds and the fallen log; line-of-sight rejects the obstacle', () => {
-  const h = harness(); h.join();
-  const p = h.state.player;
-  p.x = 420; p.y = 268;
-  h.step([h.message('a',{moveX:1})]);
-  assert(p.x < 440, 'The player capsule stops before the log');
-  p.x = 910; p.y = 350; h.step([h.message('a',{moveX:1})]);
-  assert(p.x <= 908);
-  assert.equal(h.scope.pveSonTruLineClear(420,268,590,268), false);
-  assert.equal(h.scope.pveSonTruLineClear(420,310,590,310), true);
+test('pending encounter survives temporary storage-read failures and remains pending after recovery', () => {
+  const h = harness();
+  const state = h.init();
+  h.join();
+  h.scope.recordPveSonTruOutcome(h.nk, OWNER, state.encounterId, 1, true);
+  state.phase = 'reward_pending';
+  state.settlementStatus = 'pending';
+  state.pendingCheckAt = 0;
+  const storageRead = h.nk.storageRead;
+  h.nk.storageRead = ids => {
+    if (ids.some(id => id.collection === 'pve_settlements')) throw Error('temporary storage outage');
+    return storageRead(ids);
+  };
+
+  assert.doesNotThrow(() => h.step());
+  assert.equal(state.phase, 'reward_pending');
+  assert.equal(state.settlementStatus, 'pending');
+  h.nk.storageRead = storageRead;
+  h.steps(20);
+  assert.equal(state.phase, 'reward_pending');
+  assert.equal(h.rpc('inventory_get').pendingSettlement.reward.items[0].itemId, 'it_boar_hide');
 });
 
-test('malformed, stale, oversized and forged-session inputs cannot move or alter HP', () => {
-  const h = harness(); h.join(); const p = h.state.player, x = p.x;
-  h.step([h.message('a',{moveX:2})]);
-  h.step([h.message('a',{epoch:'old',moveX:1})]);
-  h.step([h.message('a',{moveX:1},'fake')]);
-  h.step([h.message('a',{moveX:null})]);
-  h.step([h.message('a',{seq:-1,moveX:1})]);
-  h.step([h.message('a',{moveX:1,extra:'x'.repeat(600)})]);
-  h.step([{sender:h.presence(),opCode:1,data:Buffer.from('{bad')}]);
-  h.step([{sender:h.presence(),opCode:1,data:null}]);
-  assert.equal(p.x,x); assert.equal(p.hp,100); assert.equal(h.state.boar.hp,60);
+test('mortal training kill has no XP, loot, pending settlement or repeatable reward receipt', () => {
+  const h = harness();
+  const profile = profileFor(h, 'mortal');
+  const state = h.init({rewardEligible: false, attack: 100});
+  h.join();
+  state.player.x = 635; state.player.y = 390;
+  state.boar.x = 690; state.boar.y = 390; state.boar.mode = 'recover'; state.boar.since = 0;
+  h.step([h.message({action: 'sk_basic'})]);
+  h.steps(3);
+  assert.equal(state.boar.hp, 0);
+  assert.equal(state.phase, 'victory');
+  assert.equal(state.settlementStatus, 'training');
+  assert.equal(h.rpc('inventory_get').pendingSettlement, null);
+  assert.equal(h.rpc('get_profile').cultivationXp, 0);
+  assert.equal(h.rpc('get_profile').inventory.length, profile.inventory.length);
+  assert.equal([...h.rows.values()].filter(row => row.collection === 'asset_receipts' && row.value.sourceId.startsWith('pve:')).length, 0);
 });
 
-test('brief disconnect preserves HP and position, resets input sequence, and permits the same owner to rejoin', () => {
-  const h = harness(); h.join(); const p = h.state.player;
-  p.hp = 70; p.x = 350; p.attackAt = 99;
-  h.leave(); h.steps(20);
-  assert.equal(h.join('a','reconnected'), true);
-  assert.equal(p.hp,70); assert.equal(p.x,350); assert.equal(p.attackAt,99); assert.equal(p.seq,-1);
-  h.step([h.message('a',{moveX:1},'a')]); assert.equal(p.x,350, 'The old session cannot send inputs');
-  h.step([h.message('a',{moveX:1},'reconnected')]); assert.equal(p.x,359);
+test('LK victory checkpoints remaining HP in the same durable profile as XP and loot', () => {
+  const h = harness();
+  profileFor(h);
+  const state = h.init({attack: 100, initialHp: 73});
+  h.join();
+  state.player.x = 635; state.player.y = 390; state.player.hp = 48;
+  state.boar.x = 690; state.boar.y = 390; state.boar.mode = 'recover'; state.boar.since = 0;
+  h.step([h.message({action: 'sk_basic'})]);
+  h.steps(3);
+  const saved = h.rpc('get_profile');
+  assert.equal(saved.hp, 48);
+  assert.equal(saved.cultivationXp, 10);
+  assert.equal(saved.inventory.at(-1).itemId, 'it_boar_hide');
+  assert.equal(state.phase, 'victory');
 });
 
-test('disconnect timeout ends only the encounter, snapshots omit secrets and rewards, and combat never writes progression', () => {
-  const h = harness(); h.join(); h.writes.length = 0;
-  h.state.player.x = 280; h.state.player.y = 340;
-  h.leave(); h.steps(199); assert.equal(h.state.phase,'active');
-  h.step(); assert.equal(h.state.phase,'finished'); assert.equal(h.state.reason,'disconnect');
-  const snap = h.snapshots.at(-1);
-  assert.equal(snap.players[0].presence,undefined); assert.equal(snap.players[0].sessionId,undefined);
-  assert.equal(snap.rewards,undefined); assert.equal(snap.settlement,undefined); assert.equal(snap.rules.tickRate,20);
-  assert.equal(h.writes.length,0);
+test('defeat preserves the last valid checkpoint HP while the match shows zero during recovery', () => {
+  const h = harness();
+  profileFor(h);
+  const state = h.init({initialHp: 73});
+  h.join();
+  state.player.x = 675; state.player.y = 390; state.player.hp = 10;
+  state.boar.x = 690; state.boar.y = 390; state.boar.mode = 'charging'; state.boar.faceX = -1; state.boar.faceY = 0; state.boar.since = -1;
+  h.step();
+  assert.equal(state.phase, 'defeated');
+  assert.equal(state.player.hp, 0);
+  assert.equal(h.rpc('get_profile').hp, 73);
 });

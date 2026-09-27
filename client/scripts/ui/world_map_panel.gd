@@ -6,7 +6,8 @@ signal map_requested(map_id: String)
 
 const CATALOG_PATH := "res://data/map_catalog.json"
 
-@onready var route: HBoxContainer = $Window/Route
+@onready var route_nodes: Control = $Window/RouteNodes
+@onready var route_overview: TextureRect = $Window/RouteOverview
 @onready var info: Label = $Window/Info
 @onready var preview: TextureRect = $Window/Preview
 @onready var no_preview: Label = $Window/NoPreview
@@ -43,10 +44,9 @@ func set_current_map(map_id: String) -> void:
 		var button: Button = route_buttons.get(entry_id)
 		if button == null:
 			continue
-		button.text = str(entry.get("route_label", entry.get("name", "Map")))
-		button.tooltip_text = str(entry.get("name", "Map"))
+		button.text = str(entry.get("name", "Map"))
+		button.tooltip_text = str(entry.get("route_label", button.text)).replace("\n", " • ")
 		if entry_id == current_map_id:
-			button.text = str(entry.get("name", "Map")) + "\nĐang ở đây"
 			button.tooltip_text += " • đang ở"
 	if visible:
 		_select_map(current_map_id)
@@ -71,35 +71,35 @@ func _load_catalog() -> void:
 			maps_by_id[str(map_data.id)] = map_data
 
 func _build_route() -> void:
-	for child in route.get_children():
+	for child in route_nodes.get_children():
 		child.queue_free()
 	route_buttons.clear()
+	var node_layout := {
+		"m_an_khe": Vector2(8, 111),
+		"m_truc_am": Vector2(132, 88),
+		"m_thach_can": Vector2(312, 48),
+		"m_co_tinh": Vector2(476, 67)
+	}
 	for index in range(map_entries.size()):
 		var map_data: Dictionary = map_entries[index]
 		var button := Button.new()
 		button.name = str(map_data.get("id", "Map%d" % index))
-		button.text = str(map_data.get("route_label", map_data.get("name", "Map")))
-		button.custom_minimum_size = Vector2(108, 54)
-		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		button.add_theme_font_size_override("font_size", 8)
+		button.text = str(map_data.get("name", "Map"))
+		button.tooltip_text = str(map_data.get("route_label", button.text)).replace("\n", " • ")
+		button.position = node_layout.get(str(map_data.get("id", "")), Vector2.ZERO)
+		button.custom_minimum_size = Vector2(84, 24)
+		button.add_theme_font_size_override("font_size", 7)
 		button.toggle_mode = true
 		button.button_group = _button_group
 		button.pressed.connect(_select_map.bind(str(map_data.get("id", ""))))
-		route.add_child(button)
+		route_nodes.add_child(button)
 		route_buttons[str(map_data.get("id", ""))] = button
-		if index < map_entries.size() - 1:
-			var arrow := Label.new()
-			arrow.text = "›"
-			arrow.custom_minimum_size = Vector2(12, 54)
-			arrow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			arrow.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-			arrow.add_theme_font_size_override("font_size", 14)
-			route.add_child(arrow)
 
 func _select_map(map_id: String) -> void:
 	if not maps_by_id.has(map_id):
 		return
 	selected_id = map_id
+	route_overview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var map_data: Dictionary = maps_by_id[map_id]
 	info.text = "%s  •  %s\n%s" % [
 		str(map_data.get("name", "Map")),

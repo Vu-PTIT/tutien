@@ -10,7 +10,6 @@ func _ready() -> void:
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
 	$MapButton.pressed.connect(func() -> void: action_requested.emit("map"))
 	$SparringButton.pressed.connect(func() -> void: action_requested.emit("dock"))
-	$LeaveEncounter.pressed.connect(func() -> void: action_requested.emit("leave"))
 	$HelpButton.pressed.connect(func() -> void:
 		notify("Kéo cần trái để đi • nút phải để tương tác" if touch_layout else "WASD: đi • M: tuyến map • I: túi • E: tương tác"))
 	for index in range(6):
@@ -18,7 +17,7 @@ func _ready() -> void:
 		get_node("Hotbar/Slot%d" % index).pressed.connect(
 			func() -> void: action_requested.emit(action_id))
 	$Dock/Close.pressed.connect(func() -> void: $Dock.hide())
-	for entry in ["Connect", "Create", "Join", "Ready", "Leave"]:
+	for entry in ["Connect", "Create", "Join", "Ready", "Leave", "Hunt"]:
 		var action_id: String = entry.to_lower()
 		get_node("Dock/" + entry).pressed.connect(
 			func() -> void: action_requested.emit(action_id))
@@ -26,10 +25,10 @@ func _ready() -> void:
 	for index in [0, 1, 4]:
 		var button: Button = get_node("Hotbar/Slot%d" % index)
 		button.modulate = Color(0.6, 0.6, 0.6)
-		button.tooltip_text = "Chưa có cơ chế sử dụng. Không trừ vật phẩm."
-	$Hotbar/Slot2.tooltip_text = "Q / J: đánh trong đấu tập hoặc săn Sơn Trư"
+		button.tooltip_text = "Chọn Hồi Nguyên Hoàn trong Túi đồ để hồi tối đa 40 HP." if index == 0 else "Ô này chưa có hành động vật phẩm."
+	$Hotbar/Slot2.tooltip_text = "Q / J: đánh khi săn Sơn Trư hoặc đấu tập online"
 	$Hotbar/Slot3.tooltip_text = "E / chạm: tương tác với điểm gần nhất"
-	$Hotbar/Slot5.tooltip_text = "Space: né trong đấu tập hoặc săn Sơn Trư"
+	$Hotbar/Slot5.tooltip_text = "Space: né khi săn Sơn Trư hoặc đấu tập online"
 
 func _process(delta: float) -> void:
 	$ModalShade.visible = $Inventory.visible or $Dock.visible
@@ -144,6 +143,15 @@ func set_health(hp: int) -> void:
 func apply_profile(profile: Dictionary) -> void:
 	var realm := str(profile.get("realm", "mortal"))
 	$Vitals/Realm.text = "PHÀM NHÂN" if realm == "mortal" else "LUYỆN KHÍ • %d" % int(profile.get("realmStage", 1))
-	# This version has no authoritative Qi field. Never invent a filled resource bar.
-	$Vitals/Qi.value = 0
-	$Vitals/QiText.text = "Linh lực • chưa có dữ liệu"
+	set_health(int(profile.get("hp", 100)))
+	if realm == "luyen_khi":
+		var thresholds := [300, 600, 1000]
+		var stage := clampi(int(profile.get("realmStage", 1)), 1, 4)
+		var capacity := int(thresholds[stage - 1]) if stage < 4 else 1
+		var xp := int(profile.get("cultivationXp", 0))
+		$Vitals/Qi.max_value = capacity
+		$Vitals/Qi.value = clampi(xp, 0, capacity)
+		$Vitals/QiText.text = "Tu vi • %d XP%s" % [xp, " • đạt giới hạn" if stage == 4 else ""]
+	else:
+		$Vitals/Qi.value = 0
+		$Vitals/QiText.text = "Chưa khai mở tu vi"

@@ -48,7 +48,7 @@ func _run() -> void:
 			var cleanup: Dictionary = await api._request(HTTPClient.METHOD_DELETE, "/v2/account", null, "Bearer " + api.token)
 			if not _good(cleanup, "Cleanup"): success = false
 		api.queue_free()
-	if success: print("PASS Godot combat: consent, capacity, movement, HP agreement, reconnect, finish and unchanged profile")
+	if success: print("PASS Godot combat/PvE: duel lifecycle, solo hunt admission, boar tell/charge/recover and unchanged training profile")
 	quit(0 if success else 1)
 
 func _scenario() -> bool:
@@ -119,4 +119,20 @@ func _scenario() -> bool:
 	if not _check(common > 5, "Too few shared snapshots"): return false
 	if not _check(await alice.call_rpc("get_profile") == profile_a and await bob.call_rpc("get_profile") == profile_b, "Sparring changed persistent profile"): return false
 	if not _good(await alice.leave_sparring(), "Leave A"): return false
-	return _good(await bob.leave_sparring(), "Leave B")
+	if not _good(await bob.leave_sparring(), "Leave B"): return false
+	if not _check((await alice.call_rpc("pve_son_tru_create", {})).has("error"), "PvE started without explicit consent"): return false
+	if not _check((await alice.call_rpc("pve_son_tru_create", {"consent": true, "reward": {"items": []}})).has("error"), "Client reward fields were accepted"): return false
+	if not _good(await alice.create_son_tru(), "Create solo Sơn Trư hunt"): return false
+	if not await _wait_for(func() -> bool: return alice.snapshot.get("phase", "") == "active" and alice.snapshot.get("mode", "") == "pve_son_tru" and alice.snapshot.has("boar")):
+		return _check(false, "PvE snapshot missing")
+	deadline = Time.get_ticks_msec() + 6000
+	while Time.get_ticks_msec() < deadline and str(alice.snapshot.get("boar", {}).get("mode", "")) != "tell":
+		alice.send_input(Vector2.RIGHT, Vector2.RIGHT)
+		await create_timer(0.05).timeout
+	alice.send_input(Vector2.ZERO, Vector2.RIGHT)
+	if not _check(str(alice.snapshot.get("boar", {}).get("mode", "")) == "tell", "Sơn Trư did not broadcast its windup tell"): return false
+	if not await _wait_for(func() -> bool: return str(alice.snapshot.get("boar", {}).get("mode", "")) == "recover", 4.0):
+		return _check(false, "Sơn Trư charge/recover cycle missing")
+	if not _check(int(_player(alice, alice_id).get("hp", 0)) == 100, "Training test unexpectedly damaged the player"): return false
+	if not _good(await alice.leave_sparring(), "Leave PvE hunt"): return false
+	return _check(await alice.call_rpc("get_profile") == profile_a, "Mortal training changed XP, loot or HP")

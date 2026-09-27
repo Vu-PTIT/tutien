@@ -76,6 +76,15 @@ test('email registration normalizes email, preserves password, and enforces bcry
   assert.equal(run({account:{password},create:false,username:'alice'}).username,'alice');
 });
 
+test('auth quota stays at 30 by default and allows CI headroom only with dev guest auth enabled',()=>{
+  const makeRequest = () => ({account:{email:'alice@example.com',password:'A strong password'},create:true,username:'alice'});
+  const normal=setup();
+  for(let i=0;i<30;i++) normal.handlers.registerBeforeAuthenticateEmail(ctx,logger,normal.nk,makeRequest());
+  rejectsCode(()=>normal.handlers.registerBeforeAuthenticateEmail(ctx,logger,normal.nk,makeRequest()),8);
+  const dev=setup(),devCtx={...ctx,env:{ALLOW_DEVICE_AUTH:'true'}};
+  for(let i=0;i<31;i++) dev.handlers.registerBeforeAuthenticateEmail(devCtx,logger,dev.nk,makeRequest());
+});
+
 test('guest login requires explicit dev opt-in; custom auth is disabled',()=>{
   const {handlers,nk}=setup();
   rejectsCode(()=>handlers.registerBeforeAuthenticateDevice(ctx,logger,nk,{}),7);

@@ -194,8 +194,9 @@ với mốc tính năng mới nhất `1fced41`. Chi tiết giao diện và hư�
   với An Khê. Art đang là PNG một lớp, chưa phải tileset production.
 - Chuyển từ scene An Khê riêng sang `map_world.tscn` và `game_map.gd`; catalog
   cấp ảnh nền, điểm spawn, vùng/phòng, blocker và chế độ camera.
-- Route overlay có ảnh preview và nút **Đi thử map này**; tải map cục bộ, cập
-  nhật HUD/minimap và tọa độ. Ba map mới dùng canvas 48×36 tạm thời, không khóa
+- Route overlay có panorama nối An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh; chọn
+  từng vùng để xem preview, rồi **Đi thử map này** tải map cục bộ, cập nhật
+  HUD/minimap và tọa độ. Ba map mới dùng canvas 48×36 tạm thời, không khóa
   kích thước thiết kế.
 - Trúc Âm có Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư; Thạch Cạn có Ngoại Vi, Mỏ Cũ;
   Cổ Tỉnh có năm phòng và camera khóa theo phòng. Quest/unlock và gameplay vẫn
@@ -333,3 +334,28 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 - Minimap lấy JSON địa hình/POI, HUD có bố cục touch landscape và lệnh từ InputMap dùng chung cho bàn phím, chuột, nút và cần ảo.
 - Đối chiếu `feat/economy-balance-v1` trước khi nhập: `starter:v1` 12 Linh Thạch có receipt, đề xuất 120 là source v2 riêng; 150 definition ở nhánh kinh tế chỉ là design, không đưa vào runtime. Xem `economy-branch-review-2026-09-26.md`.
 - CI Godot 4.6.1 chạy smoke bốn map và lưu screenshot desktop/touch; QA nhìn bằng ảnh thật để sửa lời nhiệm vụ bị cắt ở Thạch Cạn/Cổ Tỉnh.
+
+## 26/09/2026 — P2 chuyến săn Sơn Trư và settlement
+
+- Working tree `feat/p2-son-tru-settlement`, dựa trên `beee1fc`; chưa commit/push/merge.
+- Migrate profile schema 2 → 3; thêm HP, XP giới hạn theo tầng Luyện Khí và instance trang bị. Túi hỗ trợ trang bị, dùng Hồi Nguyên Hoàn, bỏ vật tư thường sau xác nhận.
+- Thêm match solo Sơn Trư 20 Hz với kiểm tra server cho hướng, tốc độ, né, đánh, tell/lao/hồi thế, HP, cooldown và quyền chủ match. P2 không cấp XP cho profile Phàm Nhân.
+- Kill ở Luyện Khí lưu outcome/source + con trỏ settlement trước khi công bố thắng. Đầy túi giữ thưởng qua restart, chặn chuyến săn tiếp theo, nhận lại qua một receipt/source ổn định. HP còn lại được checkpoint khi thắng; thua dùng HP lúc bắt đầu chuyến đi.
+- Dùng sprite Sơn Trư và nền Bãi Sơn Trư được tạo cho lát cắt, nối vào cùng scene dùng input keyboard/mouse/touch.
+- Server build + 79/79 unit test và hai kiểm tra asset/scene tĩnh đạt. Docker/Nakama/PostgreSQL smoke và Godot 4.6.1 import/runtime chưa chạy local; CI đã mở rộng inventory smoke cho settlement restart và combat smoke cho trận PvE thật.
+- Thiết kế còn ở P3 trở đi: quest/đột phá, shop/craft/vườn, NPC progression, playtest cân bằng và mobile export/thiết bị thật.
+
+## 27/09/2026 — Nối sơ đồ tuyến và giữ settlement khi storage tạm lỗi
+
+- Snapshot trước khi push: nhánh P2 đã rebase trên `main` `5d45df9`, commit `14ee8fa`.
+- Thay bốn nút vuông/chevron trên overlay bằng panorama tổng quan liền mạch; tên vùng và điểm chọn là Control riêng đặt trên từng đoạn tuyến. Preview từng map và chuyển map cục bộ vẫn còn.
+- Tái sử dụng map TileMap/props/cổng hiện có, phông đấu trường và sprite Sơn Trư; không tạo lại các map gameplay hay nhân vật.
+- Settlement polling giữ nguyên `reward_pending` khi storage read tạm lỗi; test kiểm tra phục hồi sau khi backend đọc lại được.
+- Server build + 79/79 unit test, scene audit (11 scene/79 resource refs) và integrity check 22 PNG đạt. Godot/Docker live gate chưa chạy local; CI cần xác nhận scene runtime và Nakama settlement.
+
+## 27/09/2026 — Push P2 và sửa lỗi lộ ra trong CI
+
+- Mở PR #8 `feat/p2-son-tru-settlement` → `main`; GitHub tree được đối chiếu trùng với tree local, đủ 41 file thay đổi.
+- CI xác nhận server build/unit, Docker/Nakama setup và test social chạy; Godot 4.6.1 phát hiện biến `protected` cần kiểu tường minh. Bản sửa đã đưa lên PR.
+- Lần chạy tiếp theo còn bắt được alias mutable giữa `selected_slot` và dữ liệu túi demo cùng phép so sánh `Vector2`/`Vector2i`; đã sửa hai lỗi và thêm thông tin lỗi rõ hơn cho inventory smoke.
+- GitHub Actions run #127 (`36304883102`) đã qua inventory settlement, combat/PvE, presentation và Godot 4.6.1; PR #8 vẫn mở, chưa merge. Playtest trên mobile/thiết bị thật còn lại.

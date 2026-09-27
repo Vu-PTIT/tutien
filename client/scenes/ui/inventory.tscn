@@ -438,11 +438,27 @@ theme_override_font_sizes/font_size = 11
 offset_left = 10.0
 offset_top = 56.0
 offset_right = 216.0
-offset_bottom = 172.0
+offset_bottom = 136.0
 mouse_filter = 2
 text = "Thông tin vật phẩm và nguồn thu thập."
 theme_override_font_sizes/font_size = 10
 autowrap_mode = 2
+
+[node name="Action" type="Button" parent="Detail"]
+offset_left = 10.0
+offset_top = 145.0
+offset_right = 111.0
+offset_bottom = 168.0
+text = "Dùng / trang bị"
+theme_override_font_sizes/font_size = 9
+
+[node name="Discard" type="Button" parent="Detail"]
+offset_left = 118.0
+offset_top = 145.0
+offset_right = 216.0
+offset_bottom = 168.0
+text = "Bỏ vật phẩm"
+theme_override_font_sizes/font_size = 9
 
 [node name="Summary" type="Label" parent="."]
 offset_left = 14.0

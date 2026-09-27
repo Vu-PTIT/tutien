@@ -17,7 +17,7 @@ Các điểm đã kiểm tra trong repo:
 - `Camera2D` theo người chơi ở map dã ngoại; Cổ Tỉnh đổi giới hạn camera theo phòng. An Khê đã nắn blocker công trình, suối, sạp chợ và gốc cây theo nền nhìn thấy; các map còn lại vẫn cần nắn sát prop.
 - Route có thể tải map cục bộ. Đây là luồng test client; cổng server, checkpoint, quest, NPC, PvE, fog-of-war và lưu trạng thái chưa được nối.
 - `client/scripts/ui/hud.gd` vẽ minimap từ ô địa hình, blocker và POI của runtime; `M` mở overlay tuyến, `Esc` đóng.
-- Overlay đọc bốn map và ảnh preview từ `client/data/map_catalog.json`; chọn thẻ để xem, bấm **Đi thử map này** để đổi scene cục bộ. Server chưa xác nhận quyền vào.
+- Overlay dùng panorama nối bốn vùng; tên vùng/điểm chọn là Control riêng trên tuyến, ảnh preview và chi tiết đổi theo vùng được chọn. **Đi thử map này** vẫn chỉ tải scene cục bộ; server chưa xác nhận quyền vào.
 - Tài liệu cũ ghi kích thước 64×48, 96×96, 80×64 và 64×64 tile; các số này đã lỗi thời so với quy chuẩn mới bên dưới.
 
 Vì vậy, phần đang có là **prototype trình bày và đi thử tuyến bốn map**. Terrain vẫn là atlas 32 px cố định; foreground chỉ mới xử lý bằng Y-sort/fade cho vật thể cao và chưa được phủ art đầy đủ. Cần tiếp tục tinh chỉnh va chạm ở ba map dã ngoại/hầm và nối luật mở khóa gameplay với server.
@@ -134,7 +134,7 @@ Giữ arena đơn giản, nền tối trung tính và vật cản dễ đọc. K
 
 ## 6. UI bản đồ toàn khu và trạng thái khám phá
 
-Màn hình bản đồ là lớp giao diện riêng, không phải ảnh nền của map đang chơi. Overlay prototype có bốn thẻ, ảnh preview, mô tả và nút **Đi thử map này**. Nút này nạp map local để kiểm tra tuyến; không xác nhận quest hoặc quyền vào phía server. Bản hoàn chỉnh gồm:
+Màn hình bản đồ là lớp giao diện riêng, không phải ảnh nền của map đang chơi. Overlay prototype có panorama liền mạch nối bốn vùng, điểm chọn đặt trên từng khu, preview riêng, mô tả và nút **Đi thử map này**. Nút này nạp map local để kiểm tra tuyến; không xác nhận quest hoặc quyền vào phía server. Bản hoàn chỉnh gồm:
 
 1. **Tên khu + mức nguy hiểm** ở đầu bảng; nguy hiểm có nhãn chữ và biểu tượng, không chỉ đổi màu.
 2. **Sơ đồ tuyến** ở giữa: An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh; cổng khóa ghi điều kiện mở.
