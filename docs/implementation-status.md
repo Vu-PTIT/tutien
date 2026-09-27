@@ -1,6 +1,6 @@
 # Tiến độ triển khai và thứ tự mới — cập nhật 27/09/2026
 
-> P2 đang ở PR #8 (`feat/p2-son-tru-settlement` → `main`), trên nền `5d45df9` (P1 đã merge qua PR #5–#6). Server build và 80/80 unit test đạt; scene audit gồm 11 scene/79 resource refs và 22 PNG qua kiểm tra tĩnh. Sơ đồ tuyến đã đổi sang một panorama nối bốn khu. CI trước đó đã chạy Docker/Nakama và Godot 4.6.1, phát hiện lỗi parser/UI/quota; các lỗi đã được sửa trong bản mới nhất và đang chờ CI xác nhận lại.
+> P2 đang ở PR #8 (`feat/p2-son-tru-settlement` → `main`), trên nền `5d45df9` (P1 đã merge qua PR #5–#6). Server build và 80/80 unit test đạt; scene audit gồm 11 scene/79 resource refs và 22 PNG qua kiểm tra tĩnh. Sơ đồ tuyến đã đổi sang một panorama nối bốn khu. GitHub Actions run #125 đạt toàn bộ gate Docker/Nakama/PostgreSQL và Godot 4.6.1, gồm inventory/settlement, combat/PvE, presentation và ảnh desktop/touch. PR chưa merge; playtest trên thiết bị thật vẫn còn.
 
 Nền map trước đó gồm bốn layout TileMap từ atlas 32 px, prop Y-sort riêng, 21 POI cục bộ, cổng có điểm đến và smoke test tuyến. An Khê có nền/collision chỉnh theo ảnh runtime, minimap từ dữ liệu map, sprite cây tách nền, gốc cây có va chạm và bố cục touch thử nghiệm. Bàn phím/chuột và cảm ứng dùng chung `GameInput`/InputMap. Foreground toàn map, fog-of-war, quest/unlock server, lưu trạng thái map và bản xuất mobile chưa hoàn thành.
 
@@ -62,9 +62,10 @@ cùng lệnh. `scripts/inventory-smoke.mjs` đã được mở rộng cho Docker
 PostgreSQL, migration schema 2, equip/use/discard, đầy túi và settlement restart.
 `client/tests/inventory_smoke.gd` kiểm tra panel nhận starter và trang bị;
 `client/tests/combat_smoke.gd` còn mở trận PvE thật để kiểm tra tell/lao/hồi thế.
-Môi trường local hiện không có Docker hoặc Godot executable. CI đã chạy các gate này;
-lần mới nhất trên revision trước đó còn phát hiện lỗi capture và auth quota, đã được
-sửa trong revision kế tiếp và đang chờ CI xác nhận lại.
+Môi trường local hiện không có Docker hoặc Godot executable. GitHub Actions run #125
+đã chạy thành công Docker/Nakama/PostgreSQL, Godot 4.6.1 import/runtime, smoke UI,
+inventory settlement và trận combat/PvE. Run trước đó phát hiện lỗi capture và auth
+quota; hai lỗi đã được sửa trước run nghiệm thu này.
 
 Mốc combat local từng đạt 42/42 unit test; Godot 4.6.1 import/chạy scene.
 Mốc tài sản đã ghi 64 unit test và CI run

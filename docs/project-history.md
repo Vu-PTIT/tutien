@@ -358,4 +358,4 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 - Mở PR #8 `feat/p2-son-tru-settlement` → `main`; GitHub tree được đối chiếu trùng với tree local, đủ 41 file thay đổi.
 - CI xác nhận server build/unit, Docker/Nakama setup và test social chạy; Godot 4.6.1 phát hiện biến `protected` cần kiểu tường minh. Bản sửa đã đưa lên PR.
 - Lần chạy tiếp theo còn bắt được alias mutable giữa `selected_slot` và dữ liệu túi demo cùng phép so sánh `Vector2`/`Vector2i`; đã sửa hai lỗi và thêm thông tin lỗi rõ hơn cho inventory smoke.
-- P2 chưa nghiệm thu: đợi CI chạy lại inventory settlement, combat/PvE, presentation và Godot 4.6.1.
+- GitHub Actions run #125 đã qua inventory settlement, combat/PvE, presentation và Godot 4.6.1; PR #8 vẫn mở, chưa merge. Playtest trên mobile/thiết bị thật còn lại.
