@@ -26,19 +26,33 @@ func _run() -> void:
 func _scenario() -> bool:
 	var suffix := Crypto.new().generate_random_bytes(6).hex_encode()
 	var login := await api.register_account("bag_" + suffix + "@example.com", suffix + "Password1!", "bag_" + suffix)
-	if login.has("error"): return false
+	if login.has("error"):
+		push_error("Register: " + str(login))
+		return false
 	await panel.refresh()
-	if panel.claim_button.disabled or not panel.inventory.is_empty(): return false
-	if panel.slot_buttons.size() != 24 or panel.preview_mode: return false
+	if panel.claim_button.disabled or not panel.inventory.is_empty():
+		push_error("Inventory panel did not load an empty server profile: " + str(panel.get("_mode")))
+		return false
+	if panel.slot_buttons.size() != 24 or panel.preview_mode:
+		push_error("Inventory panel did not exit preview mode after server refresh")
+		return false
 	await panel._claim()
-	if not panel.claim_button.disabled or panel.inventory.size() != 4: return false
+	if not panel.claim_button.disabled or panel.inventory.size() != 4:
+		push_error("Starter claim failed: " + str({"mode": panel.get_node("Mode").text, "inventory": panel.inventory, "claimed": panel.starter_claimed}))
+		return false
 	panel.set_filter("equipment")
-	if panel.filtered.size() != 1: return false
+	if panel.filtered.size() != 1:
+		push_error("Equipment filter returned an unexpected result: " + str(panel.filtered))
+		return false
 	panel.select_slot(0)
-	if panel.selected_id != "it_cloth_armor": return false
+	if panel.selected_id != "it_cloth_armor":
+		push_error("Expected equipped candidate cloth armor, got " + panel.selected_id)
+		return false
 	var armor_id := str(panel.selected_slot.instanceId)
 	await panel._use_or_equip_selected()
-	if str(panel.equipped.get("armor", "")) != armor_id or panel.action_button.text != "Tháo trang bị": return false
+	if str(panel.equipped.get("armor", "")) != armor_id or panel.action_button.text != "Tháo trang bị":
+		push_error("Equip did not update UI: " + str({"equipped": panel.equipped, "action": panel.action_button.text}))
+		return false
 	panel.set_filter("all")
 	var before := await api.call_rpc("get_profile")
 	await panel.refresh()

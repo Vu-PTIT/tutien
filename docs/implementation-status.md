@@ -93,8 +93,10 @@ không chạy được và CI ban đầu chưa có kết quả. Sau khi người
 nhánh đã có trên GitHub và CI được ghi ở mục 5. Không dùng cảnh báo cũ để kết luận
 inventory hiện chưa từng qua integration test.
 
-Bản P2 đã được commit trên nhánh local `feat/p2-son-tru-settlement` sau khi rebase
-lên `main` tại `5d45df9`. Chưa ghi nhận push, PR hoặc kết quả CI cho commit đó.
+Bản P2 đã được push lên `feat/p2-son-tru-settlement` và có PR #8 vào `main`, trên
+nền `5d45df9`. Workflow ban đầu phát hiện lỗi suy luận kiểu GDScript và smoke UI;
+đã sửa lỗi parser, các lỗi presentation/inventory còn lại đang được xử lý trên PR.
+Chỉ đánh dấu P2 được nghiệm thu sau khi CI Godot/Nakama/PostgreSQL đạt.
 
 
 ### Authored TileMap recovery — 24/09/2026

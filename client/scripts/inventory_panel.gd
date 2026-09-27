@@ -90,7 +90,7 @@ func set_filter(value: String) -> void:
 func _refresh_grid() -> void:
 	filtered.clear()
 	for slot: Dictionary in inventory:
-		if category == "all" or Visuals.definition(str(slot.itemId))[2] == category:
+		if category == "all" or Visuals.definition(str(slot.get("itemId", "")))[2] == category:
 			filtered.append(slot)
 	for index in range(24):
 		var button := slot_buttons[index]
@@ -100,9 +100,10 @@ func _refresh_grid() -> void:
 		button.disabled = loading
 		if index < filtered.size():
 			var item: Dictionary = filtered[index]
-			button.icon = Visuals.icon(str(item.itemId))
-			button.get_node("Quantity").text = str(item.quantity)
-			button.tooltip_text = str(Visuals.definition(str(item.itemId))[0])
+			var item_id := str(item.get("itemId", ""))
+			button.icon = Visuals.icon(item_id)
+			button.get_node("Quantity").text = str(item.get("quantity", 0))
+			button.tooltip_text = str(Visuals.definition(item_id)[0])
 	for entry in [["All", "all"], ["Equipment", "equipment"], ["Materials", "material"], ["Consumables", "consumable"]]:
 		get_node(entry[0]).modulate = Color("efcd87") if category == entry[1] else Color.WHITE
 	summary.text = ("Mẫu • %d / 24 ô" % inventory.size()) if preview_mode else (
@@ -124,8 +125,8 @@ func select_slot(index: int) -> void:
 		_update_item_actions()
 		return
 	var slot: Dictionary = filtered[index]
-	selected_slot = slot
-	selected_id = str(slot.itemId)
+	selected_slot = slot.duplicate(true)
+	selected_id = str(slot.get("itemId", ""))
 	var entry := Visuals.definition(selected_id)
 	var definition: Dictionary = catalog.get(selected_id, {})
 	$Detail/Icon.texture = Visuals.icon(selected_id)

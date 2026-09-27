@@ -352,3 +352,10 @@ Nhánh `feat/inventory-rewards` được mở rộng với prototype runtime cho
 - Tái sử dụng map TileMap/props/cổng hiện có, phông đấu trường và sprite Sơn Trư; không tạo lại các map gameplay hay nhân vật.
 - Settlement polling giữ nguyên `reward_pending` khi storage read tạm lỗi; test kiểm tra phục hồi sau khi backend đọc lại được.
 - Server build + 79/79 unit test, scene audit (11 scene/79 resource refs) và integrity check 22 PNG đạt. Godot/Docker live gate chưa chạy local; CI cần xác nhận scene runtime và Nakama settlement.
+
+## 27/09/2026 — Push P2 và sửa lỗi lộ ra trong CI
+
+- Mở PR #8 `feat/p2-son-tru-settlement` → `main`; GitHub tree được đối chiếu trùng với tree local, đủ 41 file thay đổi.
+- CI xác nhận server build/unit, Docker/Nakama setup và test social chạy; Godot 4.6.1 phát hiện biến `protected` cần kiểu tường minh. Bản sửa đã đưa lên PR.
+- Lần chạy tiếp theo còn bắt được alias mutable giữa `selected_slot` và dữ liệu túi demo cùng phép so sánh `Vector2`/`Vector2i`; đã sửa hai lỗi và thêm thông tin lỗi rõ hơn cho inventory smoke.
+- P2 chưa nghiệm thu: đợi CI chạy lại inventory settlement, combat/PvE, presentation và Godot 4.6.1.
