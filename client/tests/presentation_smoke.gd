@@ -111,7 +111,9 @@ func _run() -> void:
 	check(ground_layer.get_cell_atlas_coords(Vector2i(44, 18)).y == 4 and not main.can_walk(Vector2(44 * 32, 18 * 32)), "East stream art and collision agree")
 	check(not main.map_world.get_node("Background").visible, "Tile layer replaces the full-screen map sprite at runtime")
 	check(main.map_world.get_node("WorldLayers/ForegroundLayer") is TileMapLayer, "Map has a dedicated foreground tile layer")
-	check(main.map_world.interactables_size() == 6, "An Khê loads six data-driven interactive points")
+	check(main.map_world.interactables_size() == 8, "An Khê loads eight data-driven interactive points")
+	var luc_vi: MapInteractable = main.map_world.get_interactable("ak.npc.luc_vi")
+	check(luc_vi.get_node_or_null("NpcSprite") is Sprite2D, "Lục Vi uses the generated transparent NPC sprite")
 	check(not main.map_world.get_node("LocationLabels/Landmark_1").visible, "Far landmark labels do not clutter the An Khê HUD")
 	main.map_world.update_player_context(Vector2(30 * 32, 13 * 32))
 	check(main.map_world.get_node("LocationLabels/Landmark_1").visible, "Landmark label appears when the player approaches")
@@ -225,7 +227,7 @@ func _run() -> void:
 	await _capture_touch_layout(main, "truc-am-touch-runtime.png")
 	check(main.player.position == Vector2(5 * 32, 26 * 32), "Village gate arrives at the Trúc Âm entrance")
 	var initial_position: Vector2 = main.player.position
-	check(main.map_world.interactables_size() == 5, "Trúc Âm loads its own interactive map data")
+	check(main.map_world.interactables_size() == 7, "Trúc Âm loads its own interactive map data")
 	check(main.map_world.get_node("AmbientFX").get_child_count() == 3, "Trúc Âm loads its water highlights")
 	main._action("map")
 	await process_frame

@@ -21,9 +21,9 @@ Nền map trước đó gồm bốn layout TileMap từ atlas 32 px, prop Y-sort
 | Dùng/trang bị/dọn túi | Equip tăng công/thủ, thuốc hồi 40 HP, bỏ vật tư thường; có validation và retry receipt |
 | PvE/AI/encounter/loot | Sơn Trư solo authoritative, tell/lao/hồi thế, thắng/thua/reset, reward XP/da và cooldown |
 | Settlement | Outcome/source bền vững; đầy túi giữ chờ qua restart, chặn chuyến săn mới đến khi nhận |
-| Tu vi/đột phá | Có XP P2 giới hạn theo tầng Luyện Khí; đột phá/quest runtime chưa làm |
+| Tu vi/đột phá | XP P2 giới hạn theo tầng; nhánh P3 thêm mở đầu mortal → LK1 và phần thưởng dẫn khí |
 | Node, vườn, craft, shop | Chưa có runtime |
-| Quest/chương/bản đồ gameplay | Có thiết kế và map prototype; chưa có luồng quest server hoàn chỉnh |
+| Quest/chương/bản đồ gameplay | Nhánh P3 đang nối world session server-authoritative và quest 001–003 trên map prototype |
 | Cross-platform PC + mobile | InputMap/HUD và điều khiển cảm ứng dùng cùng action; chưa có mobile export hoặc playtest thiết bị |
 
 Chi tiết: [combat](combat-prototype.md), [tài sản/P2](inventory-and-rewards.md),
@@ -35,12 +35,13 @@ Chi tiết: [combat](combat-prototype.md), [tài sản/P2](inventory-and-rewards
 | --- | --- | --- |
 | P1 — một Sơn Trư | Runtime đã có trong lát cắt P2 | Đọc đòn/né/phản công; server xác nhận |
 | P2 — chuyến săn có thành quả | CI hoàn tất trên PR #8; PR chưa merge | Nhận đúng một lần; đầy túi giữ thưởng; restart còn; đồ và HP có tác dụng/lưu |
-| P3 — mở đầu nhân vật | Chưa làm; là mốc kế tiếp sau P2 | Quest runtime 001–003, dẫn khí, Phi Nhận, UI mục tiêu; tài khoản mới mortal → LK1 |
+| P3 — mở đầu nhân vật | Đang triển khai trên `feat/p3-world-quests`; chưa qua CI Godot hoặc merge | World movement/interaction server-authoritative; quest 001–003, Mạch Bàn, `sk_scan`, dẫn khí, Phi Nhận, UI mục tiêu |
 | P4 — vòng Trúc Âm | Chưa làm | Node, shop nhỏ, garden/craft, 004–006, Độc Chu và đột phá tầng 2 |
 | P5 — chương đầu | Chưa làm | 007–012, Thạch Cạn/Cổ Tỉnh, quái/công thức còn lại, tầng 3–4 |
 
 P2 dùng fixture Luyện Khí riêng trong smoke; không đổi trạng thái người chơi thật
-và không thêm debug grant RPC. P4 cần bán da/mua nước/thuốc và craft; không nghiệm
+và không thêm debug grant RPC. P3 lưu vị trí map và quest trong storage theo tài khoản;
+vật phẩm, cờ, realm, skill, insight và XP được ghi cùng lần cập nhật hồ sơ. P4 cần bán da/mua nước/thuốc và craft; không nghiệm
 thu economy khi loot chỉ nằm trong túi. P5 qua playtest rồi mới tăng map/kỹ năng/
 tông môn/PvP/chợ; không dùng lịch chờ để kéo dài chương.
 
@@ -57,8 +58,12 @@ Không bắt đầu encounter thưởng mới khi còn settlement chờ đầy t
 
 ## 5. Bằng chứng kiểm thử
 
-Nhánh P2: `npm --prefix server test` đạt 80/80; TypeScript build nằm trong
-cùng lệnh. `scripts/inventory-smoke.mjs` đã được mở rộng cho Docker/Nakama/
+Nhánh P3 hiện đạt `npm --prefix server test` 86/86; TypeScript build nằm trong
+cùng lệnh. Sáu test mới kiểm tra khởi tạo vị trí, di chuyển giả mạo/stale,
+tương tác gần vật thể trên đúng map, chuỗi quest/thưởng một lần và cổng vật lý.
+`node scripts/check-pixel-scenes.cjs` đạt 11 scene/79 resource refs, gồm PNG Lục Vi.
+Godot executable chưa có tại local nên `presentation_smoke.gd` chưa chạy; CI cần xác nhận
+import Godot/runtime trước khi merge. `scripts/inventory-smoke.mjs` đã được mở rộng cho Docker/Nakama/
 PostgreSQL, migration schema 2, equip/use/discard, đầy túi và settlement restart.
 `client/tests/inventory_smoke.gd` kiểm tra panel nhận starter và trang bị;
 `client/tests/combat_smoke.gd` còn mở trận PvE thật để kiểm tra tell/lao/hồi thế.
@@ -74,10 +79,10 @@ Mốc tài sản đã ghi 64 unit test và CI run
 thành công trên `a0ad66e`, gồm Nakama/PostgreSQL, inventory/restart, social và Godot.
 Đây là kết quả **lịch sử của mốc đó**, không phải lần chạy lại do sửa tài liệu này.
 
-Các kiểm tra local trong turn rà soát này đạt: `npm test --prefix server` 80/80,
-scene audit 11 scene/79 refs và PNG integrity 22/22. Godot/Docker không có sẵn tại
-local; CI run #127 là bằng chứng runtime/integration cho head hiện tại. Kết quả này
-không thay cho playtest mobile thật.
+P2 trước đó đạt 80/80 server test và CI runtime/integration; bằng chứng này không
+thay cho P3. P3 local hiện đạt server test 85/85, scene audit và JSON/PNG checks.
+Godot/Docker không có sẵn tại local; cần CI mới xác nhận GDScript, Godot import/runtime,
+và integration Nakama/PostgreSQL cho nhánh P3. Kết quả này không thay cho playtest mobile thật.
 
 ## 6. Tài liệu và việc còn thiếu
 
@@ -101,10 +106,11 @@ P2 đã được push lên `feat/p2-son-tru-settlement` và có PR #8 vào `main
 `5d45df9`. Head `e8348b8` có CI run #127 xanh; PR vẫn mở và chưa merge. P2 đạt
 điều kiện CI, còn playtest thiết bị là phần xác nhận tiếp theo.
 
-P3 phải bắt đầu bằng hợp đồng event thế giới đáng tin cậy: NPC/POI và chuyển map
-hiện vẫn được điều khiển cục bộ. Không cấp XP, vật phẩm hoặc mở cảnh giới từ một
-event vị trí do client tự khai. Sau khi có nguồn event server-authoritative, triển
-khai chuỗi 001–003, commit realm/skill/insight cùng thưởng một lần, rồi nối UI mục tiêu.
+P3 đã có RPC server-owned cho vị trí, va chạm, cự ly/đường nhìn, POI và cổng map;
+client không gửi map hoặc đối tượng đích giả. Quest 001–003 và UI mục tiêu đã nối,
+Lục Vi có sprite NPC mới theo phong cách pixel hiện có. Phần còn lại là qua Godot/CI,
+soát playtest đoạn nối map và gói thay đổi trước khi coi P3 hoàn tất. Chưa tạo map mới:
+Trúc Âm vẫn là prototype hiện có, được thêm hai POI dấu nước theo đặc tả.
 
 
 ### Authored TileMap recovery — 24/09/2026

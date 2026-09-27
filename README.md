@@ -57,7 +57,7 @@ và [trạng thái triển khai](docs/implementation-status.md).
 
 Đã có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**. P1 thêm encounter Sơn Trư một người chơi: báo hướng 0,75 giây, lao 4 tile, hồi 0,8 giây, né/phản công, chết/reset và reconnect ngắn. Encounter hiện chỉ thử combat; **chưa cấp XP, linh thạch hay vật phẩm**. Inventory 24 ô, catalog, migration và gói khởi đầu đã có; dùng/trang bị đồ, quest runtime, trồng trọt, giao dịch và PvP mở vẫn chưa làm. Mobile export và đồ họa toàn game chưa nghiệm thu.
 
-Xem [tiến độ và thứ tự triển khai](docs/implementation-status.md), [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md). P2 đã qua CI trên PR #8; mốc kế tiếp là P3: quest 001–003 và mở đầu tu luyện, sau khi chốt event tương tác/map đáng tin cậy phía server.
+Xem [tiến độ và thứ tự triển khai](docs/implementation-status.md), [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md). P2 đã qua CI trên PR #8; P3 đang được triển khai trên `feat/p3-world-quests`: server-authoritative world interaction và quest 001–003. Cần CI Godot/Nakama xác nhận trước khi merge.
 Xem [nhật ký phát triển và lịch sử Git](docs/project-history.md) để biết các mốc đã commit, trạng thái sản phẩm và thứ tự làm tiếp theo.
 
 ## Môi trường phát triển

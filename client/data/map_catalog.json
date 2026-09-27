@@ -42,6 +42,27 @@
 		  "icon": "res://assets/pixel/icon_4.tres"
 		},
 		{
+		  "entity_id": "ak.npc.luc_vi",
+		  "display_name": "Lục Vi — người dẫn đường",
+		  "position_tiles": [24, 31],
+		  "interaction_radius_tiles": 1.8,
+		  "action_kind": "dialogue",
+		  "action_label": "Nói chuyện",
+		  "npc_texture": "res://assets/pixel/npcs/luc_vi.png",
+		  "message": "Lục Vi: Dòng nước ở Ven Suối có hai dấu bất thường. Cầm Mạch Bàn rồi dò cả hai.",
+		  "icon": "res://assets/pixel/icon_11.tres"
+		},
+		{
+		  "entity_id": "ak.shrine.breathing",
+		  "display_name": "Bàn Tĩnh Tâm",
+		  "position_tiles": [25, 20],
+		  "interaction_radius_tiles": 1.7,
+		  "action_kind": "shrine",
+		  "action_label": "Dẫn khí",
+		  "message": "Một nơi yên tĩnh để thực hành dẫn khí sau khi khảo sát xong.",
+		  "icon": "res://assets/pixel/icon_11.tres"
+		},
+		{
 		  "entity_id": "ak.board.village",
 		  "display_name": "Bảng việc trong làng",
 		  "position_tiles": [15, 17],
@@ -112,7 +133,7 @@
 	  "camera_mode": "map",
 	  "spawn_tiles": [5, 26],
 	  "summary": "Dược liệu • học né đòn",
-	  "details": "Ba khu: Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư. Bản thử cho phép đi map cục bộ; quest, quái và lối tắt chưa được xác nhận phía server.",
+	  "details": "Ba khu: Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư. Lối mở và hai dấu nước được xác nhận từ vị trí phía server.",
 	  "quest_title": "KHẢO SÁT TRÚC ÂM",
 	  "quest_body": "Ba khu đã có nền và vùng đi thử.\nQuest, quái và thu thập chưa kết nối.",
 	  "preview": "res://assets/pixel/truc_am_world_v1.png",
@@ -126,6 +147,26 @@
 		  "action_label": "Khảo sát dược liệu",
 		  "message": "Cam Lộ mọc gần dòng nước. Điểm thu thập đang ở chế độ xem thử; chưa cấp vật phẩm.",
 		  "icon": "res://assets/pixel/icon_1.tres"
+		},
+		{
+		  "entity_id": "ta.poi.water_trace_west",
+		  "display_name": "Dấu nước phía tây",
+		  "position_tiles": [8, 18],
+		  "interaction_radius_tiles": 1.7,
+		  "action_kind": "scan",
+		  "action_label": "Dò dấu nước",
+		  "message": "Một vệt khoáng chất mỏng bám dưới mặt nước.",
+		  "icon": "res://assets/pixel/icon_11.tres"
+		},
+		{
+		  "entity_id": "ta.poi.water_trace_east",
+		  "display_name": "Dấu nước phía đông",
+		  "position_tiles": [14, 30],
+		  "interaction_radius_tiles": 1.7,
+		  "action_kind": "scan",
+		  "action_label": "Dò dấu nước",
+		  "message": "Dấu vết này khớp với mẫu phía tây.",
+		  "icon": "res://assets/pixel/icon_11.tres"
 		},
 		{
 		  "entity_id": "ta.trail.boar_sign",

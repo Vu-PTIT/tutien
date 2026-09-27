@@ -11,6 +11,9 @@ function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkr
   initializer.registerRpc("inventory_discard", inventoryDiscardRpc);
   initializer.registerRpc("pve_son_tru_create", pveSonTruCreateRpc);
   initializer.registerRpc("pve_son_tru_claim_pending", pveSonTruClaimPendingRpc);
+  initializer.registerRpc("world_get", worldGetRpc);
+  initializer.registerRpc("world_move", worldMoveRpc);
+  initializer.registerRpc("world_interact", worldInteractRpc);
   initializer.registerRpc("combat_create", combatCreateRpc);
   initializer.registerMatch("sparring", {
     matchInit: combatInit, matchJoinAttempt: combatJoinAttempt, matchJoin: combatJoin,
