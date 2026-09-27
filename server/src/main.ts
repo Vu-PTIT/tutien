@@ -6,18 +6,18 @@ function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkr
   initializer.registerRpc("get_profile", getProfile);
   initializer.registerRpc("inventory_get", inventoryGetRpc);
   initializer.registerRpc("inventory_claim_starter", inventoryClaimStarterRpc);
-  initializer.registerRpc("combat_create", combatCreateRpc);
+  initializer.registerRpc("inventory_equip", inventoryEquipRpc);
+  initializer.registerRpc("inventory_use", inventoryUseRpc);
+  initializer.registerRpc("inventory_discard", inventoryDiscardRpc);
   initializer.registerRpc("pve_son_tru_create", pveSonTruCreateRpc);
+  initializer.registerRpc("pve_son_tru_claim_pending", pveSonTruClaimPendingRpc);
+  initializer.registerRpc("combat_create", combatCreateRpc);
   initializer.registerMatch("sparring", {
     matchInit: combatInit, matchJoinAttempt: combatJoinAttempt, matchJoin: combatJoin,
     matchLeave: combatLeave, matchLoop: combatLoop, matchTerminate: combatTerminate,
     matchSignal: combatSignal
   });
-  initializer.registerMatch("pve_son_tru", {
-    matchInit: pveSonTruInit, matchJoinAttempt: pveSonTruJoinAttempt, matchJoin: pveSonTruJoin,
-    matchLeave: pveSonTruLeave, matchLoop: pveSonTruLoop, matchTerminate: pveSonTruTerminate,
-    matchSignal: pveSonTruSignal
-  });
+  initializer.registerMatch("pve_son_tru", pveSonTruMatch);
   initializer.registerRpc("social_find_player", socialFindPlayerRpc);
   initializer.registerRpc("social_group_create", groupCreateRpc);
   initializer.registerRpc("social_group_action", groupActionRpc);

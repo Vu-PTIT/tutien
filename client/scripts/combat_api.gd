@@ -31,6 +31,9 @@ func create_sparring() -> Dictionary:
 		return result
 	return await join_sparring(str(result.matchId))
 
+func create_son_tru() -> Dictionary:
+	return await create_son_tru_encounter()
+
 func create_son_tru_encounter() -> Dictionary:
 	if not match_id.is_empty():
 		return {"error": "Leave the current encounter first"}

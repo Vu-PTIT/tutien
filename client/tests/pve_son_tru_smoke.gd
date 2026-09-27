@@ -52,6 +52,8 @@ func _scenario() -> bool:
 	var before := await api.call_rpc("get_profile")
 	if not _good(before, "Profile before encounter"):
 		return false
+	if not _check(str(before.get("realm", "")) == "mortal", "Fresh smoke account is a mortal training player"):
+		return false
 	if not _check((await api.call_rpc("pve_son_tru_create", {})).has("error"), "Missing opt-in accepted"):
 		return false
 	if not _good(await api.create_son_tru_encounter(), "Create Sơn Trư encounter"):
@@ -88,10 +90,17 @@ func _scenario() -> bool:
 		return false
 	if not _check(Vector2(float(_player().x), float(_player().y)).distance_to(position_before) < 1.0, "Reconnect changed the server position"):
 		return false
-	var after := await api.call_rpc("get_profile")
-	if not _check(after == before, "Combat changed persistent progression"):
+	var saved_hp := int(_player().hp)
+	if not _good(await api.leave_current_match(), "Leave encounter"):
 		return false
-	return _good(await api.leave_current_match(), "Leave encounter")
+	var after := await api.call_rpc("get_profile")
+	if not _check(int(after.get("hp", -1)) == saved_hp, "Encounter did not checkpoint remaining HP"):
+		return false
+	if not _check(after.get("cultivationXp") == before.get("cultivationXp") and
+		after.get("inventory") == before.get("inventory") and
+		after.get("spiritStones") == before.get("spiritStones"), "Mortal training granted XP, loot or currency"):
+		return false
+	return true
 
 func _check(ok: bool, label: String) -> bool:
 	if not ok:

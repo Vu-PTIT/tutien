@@ -14,6 +14,9 @@ không phải tileset vẽ/tách thủ công.
 | `co_tinh_world_v1.png` | 1448 × 1086 RGB | Năm phòng nối tiếp; nền prototype dungeon Cổ Tỉnh |
 | `cultivator.png` | 1182 × 1330 transparent PNG | 4 hướng × 4 frame, nền trong suốt |
 | `icons.png` | 1254 × 1254 transparent PNG | 16 icon, nền trong suốt |
+| `maps/bai_son_tru.png` | 1586 × 992 RGB | Nền bãi săn cố định; chỉ là phông chiến đấu, bounds do server điều khiển |
+| `maps/world_route_overview.png` | 768 × 256 RGB | Sơ đồ tổng quan UI: một đường liên tục An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh; không dùng làm map runtime |
+| `enemies/son_tru/clean.png` | 128 × 128 transparent PNG | Sơn Trư idle, sprite riêng; chưa có animation |
 | `hero_idle.tres` | AtlasTexture | Nhân vật trong editor và chân dung HUD |
 | `icon_0.tres` … `icon_15.tres` | AtlasTexture | Icon dùng lại trong HUD/túi |
 | `ui_font.ttf` | DejaVu Sans | Tiếng Việt; license `FONT-LICENSE.txt` |
@@ -41,6 +44,14 @@ không phải tileset vẽ/tách thủ công.
 7. **Icon:** atlas pixel RPG 4 × 4 trong suốt, tách ô: bình đỏ, thảo dược,
    giọt nước, cuộn giấy, kiếm, áo giáp, quặng, tre, hạt giống, sổ, tinh thể,
    la bàn, da, nấm, chìa khóa, vệt chém xanh; viền tối, cùng bảng màu.
+8. **Bãi Sơn Trư:** `maps/bai_son_tru.prompt.txt`; nền chiến đấu pixel 16-bit,
+   khoảng đất thoáng cạnh rừng trúc và suối, không có vật thể cần va chạm hay
+   nhân vật. Đây là phông cho encounter cố định, không thay TileMap thế giới.
+9. **Sơn Trư:** `enemies/son_tru/prompt-used.txt`; sprite idle góc top-down 3/4
+   trên nền magenta phẳng. Pipeline đã tách nền và xuất PNG RGBA; chưa có sheet
+   animation.
+10. **Sơ đồ tuyến:** `maps/world_route_overview.prompt.txt`; panorama pixel RPG
+    liền mạch bốn vùng. Đây là nền UI; tên và điểm chọn được vẽ riêng trong Godot.
 
 ## Quy tắc và việc còn thiếu
 
@@ -54,6 +65,8 @@ không phải tileset vẽ/tách thủ công.
 - `an_khe_world_v1.png` được thu phóng nearest lên kích thước world 1536×1152;
   va chạm prototype là các blocker chữ nhật, chưa khớp từng bụi cây/hàng rào.
 - Ba map mới tạm dùng canvas 48×36 tile để thử route/runtime; kích thước này
-  chưa khóa trong quy chuẩn. Collider, TileMap, foreground và gameplay encounter
-  còn thiếu.
+  chưa khóa trong quy chuẩn. TileMap/foreground của các zone Trúc Âm, Thạch Cạn,
+  Cổ Tỉnh và collision theo terrain vẫn còn thiếu. P2 có phông chiến đấu riêng
+  cùng encounter Sơn Trư server-authoritative; đây không phải phần hoàn thiện
+  overworld Bãi Sơn Trư.
 - Bám phong cách concept, không coi là bản khớp từng pixel.

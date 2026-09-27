@@ -158,9 +158,10 @@ Runtime tại mốc nguồn dùng schema hồ sơ 2 cho inventory. Đoạn dư�
 }
 ```
 
-Trước runtime phải thiết kế migration riêng từ schema 2, giữ tiền/túi/revision và
-trường hợp dữ liệu lỗi. HP trong trận và chỉ số suy ra không do client ghi.
-Nguồn và receipt XP dùng cùng tầng giao dịch với tài sản hoặc outbox đã kiểm chứng.
+Runtime P2 đã migrate schema 1/2 sang schema 3, giữ tài sản hợp lệ, thêm XP/HP/
+equipment và có test CAS. Schema 3 hiện chưa chứa root profile, insight, skill hay
+đột phá trong mẫu tương lai bên trên. HP, XP và stats từ trang bị do server ghi;
+P3 cần thiết kế migration/tầng giao dịch riêng cho các trường tiến trình còn lại.
 
 ## 11. Giao diện và nghiệm thu
 

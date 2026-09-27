@@ -19,7 +19,7 @@ func _run() -> void:
 		if cleanup.has("error"): success = false
 	panel.queue_free()
 	api.queue_free()
-	if success: print("PASS Godot inventory panel: refresh, starter claim, re-open and replay")
+	if success: print("PASS Godot inventory panel: refresh, starter claim, equip, re-open and replay")
 	else: push_error("Inventory panel smoke failed")
 	quit(0 if success else 1)
 
@@ -36,9 +36,12 @@ func _scenario() -> bool:
 	if panel.filtered.size() != 1: return false
 	panel.select_slot(0)
 	if panel.selected_id != "it_cloth_armor": return false
+	var armor_id := str(panel.selected_slot.instanceId)
+	await panel._use_or_equip_selected()
+	if str(panel.equipped.get("armor", "")) != armor_id or panel.action_button.text != "Tháo trang bị": return false
 	panel.set_filter("all")
 	var before := await api.call_rpc("get_profile")
 	await panel.refresh()
 	await panel._claim()
 	var after := await api.call_rpc("get_profile")
-	return not before.has("error") and before == after and int(after.spiritStones) == 12 and int(after.revision) == 1
+	return not before.has("error") and before == after and int(after.spiritStones) == 12 and int(after.revision) == 2 and str(after.equipped.armor) == armor_id

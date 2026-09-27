@@ -5,10 +5,11 @@ test('rejects unauthenticated and system-owned profiles', () => {
   const s=setup();
   for(const id of ['', '00000000-0000-0000-0000-000000000000']) rejectsCode(()=>s.rpc('get_profile',{},id),16);
 });
-test('creates server-owned schema 2 and ignores client supplied money', () => {
+test('creates server-owned schema 3 and ignores client supplied assets', () => {
   const s=setup(), profile=s.rpc('get_profile',{spiritStones:99999});
-  assert.equal(profile.spiritStones,0);
-  assert.equal(profile.schemaVersion,2);
+  assert.equal(profile.spiritStones,0); assert.equal(profile.cultivationXp,0);
+  assert.equal(profile.hp,100); assert.deepEqual(profile.equipped,{weapon:'',armor:''});
+  assert.equal(profile.schemaVersion,3);
   assert.equal(profile.realm,'mortal');
   assert.equal(profile.realmStage,0);
   assert.equal(profile.characterId,A);
@@ -46,10 +47,20 @@ test('migration preserves money, valid cultivation and unknown fields', () => {
 test('migration maps original pham_nhan level 1 to mortal stage 0', () => {
   const s=setup();s.put({schemaVersion:1,realm:'pham_nhan',level:1,spiritStones:12});
   const p=s.rpc('get_profile');assert.equal(p.realm,'mortal');assert.equal(p.realmStage,0);assert.equal(p.spiritStones,12);
+  assert.equal(p.cultivationXp,0);
+});
+test('schema 2 migration preserves assets and initializes HP, XP and empty equipment', () => {
+  const s=setup();
+  s.put({schemaVersion:2,characterId:A,realm:'luyen_khi',realmStage:2,spiritStones:40,revision:7,inventory:[],note:'keep'});
+  const p=s.rpc('get_profile');
+  assert.equal(p.schemaVersion,3); assert.equal(p.realmStage,2); assert.equal(p.spiritStones,40);
+  assert.equal(p.revision,7); assert.equal(p.cultivationXp,0); assert.equal(p.hp,100);
+  assert.deepEqual(p.equipped,{weapon:'',armor:''}); assert.equal(p.note,'keep');
 });
 test('invalid and unknown schemas are preserved untouched for review', () => {
   for(const data of [
-    {schemaVersion:3}, {schemaVersion:1,realm:'pham_nhan',level:9,spiritStones:50},
+    {schemaVersion:4}, {schemaVersion:3,characterId:A,realm:'mortal',realmStage:0,cultivationXp:-1,hp:100,equipped:{weapon:'',armor:''},spiritStones:0,revision:0,inventory:[]},
+    {schemaVersion:1,realm:'pham_nhan',level:9,spiritStones:50},
     {schemaVersion:1,realm:'luyen_khi',level:5,spiritStones:50},
     {schemaVersion:1,realm:'pham_nhan',level:1,spiritStones:-1},
     {schemaVersion:1,realm:'pham_nhan',level:1,spiritStones:0,inventory:[]}

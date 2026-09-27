@@ -2,12 +2,13 @@ extends Node2D
 ## No @tool runtime simulation: all visual nodes are serialized in .tscn.
 const Api = preload("res://scripts/combat_api.gd")
 const Actor = preload("res://scenes/player.tscn")
-const BoarScene = preload("res://scenes/pve_son_tru_actor.tscn")
 const MapWorldScene = preload("res://scenes/map_world.tscn")
 const InputScript = preload("res://scripts/game_input.gd")
-const SON_TRU_BACKGROUND: Texture2D = preload("res://assets/pixel/enemies/bai_son_tru.png")
-const SON_TRU_PROPS: Texture2D = preload("res://assets/pixel/props/truc_am_props.png")
+const SON_TRU_BACKGROUND: Texture2D = preload("res://assets/pixel/maps/bai_son_tru.png")
+const SON_TRU_SPRITE: Texture2D = preload("res://assets/pixel/enemies/son_tru/clean.png")
 const ARENA_SCALE := 2.0 / 3.0
+const PVE_SCALE := 0.6
+const PVE_OFFSET := Vector2(32.0, 0.0)
 const WALK_SPEED := 72.0
 
 @onready var hud: PixelHUD = $Presentation/HUD
@@ -29,13 +30,12 @@ var send_clock: float = 0.0
 var snapshot_age: float = 0.0
 var pending_action: String = ""
 var last_phase: String = ""
-var last_match_kind: String = ""
 var fighters: Dictionary = {}
-var son_tru_actor: Node2D
 var local_map_flags: Dictionary = {}
 var offline_position := Vector2(768, 576)
 var touch_layout_enabled := false
 var game_input: GameInput
+var boar_sprite: Sprite2D
 
 func _ready() -> void:
 	get_window().min_size = Vector2i(640, 360)
@@ -50,12 +50,27 @@ func _ready() -> void:
 	api.snapshot_received.connect(_snapshot)
 	api.match_connection_lost.connect(_connection_lost)
 	hud.action_requested.connect(_action)
-	hud.get_node("LeaveEncounter").pressed.connect(func() -> void: _action("leave"))
 	touch_controls.action_requested.connect(game_input.request_action)
 	touch_layout_enabled = OS.has_feature("mobile") or OS.get_cmdline_user_args().has("--touch-preview")
 	hud.set_touch_layout(touch_layout_enabled)
 	world_map.map_requested.connect(_travel_to_map)
 	world_map.set_current_map(current_map_id)
+	var background := Sprite2D.new()
+	background.name = "SonTruBackground"
+	background.texture = SON_TRU_BACKGROUND
+	background.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	background.position = Vector2(320, 180)
+	background.scale = Vector2(576.0 / SON_TRU_BACKGROUND.get_width(), 360.0 / SON_TRU_BACKGROUND.get_height())
+	background.z_index = -20
+	$Arena.add_child(background)
+	boar_sprite = Sprite2D.new()
+	boar_sprite.name = "SonTru"
+	boar_sprite.texture = SON_TRU_SPRITE
+	boar_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	boar_sprite.scale = Vector2(0.8, 0.8)
+	boar_sprite.z_index = 1
+	boar_sprite.visible = false
+	$Arena.add_child(boar_sprite)
 	$Arena.hide()
 	var identity_path := "user://identity.cfg"
 	for argument in OS.get_cmdline_user_args():
@@ -99,7 +114,7 @@ func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 
 func _travel_to_map(map_id: String, arrival_tiles: Array = []) -> void:
 	if api != null and not api.match_id.is_empty():
-		hud.notify("Rời encounter trước khi chuyển map.")
+		hud.notify("Không thể chuyển map trong đấu tập.")
 		return
 	if map_id == current_map_id:
 		world_map.hide()
@@ -126,7 +141,7 @@ func _action(action: String) -> void:
 			hud.set_touch_layout(touch_layout_enabled)
 		"inventory":
 			if not api.match_id.is_empty():
-				hud.notify("Túi đồ đóng trong encounter.")
+				hud.notify("Túi đồ bị khóa trong trận online.")
 			elif inventory_panel.visible:
 				inventory_panel.hide()
 			else:
@@ -135,7 +150,7 @@ func _action(action: String) -> void:
 				inventory_panel.open_inventory()
 		"map":
 			if not api.match_id.is_empty():
-				hud.notify("Bản đồ đóng trong encounter.")
+				hud.notify("Bản đồ tuyến đóng trong trận online.")
 			elif world_map.visible:
 				world_map.hide()
 			else:
@@ -157,13 +172,15 @@ func _action(action: String) -> void:
 			room.release_focus()
 		"leave":
 			_leave_match()
+		"hunt":
+			_create_son_tru()
 		"attack", "dodge":
 			if inventory_panel.visible or dock.visible or world_map.visible:
 				return
 			if api.snapshot.get("phase", "") == "active":
 				pending_action = "sk_basic" if action == "attack" else "sk_dodge"
 			else:
-				hud.notify("Chiến đấu chỉ hoạt động trong phòng đấu tập online.")
+				hud.notify("Chiến đấu chỉ hoạt động trong trận online.")
 		"interact":
 			if not api.match_id.is_empty():
 				return
@@ -180,7 +197,7 @@ func _action(action: String) -> void:
 func _interact_with_world_object(target: MapInteractable) -> void:
 	var details := target.interaction_data
 	if target.action_kind == "encounter" and str(details.get("encounter_id", "")) == "en_boar":
-		_create_son_tru_encounter()
+		_create_son_tru()
 		return
 	if target.action_kind == "gate":
 		var destination := str(details.get("target_map_id", ""))
@@ -243,13 +260,7 @@ func _process(delta: float) -> void:
 		if send_clock >= 0.05:
 			send_clock = 0.0
 			var origin := _local_server_position()
-			var aim := game_input.aim(direction, touch_layout_enabled, get_global_mouse_position() / ARENA_SCALE, origin)
-			if api.match_kind == "pve_son_tru":
-				var boar: Dictionary = api.snapshot.get("boar", {})
-				if not boar.is_empty():
-					var target := Vector2(float(boar.get("x", origin.x)), float(boar.get("y", origin.y)))
-					if (target - origin).length_squared() > 0.01:
-						aim = (target - origin).normalized()
+			var aim := game_input.aim(direction, touch_layout_enabled, _pointer_world_position(), origin)
 			api.send_input(direction, aim, pending_action)
 			pending_action = ""
 		if snapshot_age > 2.0:
@@ -262,6 +273,15 @@ func _local_server_position() -> Vector2:
 			return Vector2(float(p.x), float(p.y))
 	return Vector2(380, 350)
 
+func _arena_world_position(point: Vector2) -> Vector2:
+	return PVE_OFFSET + point * PVE_SCALE if api.match_kind == "pve_son_tru" else point * ARENA_SCALE
+
+func _pointer_world_position() -> Vector2:
+	var point := get_global_mouse_position()
+	if api.match_kind == "pve_son_tru":
+		return (point - PVE_OFFSET) / PVE_SCALE
+	return point / ARENA_SCALE
+
 func _present_fighters(delta: float) -> void:
 	for p: Dictionary in api.snapshot.get("players", []):
 		var id := str(p.id)
@@ -269,29 +289,43 @@ func _present_fighters(delta: float) -> void:
 			var actor := Actor.instantiate() as PixelActor
 			actor.get_node("Camera2D").enabled = false
 			$Arena.add_child(actor)
-			actor.position = Vector2(float(p.x), float(p.y)) * ARENA_SCALE
+			actor.position = _arena_world_position(Vector2(float(p.x), float(p.y)))
 			if id != user_id:
 				actor.modulate = Color(1.0, 0.76, 0.66)
 			fighters[id] = actor
 		var actor: PixelActor = fighters[id]
-		var target := Vector2(float(p.x), float(p.y)) * ARENA_SCALE
+		var target := _arena_world_position(Vector2(float(p.x), float(p.y)))
+		actor.z_index = int(float(p.y))
 		var movement := target - actor.position
 		actor.position = actor.position.lerp(target, minf(1.0, delta * 20.0))
 		actor.present(movement, delta)
-	if api.match_kind == "pve_son_tru":
-		if son_tru_actor == null:
-			son_tru_actor = BoarScene.instantiate() as Node2D
-			$Arena.add_child(son_tru_actor)
-		var boar_data: Dictionary = api.snapshot.get("boar", {}).duplicate()
-		if not boar_data.is_empty():
-			boar_data["tick"] = int(api.snapshot.get("tick", 0))
-			son_tru_actor.call("present", boar_data)
+	if api.match_kind == "pve_son_tru" and api.snapshot.has("boar"):
+		var boar: Dictionary = api.snapshot.boar
+		boar_sprite.position = _arena_world_position(Vector2(float(boar.x), float(boar.y)))
+		boar_sprite.z_index = int(float(boar.y))
+		boar_sprite.flip_h = float(boar.get("faceX", -1)) > 0
+		boar_sprite.visible = int(boar.get("hp", 0)) > 0
+	else:
+		boar_sprite.visible = false
 
 func _draw() -> void:
 	if api == null or api.match_id.is_empty():
 		return
 	if api.match_kind == "pve_son_tru":
-		_draw_son_tru_arena()
+		var boar: Dictionary = api.snapshot.get("boar", {})
+		if not boar.is_empty():
+			var boar_position := _arena_world_position(Vector2(float(boar.x), float(boar.y)))
+			var boar_face := Vector2(float(boar.get("faceX", -1)), float(boar.get("faceY", 0)))
+			if str(boar.get("mode", "")) == "tell":
+				draw_line(boar_position, boar_position + boar_face * PVE_SCALE * 128.0, Color(1.0, 0.48, 0.24, 0.85), 6.0)
+				draw_arc(boar_position, 28.0, 0.0, TAU, 24, Color("f6d38a"), 2.0)
+			var bar_origin := boar_position + Vector2(-22.0, -48.0)
+			draw_rect(Rect2(bar_origin, Vector2(44.0, 4.0)), Color("431f2b"))
+			draw_rect(Rect2(bar_origin, Vector2(44.0 * float(boar.get("hp", 0)) / maxf(float(boar.get("maxHp", 60)), 1.0), 4.0)), Color("d87946"))
+		for p: Dictionary in api.snapshot.get("players", []):
+			var pos := _arena_world_position(Vector2(float(p.x), float(p.y)))
+			draw_rect(Rect2(pos + Vector2(-14, -44), Vector2(28, 3)), Color("431f2b"))
+			draw_rect(Rect2(pos + Vector2(-14, -44), Vector2(28 * float(p.hp) / 100.0, 3)), Color("8ab974"))
 		return
 	# The arena is deliberately separate from the illustrated village:
 	# only server-defined walls block combat, not the village scenery.
@@ -312,39 +346,6 @@ func _draw() -> void:
 		draw_rect(Rect2(pos + Vector2(-14, -49), Vector2(28, 3)), Color("431f2b"))
 		draw_rect(Rect2(pos + Vector2(-14, -49), Vector2(28 * float(p.hp) / 100, 3)), Color("8ab974"))
 
-func _draw_son_tru_arena() -> void:
-	draw_texture_rect(SON_TRU_BACKGROUND, Rect2(Vector2.ZERO, Vector2(640, 360)), false)
-	var rules: Dictionary = api.snapshot.get("rules", {})
-	for obstacle: Dictionary in rules.get("obstacles", []):
-		var tile := int(obstacle.get("spriteTile", 59))
-		var source := Rect2((tile % 8) * 128, int(tile / 8) * 128, 128, 128)
-		var center := Vector2(float(obstacle.x) + float(obstacle.w) * 0.5,
-			float(obstacle.y) + float(obstacle.h) * 0.5) * ARENA_SCALE
-		draw_texture_rect_region(SON_TRU_PROPS,
-			Rect2(center - Vector2(43, 34), Vector2(86, 68)), source)
-	var boar: Dictionary = api.snapshot.get("boar", {})
-	if not boar.is_empty():
-		var boar_pos := Vector2(float(boar.x), float(boar.y)) * ARENA_SCALE
-		var mode := str(boar.get("mode", "idle"))
-		if mode in ["windup", "charge"]:
-			var facing := Vector2(float(boar.faceX), float(boar.faceY)).normalized()
-			var endpoint := boar_pos + facing * float(rules.get("chargeDistance", 128)) * ARENA_SCALE
-			var warning := Color(0.91, 0.20, 0.14, 0.44) if mode == "windup" else Color(0.94, 0.13, 0.10, 0.68)
-			draw_line(boar_pos, endpoint, warning, 14.0, true)
-			draw_dashed_line(boar_pos, endpoint, Color("ffe3a0"), 2.0, 7.0, true)
-			draw_circle(endpoint, 4.0, Color("ffdc86"))
-		if str(boar.get("mode", "")) != "dead":
-			draw_rect(Rect2(boar_pos + Vector2(-25, -37), Vector2(50, 5)), Color("382523"))
-			draw_rect(Rect2(boar_pos + Vector2(-24, -36), Vector2(48 * float(boar.hp) / maxf(float(boar.get("maxHp", 60)), 1.0), 3)), Color("d87946"))
-	for p: Dictionary in api.snapshot.get("players", []):
-		var pos := Vector2(float(p.x), float(p.y)) * ARENA_SCALE
-		var facing := Vector2(float(p.faceX), float(p.faceY))
-		if p.mode in ["windup", "active"]:
-			draw_arc(pos, 42 * ARENA_SCALE, facing.angle() - PI / 3,
-				facing.angle() + PI / 3, 16, Color("f6d38a"), 2)
-		draw_rect(Rect2(pos + Vector2(-14, -43), Vector2(28, 3)), Color("431f2b"))
-		draw_rect(Rect2(pos + Vector2(-14, -43), Vector2(28 * float(p.hp) / 100, 3)), Color("8ab974"))
-
 func _connected() -> bool:
 	return api._socket != null and api._socket.get_ready_state() == WebSocketPeer.STATE_OPEN
 
@@ -355,6 +356,7 @@ func _update_buttons() -> void:
 	dock.get_node("Join").disabled = dock.get_node("Create").disabled
 	dock.get_node("Ready").disabled = busy or not _connected() or not in_match or api.snapshot.get("phase", "") != "waiting"
 	dock.get_node("Leave").disabled = busy or not in_match
+	dock.get_node("Hunt").disabled = busy or not _connected() or in_match or current_map_id != "m_truc_am"
 	hud.get_node("BagButton").disabled = busy or in_match
 	hud.get_node("MapButton").disabled = busy or in_match
 
@@ -364,53 +366,29 @@ func _message(message: String) -> void:
 
 func _connection_lost() -> void:
 	pending_action = ""
-	hud.get_node("Mode").text = "MẤT KẾT NỐI"
 	dock.show()
-	_message("Mất kết nối. Kết nối lại trong 10 giây để giữ phiên encounter.")
+	hud.get_node("Mode").text = "MẤT KẾT NỐI"
+	_message("Mất kết nối. Kết nối lại trong 10 giây để tiếp tục encounter.")
 	_update_buttons()
 
 func _snapshot(value: Dictionary) -> void:
 	snapshot_age = 0.0
-	if api.match_kind != last_match_kind:
-		last_match_kind = api.match_kind
-		last_phase = ""
 	var phase := str(value.phase)
+	var is_pve := api.match_kind == "pve_son_tru"
 	village_camera.enabled = false
 	map_world.hide()
 	$Arena.show()
 	touch_controls.set_combat_mode(true)
 	world_map.hide()
+	hud.get_node("Location/Title").text = "BÃI SƠN TRƯ" if is_pve else "VÕ ĐÀI"
+	hud.get_node("Location/State").text = "PvE • server xác nhận" if is_pve else "Đấu tập • không mất đồ"
 	hud.get_node("Minimap").hide()
-	var is_son_tru := api.match_kind == "pve_son_tru"
-	hud.get_node("LeaveEncounter").visible = is_son_tru
-	hud.get_node("BagButton").visible = not is_son_tru
-	hud.get_node("MapButton").visible = not is_son_tru
-	hud.get_node("SparringButton").visible = not is_son_tru
-	hud.get_node("Location/Title").text = "BÃI SƠN TRƯ" if is_son_tru else "VÕ ĐÀI"
-	hud.get_node("Location/State").text = "PvE • server xác nhận" if is_son_tru else "Đấu tập • không mất đồ"
-	hud.get_node("Quest/Title").text = "ĐỌC CÚ LAO" if is_son_tru else "ĐẤU TẬP"
-	hud.get_node("Quest/Body").text = "Gầm 0,75 s • khóa hướng\nNé ngang cú lao 4 ô\nPhản công • không XP/đồ" if is_son_tru else "Q / J: đánh • Space: né\nHP và vị trí từ server."
+	hud.get_node("Quest/Title").text = "ĐỌC CÚ LAO" if is_pve else "ĐẤU TẬP"
+	hud.get_node("Quest/Body").text = "Gầm 0,75 giây • khóa hướng\nNé ngang rồi phản công\nLuyện Khí nhận XP + da" if is_pve else "Q / J: đánh • Space: né\nHP và vị trí từ server."
 	hud.get_node("Mode").text = "ONLINE • SERVER XÁC NHẬN"
 	for p: Dictionary in value.get("players", []):
 		if p.id == user_id:
 			hud.set_health(int(p.hp))
-	if is_son_tru:
-		if phase != last_phase:
-			last_phase = phase
-			match phase:
-				"active":
-					dock.hide()
-					_message("Quan sát hướng gầm • né ngang • phản công lúc hồi thế.")
-				"defeated":
-					_message("Bạn gục ngã. Đang hồi sinh ở rìa bãi…")
-				"victory":
-					_message("Sơn Trư đã ngã. Encounter này chỉ thử combat; chưa cấp XP hay vật phẩm.")
-				"finished":
-					_message("Encounter kết thúc. Rời bãi để quay lại Trúc Âm.")
-		_present_fighters(0.0)
-		_update_buttons()
-		queue_redraw()
-		return
 	if phase != last_phase:
 		last_phase = phase
 		match phase:
@@ -423,11 +401,36 @@ func _snapshot(value: Dictionary) -> void:
 				_message("Chuẩn bị đấu tập…")
 			"active":
 				dock.hide()
-				_message("Trận đấu bắt đầu.")
+				_message("Quan sát hướng gầm • né ngang • phản công lúc Sơn Trư hồi thế." if is_pve else "Trận đấu bắt đầu.")
+			"settlement_saving", "settling":
+				hud.get_node("Mode").text = "ĐANG LƯU VÀ GHI NHẬN THƯỞNG…"
+				_message("Kết quả đã xác nhận; đang lưu thưởng trên server.")
+			"reward_pending":
+				dock.show()
+				hud.get_node("Mode").text = "THƯỞNG ĐANG CHỜ • TÚI ĐẦY"
+				hud.get_node("Quest/Body").text = "Kết quả đã được lưu.\nRời bãi, dọn túi rồi\nnhận thưởng trong Túi đồ."
+				_message("Túi đầy. Phần thưởng vẫn được giữ để nhận sau khi dọn túi.")
+			"defeated":
+				hud.get_node("Mode").text = "BẠN ĐÃ KIỆT SỨC • ĐANG HỒI PHỤC"
+				_message("Bạn đã gục ngã. Sơn Trư sẽ trở lại sau một lát.")
+			"victory":
+				dock.show()
+				dock.get_node("Status").text = "Đã xong • rời bãi để về map"
 			"finished":
 				dock.show()
-				var winner := str(value.get("winner", ""))
-				_message(("Hòa" if winner.is_empty() else ("Bạn thắng" if winner == user_id else "Bạn thua")) + " • Rời trận để quay lại map hiện tại.")
+				if is_pve:
+					_message("Encounter kết thúc • rời bãi để quay lại map.")
+				else:
+					var winner := str(value.get("winner", ""))
+					_message(("Hòa" if winner.is_empty() else ("Bạn thắng" if winner == user_id else "Bạn thua")) + " • Rời trận để quay lại map hiện tại.")
+	if is_pve:
+		var settlement: Dictionary = value.get("settlement", {})
+		if phase == "victory":
+			if str(settlement.get("status", "")) == "training":
+				_message("Bài luyện phàm nhân hoàn tất • không có XP hoặc loot lặp.")
+			else:
+				var items: Array = settlement.get("items", [])
+				_message("Đã nhận %d tu vi và %s." % [int(settlement.get("cultivationXp", 0)), "Da Sơn Trư ×1" if not items.is_empty() else "không có loot thêm"])
 	_update_buttons()
 
 func _connect_backend() -> void:
@@ -469,23 +472,23 @@ func _create_match() -> void:
 	busy = false
 	_update_buttons()
 
-func _create_son_tru_encounter() -> void:
-	if busy or not api.match_id.is_empty():
-		return
+func _create_son_tru() -> void:
 	if current_map_id != "m_truc_am":
-		hud.notify("Dấu vết này chỉ dẫn tới Bãi Sơn Trư ở Trúc Âm.")
+		hud.notify("Dấu vết Sơn Trư đang ở Trúc Âm. Hãy mở tuyến map để đi tới đó.")
 		return
 	if not _connected():
 		dock.show()
 		hud.notify("Kết nối máy chủ trong bảng Đấu tập trước khi vào Bãi Sơn Trư.")
 		return
+	if busy or not api.match_id.is_empty():
+		return
 	busy = true
 	_update_buttons()
-	var result: Dictionary = await api.create_son_tru_encounter()
+	var result: Dictionary = await api.create_son_tru()
 	if result.has("error"):
-		_message("Không vào được Bãi Sơn Trư: " + str(result.error))
+		_message(str(result.error))
 	else:
-		dock.hide()
+		room.text = api.match_id
 	busy = false
 	_update_buttons()
 
@@ -506,25 +509,24 @@ func _leave_match() -> void:
 		return
 	busy = true
 	_update_buttons()
-	await api.leave_current_match()
+	var was_pve := api.match_kind == "pve_son_tru"
+	await api.leave_sparring()
 	for actor: Node2D in fighters.values():
 		actor.queue_free()
 	fighters.clear()
-	if son_tru_actor != null:
-		son_tru_actor.queue_free()
-		son_tru_actor = null
+	boar_sprite.visible = false
 	pending_action = ""
 	last_phase = ""
-	last_match_kind = ""
 	$Arena.hide()
 	map_world.show()
 	touch_controls.set_combat_mode(false)
-	hud.get_node("LeaveEncounter").hide()
-	hud.get_node("BagButton").show()
-	hud.get_node("MapButton").show()
-	hud.get_node("SparringButton").show()
 	village_camera.enabled = true
-	hud.set_health(100)
+	if was_pve:
+		var profile: Dictionary = await api.call_rpc("get_profile")
+		if not profile.has("error"):
+			hud.apply_profile(profile)
+	else:
+		hud.set_health(100)
 	hud.get_node("Minimap").show()
 	hud.configure_map(map_world.map_data)
 	hud.get_node("Quest/Title").text = str(map_world.map_data.get("quest_title", "THÁM HIỂM"))

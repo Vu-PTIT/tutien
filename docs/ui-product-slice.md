@@ -21,8 +21,9 @@ minimap, thanh phím tắt và túi đồ dạng lưới.
 - `client/scripts/game_input.gd`: InputMap chuyển bàn phím/chuột/cần ảo thành
   lệnh di chuyển, đánh, né và tương tác chung cho cùng scene.
 - `client/data/map_catalog.json`, `client/scripts/ui/world_map_panel.gd`:
-  bốn map, ảnh preview và overlay chọn tuyến; nút **Đi thử map này** tải scene
-  cục bộ để kiểm tra, chưa kiểm tra quyền vào phía server.
+  overlay panorama nối An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh, điểm bấm đặt
+  trên từng vùng và preview riêng khi chọn; **Đi thử map này** tải scene cục bộ,
+  chưa kiểm tra quyền vào phía server.
 - `client/scenes/ui/inventory.tscn`: 24 ô, bốn bộ lọc và chi tiết vật phẩm.
   Test dùng chính PackedScene này; không còn ItemList ẩn để giả tương thích.
 - `client/themes/tutien_theme.tres`: màu sắc, khung vuông, focus, nút và font
@@ -43,11 +44,11 @@ chiều độc lập. Cơ sở cấu hình:
    chưa phải kích thước thiết kế đã chốt.
 3. **I** mở túi, chọn ô/bộ lọc; **Esc** đóng. Khi offline, túi ghi rõ là mẫu,
    không lưu vào tài khoản, không được nhận vật tư.
-4. Đến cửa hiệu thuốc bên trái, **E** xem lời nhắn mẫu. Chưa có NPC tương tác
-   hoàn chỉnh hay quest lưu vào server.
-5. **Đấu tập → Kết nối** với backend đang chạy. Tạo/vào phòng, hai người sẵn
-   sàng; **Q/J/chuột trái** đánh, **Space** né. Combat dùng vị trí, HP và vật cản
-   từ server, không dựa vào ảnh nền làng.
+4. Đến cửa hiệu thuốc bên trái, **E** xem lời nhắn mẫu. NPC và quest lưu server
+   chưa có runtime.
+5. **Đấu tập → Kết nối** với backend. **Săn Sơn Trư** mở trận solo; Luyện Khí
+   nhận XP/da khi thắng, Phàm Nhân chỉ có bài luyện. **Q/J/chuột trái** đánh,
+   **Space** né. Trang bị/thuốc thao tác trong Túi đồ sau khi rời trận.
 
 Lỗi Antigravity `.lnk` trong log là lỗi cấu hình trình soạn thảo ngoài, không
 chứng minh lỗi render. Trong Editor Settings, tìm `text_editor/external`:
@@ -65,8 +66,8 @@ tắt Use External Editor hoặc chọn executable thật thay vì shortcut `.ln
   phát hành. Nearest không thay thế việc chỉnh pixel thủ công.
 - Đấu trường còn nền lưới đơn giản, chưa có đồ họa hoàn thiện.
 - Route map có bốn preview và chuyển scene cục bộ; HUD/minimap theo map, tọa độ tile và tên zone/phòng. Cổ Tỉnh đổi giới hạn camera khi vào phòng khác.
-- Quy chuẩn chi tiết và phần chưa triển khai ở [04-world-and-maps.md](game-design/04-world-and-maps.md). Server unlock, quest, NPC/PvE, fog-of-war, mobile safe-area/export và playtest thiết bị thật chưa được nối.
-- Không thêm PvE, dùng/trang bị đồ, trồng trọt hoặc nhiệm vụ lưu trữ.
+- Quy chuẩn chi tiết và phần chưa triển khai ở [04-world-and-maps.md](game-design/04-world-and-maps.md). Server unlock/quest, NPC progression, fog-of-war, mobile safe-area/export và playtest thiết bị thật chưa được nối.
+- P2 có một encounter PvE, trang bị, hồi phục và dọn túi. P3+ vẫn cần quest progression, trồng trọt, craft và economy runtime.
 - Không tự gán linh lực đầy/Luyện Khí khi thiếu dữ liệu. Túi thật xóa dữ liệu
   mẫu trước khi tải tài sản từ server.
 
@@ -75,7 +76,7 @@ tắt Use External Editor hoặc chọn executable thật thay vì shortcut `.ln
 - `node scripts/check-pixel-scenes.cjs`: đạt; kiểm resource, node parent,
   catalog/preview bốn map, spawn không nằm trong blocker, 24 ô, hotbar,
   cấu hình pixel và atlas. Đây không phải parser GDScript.
-- `npm test --prefix server`: 64/64 đạt; không thay thế test client.
+- `npm test --prefix server`: 79/79 ở nhánh P2; 64/64 là kết quả lịch sử ở mốc này. Unit test không thay thế test client.
 - Mốc 21/09 chưa chạy được Godot tại chỗ. Trên nhánh tích hợp hiện tại, CI
   Godot 4.6.1 import, chạy smoke bốn map và chụp screenshot viewport thật.
 - `presentation_smoke.gd` bao phủ chuyển bốn map, số zone/phòng, spawn,

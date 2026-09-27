@@ -100,7 +100,7 @@ const txt=s=>{try{return JSON.parse(s)}catch{return s||''}};
         let content=txt(p.text);
         if(parent==='Inventory'&&n.name==='Summary')content='Mẫu • 10 / 24 ô';
         if(parent==='Detail'&&n.name==='Name')content='Thanh Thiết Kiếm';
-        if(parent==='Detail'&&n.name==='Body')content='Kiếm sắt của người mới nhập đạo.\nChưa hỗ trợ trang bị.\n\nNguồn: Lò rèn • chưa mở\nSố lượng: 1';
+        if(parent==='Detail'&&n.name==='Body')content='Kiếm sắt của người mới nhập đạo.\nTrang bị để tăng 5 điểm công.\n\nNguồn: Lò rèn • chưa mở\nSố lượng: 1';
         for(const [i,line] of content.split('\n').entries())text(line,x+(p.horizontal_alignment==='1'?w/2:0),y+size+1+i*13,size,p.horizontal_alignment==='1');
       }
       if(n.type==='GridContainer'){

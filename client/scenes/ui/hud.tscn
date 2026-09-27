@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 [ext_resource type="Theme" path="res://themes/tutien_theme.tres" id="theme"]
 [ext_resource type="Texture2D" path="res://assets/pixel/hero_idle.tres" id="hero"]
 [ext_resource type="Texture2D" path="res://assets/pixel/an_khe_world_v1.png" id="map"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory.tscn" id="bag"]
 [ext_resource type="Script" path="res://scripts/ui/world_map_panel.gd" id="map_panel_script"]
+[ext_resource type="Texture2D" path="res://assets/pixel/maps/world_route_overview.png" id="route_overview"]
 [ext_resource type="PackedScene" path="res://scenes/ui/touch_controls.tscn" id="touch_controls"]
 
 [node name="HUD" type="Control"]
@@ -396,7 +397,7 @@ offset_top = 8.0
 offset_right = 452.0
 offset_bottom = 24.0
 mouse_filter = 2
-text = "ĐẤU TẬP ONLINE • NAKAMA"
+text = "ONLINE • ĐẤU TẬP VÀ SĂN QUÁI"
 theme_override_font_sizes/font_size = 12
 
 [node name="Close" type="Button" parent="Dock"]
@@ -458,10 +459,17 @@ offset_right = 184.0
 offset_bottom = 124.0
 text = "Rời trận"
 
+[node name="Hunt" type="Button" parent="Dock"]
+offset_left = 400.0
+offset_top = 100.0
+offset_right = 505.0
+offset_bottom = 124.0
+text = "Săn Sơn Trư"
+
 [node name="Safety" type="Label" parent="Dock"]
 offset_left = 195.0
 offset_top = 99.0
-offset_right = 523.0
+offset_right = 390.0
 offset_bottom = 124.0
 mouse_filter = 2
 text = "J / Q đánh • Space né theo chuột"
@@ -484,48 +492,58 @@ mouse_filter = 0
 color = Color(0.015, 0.025, 0.04, 0.78)
 
 [node name="Window" type="Panel" parent="WorldMap"]
-offset_left = 48.0
-offset_top = 47.0
-offset_right = 592.0
-offset_bottom = 313.0
+offset_left = 24.0
+offset_top = 14.0
+offset_right = 616.0
+offset_bottom = 346.0
 
 [node name="Title" type="Label" parent="WorldMap/Window"]
 offset_left = 12.0
 offset_top = 8.0
-offset_right = 465.0
+offset_right = 510.0
 offset_bottom = 25.0
 mouse_filter = 2
-text = "SƠ ĐỒ TUYẾN MVP  •  CHỌN KHU ĐỂ XEM"
+text = "BẢN ĐỒ TUYẾN  •  AN KHÊ → TRÚC ÂM → THẠCH CẠN → CỔ TỈNH"
 theme_override_font_sizes/font_size = 11
 
 [node name="Close" type="Button" parent="WorldMap/Window"]
-offset_left = 503.0
+offset_left = 550.0
 offset_top = 6.0
-offset_right = 531.0
+offset_right = 578.0
 offset_bottom = 29.0
 text = "X"
 
-[node name="Route" type="HBoxContainer" parent="WorldMap/Window"]
+[node name="RouteOverview" type="TextureRect" parent="WorldMap/Window"]
 offset_left = 12.0
-offset_top = 39.0
-offset_right = 532.0
-offset_bottom = 101.0
-theme_override_constants/separation = 4
+offset_top = 35.0
+offset_right = 580.0
+offset_bottom = 225.0
+mouse_filter = 2
+texture = ExtResource("route_overview")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RouteNodes" type="Control" parent="WorldMap/Window"]
+offset_left = 12.0
+offset_top = 35.0
+offset_right = 580.0
+offset_bottom = 225.0
+mouse_filter = 2
 
 [node name="Preview" type="TextureRect" parent="WorldMap/Window"]
 offset_left = 12.0
-offset_top = 112.0
-offset_right = 250.0
-offset_bottom = 231.0
+offset_top = 231.0
+offset_right = 134.0
+offset_bottom = 301.0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
 [node name="NoPreview" type="Label" parent="WorldMap/Window"]
 offset_left = 12.0
-offset_top = 112.0
-offset_right = 250.0
-offset_bottom = 231.0
+offset_top = 231.0
+offset_right = 134.0
+offset_bottom = 301.0
 mouse_filter = 2
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -533,10 +551,10 @@ text = "Chưa có ảnh preview"
 theme_override_font_sizes/font_size = 9
 
 [node name="Info" type="Label" parent="WorldMap/Window"]
-offset_left = 262.0
-offset_top = 111.0
-offset_right = 518.0
-offset_bottom = 231.0
+offset_left = 146.0
+offset_top = 230.0
+offset_right = 580.0
+offset_bottom = 301.0
 mouse_filter = 2
 autowrap_mode = 2
 text = "An Khê"
@@ -544,18 +562,18 @@ theme_override_font_sizes/font_size = 9
 
 [node name="Note" type="Label" parent="WorldMap/Window"]
 offset_left = 12.0
-offset_top = 239.0
-offset_right = 375.0
-offset_bottom = 258.0
+offset_top = 307.0
+offset_right = 400.0
+offset_bottom = 326.0
 mouse_filter = 2
-text = "Ảnh ý tưởng • đi thử cục bộ, chưa ghi server"
+text = "Đường liền trên sơ đồ • đi thử từng khu bằng cổng runtime"
 theme_override_font_sizes/font_size = 8
 
 [node name="Travel" type="Button" parent="WorldMap/Window"]
-offset_left = 393.0
-offset_top = 237.0
-offset_right = 532.0
-offset_bottom = 263.0
+offset_left = 430.0
+offset_top = 304.0
+offset_right = 580.0
+offset_bottom = 330.0
 text = "Đi thử map này"
 
 [node name="TouchControls" parent="." instance=ExtResource("touch_controls")]
