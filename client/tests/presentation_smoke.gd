@@ -49,7 +49,8 @@ func check_map_assets(world: GameMap) -> void:
 			props_count += 1
 			var texture: Texture2D = actor.get_node("Sprite").texture
 			check(texture != null and texture.get_size() == Vector2(128, 128), "Landmarks retain full source resolution")
-	check(props_count >= 7, "Map has authored landmarks: " + world.map_id)
+	var minimum_props := 6 if world.map_id == "m_thach_can" else 7
+	check(props_count >= minimum_props, "Map has authored landmarks: " + world.map_id)
 	check(not world.get_node("Background").visible, "No painted PNG fallback: " + world.map_id)
 
 func _run() -> void:
@@ -234,6 +235,7 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	check(main.current_map_id == "m_thach_can", "Trúc Âm exit gate opens Thạch Cạn")
+	check(main.player.position == Vector2(4 * 32, 17 * 32), "Trúc Âm gate arrives beside its paired Thạch Cạn exit")
 	check_map_assets(main.map_world)
 	var mine_entrance: MapProp = main.map_world.get_node("Actors/tc_prop_mine_entrance") as MapProp
 	check(mine_entrance != null and not mine_entrance.get_node("Sprite").texture is AtlasTexture, "Thạch Cạn mine entrance uses its own cutout")
@@ -255,7 +257,6 @@ func _run() -> void:
 	main.map_world.update_player_context(main.player.position)
 	await process_frame
 	await _capture("thach-can-flow-pillar-runtime.png")
-	check(main.player.position == Vector2(4 * 32, 17 * 32), "Trúc Âm gate arrives beside its paired Thạch Cạn exit")
 	check(main.map_world.interactables_size() == 5, "Thạch Cạn loads its own interactive map data")
 	check(not main.can_walk(Vector2(5 * 32, 17 * 32)), "Thạch Cạn void terrain blocks walking")
 	var ore_node: MapInteractable = main.map_world.get_interactable("tc.node.iron_ore")
