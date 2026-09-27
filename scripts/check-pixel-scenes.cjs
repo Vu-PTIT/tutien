@@ -266,6 +266,8 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
   if(name==='thach_can') {
     assert.ok(layout.props.every(prop=>Boolean(prop.texture_path)),'Thạch Cạn map props must not carry atlas ground squares');
     assert.ok(!layout.props.some(prop=>prop.name==='tc_prop_outer_cliff'),'Tile terrain supplies the cliff edge without a backdrop square');
+    assert.ok(layout.ground_rows.every(row=>[...row].every(symbol=>tileSymbols.indexOf(symbol)<48)),
+      'Thạch Cạn ground layer must not place object cells from the terrain atlas');
   }
   for(const [propName,tileIndex] of Object.entries(expectedPropTiles['m_'+name]||{})) {
     const prop=layout.props.find(candidate=>candidate.name===propName);

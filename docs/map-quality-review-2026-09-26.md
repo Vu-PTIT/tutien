@@ -14,7 +14,7 @@ Giữ map runtime dạng Godot `TileMapLayer` 32 px, props Y-sort riêng, POI/ga
 - FX ở Thạch Cạn và Cổ Tỉnh được đặt lại trên tile nước hoặc mạch sáng.
 - Rà từng ô atlas đã phát hiện một số tile ID không khớp tên prop ở Trúc Âm và Thạch Cạn; đã đổi sang ô tre, suối, vách đá, chống hầm, xe quặng và mạch tinh thạch tương ứng. Lò rèn An Khê, cửa mỏ và trụ Mạch Bàn Thạch Cạn có cutout RGBA riêng kèm prompt nguồn. Trụ được đặt tách khỏi cửa mỏ để hai landmark không che lẫn nhau.
 - Kiểm tra tĩnh duyệt đường 4 hướng từ spawn tới mọi POI và điểm đến của gate, đồng thời kiểm tra vùng trống quanh spawn/điểm đến cho collider người chơi, collision terrain, vùng cầu, FX và liên kết POI–prop.
-- Tiếp lượt rà hiện tại: quặng, chống hầm, xe goòng và cụm tinh thể Thạch Cạn được tách thành sprite RGBA không nền; vách đá trang trí trùng với địa hình bị bỏ, giữ vách do tile terrain vẽ. Không còn nền vuông bám theo các prop tương tác chính trong map này.
+- Tiếp lượt rà hiện tại: quặng, chống hầm, xe goòng và cụm tinh thể Thạch Cạn được tách thành sprite RGBA không nền; tile ground atlas 48–51 (ô quặng/đá có nền vuông) được thay bằng biến thể đất đá, còn vách trang trí do tile terrain vẽ. Không còn nền vuông bám theo các prop tương tác chính trong map này.
 - Ba lối An Khê ↔ Trúc Âm ↔ Thạch Cạn ↔ Cổ Tỉnh có `connection_id` và cổng đối ứng. Mỗi lần qua cổng đưa người chơi tới gần lối quay lại ở map đích; sơ đồ M hiển thị nhãn đường nối từ chính dữ liệu này.
 
 ## Còn phải làm trước khi gọi là map hoàn thiện
