@@ -76,7 +76,7 @@ tắt Use External Editor hoặc chọn executable thật thay vì shortcut `.ln
 - `node scripts/check-pixel-scenes.cjs`: đạt; kiểm resource, node parent,
   catalog/preview bốn map, spawn không nằm trong blocker, 24 ô, hotbar,
   cấu hình pixel và atlas. Đây không phải parser GDScript.
-- `npm test --prefix server`: 79/79 ở nhánh P2; 64/64 là kết quả lịch sử ở mốc này. Unit test không thay thế test client.
+- `npm test --prefix server`: 80/80 ở nhánh P2; 64/64 là kết quả lịch sử ở mốc này. Unit test không thay thế test client.
 - Mốc 21/09 chưa chạy được Godot tại chỗ. Trên nhánh tích hợp hiện tại, CI
   Godot 4.6.1 import, chạy smoke bốn map và chụp screenshot viewport thật.
 - `presentation_smoke.gd` bao phủ chuyển bốn map, số zone/phòng, spawn,

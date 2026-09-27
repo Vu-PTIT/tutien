@@ -1,6 +1,6 @@
 # Tiến độ triển khai và thứ tự mới — cập nhật 27/09/2026
 
-> P2 đang hoàn thiện trên nhánh riêng `feat/p2-son-tru-settlement`, đặt trên `main` tại `5d45df9` (P1 đã merge qua PR #5–#6). Server build và 79/79 unit test đạt; scene audit gồm 11 scene/79 resource refs và 22 PNG qua kiểm tra tĩnh. Sơ đồ tuyến đã đổi sang một panorama nối bốn khu. Smoke Docker/Nakama/PostgreSQL và import/runtime Godot 4.6.1 chưa chạy local vì môi trường không có Docker/Godot executable; cần CI xác nhận các gate đó.
+> P2 đang ở PR #8 (`feat/p2-son-tru-settlement` → `main`), trên nền `5d45df9` (P1 đã merge qua PR #5–#6). Server build và 80/80 unit test đạt; scene audit gồm 11 scene/79 resource refs và 22 PNG qua kiểm tra tĩnh. Sơ đồ tuyến đã đổi sang một panorama nối bốn khu. CI trước đó đã chạy Docker/Nakama và Godot 4.6.1, phát hiện lỗi parser/UI/quota; các lỗi đã được sửa trong bản mới nhất và đang chờ CI xác nhận lại.
 
 Nền map trước đó gồm bốn layout TileMap từ atlas 32 px, prop Y-sort riêng, 21 POI cục bộ, cổng có điểm đến và smoke test tuyến. An Khê có nền/collision chỉnh theo ảnh runtime, minimap từ dữ liệu map, sprite cây tách nền, gốc cây có va chạm và bố cục touch thử nghiệm. Bàn phím/chuột và cảm ứng dùng chung `GameInput`/InputMap. Foreground toàn map, fog-of-war, quest/unlock server, lưu trạng thái map và bản xuất mobile chưa hoàn thành.
 
@@ -8,7 +8,7 @@ Nền map trước đó gồm bốn layout TileMap từ atlas 32 px, prop Y-sort
 
 - `main` tại `5d45df95b278583b688f2cefa16260dbe3eae3b9` đã có P1 Sơn Trư và tài liệu nghiệm thu; P2 tiếp tục trên nhánh feature riêng.
 - P2 gồm profile schema 3 và migration schema 2, equip/use/discard server-side, trận solo Sơn Trư authoritative, XP/loot, settlement outbox chờ nhận khi đầy túi, HP checkpoint và HUD dùng cùng input PC/touch.
-- Commit triển khai P2 chính là `14ee8fa`, kèm sửa lối vào map và cập nhật tài liệu trên cùng nhánh local; chưa push/merge và chưa có GitHub CI cho P2. Kết quả local không thay cho integration smoke hoặc Godot runtime.
+- Commit triển khai P2 chính là `14ee8fa`, kèm sửa lối vào map và cập nhật tài liệu; nhánh đã push và PR #8 đang mở, chưa merge. Kết quả unit/static local không thay cho integration smoke hoặc Godot runtime.
 - Không nhập `feat/economy-balance-v1` vào runtime; xem [đối chiếu nhánh kinh tế](economy-branch-review-2026-09-26.md).
 
 ## 2. Có và chưa có
@@ -57,13 +57,14 @@ Không bắt đầu encounter thưởng mới khi còn settlement chờ đầy t
 
 ## 5. Bằng chứng kiểm thử
 
-Nhánh P2: `npm --prefix server test` đạt 79/79; TypeScript build nằm trong
+Nhánh P2: `npm --prefix server test` đạt 80/80; TypeScript build nằm trong
 cùng lệnh. `scripts/inventory-smoke.mjs` đã được mở rộng cho Docker/Nakama/
 PostgreSQL, migration schema 2, equip/use/discard, đầy túi và settlement restart.
 `client/tests/inventory_smoke.gd` kiểm tra panel nhận starter và trang bị;
 `client/tests/combat_smoke.gd` còn mở trận PvE thật để kiểm tra tell/lao/hồi thế.
-Môi trường local hiện không có Docker hoặc Godot executable, nên hai smoke live và
-Godot 4.6.1 import/runtime chưa được chạy; cần CI trên branch để xác nhận.
+Môi trường local hiện không có Docker hoặc Godot executable. CI đã chạy các gate này;
+lần mới nhất trên revision trước đó còn phát hiện lỗi capture và auth quota, đã được
+sửa trong revision kế tiếp và đang chờ CI xác nhận lại.
 
 Mốc combat local từng đạt 42/42 unit test; Godot 4.6.1 import/chạy scene.
 Mốc tài sản đã ghi 64 unit test và CI run

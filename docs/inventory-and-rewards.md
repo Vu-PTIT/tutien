@@ -76,7 +76,7 @@ hồi lại ở HP lúc bắt đầu chuyến săn; chiến thắng giữ HP cò
 
 ## Kiểm chứng
 
-- `npm --prefix server test`: 79 unit test, gồm schema/migration, CAS/replay, trang bị/vật phẩm, admission PvE, giới hạn di chuyển, AI Sơn Trư, kill reward, full-bag outbox/restart, checkpoint HP và phục hồi khi poll settlement gặp lỗi đọc storage.
+- `npm --prefix server test`: 80 unit test, gồm schema/migration, CAS/replay, trang bị/vật phẩm, admission PvE, giới hạn di chuyển, AI Sơn Trư, kill reward, full-bag outbox/restart, checkpoint HP, phục hồi khi poll settlement gặp lỗi đọc storage và quota đăng nhập dev/test.
 - `node scripts/inventory-smoke.mjs`: Docker/Nakama/PostgreSQL; kiểm tra profile/schema 2 migration, starter, quyền truy cập, equip/use/discard, full bag, settlement chờ, restart rồi nhận đúng một lần.
 - `client/tests/inventory_smoke.gd`: Godot 4.6.1 panel smoke, gồm nhận starter/trang bị/replay. `client/tests/combat_smoke.gd` còn mở trận PvE thật và quan sát tell/lao/hồi thế trên Nakama.
 - SQL fixture chỉ dùng với account do smoke tạo; không mở admin/debug RPC trong runtime.

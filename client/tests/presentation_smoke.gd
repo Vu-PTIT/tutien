@@ -48,7 +48,7 @@ func _capture_son_tru_preview(main) -> void:
 	await process_frame
 	check(main.get_node("Arena/SonTruBackground").texture != null, "Sơn Trư arena uses its generated map art")
 	check(main.boar_sprite.visible and main.boar_sprite.texture.get_size() == Vector2(128, 128), "PVE encounter presents the transparent boar sprite")
-	check(main.boar_sprite.position == Vector2(446, 234), "Server boar position maps into the arena viewport")
+	check(main.boar_sprite.position.distance_to(Vector2(446, 234)) < 0.01, "Server boar position maps into the arena viewport")
 	check(main.hud.get_node("Location/Title").text == "BÃI SƠN TRƯ", "PvE HUD identifies the hunting area")
 	await _capture("son-tru-runtime.png")
 	await _capture_touch_layout(main, "son-tru-touch-runtime.png")
