@@ -2,6 +2,32 @@
   "version": 3,
   "tile_size_px": 32,
   "viewport_px": [640, 360],
+  "route_connections": [
+	{
+	  "id": "connection_an_khe_truc_am",
+	  "label": "Ven suối",
+	  "from_map_id": "m_an_khe",
+	  "from_gate_id": "ak.gate.truc_am",
+	  "to_map_id": "m_truc_am",
+	  "to_gate_id": "ta.retreat.ankhe"
+	},
+	{
+	  "id": "connection_truc_am_thach_can",
+	  "label": "Lối núi",
+	  "from_map_id": "m_truc_am",
+	  "from_gate_id": "ta.gate.thach_can",
+	  "to_map_id": "m_thach_can",
+	  "to_gate_id": "tc.retreat.truc_am"
+	},
+	{
+	  "id": "connection_thach_can_co_tinh",
+	  "label": "Cửa mỏ",
+	  "from_map_id": "m_thach_can",
+	  "from_gate_id": "tc.gate.co_tinh",
+	  "to_map_id": "m_co_tinh",
+	  "to_gate_id": "ct.retreat.thach_can"
+	}
+  ],
   "maps": [
 	{
 	  "id": "m_an_khe",
@@ -83,7 +109,9 @@
 		  "action_kind": "gate",
 		  "action_label": "Đi tới Trúc Âm",
 		  "target_map_id": "m_truc_am",
-		  "target_arrival_tiles": [5, 26],
+		  "target_arrival_tiles": [5, 29],
+		  "connection_id": "connection_an_khe_truc_am",
+		  "counterpart_gate_id": "ta.retreat.ankhe",
 		  "icon": "res://assets/pixel/icon_11.tres",
 		  "visual_prop_id": "ak_prop_north_gate"
 		}
@@ -164,7 +192,9 @@
 		  "action_kind": "gate",
 		  "action_label": "Rút về An Khê",
 		  "target_map_id": "m_an_khe",
-		  "target_arrival_tiles": [22, 3],
+		  "target_arrival_tiles": [22, 4],
+		  "connection_id": "connection_an_khe_truc_am",
+		  "counterpart_gate_id": "ak.gate.truc_am",
 		  "icon": "res://assets/pixel/icon_11.tres"
 		},
 		{
@@ -175,7 +205,9 @@
 		  "action_kind": "gate",
 		  "action_label": "Đi tới Thạch Cạn",
 		  "target_map_id": "m_thach_can",
-		  "target_arrival_tiles": [9, 18],
+		  "target_arrival_tiles": [4, 17],
+		  "connection_id": "connection_truc_am_thach_can",
+		  "counterpart_gate_id": "tc.retreat.truc_am",
 		  "icon": "res://assets/pixel/icon_14.tres"
 		}
 	  ],
@@ -252,7 +284,9 @@
 		  "action_kind": "gate",
 		  "action_label": "Rút về Trúc Âm",
 		  "target_map_id": "m_truc_am",
-		  "target_arrival_tiles": [44, 4],
+		  "target_arrival_tiles": [42, 4],
+		  "connection_id": "connection_truc_am_thach_can",
+		  "counterpart_gate_id": "ta.gate.thach_can",
 		  "icon": "res://assets/pixel/icon_11.tres"
 		},
 		{
@@ -263,7 +297,9 @@
 		  "action_kind": "gate",
 		  "action_label": "Đi tới Cổ Tỉnh",
 		  "target_map_id": "m_co_tinh",
-		  "target_arrival_tiles": [11, 31],
+		  "target_arrival_tiles": [11, 25],
+		  "connection_id": "connection_thach_can_co_tinh",
+		  "counterpart_gate_id": "ct.retreat.thach_can",
 		  "icon": "res://assets/pixel/icon_14.tres",
 		  "visual_prop_id": "tc_prop_mine_entrance"
 		}
@@ -351,7 +387,9 @@
 		  "action_kind": "gate",
 		  "action_label": "Rút về Thạch Cạn",
 		  "target_map_id": "m_thach_can",
-		  "target_arrival_tiles": [42, 24],
+		  "target_arrival_tiles": [40, 24],
+		  "connection_id": "connection_thach_can_co_tinh",
+		  "counterpart_gate_id": "tc.gate.co_tinh",
 		  "icon": "res://assets/pixel/icon_11.tres"
 		}
 	  ],

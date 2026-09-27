@@ -51,6 +51,46 @@ const layoutByMapId=new Map(mapCatalog.maps.map(map=>[
   map.id,
   JSON.parse(fs.readFileSync(path.join(root,'data/maps/'+map.id.slice(2)+'.json'),'utf8'))
 ]));
+const routeConnections=mapCatalog.route_connections||[];
+assert.equal(routeConnections.length,3,'The four-map chapter route has three named connections');
+const routeConnectionIds=new Set(),routeGateIds=new Set(),routeNeighbors=new Map(mapCatalog.maps.map(m=>[m.id,new Set()]));
+const gateById=(mapId,gateId)=>mapCatalog.maps.find(m=>m.id===mapId)?.interactables.find(p=>p.entity_id===gateId);
+for(const connection of routeConnections) {
+  assert.ok(connection.id&&!routeConnectionIds.has(connection.id),'Route connection ids are unique');
+  routeConnectionIds.add(connection.id);
+  assert.ok(connection.label,'Each route connection has a visible label: '+connection.id);
+  const from=gateById(connection.from_map_id,connection.from_gate_id);
+  const to=gateById(connection.to_map_id,connection.to_gate_id);
+  assert.ok(from&&to,'Connection endpoints exist: '+connection.id);
+  assert.equal(from.action_kind,'gate','Connection source is an interactive gate: '+connection.id);
+  assert.equal(to.action_kind,'gate','Connection destination is an interactive gate: '+connection.id);
+  assert.equal(from.connection_id,connection.id,'Source gate declares its connection: '+connection.id);
+  assert.equal(to.connection_id,connection.id,'Return gate declares the same connection: '+connection.id);
+  assert.equal(from.counterpart_gate_id,to.entity_id,'Source points to its reciprocal gate: '+connection.id);
+  assert.equal(to.counterpart_gate_id,from.entity_id,'Return gate points back to its source: '+connection.id);
+  assert.equal(from.target_map_id,connection.to_map_id,'Source gate targets the paired map: '+connection.id);
+  assert.equal(to.target_map_id,connection.from_map_id,'Return gate targets the paired map: '+connection.id);
+  const nearGate=(arrival,gate)=>Math.hypot(arrival[0]-gate.position_tiles[0],arrival[1]-gate.position_tiles[1]);
+  assert.ok(nearGate(from.target_arrival_tiles,to)<=3.2,'Source arrival lands near the reciprocal exit: '+connection.id);
+  assert.ok(nearGate(to.target_arrival_tiles,from)<=3.2,'Return arrival lands near the source exit: '+connection.id);
+  assert.ok(!routeGateIds.has(from.entity_id)&&!routeGateIds.has(to.entity_id),'A gate belongs to only one route: '+connection.id);
+  routeGateIds.add(from.entity_id);routeGateIds.add(to.entity_id);
+  routeNeighbors.get(connection.from_map_id).add(connection.to_map_id);
+  routeNeighbors.get(connection.to_map_id).add(connection.from_map_id);
+}
+for(const map of mapCatalog.maps) for(const gate of map.interactables.filter(p=>p.action_kind==='gate')) {
+  assert.ok(routeGateIds.has(gate.entity_id),'Every map gate belongs to a named reciprocal route: '+gate.entity_id);
+}
+for(let i=0;i<mapCatalog.maps.length-1;i++) {
+  assert.ok(routeConnections.some(c=>(c.from_map_id===mapCatalog.maps[i].id&&c.to_map_id===mapCatalog.maps[i+1].id)
+    ||(c.to_map_id===mapCatalog.maps[i].id&&c.from_map_id===mapCatalog.maps[i+1].id)),
+    'Adjacent route cards have a gate connection');
+}
+const connectedMaps=new Set([mapCatalog.maps[0].id]),connectionQueue=[mapCatalog.maps[0].id];
+for(let i=0;i<connectionQueue.length;i++) for(const neighbor of routeNeighbors.get(connectionQueue[i])) {
+  if(!connectedMaps.has(neighbor)){connectedMaps.add(neighbor);connectionQueue.push(neighbor);}
+}
+assert.equal(connectedMaps.size,mapCatalog.maps.length,'The route graph connects every map');
 const reachableByMapId=new Map();
 const expectedPropTiles={
   m_truc_am:{
@@ -58,13 +98,6 @@ const expectedPropTiles={
     ta_prop_deep_bamboo:48,
     ta_prop_herb_pocket:52,
     ta_prop_well_spring:61
-  },
-  m_thach_can:{
-    tc_prop_outer_cliff:9,
-    tc_prop_ore_vein:51,
-    tc_prop_mine_support:45,
-    tc_prop_rest_cart:59,
-    tc_prop_deep_crystal:62
   },
   m_co_tinh:{
     ct_prop_jade_crystal_cluster:55,
@@ -74,7 +107,11 @@ const expectedPropTiles={
 const generatedMapProps={
   ak_prop_blacksmith:'res://assets/pixel/props/an_khe_blacksmith.png',
   tc_prop_mine_entrance:'res://assets/pixel/props/thach_can_mine_entrance.png',
-  tc_prop_flow_pillar:'res://assets/pixel/props/thach_can_flow_pillar.png'
+  tc_prop_flow_pillar:'res://assets/pixel/props/thach_can_flow_pillar.png',
+  tc_prop_ore_vein:'res://assets/pixel/props/thach_can_ore_vein.png',
+  tc_prop_mine_support:'res://assets/pixel/props/thach_can_mine_support.png',
+  tc_prop_rest_cart:'res://assets/pixel/props/thach_can_rest_cart.png',
+  tc_prop_deep_crystal:'res://assets/pixel/props/thach_can_deep_crystal.png'
 };
 const trucAm=mapCatalog.maps.find(m=>m.id==='m_truc_am');
 const boarSign=trucAm.interactables.find(p=>p.entity_id==='ta.trail.boar_sign');
@@ -212,7 +249,8 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
   assert.equal(layout.props_cell_px,128, 'Props must retain 128 px source detail');
   assert.equal(layout.atlas_columns,8,'Terrain atlas must use 8 columns: '+name);
   assert.ok(layout.tile_set && Array.isArray(layout.ground_rows), 'Missing authored map layout data: '+name);
-  assert.ok(layout.props_atlas && Array.isArray(layout.props) && layout.props.length>=7, 'Map needs a substantial props layer: '+name);
+  const minPropCount=name==='thach_can'?6:7;
+  assert.ok(layout.props_atlas && Array.isArray(layout.props) && layout.props.length>=minPropCount, 'Map needs a substantial props layer: '+name);
   for(const prop of layout.props) {
     if(prop.texture_path) {
       const assetPath=path.join(root,prop.texture_path.replace('res://',''));
@@ -224,6 +262,10 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
     } else {
       assert.ok(Number.isInteger(prop.tile)&&prop.tile>=0&&prop.tile<64,'Atlas prop must reference a valid cell: '+prop.name);
     }
+  }
+  if(name==='thach_can') {
+    assert.ok(layout.props.every(prop=>Boolean(prop.texture_path)),'Thạch Cạn map props must not carry atlas ground squares');
+    assert.ok(!layout.props.some(prop=>prop.name==='tc_prop_outer_cliff'),'Tile terrain supplies the cliff edge without a backdrop square');
   }
   for(const [propName,tileIndex] of Object.entries(expectedPropTiles['m_'+name]||{})) {
     const prop=layout.props.find(candidate=>candidate.name===propName);
@@ -248,6 +290,20 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
   }
 }
 assert.ok(gameMap.includes('_build_props(layout)') && gameMap.includes('MAP_PROP_SCENE'), 'Map decorative props are data-driven and Y-sorted');
+const minePack=JSON.parse(read('assets/pixel/props/thach_can_mining_props_pack.json'));
+assert.deepEqual(minePack.grid,[2,2],'Thạch Cạn compact props use a 2×2 pack');
+assert.deepEqual(minePack.edge_touch,[],'Accepted map props do not touch prop-pack cell edges');
+assert.ok(fs.existsSync(path.join(root,minePack.prompt.replace(/^res:\/\//,''))),'Prop pack keeps its generation prompt');
+const minePackSource=fs.readFileSync(path.join(root,minePack.source_image.replace(/^res:\/\//,'')));
+assert.equal(minePackSource.readUInt32BE(16),1254,'Raw prop pack keeps generated width');
+assert.equal(minePackSource.readUInt32BE(20),1254,'Raw prop pack keeps generated height');
+for(const prop of minePack.props) {
+  assert.ok(fs.existsSync(path.join(root,prop.prompt.replace(/^res:\/\//,''))),'Extracted prop keeps its prompt provenance: '+prop.id);
+  const png=fs.readFileSync(path.join(root,prop.asset.replace(/^res:\/\//,'')));
+  assert.equal(png.readUInt32BE(16),128,'Extracted map prop width: '+prop.id);
+  assert.equal(png.readUInt32BE(20),128,'Extracted map prop height: '+prop.id);
+  assert.equal(png[25],6,'Extracted map prop is transparent RGBA: '+prop.id);
+}
 const sakura=path.join(root,'assets/pixel/props/an_khe_sakura.png');
 const sakuraPng=fs.readFileSync(sakura);
 assert.equal(sakuraPng.readUInt32BE(16),128,'Standalone sakura has 128 px width');
@@ -274,7 +330,10 @@ assert.ok(read('scripts/main.gd').includes('game_input.handle_event(') && !read(
 assert.ok(gameMap.includes('_build_interactables()') && gameMap.includes('_build_water_ripples()'), 'Map POIs and water motion are data-driven');
 assert.ok(main.includes('func _travel_to_map(map_id: String, arrival_tiles: Array = [])') && main.includes('target_arrival_tiles'), 'Map gates load their configured arrival point');
 assert.ok(gameMap.includes('room_lock'), 'Cổ Tỉnh camera locks by room');
-assert.ok(read('scripts/ui/world_map_panel.gd').includes('signal map_requested'), 'Route panel emits travel requests');
+const routePanel=read('scripts/ui/world_map_panel.gd');
+assert.ok(routePanel.includes('signal map_requested'), 'Route panel emits travel requests');
+assert.ok(routePanel.includes('route_connections')&&routePanel.includes('_connection_between(')&&routePanel.includes('connection.get("label"'),
+  'World map route cards render names from the connected gate graph');
 assert.ok(main.includes('world_map.map_requested.connect(_travel_to_map)'), 'Main connects map travel');
-console.log('PASS static map and scene audit: '+scenes+' scenes, '+references+' resource references, terrain collision, walkable POIs, reachable gates, aligned ripples, real PNG assets.');
+console.log('PASS static map and scene audit: '+scenes+' scenes, '+references+' resource references, connected reciprocal routes, walkable POIs, transparent Thạch Cạn props, aligned ripples, valid PNG assets.');
 console.log('Not a GDScript parser or Godot runtime test. Run presentation_smoke.gd in Godot.');

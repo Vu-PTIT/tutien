@@ -192,19 +192,29 @@ func _run() -> void:
 	check_quest_visible(hud)
 	await _capture("truc-am-runtime.png")
 	await _capture_touch_layout(main, "truc-am-touch-runtime.png")
-	check(main.player.position == Vector2(5 * 32, 26 * 32), "Village gate arrives at the Trúc Âm entrance")
-	var initial_position: Vector2 = main.player.position
+	check(main.player.position == Vector2(5 * 32, 29 * 32), "An Khê gate arrives beside its paired Trúc Âm exit")
 	check(main.map_world.interactables_size() == 5, "Trúc Âm loads its own interactive map data")
 	check(main.map_world.get_node("AmbientFX").get_child_count() == 3, "Trúc Âm loads its water highlights")
 	check(not main.can_walk(Vector2(12 * 32, 27 * 32)), "Trúc Âm river terrain blocks walking")
 	check(main.can_walk(Vector2(3 * 32, 27 * 32)), "The entry bridge keeps its authored walkable deck")
+	var truc_retreat: MapInteractable = main.map_world.get_interactable("ta.retreat.ankhe")
+	main.player.position = truc_retreat.position
+	main._action("interact")
+	await process_frame
+	await process_frame
+	check(main.current_map_id == "m_an_khe", "Trúc Âm return gate leads back to An Khê")
+	check(main.player.position == Vector2(22 * 32, 4 * 32), "Trúc Âm return arrives beside the paired An Khê gate")
 	main._action("map")
 	await process_frame
 	check(map_panel.visible, "Map action opens route panel")
 	map_panel.route_buttons["m_truc_am"].emit_signal("pressed")
 	check(map_panel.selected_id == "m_truc_am", "Route selection updates selected map")
 	check(map_panel.info.text.contains("Ven Suối"), "Map selection shows zone information")
+	var initial_position: Vector2 = main.player.position
+	check(map_panel.route_connections.size() == 3, "Route panel loads all three linked map passages")
+	check(map_panel._connection_between("m_truc_am", "m_thach_can").get("label") == "Lối núi", "Route card shows the named link to Thạch Cạn")
 	check(main.player.position == initial_position, "Selecting a route card does not teleport the player")
+	await _capture("connected-route-panel.png")
 	map_panel.travel_button.emit_signal("pressed")
 	await process_frame
 	await process_frame
@@ -231,6 +241,12 @@ func _run() -> void:
 	var flow_pillar: MapProp = main.map_world.get_node("Actors/tc_prop_flow_pillar") as MapProp
 	check(flow_pillar != null and not flow_pillar.get_node("Sprite").texture is AtlasTexture, "Thạch Cạn flow pillar uses its own cutout")
 	check(flow_pillar.get_node("Sprite").texture.get_image().detect_alpha() != Image.ALPHA_NONE, "Thạch Cạn flow pillar cutout retains alpha")
+	for prop_id in ["tc_prop_ore_vein", "tc_prop_mine_support", "tc_prop_rest_cart", "tc_prop_deep_crystal"]:
+		var cutout: MapProp = main.map_world.get_node("Actors/" + prop_id) as MapProp
+		check(cutout != null, prop_id + " is present in Thạch Cạn")
+		if cutout != null:
+			check(not cutout.get_node("Sprite").texture is AtlasTexture, prop_id + " uses a separate cutout")
+			check(cutout.get_node("Sprite").texture.get_image().detect_alpha() != Image.ALPHA_NONE, prop_id + " has no opaque square background")
 	check(main.can_walk(flow_pillar.position), "Thạch Cạn flow pillar is reachable on dry ground")
 	check_quest_visible(hud)
 	await _capture("thach-can-runtime.png")
@@ -239,9 +255,7 @@ func _run() -> void:
 	main.map_world.update_player_context(main.player.position)
 	await process_frame
 	await _capture("thach-can-flow-pillar-runtime.png")
-	main.player.position = Vector2(9 * 32, 18 * 32)
-	main.map_world.update_player_context(main.player.position)
-	check(main.player.position == Vector2(9 * 32, 18 * 32), "Trúc Âm gate arrives on a clear Thạch Cạn entrance tile")
+	check(main.player.position == Vector2(4 * 32, 17 * 32), "Trúc Âm gate arrives beside its paired Thạch Cạn exit")
 	check(main.map_world.interactables_size() == 5, "Thạch Cạn loads its own interactive map data")
 	check(not main.can_walk(Vector2(5 * 32, 17 * 32)), "Thạch Cạn void terrain blocks walking")
 	var ore_node: MapInteractable = main.map_world.get_interactable("tc.node.iron_ore")
@@ -259,7 +273,7 @@ func _run() -> void:
 	check_quest_visible(hud)
 	await _capture("co-tinh-runtime.png")
 	await _capture_touch_layout(main, "co-tinh-touch-runtime.png")
-	check(main.player.position == Vector2(11 * 32, 31 * 32), "Thạch Cạn gate arrives at the Cổ Tỉnh entrance")
+	check(main.player.position == Vector2(11 * 32, 25 * 32), "Thạch Cạn gate arrives beside its paired Cổ Tỉnh exit")
 	check(main.map_world.interactables_size() == 5, "Cổ Tỉnh loads its own interactive map data")
 	check(main.map_world.areas_size() == 5, "Cổ Tỉnh has five named rooms")
 	check(main.map_world.active_area_name == "Cửa Giếng", "Cổ Tỉnh spawn is in the entrance room")
@@ -277,7 +291,21 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	check(main.current_map_id == "m_thach_can", "Cổ Tỉnh retreat returns to Thạch Cạn")
-	check(main.player.position == Vector2(42 * 32, 24 * 32), "Cổ Tỉnh retreat arrives beside the destination gate")
+	check(main.player.position == Vector2(40 * 32, 24 * 32), "Cổ Tỉnh retreat arrives beside the paired Thạch Cạn gate")
+	var thach_retreat: MapInteractable = main.map_world.get_interactable("tc.retreat.truc_am")
+	main.player.position = thach_retreat.position
+	main._action("interact")
+	await process_frame
+	await process_frame
+	check(main.current_map_id == "m_truc_am", "Thạch Cạn return gate leads back to Trúc Âm")
+	check(main.player.position == Vector2(42 * 32, 4 * 32), "Thạch Cạn return arrives beside the paired Trúc Âm gate")
+	var thach_gate_back: MapInteractable = main.map_world.get_interactable("ta.gate.thach_can")
+	main.player.position = thach_gate_back.position
+	main._action("interact")
+	await process_frame
+	await process_frame
+	check(main.current_map_id == "m_thach_can", "Trúc Âm passage returns to Thạch Cạn")
+	check(main.player.position == Vector2(4 * 32, 17 * 32), "Return passage lands beside the same linked exit")
 	map_panel.open_map()
 	map_panel.route_buttons["m_an_khe"].emit_signal("pressed")
 	map_panel.travel_button.emit_signal("pressed")

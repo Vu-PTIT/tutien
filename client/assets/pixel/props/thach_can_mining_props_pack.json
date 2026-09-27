@@ -1,0 +1,45 @@
+{
+  "schema": "generate2dmap.prop_pack.v1",
+  "source_image": "res://assets/pixel/props/thach_can_mining_props_pack_source.png",
+  "prompt": "res://assets/pixel/props/thach_can_mining_props_pack.prompt.txt",
+  "source_size_px": [1254, 1254],
+  "grid": [2, 2],
+  "cell_size_px": [627, 627],
+  "background_color": "#FF00FF",
+  "extraction": {
+    "method": "magenta_chroma_key_then_premultiplied_lanczos",
+    "output_size_px": [128, 128],
+    "contact_shadow_removed": true
+  },
+  "edge_touch": [],
+  "props": [
+    {
+      "id": "tc_prop_ore_vein",
+      "cell": [0, 0],
+      "asset": "res://assets/pixel/props/thach_can_ore_vein.png",
+      "prompt": "res://assets/pixel/props/thach_can_ore_vein.prompt.txt",
+      "foot_padding_px": 18
+    },
+    {
+      "id": "tc_prop_mine_support",
+      "cell": [1, 0],
+      "asset": "res://assets/pixel/props/thach_can_mine_support.png",
+      "prompt": "res://assets/pixel/props/thach_can_mine_support.prompt.txt",
+      "foot_padding_px": 21
+    },
+    {
+      "id": "tc_prop_rest_cart",
+      "cell": [0, 1],
+      "asset": "res://assets/pixel/props/thach_can_rest_cart.png",
+      "prompt": "res://assets/pixel/props/thach_can_rest_cart.prompt.txt",
+      "foot_padding_px": 34
+    },
+    {
+      "id": "tc_prop_deep_crystal",
+      "cell": [1, 1],
+      "asset": "res://assets/pixel/props/thach_can_deep_crystal.png",
+      "prompt": "res://assets/pixel/props/thach_can_deep_crystal.prompt.txt",
+      "foot_padding_px": 25
+    }
+  ]
+}

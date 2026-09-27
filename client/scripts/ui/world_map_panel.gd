@@ -16,6 +16,7 @@ const CATALOG_PATH := "res://data/map_catalog.json"
 var maps_by_id: Dictionary = {}
 var route_buttons: Dictionary = {}
 var map_entries: Array = []
+var route_connections: Array = []
 var catalog: Dictionary = {}
 var selected_id: String = ""
 var current_map_id: String = "m_an_khe"
@@ -66,6 +67,8 @@ func _load_catalog() -> void:
 		push_error("Map catalog is missing its maps array")
 		return
 	map_entries = entries
+	var connections: Variant = catalog.get("route_connections", [])
+	route_connections = connections if connections is Array else []
 	for map_data: Variant in map_entries:
 		if map_data is Dictionary and map_data.has("id"):
 			maps_by_id[str(map_data.id)] = map_data
@@ -79,7 +82,7 @@ func _build_route() -> void:
 		var button := Button.new()
 		button.name = str(map_data.get("id", "Map%d" % index))
 		button.text = str(map_data.get("route_label", map_data.get("name", "Map")))
-		button.custom_minimum_size = Vector2(108, 54)
+		button.custom_minimum_size = Vector2(94, 54)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.add_theme_font_size_override("font_size", 8)
 		button.toggle_mode = true
@@ -88,13 +91,40 @@ func _build_route() -> void:
 		route.add_child(button)
 		route_buttons[str(map_data.get("id", ""))] = button
 		if index < map_entries.size() - 1:
+			var next_data: Dictionary = map_entries[index + 1]
+			var connection := _connection_between(str(map_data.get("id", "")), str(next_data.get("id", "")))
+			var connector := VBoxContainer.new()
+			connector.custom_minimum_size = Vector2(40, 54)
+			connector.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			connector.alignment = BoxContainer.ALIGNMENT_CENTER
+			connector.add_theme_constant_override("separation", 0)
 			var arrow := Label.new()
 			arrow.text = "›"
-			arrow.custom_minimum_size = Vector2(12, 54)
+			arrow.custom_minimum_size = Vector2(40, 22)
 			arrow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			arrow.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-			arrow.add_theme_font_size_override("font_size", 14)
-			route.add_child(arrow)
+			arrow.add_theme_font_size_override("font_size", 16)
+			connector.add_child(arrow)
+			var link_name := Label.new()
+			link_name.text = str(connection.get("label", "lối nối"))
+			link_name.custom_minimum_size = Vector2(40, 20)
+			link_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			link_name.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			link_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			link_name.add_theme_font_size_override("font_size", 7)
+			connector.add_child(link_name)
+			route.add_child(connector)
+
+func _connection_between(first_map_id: String, second_map_id: String) -> Dictionary:
+	for value: Variant in route_connections:
+		if not value is Dictionary:
+			continue
+		var connection: Dictionary = value
+		var source := str(connection.get("from_map_id", ""))
+		var target := str(connection.get("to_map_id", ""))
+		if (source == first_map_id and target == second_map_id) or (source == second_map_id and target == first_map_id):
+			return connection
+	return {}
 
 func _select_map(map_id: String) -> void:
 	if not maps_by_id.has(map_id):
