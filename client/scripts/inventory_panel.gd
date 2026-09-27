@@ -159,7 +159,7 @@ func _update_item_actions() -> void:
 		action_button.disabled = hp >= 100 or int(selected_slot.get("quantity", 0)) <= 0
 	else:
 		action_button.text = "Chưa dùng được"
-	var protected := bool(definition.get("bound", false)) or Visuals.definition(selected_id)[2] == "quest"
+	var protected: bool = bool(definition.get("bound", false)) or str(Visuals.definition(selected_id)[2]) == "quest"
 	var equipped_item := false
 	if selected_slot.has("instanceId"):
 		var instance_id := str(selected_slot.instanceId)
