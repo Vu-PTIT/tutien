@@ -13,6 +13,7 @@ const WALK_SPEED := 72.0
 
 @onready var hud: PixelHUD = $Presentation/HUD
 @onready var inventory_panel: InventoryPanel = $Presentation/HUD/Inventory
+@onready var character_panel: CharacterPanel = $Presentation/HUD/CharacterPanel
 @onready var map_host: Node2D = $MapHost
 @onready var dock: Panel = $Presentation/HUD/Dock
 @onready var room: LineEdit = $Presentation/HUD/Dock/Room
@@ -59,11 +60,14 @@ func _ready() -> void:
 	api = Api.new()
 	add_child(api)
 	inventory_panel.api = api
+	character_panel.api = api
 	api.snapshot_received.connect(_snapshot)
 	api.match_connection_lost.connect(_connection_lost)
 	hud.action_requested.connect(_action)
+	character_panel.inventory_requested.connect(_open_equipment_bag)
+	character_panel.touch_layout_changed.connect(_on_touch_layout_changed)
 	touch_controls.action_requested.connect(game_input.request_action)
-	touch_layout_enabled = OS.has_feature("mobile") or OS.get_cmdline_user_args().has("--touch-preview")
+	touch_layout_enabled = OS.has_feature("mobile") or character_panel.touch_layout_enabled or OS.get_cmdline_user_args().has("--touch-preview")
 	hud.set_touch_layout(touch_layout_enabled)
 	world_map.map_requested.connect(_travel_to_map)
 	service_menu = PopupMenu.new()
@@ -221,13 +225,13 @@ func _action(action: String) -> void:
 	match action:
 		"close":
 			inventory_panel.hide()
+			character_panel.hide()
 			dock.hide()
 			world_map.hide()
 			if service_menu != null:
 				service_menu.hide()
 		"touch_preview":
-			touch_layout_enabled = not touch_layout_enabled
-			hud.set_touch_layout(touch_layout_enabled)
+			character_panel.set_touch_layout_enabled(not touch_layout_enabled)
 		"inventory":
 			if service_menu != null:
 				service_menu.hide()
@@ -236,9 +240,20 @@ func _action(action: String) -> void:
 			elif inventory_panel.visible:
 				inventory_panel.hide()
 			else:
+				character_panel.hide()
 				world_map.hide()
 				dock.hide()
 				inventory_panel.open_inventory()
+		"character":
+			if service_menu != null:
+				service_menu.hide()
+			if character_panel.visible:
+				character_panel.hide()
+			else:
+				inventory_panel.hide()
+				world_map.hide()
+				dock.hide()
+				character_panel.open_profile()
 		"map":
 			if busy:
 				return
@@ -249,6 +264,7 @@ func _action(action: String) -> void:
 			elif world_map.visible:
 				world_map.hide()
 			else:
+				character_panel.hide()
 				inventory_panel.hide()
 				dock.hide()
 				world_map.open_map()
@@ -256,6 +272,7 @@ func _action(action: String) -> void:
 			if service_menu != null:
 				service_menu.hide()
 			world_map.hide()
+			character_panel.hide()
 			inventory_panel.hide()
 			dock.visible = not dock.visible
 		"connect":
@@ -270,7 +287,7 @@ func _action(action: String) -> void:
 		"leave":
 			_leave_match()
 		"attack", "dodge":
-			if inventory_panel.visible or dock.visible or world_map.visible:
+			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible:
 				return
 			if api.snapshot.get("phase", "") == "active":
 				pending_action = "sk_basic" if action == "attack" else "sk_dodge"
@@ -279,7 +296,7 @@ func _action(action: String) -> void:
 		"interact":
 			if not api.match_id.is_empty():
 				return
-			if inventory_panel.visible or dock.visible or world_map.visible:
+			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible:
 				return
 			var target: MapInteractable = map_world.update_interaction_focus(player.position)
 			if target == null:
@@ -384,8 +401,21 @@ func _unhandled_input(event: InputEvent) -> void:
 	if game_input.handle_event(event, touch_layout_enabled, room.has_focus()):
 		get_viewport().set_input_as_handled()
 
+func _on_touch_layout_changed(enabled: bool) -> void:
+	touch_layout_enabled = enabled
+	hud.set_touch_layout(enabled)
+
+func _open_equipment_bag() -> void:
+	character_panel.hide()
+	if not api.match_id.is_empty():
+		hud.notify("Túi đồ bị khóa trong trận online.")
+		return
+	world_map.hide()
+	dock.hide()
+	inventory_panel.open_equipment()
+
 func _movement() -> Vector2:
-	if busy or inventory_panel.visible or dock.visible or world_map.visible:
+	if busy or inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible:
 		return Vector2.ZERO
 	return game_input.movement(touch_controls.direction)
 
@@ -707,6 +737,7 @@ func _connect_backend() -> void:
 		result = await api.get_account()
 		if not result.has("error"):
 			user_id = str(result.user.id)
+			character_panel.set_display_name(str(result.user.get("username", "")))
 			result = await api.call_rpc("get_profile")
 			if not result.has("error"):
 				hud.apply_profile(result)

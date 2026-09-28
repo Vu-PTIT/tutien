@@ -5,15 +5,17 @@ var toast_time: float = 0.0
 var touch_layout: bool = false
 
 @onready var touch_controls: TouchControls = $TouchControls
+@onready var character_panel: CharacterPanel = $CharacterPanel
 
 func _ready() -> void:
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
 	$MapButton.pressed.connect(func() -> void: action_requested.emit("map"))
+	$CharacterButton.pressed.connect(func() -> void: action_requested.emit("character"))
 	$SparringButton.text = "Farm"
 	$SparringButton.tooltip_text = "Farm trên map • xem trạng thái máy chủ và đấu tập online"
 	$SparringButton.pressed.connect(func() -> void: action_requested.emit("dock"))
 	$HelpButton.pressed.connect(func() -> void:
-		notify("Kéo cần trái để đi • chạm Đánh khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh quái • M: map • I: túi • E: tương tác"))
+		notify("Kéo cần trái để đi • chạm Đánh khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh quái • M: map • C: hồ sơ • I: túi • E: tương tác"))
 	for index in range(6):
 		var action_id: String = ["item_heal", "item_herb", "attack", "interact", "locked", "dodge"][index]
 		get_node("Hotbar/Slot%d" % index).pressed.connect(
@@ -33,8 +35,8 @@ func _ready() -> void:
 	$Hotbar/Slot5.tooltip_text = "Space: né trong đấu tập online"
 
 func _process(delta: float) -> void:
-	$ModalShade.visible = $Inventory.visible or $Dock.visible
-	touch_controls.set_controls_visible(touch_layout and not $Inventory.visible and not $Dock.visible and not $WorldMap.visible)
+	$ModalShade.visible = $Inventory.visible or $Dock.visible or character_panel.visible
+	touch_controls.set_controls_visible(touch_layout and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible)
 	if toast_time > 0:
 		toast_time -= delta
 		$Toast.visible = toast_time > 0
@@ -45,7 +47,7 @@ func set_touch_layout(enabled: bool) -> void:
 	$Controls.visible = not enabled
 	$HelpButton.position = Vector2(8, 170) if enabled else Vector2(8, 328)
 	$HelpButton.text = "Hướng dẫn" if enabled else "Hướng dẫn / trạng thái"
-	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not $WorldMap.visible)
+	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible)
 
 func notify(message: String) -> void:
 	$Toast/Message.text = message

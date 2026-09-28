@@ -57,6 +57,15 @@ func open_inventory() -> void:
 	else:
 		await refresh()
 
+func open_equipment() -> void:
+	category = "equipment"
+	show()
+	if api == null or api.token.is_empty():
+		show_preview()
+	else:
+		await refresh()
+	set_filter("equipment")
+
 func show_preview() -> void:
 	preview_mode = true
 	stones = 0

@@ -137,6 +137,57 @@ func _run() -> void:
 	check(main.village_camera.enabled, "Camera follows the village player")
 	check(main.village_camera.limit_right == 1536 and main.village_camera.limit_bottom == 1152, "Camera clamps to An Khê world bounds")
 	check(bag.slot_buttons.size() == 24, "Inventory requires exactly 24 visual slots")
+	var character: CharacterPanel = main.character_panel
+	check(not character.visible, "Character panel starts closed")
+	main._action("character")
+	await process_frame
+	check(character.visible and character.preview_mode, "Offline character view is clearly marked as a preview")
+	check(character.get_node("PageHost/ProfilePage/StatsCard/Name").text == "Tu sĩ", "Character profile shows the current display name")
+	check(character.get_node("PageHost/ProfilePage/EquipmentCard/WeaponSlot/Name").text.contains("Chưa trang bị"), "Empty weapon slot is explained")
+	character.profile = {
+		"realm": "luyen_khi", "realmStage": 2, "cultivationXp": 240, "hp": 72, "spiritStones": 19,
+		"equipped": {"weapon": "weapon-instance", "armor": "armor-instance"},
+		"inventory": [
+			{"itemId": "it_iron_sword", "instanceId": "weapon-instance", "quantity": 1},
+			{"itemId": "it_cloth_armor", "instanceId": "armor-instance", "quantity": 1}
+		]
+	}
+	character.inventory = character.profile.inventory
+	character.catalog = {
+		"it_iron_sword": {"id": "it_iron_sword", "name": "Thanh Thiết Kiếm", "attackBonus": 5},
+		"it_cloth_armor": {"id": "it_cloth_armor", "name": "Áo vải", "defenseBonus": 15}
+	}
+	character._render_profile()
+	check(character.get_node("PageHost/ProfilePage/StatsCard/Attack").text == "Công kích • 21" and
+		character.get_node("PageHost/ProfilePage/StatsCard/Defense").text == "Phòng ngự • 20",
+		"Profile totals include server catalog equipment bonuses")
+	check(character.get_node("PageHost/ProfilePage/StatsCard/Cultivation").value == 240.0 and
+		character.get_node("PageHost/ProfilePage/StatsCard/Cultivation").max_value == 600.0,
+		"Cultivation progress uses the current realm threshold")
+	character._show_preview()
+	character.show_page("skills")
+	check(character.get_node("PageHost/SkillsPage").visible and not character.get_node("PageHost/ProfilePage").visible,
+		"Skills tab opens its own page")
+	character.show_page("settings")
+	check(character.get_node("PageHost/SettingsPage").visible, "Settings tab opens its own page")
+	character.set_touch_layout_enabled(true, false)
+	check(main.touch_layout_enabled, "Touch layout setting reaches the game HUD")
+	character.set_touch_layout_enabled(false, false)
+	character.show_page("profile")
+	character.get_node("PageHost/ProfilePage/EquipmentCard/OpenEquipmentBag").emit_signal("pressed")
+	await process_frame
+	check(bag.visible and bag.category == "equipment" and bag.filtered.size() == 2,
+		"Profile opens the equipment filter in the existing inventory")
+	main._action("close")
+	await process_frame
+	var character_key := InputEventKey.new()
+	character_key.physical_keycode = KEY_C
+	character_key.pressed = true
+	main._unhandled_input(character_key)
+	await process_frame
+	check(character.visible, "C opens the character panel")
+	main._unhandled_input(escape_event())
+	check(not character.visible, "Escape closes the character panel")
 	check(hud.get_node("Hotbar").get_child_count() == 12, "Six buttons + six key labels")
 	check(not bag.visible and not main.dock.visible, "Modals start closed")
 	Input.action_press("move_right")

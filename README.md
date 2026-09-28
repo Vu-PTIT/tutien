@@ -21,7 +21,7 @@ docker compose up --build -d
 3. Import `client/project.godot` trong Godot, nhấn **F6/F5** chạy scene/project. Chạy với `--touch-preview` hoặc nhấn **F9** trong bản PC để thử bố cục cảm ứng màn hình ngang; trên thiết bị mobile, bố cục này tự bật.
 4. Di chuyển bằng **WASD / phím mũi tên**, hoặc kéo cần trái ở chế độ cảm ứng. Quái spawn trực tiếp trên map **Trúc Âm**; đến gần Sơn Trư hoặc Độc Chu rồi nhấn **Q/J/chuột trái** hoặc nút **Đánh**. Đòn đánh đầu tự đăng nhập thiết bị nếu backend đang chạy. XP, nguyên liệu và trang bị rơi được máy chủ cộng thẳng vào **Túi đồ**, không cần nhặt vật thể trên đất. Nếu không kết nối được, mở **Farm → Kết nối**; khi Nakama chưa chạy, bật Docker rồi chạy `docker compose up --build -d`. Backend chưa bật thì chỉ đi khám phá map offline được.
    Đấu tập online vẫn mở từ **Farm**; xem [luật đấu tập](docs/combat-prototype.md).
-5. Ngoài trận, bấm **Túi [I]**; **Esc** đóng. Chưa kết nối chỉ hiển thị mẫu có nhãn, không lưu và không nhận thưởng. Sau kết nối mới xem tài sản và nhận vật tư khởi đầu một lần. Xem [hợp đồng inventory/reward](docs/inventory-and-rewards.md).
+5. Bấm **Nhân vật [C]** để xem hồ sơ, cảnh giới, chỉ số, kiếm/áo đang trang bị, kỹ năng và cài đặt âm thanh, toàn màn hình, bố cục cảm ứng. Bấm **Mở Túi đồ để trang bị** để chọn hoặc tháo món; **Túi [I]** mở kho; **Esc** đóng cửa sổ. Chưa kết nối, hồ sơ và kho chỉ hiển thị mẫu, không lưu và không nhận thưởng. Sau kết nối mới xem tài sản và nhận vật tư khởi đầu một lần. Xem [hợp đồng inventory/reward](docs/inventory-and-rewards.md).
 6. Kiểm tra backend: `docker compose ps`, `docker compose logs nakama`. Sau khi backend healthy: `node scripts/smoke.mjs`.
 
 ```sh
