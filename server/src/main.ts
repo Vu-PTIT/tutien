@@ -14,6 +14,7 @@ function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkr
   initializer.registerRpc("pve_son_tru_create", pveSonTruCreateRpc);
   initializer.registerRpc("pve_son_tru_claim_pending", pveSonTruClaimPendingRpc);
   initializer.registerRpc("world_get", worldGetRpc);
+  initializer.registerRpc("world_travel", worldTravelRpc);
   initializer.registerRpc("world_move", worldMoveRpc);
   initializer.registerRpc("world_interact", worldInteractRpc);
   initializer.registerRpc("world_attack", worldAttackRpc);

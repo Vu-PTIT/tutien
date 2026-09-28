@@ -221,6 +221,32 @@ const worldGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   }
   return fail(nkruntime.Codes.UNAVAILABLE,"World field state is busy; retry");
 };
+const worldTravelRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
+  const userId=authenticated(ctx),input=objectPayload(payload);
+  if(Object.keys(input).length!==1||typeof input.mapId!=="string"||!WORLD_MAPS[input.mapId]||!worldMapReachable(input.mapId))
+    return fail(nkruntime.Codes.INVALID_ARGUMENT,"Map is not reachable");
+  for(let attempt=0;attempt<5;attempt++) {
+    const current=worldReadSession(nk,userId),session=current.session;
+    const next=JSON.parse(JSON.stringify(session)) as WorldSession;
+    if(session.mapId===input.mapId) {
+      if(worldEnsureFieldMobs(next,next.mapId,Date.now())) {
+        try { worldWrite(nk,userId,next,current.version); } catch(_error) { continue; }
+      }
+      return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,seq:next.seq,quest:worldQuestView(loadCharacter(nk,userId).state),
+        fieldMobs:worldFieldMobSnapshot(next,next.mapId),message:"Bạn đang ở khu vực này."});
+    }
+    const target=WORLD_MAPS[input.mapId];
+    next.mapId=input.mapId; next.x=target.spawnX; next.y=target.spawnY;
+    next.seq=Number(next.seq||0)+1; next.updatedAt=Date.now();
+    worldEnsureFieldMobs(next,next.mapId,Date.now());
+    try {
+      worldWrite(nk,userId,next,current.version);
+      return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,seq:next.seq,quest:worldQuestView(loadCharacter(nk,userId).state),
+        fieldMobs:worldFieldMobSnapshot(next,next.mapId),message:"Đã chuyển khu vực theo tuyến bản đồ."});
+    } catch(_error) { /* Retry after a concurrent world movement or map change. */ }
+  }
+  return fail(nkruntime.Codes.UNAVAILABLE,"World map transition is busy; retry");
+};
 const worldMoveRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx),input=objectPayload(payload);
   if(Object.keys(input).some(k=>["x","y","seq"].indexOf(k)<0)||typeof input.x!=="number"||typeof input.y!=="number"||typeof input.seq!=="number"||input.seq%1!==0||input.seq<1)
@@ -253,13 +279,28 @@ const worldInteractRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   if(!worldPathWalkable(map,[session.x,session.y],[centerX,centerY])) return fail(nkruntime.Codes.FAILED_PRECONDITION,"A blocker is between you and this object");
   if(point.kind==="locked") return fail(nkruntime.Codes.FAILED_PRECONDITION,"Lối sang Thạch Cạn chưa mở trong phần chơi hiện tại.");
   if(point.kind==="gate") {
-    if(!point.destination||!WORLD_MAPS[point.destination]||!worldWalkable(WORLD_MAPS[point.destination],[point.arrivalX!,point.arrivalY!])) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Gate destination requires review");
-    const next=JSON.parse(JSON.stringify(session)) as WorldSession;
-    next.mapId=point.destination; next.x=point.arrivalX!; next.y=point.arrivalY!; next.updatedAt=Date.now();
-    worldEnsureFieldMobs(next,next.mapId,Date.now());
-    worldWrite(nk,userId,next,current.version);
-    return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,quest:worldQuestView(loadCharacter(nk,userId).state),
-      fieldMobs:worldFieldMobSnapshot(next,next.mapId),message:"Đã đi qua cổng do máy chủ xác nhận."});
+    for(let attempt=0;attempt<5;attempt++) {
+      const latest=worldReadSession(nk,userId),latestSession=latest.session,latestMap=WORLD_MAPS[latestSession.mapId];
+      const gate=worldFindPoint(latestMap,input.entityId);
+      if(!gate||gate.kind!=="gate") return fail(nkruntime.Codes.NOT_FOUND,"This gate is no longer on the current map");
+      if(worldDistance(latestSession.x,latestSession.y,gate.x,gate.y)>gate.radius*WORLD_TILE)
+        return fail(nkruntime.Codes.FAILED_PRECONDITION,"Move closer to interact");
+      if(!worldPathWalkable(latestMap,[latestSession.x,latestSession.y],[gate.x,gate.y]))
+        return fail(nkruntime.Codes.FAILED_PRECONDITION,"A blocker is between you and this object");
+      if(!gate.destination||!WORLD_MAPS[gate.destination]||typeof gate.arrivalX!=="number"||typeof gate.arrivalY!=="number"||
+          !worldWalkable(WORLD_MAPS[gate.destination],[gate.arrivalX,gate.arrivalY]))
+        return fail(nkruntime.Codes.FAILED_PRECONDITION,"Gate destination requires review");
+      const next=JSON.parse(JSON.stringify(latestSession)) as WorldSession;
+      next.mapId=gate.destination; next.x=gate.arrivalX; next.y=gate.arrivalY;
+      next.seq=Number(next.seq||0)+1; next.updatedAt=Date.now();
+      worldEnsureFieldMobs(next,next.mapId,Date.now());
+      try {
+        worldWrite(nk,userId,next,latest.version);
+        return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,seq:next.seq,quest:worldQuestView(loadCharacter(nk,userId).state),
+          fieldMobs:worldFieldMobSnapshot(next,next.mapId),message:"Đã đi qua cổng do máy chủ xác nhận."});
+      } catch(_error) { /* Retry after a concurrent movement or map transition. */ }
+    }
+    return fail(nkruntime.Codes.UNAVAILABLE,"World gate is busy; retry interaction");
   }
   if(point.kind==="resource") {
     const gathered=gatherWorldResource(nk,userId,input.entityId);

@@ -36,6 +36,8 @@ jobs:
         run: timeout 90 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/combat_smoke.gd
       - name: Test Sơn Trư PvE encounter against Nakama
         run: timeout 90 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/pve_son_tru_smoke.gd
+      - name: Test online map travel, field gates and farming
+        run: timeout 120 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/world_field_smoke.gd
       - if: failure()
         run: docker compose logs
       - if: always()

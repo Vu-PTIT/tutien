@@ -87,7 +87,23 @@ test('physical gate changes server map and cannot be used from too far away', ()
   const moved=s.rpc('world_interact',{entityId:'ak.gate.truc_am'});
   assert.equal(moved.mapId,'m_truc_am');
   assert.deepEqual([moved.x,moved.y],[160,928]);
+  assert.equal(moved.seq,1);
   rejectsCode(()=>s.rpc('world_interact',{entityId:'ak.gate.truc_am'}),5);
+});
+
+test('map travel uses reachable routes, canonical arrivals, and a fresh movement sequence', () => {
+  const s=setup();
+  s.rpc('world_get');
+  const truc=s.rpc('world_travel',{mapId:'m_truc_am'});
+  assert.deepEqual([truc.mapId,truc.x,truc.y,truc.seq],['m_truc_am',160,928,1]);
+  assert.equal(truc.fieldMobs.length,4);
+  const same=s.rpc('world_travel',{mapId:'m_truc_am'});
+  assert.deepEqual([same.mapId,same.x,same.y,same.seq],['m_truc_am',160,928,1]);
+  const coTinh=s.rpc('world_travel',{mapId:'m_co_tinh'});
+  assert.deepEqual([coTinh.mapId,coTinh.x,coTinh.y,coTinh.seq],['m_co_tinh',352,992,2]);
+  rejectsCode(()=>s.rpc('world_travel',{mapId:'unknown_map'}),3);
+  rejectsCode(()=>s.rpc('world_travel',{mapId:'m_an_khe',x:1}),3);
+  assert.equal(s.rpc('world_get').mapId,'m_co_tinh');
 });
 
 test('Trúc Âm exposes its Sơn Trư and Độc Chu as live field mobs on the current map', () => {

@@ -42,6 +42,8 @@ var world_sync_busy: bool = false
 var world_field_poll_clock: float = 0.0
 var world_field_poll_busy: bool = false
 var world_last_synced_position := Vector2(-10000.0, -10000.0)
+var local_map_travel_pending: bool = false
+var world_transition_generation: int = 0
 var world_quest: Dictionary = {}
 var service_menu: PopupMenu
 var service_kind: String = ""
@@ -141,9 +143,42 @@ func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	_update_field_combat_controls()
 	return true
 
+func _apply_world_location(state: Dictionary, force_position: bool = true) -> bool:
+	if not state.has("mapId") or not state.has("x") or not state.has("y"):
+		return false
+	var server_map := str(state.get("mapId", current_map_id))
+	if world_map == null or not world_map.maps_by_id.has(server_map):
+		return false
+	var px := float(state.get("x", 0.0))
+	var py := float(state.get("y", 0.0))
+	var server_seq := int(state.get("seq", world_seq))
+	var map_changed := server_map != current_map_id
+	var apply_position := force_position or map_changed or server_seq != world_seq
+	if map_changed:
+		var tile_size := maxi(int(world_map.catalog.get("tile_size_px", 32)), 1)
+		if not _load_map(server_map, [floori(px / tile_size), floori(py / tile_size)]):
+			return false
+	world_seq = server_seq
+	if apply_position:
+		player.position = Vector2(px, py)
+		offline_position = player.position
+		world_last_synced_position = player.position
+		var area_name := map_world.update_player_context(player.position)
+		var focused: MapInteractable = map_world.update_interaction_focus(player.position)
+		hud.set_interaction_prompt(focused.prompt_text() if focused != null else "")
+		hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, area_name)
+		hud.get_node("Location/State").text = "An toàn • " + area_name if server_map == "m_an_khe" else area_name
+	if state.has("profile"):
+		hud.apply_profile(state.profile)
+	if state.has("quest"):
+		_apply_world_quest(state.quest)
+	if state.has("fieldMobs"):
+		map_world.update_field_mobs(state.fieldMobs)
+	_update_field_combat_controls()
+	return true
+
 func _travel_to_map(map_id: String, arrival_tiles: Array = []) -> void:
-	if not api.token.is_empty():
-		hud.notify("Hãy đi tới cổng trên bản đồ để chuyển khu vực.")
+	if busy:
 		return
 	if api != null and not api.match_id.is_empty():
 		hud.notify("Không thể chuyển map trong đấu tập.")
@@ -152,9 +187,32 @@ func _travel_to_map(map_id: String, arrival_tiles: Array = []) -> void:
 		world_map.hide()
 		hud.notify("Bạn đang ở " + map_world.map_name + ".")
 		return
-	if _load_map(map_id, arrival_tiles):
-		world_map.hide()
-		hud.notify("Đã chuyển map cục bộ để thử tuyến. Tiến độ chưa ghi lên server.")
+	busy = true
+	world_transition_generation += 1
+	_update_buttons()
+	if api != null and not api.token.is_empty():
+		var sync_result: Dictionary = await _sync_world_position(true)
+		if sync_result.has("error"):
+			hud.notify("Chưa đồng bộ được vị trí trước khi chuyển map.")
+		else:
+			var result: Dictionary = await api.call_rpc("world_travel", {"mapId": map_id})
+			if result.has("error"):
+				hud.notify("Chuyển map chưa được máy chủ xác nhận: " + str(result.error))
+			elif not _apply_world_location(result):
+				hud.notify("Máy chủ trả về điểm đến không hợp lệ.")
+			else:
+				local_map_travel_pending = false
+				world_map.hide()
+				hud.notify(str(result.get("message", "Đã chuyển khu vực theo tuyến bản đồ.")))
+	else:
+		if _load_map(map_id, arrival_tiles):
+			local_map_travel_pending = true
+			world_map.hide()
+			hud.notify("Đã chuyển map cục bộ để thử tuyến. Tiến độ chưa ghi lên server.")
+		else:
+			hud.notify("Map đích chưa sẵn sàng.")
+	busy = false
+	_update_buttons()
 
 func _action(action: String) -> void:
 	match action:
@@ -179,6 +237,8 @@ func _action(action: String) -> void:
 				dock.hide()
 				inventory_panel.open_inventory()
 		"map":
+			if busy:
+				return
 			if service_menu != null:
 				service_menu.hide()
 			if not api.match_id.is_empty():
@@ -227,34 +287,33 @@ func _action(action: String) -> void:
 			hud.notify("Chức năng chưa mở. Không tiêu hao vật phẩm.")
 
 func _interact_with_world_object(target: MapInteractable) -> void:
+	if busy:
+		return
 	var details := target.interaction_data
-	if target.entity_id in ["ak.market.village", "ak.garden.home", "ak.service.do_khe"]:
-		_open_service_menu(target.entity_id)
+	var entity_id := target.entity_id
+	var is_gate := target.action_kind == "gate"
+	if entity_id in ["ak.market.village", "ak.garden.home", "ak.service.do_khe"]:
+		_open_service_menu(entity_id)
 		return
 	if not api.token.is_empty():
-		await _sync_world_position(true)
-		var result: Dictionary = await api.call_rpc("world_interact", {"entityId": target.entity_id})
-		if result.has("error"):
-			hud.notify("Tương tác chưa được xác nhận: " + str(result.error))
-			return
-		if result.has("profile"):
-			hud.apply_profile(result.profile)
-		var server_map := str(result.get("mapId", current_map_id))
-		if server_map != current_map_id:
-			var px := float(result.get("x", 0.0))
-			var py := float(result.get("y", 0.0))
-			if _load_map(server_map, [floori(px / 32.0), floori(py / 32.0)]):
-				player.position = Vector2(px, py)
-				world_last_synced_position = player.position
-				world_map.update_player_context(player.position)
-				world_map.update_interaction_focus(player.position)
-		if result.has("quest"):
-			_apply_world_quest(result.quest)
-		if result.has("fieldMobs"):
-			map_world.update_field_mobs(result.fieldMobs)
-		hud.notify(str(result.get("message", "Máy chủ đã xác nhận tương tác.")))
+		busy = true
+		world_transition_generation += 1
+		_update_buttons()
+		var sync_result: Dictionary = await _sync_world_position(true)
+		if sync_result.has("error"):
+			hud.notify("Chưa đồng bộ được vị trí để tương tác.")
+		else:
+			var result: Dictionary = await api.call_rpc("world_interact", {"entityId": entity_id})
+			if result.has("error"):
+				hud.notify("Tương tác chưa được xác nhận: " + str(result.error))
+			elif not _apply_world_location(result):
+				hud.notify("Máy chủ trả về trạng thái bản đồ không hợp lệ.")
+			else:
+				hud.notify(str(result.get("message", "Máy chủ đã xác nhận tương tác.")))
+		busy = false
+		_update_buttons()
 		return
-	if target.action_kind == "gate":
+	if is_gate:
 		var destination := str(details.get("target_map_id", ""))
 		if destination.is_empty():
 			hud.notify("Lối chuyển map chưa có điểm đến.")
@@ -373,15 +432,11 @@ func _sync_world_position(force: bool = false) -> Dictionary:
 	else:
 		var state: Dictionary = await api.call_rpc("world_get")
 		if not state.has("error"):
-			world_seq = int(state.get("seq", world_seq))
-			var server_map := str(state.get("mapId", current_map_id))
-			if server_map != current_map_id:
-				_load_map(server_map, [floori(float(state.x) / 32.0), floori(float(state.y) / 32.0)])
-			player.position = Vector2(float(state.x), float(state.y))
-			world_last_synced_position = player.position
-			map_world.update_field_mobs(state.get("fieldMobs", []))
-			hud.notify("Vị trí đã đồng bộ lại với máy chủ.")
-			result = state
+			if _apply_world_location(state):
+				hud.notify("Vị trí đã đồng bộ lại với máy chủ.")
+				result = state
+			else:
+				result = {"error": "Máy chủ trả về vị trí thế giới không hợp lệ."}
 	world_sync_busy = false
 	return result
 
@@ -413,14 +468,10 @@ func _process(delta: float) -> void:
 
 func _poll_world_field() -> void:
 	world_field_poll_busy = true
+	var request_generation := world_transition_generation
 	var result: Dictionary = await api.call_rpc("world_get")
-	if not result.has("error"):
-		var server_map := str(result.get("mapId", current_map_id))
-		if server_map != current_map_id:
-			_load_map(server_map, [floori(float(result.x) / 32.0), floori(float(result.y) / 32.0)])
-			player.position = Vector2(float(result.x), float(result.y))
-		map_world.update_field_mobs(result.get("fieldMobs", []))
-		_update_field_combat_controls()
+	if not result.has("error") and not busy and request_generation == world_transition_generation:
+		_apply_world_location(result, false)
 	world_field_poll_busy = false
 
 func _update_field_combat_controls() -> void:
@@ -470,10 +521,10 @@ func _attack_field_mob() -> void:
 	if result.has("error"):
 		hud.notify(str(result.error))
 	else:
-		map_world.update_field_mobs(result.get("fieldMobs", []))
-		if result.has("profile"):
-			hud.apply_profile(result.profile)
-		hud.notify(str(result.get("message", "Máy chủ đã xử lý đòn đánh.")))
+		if not _apply_world_location(result):
+			hud.notify("Máy chủ trả về trạng thái chiến đấu không hợp lệ.")
+		else:
+			hud.notify(str(result.get("message", "Máy chủ đã xử lý đòn đánh.")))
 	busy = false
 
 func _local_server_position() -> Vector2:
@@ -656,15 +707,20 @@ func _connect_backend() -> void:
 			if not result.has("error"):
 				hud.apply_profile(result)
 				var world_result: Dictionary = await api.call_rpc("world_get", {"preferredMapId": current_map_id})
-				if not world_result.has("error"):
-					world_seq = int(world_result.get("seq", 0))
-					var world_map_id := str(world_result.get("mapId", current_map_id))
-					if world_map_id != current_map_id:
-						_load_map(world_map_id, [floori(float(world_result.x) / 32.0), floori(float(world_result.y) / 32.0)])
-					player.position = Vector2(float(world_result.x), float(world_result.y))
-					world_last_synced_position = player.position
-					_apply_world_quest(world_result.get("quest", {}))
-					map_world.update_field_mobs(world_result.get("fieldMobs", []))
+				if world_result.has("error"):
+					result = world_result
+				else:
+					if local_map_travel_pending and str(world_result.get("mapId", "")) != current_map_id:
+						var travel_result: Dictionary = await api.call_rpc("world_travel", {"mapId": current_map_id})
+						if travel_result.has("error"):
+							result = travel_result
+						else:
+							world_result = travel_result
+					if not result.has("error"):
+						if _apply_world_location(world_result):
+							local_map_travel_pending = false
+						else:
+							result = {"error": "Máy chủ trả về vị trí thế giới không hợp lệ.", "status": 0}
 	if not result.has("error"):
 		result = await api.connect_chat()
 	if not result.has("error") and not api.match_id.is_empty():

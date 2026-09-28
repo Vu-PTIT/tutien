@@ -140,4 +140,4 @@ func _select_map(map_id: String) -> void:
 	if texture == null:
 		no_preview.text = "Chưa có ảnh preview"
 	travel_button.disabled = map_id == current_map_id
-	travel_button.text = "Đang ở đây" if map_id == current_map_id else "Đi thử map này"
+	travel_button.text = "Đang ở đây" if map_id == current_map_id else "Đi đến map này"

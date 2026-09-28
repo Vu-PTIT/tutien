@@ -274,6 +274,7 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	check(main.current_map_id == "m_truc_am", "Travel action loads Trúc Âm")
+	check(main.local_map_travel_pending, "Offline map selection is retained for the next backend connection")
 	check(main.map_world.areas_size() == 3, "Trúc Âm has three named areas")
 	check(main.map_world.active_area_name == "Ven Suối", "Trúc Âm spawn is in Ven Suối")
 	check(main.hud.get_node("Minimap/Map").texture.get_image().get_size() == Vector2i(48, 36), "Travel rebuilds the minimap from Trúc Âm's authored cells")
