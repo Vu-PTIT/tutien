@@ -14,20 +14,30 @@ services:
       retries: 10
   nakama:
     build: ./server
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
     entrypoint: ["/bin/sh", "-ec"]
     command:
-      - >-
-        /nakama/nakama migrate up --database.address postgres:localdb@postgres:5432/nakama &&
-        exec /nakama/nakama --name tutien-local
-        --database.address postgres:localdb@postgres:5432/nakama
-        --runtime.js_entrypoint index.js
-        --socket.server_key local-dev-key
-        --runtime.env ALLOW_DEVICE_AUTH=true
-        --session.token_expiry_sec 900
-        --session.refresh_token_expiry_sec 604800
+      - |
+        attempt=0
+        until /nakama/nakama migrate up --database.address postgres:localdb@postgres:5432/nakama; do
+          attempt=$((attempt + 1))
+          if [ "$attempt" -ge 30 ]; then
+            echo "PostgreSQL was unavailable after 60 seconds; Nakama migration stopped." >&2
+            exit 1
+          fi
+          echo "PostgreSQL is not ready; retrying Nakama migration ($attempt/30)..."
+          sleep 2
+        done
+        exec /nakama/nakama --name tutien-local \
+          --database.address postgres:localdb@postgres:5432/nakama \
+          --runtime.js_entrypoint index.js \
+          --socket.server_key local-dev-key \
+          --runtime.env ALLOW_DEVICE_AUTH=true \
+          --session.token_expiry_sec 900 \
+          --session.refresh_token_expiry_sec 604800 \
         --logger.level INFO
     ports:
       - "127.0.0.1:7350:7350"
