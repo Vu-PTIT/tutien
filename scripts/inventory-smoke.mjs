@@ -35,7 +35,7 @@ function fixture(a,value) { storageFixture(a,'characters','main',value,1,0); }
 try {
   const a=await account();
   const initial=await Promise.all(Array.from({length:8},()=>good(a,'inventory_get')));
-  initial.forEach(v=>{assert.equal(v.profile.schemaVersion,3);assert.equal(v.profile.realm,'mortal');assert.equal(v.profile.hp,100);assert.equal(v.profile.cultivationXp,0);assert.equal(v.capacity,24);assert.equal(v.catalogVersion,2);assert.equal(v.catalog.length,25);});
+  initial.forEach(v=>{assert.equal(v.profile.schemaVersion,4);assert.deepEqual(v.profile.equippedSkills,{active_1:''});assert.equal(v.profile.realm,'mortal');assert.equal(v.profile.hp,100);assert.equal(v.profile.cultivationXp,0);assert.equal(v.capacity,24);assert.equal(v.catalogVersion,2);assert.equal(v.catalog.length,25);});
   const claims=await Promise.all(Array.from({length:12},()=>rpc(a,'inventory_claim_starter',{operationId:'same_operation_001'})));
   claims.forEach(r=>assert.equal(r.status,200,JSON.stringify(r.data)));
   assert.equal(claims.filter(r=>!r.value.replayed).length,1);
@@ -60,7 +60,7 @@ try {
   migrated.forEach(v=>{assert.equal(v.realmStage,2);assert.equal(v.spiritStones,57);assert.equal(v.note,'preserve');});
   const legacy2=await account();fixture(legacy2,{schemaVersion:2,characterId:legacy2.id,realm:'luyen_khi',realmStage:2,spiritStones:57,revision:9,inventory:[{itemId:'it_water',quantity:3}],note:'preserve'});
   const migrated2=await good(legacy2,'get_profile');
-  assert.equal(migrated2.schemaVersion,3);assert.equal(migrated2.realmStage,2);assert.equal(migrated2.spiritStones,57);assert.equal(migrated2.revision,9);
+  assert.equal(migrated2.schemaVersion,4);assert.deepEqual(migrated2.equippedSkills,{active_1:''});assert.equal(migrated2.realmStage,2);assert.equal(migrated2.spiritStones,57);assert.equal(migrated2.revision,9);
   assert.equal(migrated2.hp,100);assert.equal(migrated2.cultivationXp,0);assert.deepEqual(migrated2.equipped,{weapon:'',armor:''});
   assert.equal(migrated2.inventory[0].quantity,3);assert.equal(migrated2.note,'preserve');
   const invalid=await account();fixture(invalid,{schemaVersion:1,realm:'pham_nhan',level:99,spiritStones:8});
