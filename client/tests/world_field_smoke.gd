@@ -1,6 +1,7 @@
 extends SceneTree
 ## End-to-end world travel, physical gates and map-based field combat against Nakama.
 const Main = preload("res://scenes/main.tscn")
+const ItemVisuals = preload("res://scripts/ui/item_visuals.gd")
 var failures: int = 0
 
 func _initialize() -> void:
@@ -47,6 +48,22 @@ func _run() -> void:
 	if connected:
 		var entered_farm := await _travel_from_map_panel(main, "m_truc_am")
 		_check(entered_farm, "Map panel did not transfer online travel to Trúc Âm")
+		var drop_state: Dictionary = await api.call_rpc("world_get")
+		var boar_drop_count := 0
+		var spider_drop_count := 0
+		for mob_value: Variant in drop_state.get("fieldMobs", []):
+			if not mob_value is Dictionary:
+				continue
+			var mob: Dictionary = mob_value
+			if str(mob.get("enemyId", "")) == "en_boar" and str(mob.get("equipmentDropItemId", "")) == "it_iron_sword" and int(mob.get("equipmentDropPityKills", 0)) == 8:
+				boar_drop_count += 1
+			if str(mob.get("enemyId", "")) == "en_spider" and str(mob.get("equipmentDropItemId", "")) == "it_spider_robe" and int(mob.get("equipmentDropPityKills", 0)) == 12:
+				spider_drop_count += 1
+		_check(boar_drop_count == 2, "Both field boars must share the server sword drop table")
+		_check(spider_drop_count == 2, "Both field spiders must share the server robe drop table")
+		var robe_visual: Array = ItemVisuals.definition("it_spider_robe")
+		_check(str(robe_visual[2]) == "equipment" and str(robe_visual[3]).contains("+20 thủ"), "Spider robe has a usable equipment inventory definition")
+		_check(ItemVisuals.icon("it_spider_robe") != null, "Spider robe resolves its inventory icon")
 
 		var retreat: MapInteractable = main.map_world.get_interactable("ta.retreat.ankhe")
 		_check(retreat != null, "Trúc Âm retreat gate was not loaded")

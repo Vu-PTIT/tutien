@@ -35,7 +35,7 @@ function fixture(a,value) { storageFixture(a,'characters','main',value,1,0); }
 try {
   const a=await account();
   const initial=await Promise.all(Array.from({length:8},()=>good(a,'inventory_get')));
-  initial.forEach(v=>{assert.equal(v.profile.schemaVersion,3);assert.equal(v.profile.realm,'mortal');assert.equal(v.profile.hp,100);assert.equal(v.profile.cultivationXp,0);assert.equal(v.capacity,24);assert.equal(v.catalog.length,24);});
+  initial.forEach(v=>{assert.equal(v.profile.schemaVersion,3);assert.equal(v.profile.realm,'mortal');assert.equal(v.profile.hp,100);assert.equal(v.profile.cultivationXp,0);assert.equal(v.capacity,24);assert.equal(v.catalogVersion,2);assert.equal(v.catalog.length,25);});
   const claims=await Promise.all(Array.from({length:12},()=>rpc(a,'inventory_claim_starter',{operationId:'same_operation_001'})));
   claims.forEach(r=>assert.equal(r.status,200,JSON.stringify(r.data)));
   assert.equal(claims.filter(r=>!r.value.replayed).length,1);

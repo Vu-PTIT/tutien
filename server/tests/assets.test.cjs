@@ -6,9 +6,10 @@ const reward={spiritStones:3,items:[{itemId:'it_water',quantity:5}]};
 const claim=s=>s.rpc('inventory_claim_starter',{operationId:op});
 const grant=(s,id=op,source='test:encounter:1',bundle=reward)=>clone(s.scope.grantReward(s.nk,A,id,source,bundle));
 const at=(s,x,y)=>s.nk.storageWrite([{collection:'world_sessions',key:'main',userId:A,value:{mapId:'m_an_khe',x,y,seq:1,updatedAt:Date.now()},version:'*',permissionRead:0,permissionWrite:0}]);
-test('catalog exposes exactly the 24 stable unique IDs and stack/instance policy',()=>{
-  const s=setup(),v=s.rpc('inventory_get');assert.equal(v.capacity,24);assert.equal(v.catalog.length,24);
-  assert.equal(new Set(v.catalog.map(i=>i.id)).size,24);
+test('catalog v2 exposes 25 stable unique IDs and stack/instance policy',()=>{
+  const s=setup(),v=s.rpc('inventory_get');assert.equal(v.capacity,24);assert.equal(v.catalogVersion,2);assert.equal(v.catalog.length,25);
+  assert.equal(new Set(v.catalog.map(i=>i.id)).size,25);
+  assert.equal(v.catalog.find(i=>i.id==='it_spider_robe').defenseBonus,20);
   assert.equal(v.catalog.find(i=>i.id==='it_mach_ban').bound,true);
   assert.equal(v.catalog.find(i=>i.id==='it_water').stackMax,99);
   assert.equal(v.starterClaimed,false);

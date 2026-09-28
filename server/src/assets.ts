@@ -248,7 +248,7 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
 const inventoryGetRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) {
   const userId = authenticated(ctx);
   return JSON.stringify({ profile: loadCharacter(nk, userId).state, capacity: BAG_SIZE,
-    catalogVersion: 1, catalog: ITEM_CATALOG,
+    catalogVersion: 2, catalog: ITEM_CATALOG,
     starterClaimed: nk.storageRead([receiptId(userId, "source:starter:v1")]).length > 0,
     pendingSettlement: getPvePendingSettlement(nk, userId) });
 };

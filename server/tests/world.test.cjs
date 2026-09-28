@@ -164,6 +164,81 @@ test('field attack checks map, range, target id, cooldown, and grants one durabl
   assert.equal(s.state().inventory.find(i=>i.itemId==='it_iron_sword').quantity,1);
 });
 
+test('legacy field sessions migrate the gear table and initialize durable pity state', () => {
+  const s=setup();
+  setPosition(s,'m_truc_am',160,928);
+  s.rpc('world_get');
+  const id={collection:'world_sessions',key:'main',userId:A};
+  const row=s.nk.storageRead([id])[0];
+  const legacy=JSON.parse(JSON.stringify(row.value));
+  delete legacy.equipmentPity;
+  const mobs=legacy.fieldMobsByMap.m_truc_am;
+  for(const mob of mobs) {
+    delete mob.equipmentDropItemId; delete mob.equipmentDropBasisPoints; delete mob.equipmentDropPityKills;
+  }
+  const oldBoar=mobs.find(m=>m.id==='ta.mob.son_tru.01');
+  oldBoar.equipmentDropItemId='it_iron_sword'; oldBoar.equipmentDropBasisPoints=2000;
+  const oldSpider=mobs.find(m=>m.id==='ta.mob.doc_chu.02');
+  oldSpider.equipmentDropItemId='it_cloth_armor'; oldSpider.equipmentDropBasisPoints=1000;
+  s.nk.storageWrite([{...id,value:legacy,version:row.version,permissionRead:0,permissionWrite:0}]);
+
+  const restored=s.rpc('world_get');
+  const boars=restored.fieldMobs.filter(m=>m.enemyId==='en_boar');
+  const spiders=restored.fieldMobs.filter(m=>m.enemyId==='en_spider');
+  assert.equal(boars.length,2); assert.equal(spiders.length,2);
+  assert.ok(boars.every(m=>m.equipmentDropItemId==='it_iron_sword'&&m.equipmentDropBasisPoints===2000&&m.equipmentDropPityKills===8));
+  assert.ok(spiders.every(m=>m.equipmentDropItemId==='it_spider_robe'&&m.equipmentDropBasisPoints===1000&&m.equipmentDropPityKills===12));
+  assert.deepEqual(s.nk.storageRead([id])[0].value.equipmentPity,{});
+});
+
+test('spider equipment pity survives world reads, guarantees an upgrade, and equips it', async () => {
+  const s=setup();
+  setPosition(s,'m_truc_am',464,560);
+  const originalHash=s.nk.sha256Hash;
+  s.nk.sha256Hash=value=>value.startsWith(A+':world:')?'ffffffffffffffffffffffffffffffff':originalHash(value);
+  const world=s.rpc('world_get');
+  const spider=world.fieldMobs.find(m=>m.id==='ta.mob.doc_chu.01');
+  assert.ok(spider);
+  assert.equal(spider.equipmentDropItemId,'it_spider_robe');
+  assert.equal(spider.equipmentDropBasisPoints,1000);
+  assert.equal(spider.equipmentDropPityKills,12);
+  async function kill(id) {
+    let hit;
+    for(let strike=0;strike<3;strike++) {
+      if(strike>0) await new Promise(resolve=>setTimeout(resolve,710));
+      hit=s.rpc('world_attack',{targetId:id});
+    }
+    return hit;
+  }
+  let hit=await kill(spider.id);
+  assert.equal(hit.killed,true);
+  assert.equal(hit.equipmentPity.misses,1);
+  assert.equal(hit.profile.inventory.some(i=>i.itemId==='it_spider_robe'),false);
+  const sessionId={collection:'world_sessions',key:'main',userId:A};
+  let stored=s.nk.storageRead([sessionId])[0];
+  assert.equal(stored.value.equipmentPity.it_spider_robe,1);
+  assert.equal(s.rpc('world_get').fieldMobs.find(m=>m.id===spider.id).equipmentDropPityMisses,1);
+
+  stored=s.nk.storageRead([sessionId])[0];
+  const next=JSON.parse(JSON.stringify(stored.value));
+  next.equipmentPity.it_spider_robe=11;
+  const target=next.fieldMobsByMap.m_truc_am.find(m=>m.id===spider.id);
+  target.hp=target.maxHp; target.mode='idle'; target.respawnAt=0; target.generation++;
+  next.attackReadyAt=0;
+  s.nk.storageWrite([{...sessionId,value:next,version:stored.version,permissionRead:0,permissionWrite:0}]);
+  hit=await kill(spider.id);
+  assert.equal(hit.killed,true);
+  assert.equal(hit.equipmentPity.guaranteed,true);
+  assert.match(hit.message,/bảo đảm/);
+  const robe=hit.profile.inventory.find(i=>i.itemId==='it_spider_robe');
+  assert.ok(robe&&robe.instanceId);
+  assert.equal(s.nk.storageRead([sessionId])[0].value.equipmentPity.it_spider_robe,0);
+  const definition=s.rpc('inventory_get').catalog.find(i=>i.id==='it_spider_robe');
+  assert.equal(definition.defenseBonus,20);
+  const equipped=s.rpc('inventory_equip',{operationId:'equip_spider_robe_1',instanceId:robe.instanceId});
+  assert.equal(equipped.profile.equipped.armor,robe.instanceId);
+});
+
 test('a mortal character can start farming immediately and earn XP toward the first breakthrough', async () => {
   const s=setup();
   setPosition(s,'m_truc_am',464,560);

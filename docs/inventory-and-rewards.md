@@ -74,6 +74,13 @@ HP bị lưu khi người chơi rời trận, server dừng, thua/hồi phục h
 hồi lại ở HP lúc bắt đầu chuyến săn; chiến thắng giữ HP còn lại. Có cooldown săn
 45 giây sau khi hạ quái. Bài luyện Phàm Nhân chỉ kiểm thử combat, không ghi reward.
 
+## P3 — Trang bị rơi từ quái trên map — 28/09/2026
+
+- Hai Sơn Trư ở Trúc Âm đều luôn rơi Da Sơn Trư và có 20% cơ hội rơi Thanh Thiết Kiếm (+5 công); nếu chưa rơi, món kiếm được bảo đảm ở lần hạ Sơn Trư đủ thứ 8.
+- Hai Độc Chu đều luôn rơi Tơ nhện và có 10% cơ hội rơi Y Phục Tơ Độc (+20 thủ), là nâng cấp so với Áo vải khởi đầu (+15 thủ); món giáp được bảo đảm ở lần hạ Độc Chu đủ thứ 12.
+- Bộ đếm pity theo tài khoản và item, dùng chung giữa các spawn cùng loài, lưu trong world session. Mỗi lần hạ gộp XP, vật liệu, trang bị (nếu có), pity và receipt vào cùng giao dịch CAS của Nakama; retry/reconnect không cấp trùng. Khi túi đầy, transaction không tiêu thụ quái hay pity nên có thể dọn túi rồi đánh lại.
+- Túi vẫn có 24 ô; runtime catalog lên v2 với 25 ID. Vật phẩm trang bị tạo instance riêng, có thể trang bị trong Túi đồ; kiếm tăng sát thương field và giáp dùng chỉ số phòng thủ trong combat hiện có. Quái và vật phẩm vẫn do server xác nhận.
+
 ## Kiểm chứng
 
 - `npm --prefix server test`: 80 unit test, gồm schema/migration, CAS/replay, trang bị/vật phẩm, admission PvE, giới hạn di chuyển, AI Sơn Trư, kill reward, full-bag outbox/restart, checkpoint HP, phục hồi khi poll settlement gặp lỗi đọc storage và quota đăng nhập dev/test.

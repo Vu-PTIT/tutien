@@ -8,8 +8,8 @@ Nền map trước đó gồm bốn layout TileMap từ atlas 32 px, prop Y-sort
 
 - HUD chuyển từ bảng mục tiêu nhiệm vụ sang thông tin khu vực/farm. Tiến độ nhiệm vụ cũ vẫn được giữ ở backend để phát triển sau, nhưng không còn là điều kiện để đánh quái hoặc nhận XP farm.
 - Trúc Âm có hai Sơn Trư và hai Độc Chu xuất hiện trực tiếp trên TileMap. Người chơi đi tới quái và đánh bằng J/nút chạm; client chỉ vẽ snapshot, còn vị trí, tầm đánh, đường cản, hồi đòn, HP, respawn và receipt thưởng do server quyết định. Không còn nút mở trận Sơn Trư riêng trên HUD.
-- Đòn đánh đầu tự đăng nhập thiết bị để farm; nếu backend không phản hồi, bảng Farm mở kèm hướng dẫn khởi động Nakama. Nút Farm cũng mở bảng trạng thái/kết nối. Loot tự cộng thẳng vào Túi đồ; phiên bản hiện tại không tạo vật thể rơi trên đất để nhặt.
-- Hạ quái luôn cấp da Sơn Trư hoặc tơ nhện vào túi. Một Sơn Trư có 20% cơ hội rơi Thanh Thiết Kiếm; một Độc Chu có 10% cơ hội rơi Áo vải. Trang bị có instance riêng và chỉ rơi theo kết quả server gắn với từng lượt spawn.
+- Game tự đăng nhập và đồng bộ vị trí/profile khi khởi động, trước khi người chơi di chuyển hoặc đánh quái. Nếu backend không phản hồi, bảng Farm hướng dẫn khởi động Nakama. Nút Farm mở trạng thái/kết nối. Loot tự cộng vào Túi đồ; phiên bản hiện tại chưa tạo vật thể rơi trên đất để nhặt.
+- Hạ quái luôn cấp da Sơn Trư hoặc tơ nhện vào túi. Cả hai Sơn Trư có 20% cơ hội rơi Thanh Thiết Kiếm (+5 công), bảo đảm sau tối đa 8 lần hạ chưa rơi; cả hai Độc Chu có 10% cơ hội rơi Y Phục Tơ Độc (+20 thủ), bảo đảm sau tối đa 12 lần. Pity theo tài khoản/item được lưu cùng receipt server; gear là instance riêng và hiển thị tiến độ pity trong thông báo rơi.
 - Nhân vật phàm nhân nhận XP farm ngay từ đầu: 100 XP mở Luyện Khí 1; các mốc 300/600/1000 XP tự lên cảnh giới tiếp theo. Cấp tối đa vẫn nhận vật phẩm nhưng không nhận XP.
 - Lát cắt này chưa thêm AI đi tuần/tấn công người chơi, vật phẩm chưa nằm trên đất để nhặt, quái mới có ở Trúc Âm, và trạng thái mob vẫn theo từng tài khoản chứ chưa chia sẻ realtime giữa người chơi. Bốn TileMap/prop hiện tại được giữ làm nền; chưa có đợt vẽ biome/đạo cụ mới trong thay đổi này.
 - PvE Sơn Trư dạng match vẫn còn ở backend để tương thích và chạy smoke test cũ, nhưng client không còn luồng săn thường mở match riêng. Bước tiếp theo là AI field đơn giản, loot rơi dưới đất, rồi mở spawn/loot cho Thạch Cạn và Cổ Tỉnh; quest/chương được xếp sau.
@@ -28,7 +28,7 @@ Nền map trước đó gồm bốn layout TileMap từ atlas 32 px, prop Y-sort
 | --- | --- |
 | Backend xã hội | Có tài khoản, bạn bè/chặn, chat/nhóm; xem `social-backend.md` |
 | Đấu tập authoritative hai người | Có snapshot, đánh/né, vòng đời và reconnect; không cấp kinh tế |
-| Tài sản nhân vật | Schema 3, catalog 24 ID, túi 24 ô, migration, starter và receipt chống cấp trùng |
+| Tài sản nhân vật | Schema 3, catalog v2 có 25 ID, túi 24 ô, migration, starter và receipt chống cấp trùng |
 | Dùng/trang bị/dọn túi | Equip tăng công/thủ, thuốc hồi 40 HP, bỏ vật tư thường; có validation và retry receipt |
 | PvE/AI/encounter/loot | Sơn Trư solo authoritative, tell/lao/hồi thế, thắng/thua/reset, reward XP/da và cooldown |
 | Settlement | Outcome/source bền vững; đầy túi giữ chờ qua restart, chặn chuyến săn mới đến khi nhận |
@@ -46,7 +46,7 @@ Chi tiết: [combat](combat-prototype.md), [tài sản/P2](inventory-and-rewards
 | --- | --- | --- |
 | P1 — một Sơn Trư | Runtime đã có trong lát cắt P2 | Đọc đòn/né/phản công; server xác nhận |
 | P2 — chuyến săn có thành quả | CI hoàn tất trên PR #8; PR chưa merge | Nhận đúng một lần; đầy túi giữ thưởng; restart còn; đồ và HP có tác dụng/lưu |
-| P3 — farm field Trúc Âm | Đã push lên nhánh feature; 94/94 server tests đạt, cần CI Godot và playtest | Mob spawn ngay trên map, đánh authoritative, vật phẩm/XP/đột phá; bổ sung AI và mở rộng khu farm |
+| P3 — farm field Trúc Âm | Core farm và gear drop đã triển khai; CI/playtest cập nhật theo commit | Quái spawn trên map, loot vật liệu và gear có pity, nhận XP; tiếp tục AI field, loot trên đất và mở vùng farm |
 | P3b — mở rộng khu farm | Chưa làm | Spawn/loot và cân bằng ở Thạch Cạn/Cổ Tỉnh; polish art/prop theo biome |
 | Quest/chương 001–012 | Hoãn theo hướng sản phẩm mới | Giữ dữ liệu/backend hiện tại; chỉ quay lại sau vòng farm, lên cấp, rớt trang bị và map đã ổn |
 | Kinh tế/craft | Có prototype riêng, chưa ưu tiên | Kết nối loot thường và trang bị farm với shop/craft sau khi vòng farm ổn |
@@ -141,6 +141,13 @@ The four map prototypes use reusable biome `TileSet` atlases and authored layout
 - Chưa có scene mobile export, safe-area theo notch và playtest trên thiết bị thật. PNG world chỉ dùng preview tuyến; minimap lấy ô runtime. Phần lớn art props vẫn còn nền cỏ/đất trong ô atlas; cây anh đào An Khê là cutout đầu tiên.
 - `client/scripts/game_input.gd` gom bind phím trong InputMap và đổi keyboard/mouse/touch thành action, movement, aim chung. `main.gd` chỉ xử lý lệnh semantic; phím có thể đổi ở InputMap mà không sửa gameplay.
 - Kiểm tra tĩnh: `node scripts/check-pixel-scenes.cjs` và `node scripts/check-png-integrity.cjs`. Godot import, runtime và `client/tests/presentation_smoke.gd` phải được chạy ở CI sau khi push; không coi kiểm tra tĩnh là bằng chứng chạy engine.
+
+### P3 — Quái rớt trang bị — 28/09/2026
+
+- Thêm `it_spider_robe` (+20 thủ) làm phần thưởng nâng cấp từ Độc Chu; giữ Thanh Thiết Kiếm (+5 công) từ Sơn Trư. Tỷ lệ lần lượt 10%/20%; pity bảo đảm tối đa 12 lần hạ Độc Chu/8 lần hạ Sơn Trư.
+- Pity theo account/item dùng chung giữa các spawn cùng loài; server lưu trạng thái cùng world session và commit nguyên liệu, XP, gear, pity cùng receipt để chống mất/trùng phần thưởng.
+- Cả hai bản thể của từng loài dùng cùng bảng rơi; inventory catalog v2 có 25 ID, túi giữ 24 ô. UI hiển thị nguồn, tỷ lệ, mốc bảo đảm và chỉ số của gear.
+- Unit/live smoke kiểm tra migrate world session cũ, pity miss/guarantee, equip áo, catalog và cả bốn spawn. CI xác nhận sau commit.
 
 ### Tích hợp P2/P3 và vòng kinh tế prototype — 27/09/2026
 

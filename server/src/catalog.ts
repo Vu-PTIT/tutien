@@ -1,4 +1,4 @@
-// Stable IDs from game-design/07. Definitions do not imply usable items yet.
+// Runtime catalog v2. Stable IDs define content; equipment instances are server-owned.
 interface ItemDefinition {
   id: string; name: string; stackMax: number; instance: boolean; bound: boolean;
   equipSlot?: string; attackBonus?: number; defenseBonus?: number; healAmount?: number;
@@ -15,6 +15,7 @@ const ITEM_CATALOG: ItemDefinition[] = [
   itemDefinition("it_escape_talisman", "Thoát Thân Phù"),
   itemDefinition("it_iron_sword", "Thanh Thiết Kiếm", true, false, {equipSlot: "weapon", attackBonus: 5}),
   itemDefinition("it_cloth_armor", "Áo vải", true, false, {equipSlot: "armor", defenseBonus: 15}),
+  itemDefinition("it_spider_robe", "Y Phục Tơ Độc", true, false, {equipSlot: "armor", defenseBonus: 20}),
   itemDefinition("it_mach_ban", "Mạch Bàn", true, true),
   itemDefinition("it_water_sample", "Mẫu nước", false, true),
   itemDefinition("it_ledger", "Sổ ghi chép", false, true),

@@ -5,10 +5,10 @@ interface WorldPoint {
 interface WorldFieldMobDefinition {
   id: string; enemyId: string; name: string; x: number; y: number; maxHp: number;
   attack: number; defense: number; rewardXp: number; rewardItemId: string; respawnMs: number;
-  equipmentDropItemId?: string; equipmentDropBasisPoints?: number;
+  equipmentDropItemId?: string; equipmentDropBasisPoints?: number; equipmentDropPityKills?: number;
 }
 interface WorldFieldMobState extends WorldFieldMobDefinition {
-  hp: number; generation: number; respawnAt: number; mode: string;
+  hp: number; generation: number; respawnAt: number; mode: string; equipmentDropPityMisses?: number;
 }
 interface WorldMapDefinition {
   width: number; height: number; spawnX: number; spawnY: number; solids: number[][]; points: WorldPoint[];
@@ -17,6 +17,7 @@ interface WorldMapDefinition {
 interface WorldSession {
   mapId: string; x: number; y: number; seq: number; updatedAt: number;
   fieldMobsByMap?: {[mapId: string]: WorldFieldMobState[]}; attackReadyAt?: number;
+  equipmentPity?: {[itemId: string]: number};
 }
 
 const WORLD_TILE = 32;
@@ -48,10 +49,10 @@ const WORLD_MAPS: {[key: string]: WorldMapDefinition} = {
     {id:"ta.gate.thach_can",x:1408,y:128,radius:1.8,kind:"gate",destination:"m_thach_can",arrivalX:128,arrivalY:544},
     {id:"ta.retreat.ankhe",x:160,y:992,radius:1.8,kind:"gate",destination:"m_an_khe",arrivalX:704,arrivalY:128}
   ], fieldMobs:[
-    {id:"ta.mob.son_tru.01",enemyId:"en_boar",name:"Sơn Trư",x:1136,y:560,maxHp:60,attack:12,defense:5,rewardXp:10,rewardItemId:"it_boar_hide",respawnMs:45000,equipmentDropItemId:"it_iron_sword",equipmentDropBasisPoints:2000},
-    {id:"ta.mob.son_tru.02",enemyId:"en_boar",name:"Sơn Trư",x:1200,y:592,maxHp:60,attack:12,defense:5,rewardXp:10,rewardItemId:"it_boar_hide",respawnMs:45000},
-    {id:"ta.mob.doc_chu.01",enemyId:"en_spider",name:"Độc Chu",x:464,y:560,maxHp:45,attack:8,defense:0,rewardXp:15,rewardItemId:"it_spider_silk",respawnMs:60000},
-    {id:"ta.mob.doc_chu.02",enemyId:"en_spider",name:"Độc Chu",x:528,y:592,maxHp:45,attack:8,defense:0,rewardXp:15,rewardItemId:"it_spider_silk",respawnMs:60000,equipmentDropItemId:"it_cloth_armor",equipmentDropBasisPoints:1000}
+    {id:"ta.mob.son_tru.01",enemyId:"en_boar",name:"Sơn Trư",x:1136,y:560,maxHp:60,attack:12,defense:5,rewardXp:10,rewardItemId:"it_boar_hide",respawnMs:45000,equipmentDropItemId:"it_iron_sword",equipmentDropBasisPoints:2000,equipmentDropPityKills:8},
+    {id:"ta.mob.son_tru.02",enemyId:"en_boar",name:"Sơn Trư",x:1200,y:592,maxHp:60,attack:12,defense:5,rewardXp:10,rewardItemId:"it_boar_hide",respawnMs:45000,equipmentDropItemId:"it_iron_sword",equipmentDropBasisPoints:2000,equipmentDropPityKills:8},
+    {id:"ta.mob.doc_chu.01",enemyId:"en_spider",name:"Độc Chu",x:464,y:560,maxHp:45,attack:8,defense:0,rewardXp:15,rewardItemId:"it_spider_silk",respawnMs:60000,equipmentDropItemId:"it_spider_robe",equipmentDropBasisPoints:1000,equipmentDropPityKills:12},
+    {id:"ta.mob.doc_chu.02",enemyId:"en_spider",name:"Độc Chu",x:528,y:592,maxHp:45,attack:8,defense:0,rewardXp:15,rewardItemId:"it_spider_silk",respawnMs:60000,equipmentDropItemId:"it_spider_robe",equipmentDropBasisPoints:1000,equipmentDropPityKills:12}
   ]},
   m_thach_can: {width:48,height:36,spawnX:288,spawnY:576,solids:[
     [0,0,48,1],[0,35,48,1],[0,0,1,36],[47,0,1,36],
@@ -130,6 +131,9 @@ function worldDistance(ax: number, ay: number, bx: number, by: number): number {
 }
 function worldEnsureFieldMobs(session: WorldSession, mapId: string, now: number): boolean {
   let changed = false;
+  if (!session.equipmentPity || typeof session.equipmentPity !== "object" || Array.isArray(session.equipmentPity)) {
+    session.equipmentPity = {}; changed = true;
+  }
   if (!session.fieldMobsByMap) { session.fieldMobsByMap = {}; changed = true; }
   if (!session.fieldMobsByMap[mapId]) {
     const definitions = WORLD_MAPS[mapId].fieldMobs || [];
@@ -137,7 +141,8 @@ function worldEnsureFieldMobs(session: WorldSession, mapId: string, now: number)
       return {id:mob.id,enemyId:mob.enemyId,name:mob.name,x:mob.x,y:mob.y,maxHp:mob.maxHp,
         attack:mob.attack,defense:mob.defense,rewardXp:mob.rewardXp,rewardItemId:mob.rewardItemId,
         respawnMs:mob.respawnMs,equipmentDropItemId:mob.equipmentDropItemId,
-        equipmentDropBasisPoints:mob.equipmentDropBasisPoints,hp:mob.maxHp,generation:1,respawnAt:0,mode:"idle"};
+        equipmentDropBasisPoints:mob.equipmentDropBasisPoints,equipmentDropPityKills:mob.equipmentDropPityKills,
+        hp:mob.maxHp,generation:1,respawnAt:0,mode:"idle"};
     });
     changed = true;
   }
@@ -147,9 +152,12 @@ function worldEnsureFieldMobs(session: WorldSession, mapId: string, now: number)
     const mob = mobs[i];
     for (let j = 0; j < definitions.length; j++) {
       if (definitions[j].id !== mob.id) continue;
-      if (definitions[j].equipmentDropItemId && !mob.equipmentDropItemId) {
+      if (definitions[j].equipmentDropItemId && (mob.equipmentDropItemId !== definitions[j].equipmentDropItemId ||
+          Number(mob.equipmentDropBasisPoints || 0) !== Number(definitions[j].equipmentDropBasisPoints || 0) ||
+          Number(mob.equipmentDropPityKills || 0) !== Number(definitions[j].equipmentDropPityKills || 0))) {
         mob.equipmentDropItemId = definitions[j].equipmentDropItemId;
         mob.equipmentDropBasisPoints = definitions[j].equipmentDropBasisPoints;
+        mob.equipmentDropPityKills = definitions[j].equipmentDropPityKills;
         changed = true;
       }
       break;
@@ -162,10 +170,14 @@ function worldEnsureFieldMobs(session: WorldSession, mapId: string, now: number)
 }
 function worldFieldMobSnapshot(session: WorldSession, mapId: string): WorldFieldMobState[] {
   const source=(session.fieldMobsByMap && session.fieldMobsByMap[mapId]) || [];
+  const pity=session.equipmentPity || {};
   return source.map(function (mob): WorldFieldMobState {
     return {id:mob.id,enemyId:mob.enemyId,name:mob.name,x:mob.x,y:mob.y,maxHp:mob.maxHp,
       attack:mob.attack,defense:mob.defense,rewardXp:mob.rewardXp,rewardItemId:mob.rewardItemId,
-      respawnMs:mob.respawnMs,hp:mob.hp,generation:mob.generation,respawnAt:mob.respawnAt,mode:mob.mode};
+      respawnMs:mob.respawnMs,hp:mob.hp,generation:mob.generation,respawnAt:mob.respawnAt,mode:mob.mode,
+      equipmentDropItemId:mob.equipmentDropItemId,equipmentDropBasisPoints:mob.equipmentDropBasisPoints,
+      equipmentDropPityKills:mob.equipmentDropPityKills,
+      equipmentDropPityMisses:mob.equipmentDropItemId ? Number(pity[mob.equipmentDropItemId] || 0) : 0};
   });
 }
 function worldReadSession(nk: nkruntime.Nakama,userId: string,preferredMapId: string = ""): {session:WorldSession,version:string} {
@@ -340,13 +352,23 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
       target.respawnAt=now+target.respawnMs;
       const xp=target.rewardXp;
       const items=[{itemId:target.rewardItemId,quantity:1}];
-      let equipmentDropped=false;
+      let equipmentDropped=false,pityGuaranteed=false,pityMisses=0,pityLimit=0;
       if(target.equipmentDropItemId&&Number(target.equipmentDropBasisPoints||0)>0) {
+        const itemId=target.equipmentDropItemId;
+        pityLimit=Math.max(1,Math.floor(Number(target.equipmentDropPityKills||1)));
+        const pity=session.equipmentPity || (session.equipmentPity={});
+        const storedMisses=Math.floor(Number(pity[itemId] || 0));
+        const previousMisses=storedMisses>=0?Math.min(storedMisses,pityLimit):0;
         const lootHash=nk.sha256Hash(userId+":world:"+session.mapId+":"+target.id+":"+target.generation);
         const lootRoll=(parseInt(lootHash.substring(0,4),16)%100)*100;
-        if(lootRoll<Number(target.equipmentDropBasisPoints)) {
-          items.push({itemId:target.equipmentDropItemId,quantity:1});
+        pityGuaranteed=previousMisses+1>=pityLimit;
+        if(pityGuaranteed||lootRoll<Number(target.equipmentDropBasisPoints)) {
+          items.push({itemId:itemId,quantity:1});
           equipmentDropped=true;
+          pity[itemId]=0;
+        } else {
+          pityMisses=previousMisses+1;
+          pity[itemId]=pityMisses;
         }
       }
       const reward=grantReward(nk,userId,"field_"+target.id.replace(/[^a-zA-Z0-9_-]/g,"_")+"_"+target.generation,
@@ -355,10 +377,13 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
       const rewardData=reward as {[key:string]:any};
       const awardedXp=Number(rewardData.receipt.granted.cultivationXp||0);
       const xpText=awardedXp>0?" • +"+awardedXp+" XP":"";
-      const lootText=equipmentDropped?"rơi "+catalogItem(target.equipmentDropItemId!).name+" và vật phẩm săn":"nhận vật phẩm săn";
+      const equipmentName=target.equipmentDropItemId?catalogItem(target.equipmentDropItemId).name:"";
+      const lootText=equipmentDropped?"rơi "+equipmentName+(pityGuaranteed?" (bảo đảm)":"")+" và vật phẩm săn":"nhận vật phẩm săn";
+      const pityText=!equipmentDropped&&equipmentName? " • "+equipmentName+" "+pityMisses+"/"+pityLimit+" lượt tới mốc bảo đảm":"";
+      const pityStatus=equipmentName?{itemId:target.equipmentDropItemId,misses:pityMisses,guaranteedAfter:pityLimit,guaranteed:pityGuaranteed}:null;
       return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,damage:damage,killed:true,
         profile:rewardData.profile,receipt:rewardData.receipt,fieldMobs:worldFieldMobSnapshot(session,session.mapId),
-        message:"Đã hạ "+target.name+" • "+lootText+xpText+"."});
+        equipmentPity:pityStatus,message:"Đã hạ "+target.name+" • "+lootText+pityText+xpText+"."});
     }
     try {
       worldWrite(nk,userId,session,current.version);
