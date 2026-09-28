@@ -57,7 +57,7 @@ func _run() -> void:
 
 		var returned_to_farm := await _travel_from_map_panel(main, "m_truc_am")
 		_check(returned_to_farm, "Map panel travel back to Trúc Âm failed")
-		var map_instance := main.map_world.get_instance_id()
+		var map_instance: int = main.map_world.get_instance_id()
 		var approach_ok := await _move_authoritatively(main, Vector2(300.0, 740.0))
 		_check(approach_ok, "Could not move to the first field-combat waypoint")
 		if approach_ok:
