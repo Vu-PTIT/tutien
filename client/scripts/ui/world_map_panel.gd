@@ -18,6 +18,7 @@ var maps_by_id: Dictionary = {}
 var route_buttons: Dictionary = {}
 var map_entries: Array = []
 var catalog: Dictionary = {}
+var route_connections: Array = []
 var selected_id: String = ""
 var current_map_id: String = "m_an_khe"
 var _button_group := ButtonGroup.new()
@@ -61,6 +62,8 @@ func _load_catalog() -> void:
 		push_error("Map catalog has an invalid shape")
 		return
 	catalog = parsed
+	var connections: Variant = catalog.get("route_connections", [])
+	route_connections = connections if connections is Array else []
 	var entries: Variant = catalog.get("maps", null)
 	if not entries is Array:
 		push_error("Map catalog is missing its maps array")
