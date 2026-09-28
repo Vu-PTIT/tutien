@@ -32,6 +32,14 @@ offset_right = 628.0
 offset_bottom = 329.0
 text = "Né"
 
+[node name="Dash" type="Button" parent="."]
+visible = false
+offset_left = 552.0
+offset_top = 267.0
+offset_right = 628.0
+offset_bottom = 329.0
+text = "Lướt"
+
 [node name="Hop" type="Button" parent="."]
 visible = false
 offset_left = 468.0

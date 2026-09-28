@@ -21,6 +21,7 @@ func _ready() -> void:
 	$Interact.pressed.connect(func() -> void: action_requested.emit("interact"))
 	$Attack.pressed.connect(func() -> void: action_requested.emit("attack"))
 	$Dodge.pressed.connect(func() -> void: action_requested.emit("dodge"))
+	$Dash.pressed.connect(func() -> void: action_requested.emit("dodge"))
 	$Hop.pressed.connect(func() -> void: action_requested.emit("hop"))
 	$Run.toggled.connect(_on_run_toggled)
 	set_combat_mode(false)
@@ -43,6 +44,7 @@ func set_combat_mode(enabled: bool) -> void:
 	$Attack.visible = enabled
 	$Dodge.visible = enabled
 	$Dodge.text = "Né"
+	$Dash.visible = false
 	$Run.visible = false
 	$Hop.visible = false
 	$Interact.position = Vector2(552.0, 207.0)
@@ -51,6 +53,8 @@ func set_combat_mode(enabled: bool) -> void:
 	$Attack.size = Vector2(80.0, 52.0)
 	$Dodge.position = Vector2(552.0, 267.0)
 	$Dodge.size = Vector2(80.0, 62.0)
+	$Dash.position = Vector2(552.0, 267.0)
+	$Dash.size = Vector2(76.0, 62.0)
 	clear_input(true)
 
 func set_field_combat_mode(enabled: bool) -> void:
@@ -60,8 +64,9 @@ func set_field_combat_mode(enabled: bool) -> void:
 	_field_combat_mode = enabled
 	$Interact.visible = true
 	$Attack.visible = enabled
-	$Dodge.visible = true
-	$Dodge.text = "Lướt"
+	$Dodge.visible = false
+	$Dash.visible = true
+	$Dash.text = "Lướt"
 	$Run.visible = true
 	$Hop.visible = true
 	$Interact.position = Vector2(468.0, 207.0) if enabled else Vector2(552.0, 207.0)
@@ -70,6 +75,8 @@ func set_field_combat_mode(enabled: bool) -> void:
 	$Attack.size = Vector2(76.0, 52.0)
 	$Dodge.position = Vector2(552.0, 267.0)
 	$Dodge.size = Vector2(76.0, 62.0)
+	$Dash.position = Vector2(552.0, 267.0)
+	$Dash.size = Vector2(76.0, 62.0)
 	$Hop.position = Vector2(468.0, 267.0)
 	$Hop.size = Vector2(76.0, 62.0)
 	$Run.position = Vector2(384.0, 267.0)
