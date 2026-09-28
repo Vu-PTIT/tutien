@@ -109,10 +109,6 @@ func _run() -> void:
 	check(main.can_walk(Vector2(10 * 32, 8 * 32)) and main.can_walk(Vector2(2 * 32, 17 * 32)), "Old oversized invisible building blockers are gone")
 	check(not main.can_walk(Vector2(38 * 32, 18 * 32)), "Market stall has a physical footprint")
 	check(main.player is CharacterBody2D, "Village player uses physics movement")
-	check(main._load_map("m_truc_am"), "Trúc Âm can be loaded for field farming")
-	check(not main.map_world.nearest_field_mob(Vector2(16.0 * 32.0, 17.0 * 32.0), 72.0).is_empty(),
-		"Offline field preview presents a reachable Trúc Âm mob before backend login")
-	check(main._load_map("m_an_khe"), "Presentation smoke restores the village map")
 	var ground_layer: TileMapLayer = main.map_world.get_node("WorldLayers/GroundLayer")
 	check(ground_layer.get_used_cells().size() == 48 * 36, "An Khê preview is split into editable tile cells")
 	check(ground_layer.get_cell_atlas_coords(Vector2i(24, 18)).y == 3, "An Khê spawn is in the stone plaza")
@@ -213,6 +209,10 @@ func _run() -> void:
 	main.map_world.update_player_context(main.player.position)
 	await process_frame
 	await _capture("an-khe-blacksmith-runtime.png")
+	check(main._load_map("m_truc_am"), "Trúc Âm can be loaded for field farming")
+	check(not main.map_world.nearest_field_mob(Vector2(16.0 * 32.0, 17.0 * 32.0), 72.0).is_empty(),
+		"Offline field preview presents a reachable Trúc Âm mob before backend login")
+	check(main._load_map("m_an_khe"), "Presentation smoke restores the village map")
 	main.player.position = village_spawn
 	main.map_world.update_player_context(main.player.position)
 	main.player.position = Vector2(19 * 32, 31 * 32)
