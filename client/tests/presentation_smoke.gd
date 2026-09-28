@@ -257,7 +257,7 @@ func _run() -> void:
 	check(map_panel.info.text.contains("Ven Suối"), "Map selection shows zone information")
 	var initial_position: Vector2 = main.player.position
 	check(map_panel.route_connections.size() == 3, "Route panel loads all three linked map passages")
-	check(map_panel._connection_between("m_truc_am", "m_thach_can").get("label") == "Lối núi", "Route card shows the named link to Thạch Cạn")
+	check(map_panel._route_summary("m_truc_am").contains("Lối núi → Thạch Cạn"), "Route card shows the named link to Thạch Cạn")
 	check(main.player.position == initial_position, "Selecting a route card does not teleport the player")
 	await _capture("connected-route-panel.png")
 	map_panel.travel_button.emit_signal("pressed")
