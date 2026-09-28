@@ -68,16 +68,16 @@ jobs:
         run: |
           /tmp/godot/engine --headless --path client --editor --quit 2>&1 | tee /tmp/import.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/import.log
-          /tmp/godot/engine --headless --path client --quit-after 60 2>&1 | tee /tmp/run.log
+          /tmp/godot/engine --headless --path client --quit-after 60 -- --no-auto-connect 2>&1 | tee /tmp/run.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/run.log
       - name: Offline presentation interaction smoke
         run: |
-          timeout 90 /tmp/godot/engine --headless --path client --script res://tests/presentation_smoke.gd 2>&1 | tee /tmp/presentation.log
+          timeout 90 /tmp/godot/engine --headless --path client --script res://tests/presentation_smoke.gd -- --no-auto-connect 2>&1 | tee /tmp/presentation.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/presentation.log
       - name: Capture actual Godot layout on desktop and touch
         run: |
           mkdir -p /tmp/tutien-previews
-          timeout 90 xvfb-run -a /tmp/godot/engine --path client --script res://tests/presentation_smoke.gd -- --capture-dir=/tmp/tutien-previews
+          timeout 90 xvfb-run -a /tmp/godot/engine --path client --script res://tests/presentation_smoke.gd -- --no-auto-connect --capture-dir=/tmp/tutien-previews
       - if: always()
         uses: actions/upload-artifact@v4
         with:

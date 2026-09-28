@@ -38,9 +38,12 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	var api: CombatApi = main.api
-	await main._connect_backend()
+	var connection_deadline := Time.get_ticks_msec() + 30000
+	while not main.backend_connection_attempted and Time.get_ticks_msec() < connection_deadline:
+		await process_frame
+	_check(main.backend_connection_attempted, "Client did not finish its automatic startup backend connection")
 	var connected := api != null and not api.token.is_empty()
-	_check(connected, "Client did not connect to the local Nakama server")
+	_check(connected, "Client did not connect to the local Nakama server on startup")
 	if connected:
 		var entered_farm := await _travel_from_map_panel(main, "m_truc_am")
 		_check(entered_farm, "Map panel did not transfer online travel to Trúc Âm")

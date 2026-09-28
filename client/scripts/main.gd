@@ -26,6 +26,7 @@ var api: CombatApi
 var user_id: String = ""
 var device_id: String = ""
 var busy: bool = false
+var backend_connection_attempted: bool = false
 var send_clock: float = 0.0
 var snapshot_age: float = 0.0
 var pending_action: String = ""
@@ -99,6 +100,8 @@ func _ready() -> void:
 		config.set_value("auth", "device_id", device_id)
 		config.save(identity_path)
 	_update_buttons()
+	if not OS.get_cmdline_user_args().has("--no-auto-connect"):
+		_connect_backend.call_deferred()
 
 func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	if world_map == null or not world_map.maps_by_id.has(map_id):
@@ -696,6 +699,7 @@ func _connect_backend() -> void:
 	if busy:
 		return
 	busy = true
+	backend_connection_attempted = false
 	_update_buttons()
 	_message("Đang kết nối backend…")
 	var result: Dictionary = await api.login_device(device_id)
@@ -738,6 +742,7 @@ func _connect_backend() -> void:
 		hud.get_node("Mode").text = "ONLINE • FARM TRÊN MAP"
 		_message("Đã kết nối. Vị trí, quái trên map, tương tác và túi đồ được máy chủ xác nhận.")
 	busy = false
+	backend_connection_attempted = true
 	_update_field_combat_controls()
 	_update_buttons()
 
