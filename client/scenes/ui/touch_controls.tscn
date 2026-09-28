@@ -31,3 +31,12 @@ offset_top = 283.0
 offset_right = 541.0
 offset_bottom = 342.0
 text = "Né"
+
+[node name="Skill" type="Button" parent="."]
+visible = false
+offset_left = 548.0
+offset_top = 204.0
+offset_right = 628.0
+offset_bottom = 258.0
+text = "Kỹ năng"
+theme_override_font_sizes/font_size = 8

@@ -3,6 +3,7 @@ interface CharacterState {
   [key: string]: any;
   schemaVersion: number; characterId: string; realm: string; realmStage: number;
   cultivationXp: number; hp: number; equipped: {[slot: string]: string};
+  equippedSkills: {[slot: string]: string}; learnedSkills: string[];
   spiritStones: number; revision: number; inventory: InventorySlot[];
 }
 interface LoadedCharacter { state: CharacterState; version: string; }
@@ -16,13 +17,25 @@ function invalidCharacter(): never {
   return fail(nkruntime.Codes.FAILED_PRECONDITION, "Character data requires review; no assets were changed");
 }
 function validateCharacter(state: CharacterState): void {
-  if (state.schemaVersion !== 3 || typeof state.characterId !== "string" || !state.characterId ||
+  if (state.schemaVersion !== 4 || typeof state.characterId !== "string" || !state.characterId ||
       !((state.realm === "mortal" && state.realmStage === 0) ||
         (state.realm === "luyen_khi" && assetInteger(state.realmStage, 1, 4))) ||
       !assetInteger(state.cultivationXp, 0, ASSET_LIMIT) || !assetInteger(state.hp, 0, 100) ||
       !state.equipped || typeof state.equipped.weapon !== "string" || typeof state.equipped.armor !== "string" ||
       !assetInteger(state.spiritStones, 0, ASSET_LIMIT) || !assetInteger(state.revision, 0, ASSET_LIMIT) ||
+      !Array.isArray(state.learnedSkills) || !state.equippedSkills || typeof state.equippedSkills.active_1 !== "string" ||
+      Object.keys(state.equippedSkills).some(function (key) { return key !== "active_1"; }) ||
       !Array.isArray(state.inventory) || state.inventory.length > BAG_SIZE) invalidCharacter();
+  const learnedIds: string[] = [];
+  for (let i = 0; i < state.learnedSkills.length; i++) {
+    const skillId = state.learnedSkills[i];
+    if (typeof skillId !== "string" || !catalogSkill(skillId) || learnedIds.indexOf(skillId) >= 0) invalidCharacter();
+    learnedIds.push(skillId);
+  }
+  const equippedSkill = state.equippedSkills.active_1;
+  const equippedDefinition = equippedSkill ? catalogSkill(equippedSkill) : undefined;
+  if (equippedSkill && (!equippedDefinition || equippedDefinition.equipSlot !== "active_1" ||
+      learnedIds.indexOf(equippedSkill) < 0)) invalidCharacter();
   const instances: string[] = [];
   for (let i = 0; i < state.inventory.length; i++) {
     const slot = state.inventory[i];
@@ -47,16 +60,27 @@ function validateCharacter(state: CharacterState): void {
   }
 }
 function initialCharacter(userId: string): CharacterState {
-  return { schemaVersion: 3, characterId: userId, realm: "mortal", realmStage: 0,
+  return { schemaVersion: 4, characterId: userId, realm: "mortal", realmStage: 0,
     cultivationXp: 0, hp: 100, equipped: {weapon: "", armor: ""},
+    equippedSkills: {active_1: ""}, learnedSkills: [],
     spiritStones: 0, revision: 0, inventory: [] };
 }
 function migrateCharacter(value: {[key: string]: any}, userId: string): CharacterState {
-  if (value.schemaVersion === 3) { validateCharacter(value as CharacterState); return value as CharacterState; }
+  if (value.schemaVersion === 4) { validateCharacter(value as CharacterState); return value as CharacterState; }
+  if (value.schemaVersion === 3) {
+    const next = JSON.parse(JSON.stringify(value)) as CharacterState;
+    next.schemaVersion = 4;
+    next.equippedSkills = next.equippedSkills || {active_1: ""};
+    next.learnedSkills = next.learnedSkills || [];
+    validateCharacter(next);
+    return next;
+  }
   if (value.schemaVersion === 2) {
     const next = JSON.parse(JSON.stringify(value)) as CharacterState;
-    next.schemaVersion = 3; next.cultivationXp = 0; next.hp = 100;
+    next.schemaVersion = 4; next.cultivationXp = 0; next.hp = 100;
     next.equipped = {weapon: "", armor: ""};
+    next.equippedSkills = {active_1: ""};
+    next.learnedSkills = next.learnedSkills || [];
     validateCharacter(next);
     return next;
   }
@@ -67,11 +91,12 @@ function migrateCharacter(value: {[key: string]: any}, userId: string): Characte
       !((value.realm === "pham_nhan" && value.level === 1) ||
         (value.realm === "luyen_khi" && assetInteger(value.level, 1, 4)))) invalidCharacter();
   const next = JSON.parse(JSON.stringify(value)) as CharacterState;
-  next.schemaVersion = 3;
+  next.schemaVersion = 4;
   next.characterId = userId;
   next.realmStage = value.realm === "pham_nhan" ? 0 : value.level;
   next.realm = value.realm === "pham_nhan" ? "mortal" : "luyen_khi";
   next.cultivationXp = 0; next.hp = 100; next.equipped = {weapon: "", armor: ""};
+  next.equippedSkills = {active_1: ""}; next.learnedSkills = [];
   delete next.level;
   next.inventory = [];
   next.revision = 0;
@@ -86,7 +111,7 @@ function loadCharacter(nk: nkruntime.Nakama, userId: string): LoadedCharacter {
   for (let attempt = 0; attempt < 5; attempt++) {
     const row = nk.storageRead([{ collection: "characters", key: "main", userId: userId }])[0];
     const state = row ? migrateCharacter(row.value, userId) : initialCharacter(userId);
-    if (row && row.value.schemaVersion === 3) return { state: state, version: row.version };
+    if (row && row.value.schemaVersion === 4) return { state: state, version: row.version };
     try {
       const ack = nk.storageWrite([characterWrite(userId, state, row ? row.version : "*")])[0];
       return { state: state, version: ack.version };
@@ -248,7 +273,7 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
 const inventoryGetRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) {
   const userId = authenticated(ctx);
   return JSON.stringify({ profile: loadCharacter(nk, userId).state, capacity: BAG_SIZE,
-    catalogVersion: 2, catalog: ITEM_CATALOG,
+    catalogVersion: 2, catalog: ITEM_CATALOG, skills: SKILL_CATALOG,
     starterClaimed: nk.storageRead([receiptId(userId, "source:starter:v1")]).length > 0,
     pendingSettlement: getPvePendingSettlement(nk, userId) });
 };
@@ -431,6 +456,27 @@ const inventoryEquipRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, pay
   return JSON.stringify(commitAssetMutation(nk, userId, input.operationId as string, "equip", {instanceId: input.instanceId}, function (next) {
     next.equipped[equipSlot] = next.equipped[equipSlot] === input.instanceId ? "" : input.instanceId as string;
   }));
+};
+const skillEquipRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payload) {
+  const userId = authenticated(ctx), input = objectPayload(payload);
+  if (Object.keys(input).some(function (key) { return key !== "operationId" && key !== "skillId"; }) ||
+      typeof input.operationId !== "string" || typeof input.skillId !== "string") {
+    return fail(nkruntime.Codes.INVALID_ARGUMENT, "Expected operationId and skillId only");
+  }
+  const skillId = input.skillId as string;
+  if (skillId) {
+    const definition = catalogSkill(skillId);
+    if (!definition || definition.equipSlot !== "active_1") {
+      return fail(nkruntime.Codes.FAILED_PRECONDITION, "Skill cannot be equipped in the active slot");
+    }
+  }
+  return JSON.stringify(commitAssetMutation(nk, userId, input.operationId as string, "skill_equip",
+    {skillId: skillId}, function (next) {
+      if (skillId && next.learnedSkills.indexOf(skillId) < 0) {
+        return fail(nkruntime.Codes.FAILED_PRECONDITION, "Learn this skill before equipping it");
+      }
+      next.equippedSkills.active_1 = skillId;
+    }));
 };
 const inventoryUseRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payload) {
   const userId = authenticated(ctx), input = objectPayload(payload);

@@ -3,16 +3,29 @@ extends Panel
 ## Character overview, current combat skills and device-local settings.
 signal inventory_requested
 signal touch_layout_changed(enabled: bool)
+signal profile_updated(profile: Dictionary)
 
 const Visuals = preload("res://scripts/ui/item_visuals.gd")
 const SETTINGS_PATH := "user://game_settings.cfg"
 const REALM_THRESHOLDS := [300, 600, 1000]
+const PREVIEW_SKILLS := [
+	{"id": "sk_scan", "name": "Mạch Bàn • Truy Dấu", "kind": "utility",
+		"description": "Dò dấu linh mạch và ghi nhận dấu nước trong nhiệm vụ.",
+		"unlockText": "Mở qua nhiệm vụ khảo sát tại Trúc Âm.", "equipSlot": ""},
+	{"id": "sk_phi_nhan", "name": "Phi Nhận", "kind": "active",
+		"description": "Phóng phi nhận vào mục tiêu gần, tăng 18 sát thương.",
+		"unlockText": "Mở sau nghi thức Hơi Thở Đầu Tiên.",
+		"equipSlot": "active_1", "hotkey": "R", "powerBonus": 18, "cooldownMs": 1800}
+]
 
 var api: SocialApi
 var display_name: String = ""
 var profile: Dictionary = {}
 var inventory: Array = []
 var catalog: Dictionary = {}
+var skill_definitions: Array = []
+var skill_catalog: Dictionary = {}
+var selected_skill_id: String = ""
 var preview_mode: bool = true
 var loading: bool = false
 var touch_layout_enabled: bool = false
@@ -25,6 +38,9 @@ func _ready() -> void:
 	$SkillsTab.pressed.connect(func() -> void: show_page("skills"))
 	$SettingsTab.pressed.connect(func() -> void: show_page("settings"))
 	$Refresh.pressed.connect(refresh)
+	$PageHost/SkillsPage/SkillDetail/EquipButton.pressed.connect(_equip_selected_skill)
+	$PageHost/SkillsPage/SkillLoadoutCard/RemoveSkill.pressed.connect(
+		func() -> void: _equip_skill(""))
 	$PageHost/ProfilePage/EquipmentCard/OpenEquipmentBag.pressed.connect(
 		func() -> void: inventory_requested.emit())
 	$PageHost/SettingsPage/SettingsCard/Volume.value_changed.connect(_on_volume_changed)
@@ -74,18 +90,22 @@ func refresh() -> void:
 	for definition: Variant in result.get("catalog", []):
 		if definition is Dictionary and definition.has("id"):
 			catalog[str(definition.id)] = definition
+	_set_skill_definitions(result.get("skills", []))
 	preview_mode = false
 	$DataState.text = "DỮ LIỆU NHÂN VẬT • ĐÃ ĐỒNG BỘ TỪ MÁY CHỦ"
 	_render_profile()
+	profile_updated.emit(profile.duplicate(true))
 
 func _show_preview() -> void:
 	preview_mode = true
 	profile = {
 		"realm": "mortal", "realmStage": 0, "cultivationXp": 0, "hp": 100,
-		"spiritStones": 0, "equipped": {"weapon": "", "armor": ""}, "inventory": []
+		"spiritStones": 0, "equipped": {"weapon": "", "armor": ""}, "inventory": [],
+		"learnedSkills": ["sk_scan", "sk_phi_nhan"], "equippedSkills": {"active_1": ""}
 	}
 	inventory = []
 	catalog.clear()
+	_set_skill_definitions(PREVIEW_SKILLS)
 	$DataState.text = "BẢN XEM THỬ • OFFLINE • KHÔNG PHẢI DỮ LIỆU TÀI KHOẢN"
 	_render_profile()
 
@@ -128,6 +148,7 @@ func _render_profile() -> void:
 	$PageHost/ProfilePage/StatsCard/Stones.text = "Linh thạch • %d" % int(profile.get("spiritStones", 0))
 	_set_equipment_slot("WeaponSlot", "Kiếm", weapon, weapon_definition, "attackBonus", "Công kích")
 	_set_equipment_slot("ArmorSlot", "Áo", armor, armor_definition, "defenseBonus", "Phòng ngự")
+	_render_skills()
 
 func _equipped_item(slot_name: String) -> Dictionary:
 	var equipped: Dictionary = profile.get("equipped", {})
@@ -164,6 +185,121 @@ func _set_equipment_slot(node_name: String, slot_title: String, item: Dictionary
 	icon.texture = Visuals.icon(item_id)
 	name_label.text = item_name
 	bonus_label.text = "%s +%d" % [bonus_title, bonus] if bonus > 0 else slot_title + " đang mặc"
+
+func _set_skill_definitions(definitions: Array) -> void:
+	skill_definitions = definitions.duplicate(true)
+	skill_catalog.clear()
+	for definition: Variant in skill_definitions:
+		if definition is Dictionary and definition.has("id"):
+			skill_catalog[str(definition.id)] = definition
+
+func _render_skills() -> void:
+	if not is_node_ready():
+		return
+	var list: VBoxContainer = $PageHost/SkillsPage/SkillRoster/Scroll/List
+	for child: Node in list.get_children():
+		list.remove_child(child)
+		child.queue_free()
+	var learned: Array = profile.get("learnedSkills", [])
+	var equipped: Dictionary = profile.get("equippedSkills", {"active_1": ""})
+	var active_id := str(equipped.get("active_1", ""))
+	var active_definition: Dictionary = skill_catalog.get(active_id, {})
+	var active_name := str(active_definition.get("name", active_id))
+	$PageHost/SkillsPage/SkillLoadoutCard/EquippedSkill.text = (
+		"Ô R • Chưa trang bị kỹ năng" if active_id.is_empty() else "Ô R • " + active_name)
+	$PageHost/SkillsPage/SkillLoadoutCard/RemoveSkill.disabled = (
+		active_id.is_empty() or preview_mode or loading)
+	var first_skill := ""
+	for definition: Variant in skill_definitions:
+		if not definition is Dictionary:
+			continue
+		var skill_id := str(definition.get("id", ""))
+		if skill_id.is_empty():
+			continue
+		if first_skill.is_empty():
+			first_skill = skill_id
+		var is_learned := learned.has(skill_id)
+		var is_equipped := active_id == skill_id
+		var button := Button.new()
+		button.text = ("[R] " if is_equipped else "") + str(definition.get("name", skill_id))
+		if not is_learned:
+			button.text += " • Chưa mở"
+		button.tooltip_text = str(definition.get("description", ""))
+		button.custom_minimum_size = Vector2(0, 30)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.pressed.connect(_select_skill.bind(skill_id))
+		list.add_child(button)
+	if selected_skill_id.is_empty() or not skill_catalog.has(selected_skill_id):
+		selected_skill_id = "sk_phi_nhan" if learned.has("sk_phi_nhan") else first_skill
+	_render_skill_detail()
+
+func _select_skill(skill_id: String) -> void:
+	selected_skill_id = skill_id
+	_render_skill_detail()
+
+func _render_skill_detail() -> void:
+	var detail_path := "PageHost/SkillsPage/SkillDetail/"
+	var definition: Dictionary = skill_catalog.get(selected_skill_id, {})
+	var equip_button: Button = get_node(detail_path + "EquipButton")
+	if definition.is_empty():
+		$PageHost/SkillsPage/SkillDetail/Name.text = "Chọn một kỹ năng"
+		$PageHost/SkillsPage/SkillDetail/Meta.text = ""
+		$PageHost/SkillsPage/SkillDetail/Description.text = "Kỹ năng sẽ xuất hiện khi nhân vật học được."
+		$PageHost/SkillsPage/SkillDetail/Status.text = ""
+		equip_button.text = "Chưa có kỹ năng"
+		equip_button.disabled = true
+		return
+	var learned: Array = profile.get("learnedSkills", [])
+	var equipped: Dictionary = profile.get("equippedSkills", {"active_1": ""})
+	var is_learned := learned.has(selected_skill_id)
+	var is_equippable := str(definition.get("equipSlot", "")) == "active_1"
+	var is_equipped := str(equipped.get("active_1", "")) == selected_skill_id
+	$PageHost/SkillsPage/SkillDetail/Name.text = str(definition.get("name", selected_skill_id))
+	$PageHost/SkillsPage/SkillDetail/Meta.text = "ĐÃ HỌC" if is_learned else "CHƯA MỞ KHÓA"
+	$PageHost/SkillsPage/SkillDetail/Description.text = str(definition.get("description", ""))
+	if not is_learned:
+		$PageHost/SkillsPage/SkillDetail/Status.text = str(definition.get("unlockText", "Hoàn thành nhiệm vụ để mở kỹ năng."))
+	elif not is_equippable:
+		$PageHost/SkillsPage/SkillDetail/Status.text = "Kỹ năng hỗ trợ • tự dùng trong nhiệm vụ, không chiếm ô R."
+	else:
+		$PageHost/SkillsPage/SkillDetail/Status.text = "Ô R • hồi chiêu 1,8 giây • dùng khi săn quái trên bản đồ."
+	if not is_learned:
+		equip_button.text = "Chưa mở khóa"
+	elif not is_equippable:
+		equip_button.text = "Kỹ năng hỗ trợ"
+	elif is_equipped:
+		equip_button.text = "Đã trang bị vào ô R"
+	else:
+		equip_button.text = "Trang bị vào ô R"
+	equip_button.disabled = loading or preview_mode or not is_learned or not is_equippable or is_equipped
+
+func _equip_selected_skill() -> void:
+	if selected_skill_id.is_empty():
+		return
+	_equip_skill(selected_skill_id)
+
+func _skill_operation_id() -> String:
+	return "skill_" + Crypto.new().generate_random_bytes(12).hex_encode()
+
+func _equip_skill(skill_id: String) -> void:
+	if loading or preview_mode or api == null or api.token.is_empty():
+		$PageHost/SkillsPage/SkillDetail/Status.text = "Hãy kết nối tài khoản để lưu bộ kỹ năng."
+		return
+	loading = true
+	$Refresh.disabled = true
+	$PageHost/SkillsPage/SkillDetail/Status.text = "Đang lưu bộ kỹ năng lên máy chủ…"
+	var result: Dictionary = await api.call_rpc("skill_equip", {
+		"operationId": _skill_operation_id(), "skillId": skill_id
+	})
+	loading = false
+	$Refresh.disabled = false
+	if result.has("error"):
+		$PageHost/SkillsPage/SkillDetail/Status.text = "Chưa trang bị được • " + str(result.error)
+		_render_skills()
+		return
+	profile = result.get("profile", profile).duplicate(true)
+	_render_profile()
+	profile_updated.emit(profile.duplicate(true))
 
 func _load_settings() -> void:
 	var config := ConfigFile.new()

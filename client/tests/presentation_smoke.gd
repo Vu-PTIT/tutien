@@ -168,6 +168,15 @@ func _run() -> void:
 	character.show_page("skills")
 	check(character.get_node("PageHost/SkillsPage").visible and not character.get_node("PageHost/ProfilePage").visible,
 		"Skills tab opens its own page")
+	check(character.get_node("PageHost/SkillsPage/SkillRoster/Scroll/List").get_child_count() == 2 and
+		character.get_node("PageHost/SkillsPage/SkillLoadoutCard/EquippedSkill").text == "Ô R • Chưa trang bị kỹ năng",
+		"Skills page shows the known skills and the empty R loadout")
+	check(character.get_node("PageHost/SkillsPage/SkillDetail/EquipButton").disabled,
+		"Offline preview never saves a fake skill loadout")
+	hud.apply_profile({"realm": "mortal", "realmStage": 0, "cultivationXp": 0, "hp": 100,
+		"equippedSkills": {"active_1": "sk_phi_nhan"}})
+	check(hud.equipped_skill_id == "sk_phi_nhan" and hud.get_node("Hotbar/Slot4").icon != null,
+		"Equipped Phi Nhận appears in the pixel hotbar")
 	character.show_page("settings")
 	check(character.get_node("PageHost/SettingsPage").visible, "Settings tab opens its own page")
 	character.set_touch_layout_enabled(true, false)
@@ -199,8 +208,9 @@ func _run() -> void:
 	var touch: TouchControls = hud.touch_controls
 	check(touch.visible and not hud.get_node("Hotbar").visible, "Touch layout shows controls without desktop hotbar")
 	touch.set_field_combat_mode(true)
-	check(touch.get_node("Attack").visible and touch.get_node("Interact").visible and not touch.get_node("Dodge").visible,
-		"Touch map combat exposes attack and interaction without arena dodge")
+	check(touch.get_node("Attack").visible and touch.get_node("Interact").visible and
+		touch.get_node("Skill").visible and not touch.get_node("Dodge").visible,
+		"Touch map combat exposes attack, interaction, and the equipped skill")
 	touch.set_field_combat_mode(false)
 	var finger_down := InputEventScreenTouch.new()
 	finger_down.index = 2

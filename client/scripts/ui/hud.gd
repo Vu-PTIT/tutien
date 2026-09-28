@@ -3,6 +3,8 @@ extends Control
 signal action_requested(action: String)
 var toast_time: float = 0.0
 var touch_layout: bool = false
+var equipped_skill_id: String = ""
+var phi_ren_icon: Texture2D
 
 @onready var touch_controls: TouchControls = $TouchControls
 @onready var character_panel: CharacterPanel = $CharacterPanel
@@ -15,7 +17,11 @@ func _ready() -> void:
 	$SparringButton.tooltip_text = "Farm trên map • xem trạng thái máy chủ và đấu tập online"
 	$SparringButton.pressed.connect(func() -> void: action_requested.emit("dock"))
 	$HelpButton.pressed.connect(func() -> void:
-		notify("Kéo cần trái để đi • chạm Đánh khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh quái • M: map • C: hồ sơ • I: túi • E: tương tác"))
+		notify("Kéo cần trái để đi • chạm Đánh / Kỹ năng khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh • R: kỹ năng • M: map • C: hồ sơ • I: túi • E: tương tác"))
+	phi_ren_icon = _make_phi_ren_icon()
+	$Hotbar/Slot4.add_theme_font_size_override("font_size", 8)
+	$Hotbar/Slot4.icon = null
+	$Hotbar/Slot4.text = "—"
 	for index in range(6):
 		var action_id: String = ["item_heal", "item_herb", "attack", "interact", "locked", "dodge"][index]
 		get_node("Hotbar/Slot%d" % index).pressed.connect(
@@ -26,13 +32,29 @@ func _ready() -> void:
 		get_node("Dock/" + entry).pressed.connect(
 			func() -> void: action_requested.emit(action_id))
 	$Toast.hide()
-	for index in [0, 1, 4]:
+	for index in [0, 1]:
 		var button: Button = get_node("Hotbar/Slot%d" % index)
 		button.modulate = Color(0.6, 0.6, 0.6)
-		button.tooltip_text = "Chọn Hồi Nguyên Hoàn trong Túi đồ để hồi tối đa 40 HP." if index == 0 else "Ô này chưa có hành động vật phẩm."
+		button.tooltip_text = "Chọn Hồi Nguyên Hoàn trong Túi đồ để hồi tối đa 40 HP." if index == 0 else "Ô vật phẩm thứ hai chưa được gán."
+	$Hotbar/Slot4.tooltip_text = "R: mở Nhân vật > Kỹ năng để trang bị Phi Nhận."
 	$Hotbar/Slot2.tooltip_text = "Q / J / chuột trái: đánh quái ở gần ngay trên map"
 	$Hotbar/Slot3.tooltip_text = "E / chạm: tương tác với điểm gần nhất"
 	$Hotbar/Slot5.tooltip_text = "Space: né trong đấu tập online"
+
+func _make_phi_ren_icon() -> Texture2D:
+	var image := Image.create(16, 16, false, Image.FORMAT_RGBA8)
+	image.fill(Color(0, 0, 0, 0))
+	for step in range(8):
+		var x := 4 + step
+		var y := 11 - step
+		image.set_pixel(x, y, Color("f2dc91"))
+		if x < 15 and y < 15:
+			image.set_pixel(x + 1, y + 1, Color("c8924f"))
+	image.set_pixel(2, 12, Color("7b5342"))
+	image.set_pixel(3, 11, Color("7b5342"))
+	image.set_pixel(4, 12, Color("7b5342"))
+	image.set_pixel(5, 13, Color("7b5342"))
+	return ImageTexture.create_from_image(image)
 
 func _process(delta: float) -> void:
 	$ModalShade.visible = $Inventory.visible or $Dock.visible or character_panel.visible
@@ -160,3 +182,11 @@ func apply_profile(profile: Dictionary) -> void:
 		$Vitals/Qi.max_value = 100
 		$Vitals/Qi.value = clampi(int(profile.get("cultivationXp", 0)), 0, 100)
 		$Vitals/QiText.text = "Đột phá đầu tiên • %d / 100 XP" % int(profile.get("cultivationXp", 0))
+	var equipped_skills: Dictionary = profile.get("equippedSkills", {"active_1": ""})
+	equipped_skill_id = str(equipped_skills.get("active_1", ""))
+	var skill_name := "Phi Nhận" if equipped_skill_id == "sk_phi_nhan" else "Kỹ năng"
+	$Hotbar/Slot4.modulate = Color.WHITE if not equipped_skill_id.is_empty() else Color(0.6, 0.6, 0.6)
+	$Hotbar/Slot4.tooltip_text = "R: " + skill_name + " • dùng khi săn quái trên bản đồ." if not equipped_skill_id.is_empty() else "R: trang bị Phi Nhận trong Nhân vật > Kỹ năng."
+	$Hotbar/Slot4.icon = phi_ren_icon if equipped_skill_id == "sk_phi_nhan" else null
+	$Hotbar/Slot4.text = "" if equipped_skill_id == "sk_phi_nhan" else "—"
+	touch_controls.set_equipped_skill(equipped_skill_id, skill_name)

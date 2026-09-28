@@ -309,63 +309,111 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BasicCard" type="Panel" parent="PageHost/SkillsPage"]
-offset_right = 252.0
-offset_bottom = 83.0
-
-[node name="BasicTitle" type="Label" parent="PageHost/SkillsPage/BasicCard"]
-offset_left = 9.0
-offset_top = 7.0
-offset_right = 240.0
-offset_bottom = 22.0
-mouse_filter = 2
-text = "ĐÒN ĐÁNH CƠ BẢN"
-theme_override_font_sizes/font_size = 10
-
-[node name="BasicBody" type="Label" parent="PageHost/SkillsPage/BasicCard"]
-offset_left = 9.0
-offset_top = 29.0
-offset_right = 240.0
-offset_bottom = 75.0
-mouse_filter = 2
-text = "Tấn công mục tiêu gần.\nPhím Q / J • server xác nhận"
-autowrap_mode = 2
-theme_override_font_sizes/font_size = 8
-
-[node name="DodgeCard" type="Panel" parent="PageHost/SkillsPage"]
-offset_left = 264.0
+[node name="SkillLoadoutCard" type="Panel" parent="PageHost/SkillsPage"]
 offset_right = 516.0
-offset_bottom = 83.0
+offset_bottom = 44.0
 
-[node name="DodgeTitle" type="Label" parent="PageHost/SkillsPage/DodgeCard"]
-offset_left = 9.0
-offset_top = 7.0
-offset_right = 240.0
-offset_bottom = 22.0
+[node name="LoadoutTitle" type="Label" parent="PageHost/SkillsPage/SkillLoadoutCard"]
+offset_left = 8.0
+offset_top = 4.0
+offset_right = 260.0
+offset_bottom = 17.0
 mouse_filter = 2
-text = "NÉ TRÁNH"
-theme_override_font_sizes/font_size = 10
-
-[node name="DodgeBody" type="Label" parent="PageHost/SkillsPage/DodgeCard"]
-offset_left = 9.0
-offset_top = 29.0
-offset_right = 240.0
-offset_bottom = 75.0
-mouse_filter = 2
-text = "Lướt né đòn trong đấu tập.\nPhím Space • đang dùng"
-autowrap_mode = 2
-theme_override_font_sizes/font_size = 8
-
-[node name="SkillsNote" type="Label" parent="PageHost/SkillsPage"]
-offset_left = 3.0
-offset_top = 99.0
-offset_right = 512.0
-offset_bottom = 143.0
-mouse_filter = 2
-text = "Đây là hai thao tác chiến đấu đã chạy trong prototype. Kỹ năng chủ động khác sẽ hiện ở đây khi được nối vào gameplay."
-autowrap_mode = 2
+text = "KỸ NĂNG ĐANG TRANG BỊ"
 theme_override_font_sizes/font_size = 9
 
+[node name="EquippedSkill" type="Label" parent="PageHost/SkillsPage/SkillLoadoutCard"]
+offset_left = 8.0
+offset_top = 20.0
+offset_right = 400.0
+offset_bottom = 39.0
+mouse_filter = 2
+text = "Ô R • Chưa trang bị kỹ năng"
+theme_override_font_sizes/font_size = 9
+
+[node name="RemoveSkill" type="Button" parent="PageHost/SkillsPage/SkillLoadoutCard"]
+offset_left = 425.0
+offset_top = 7.0
+offset_right = 508.0
+offset_bottom = 37.0
+text = "Tháo ô R"
+theme_override_font_sizes/font_size = 8
+
+[node name="SkillRoster" type="Panel" parent="PageHost/SkillsPage"]
+offset_top = 50.0
+offset_right = 214.0
+offset_bottom = 204.0
+
+[node name="RosterTitle" type="Label" parent="PageHost/SkillsPage/SkillRoster"]
+offset_left = 6.0
+offset_top = 4.0
+offset_right = 204.0
+offset_bottom = 18.0
+mouse_filter = 2
+text = "KỸ NĂNG ĐÃ BIẾT"
+theme_override_font_sizes/font_size = 8
+
+[node name="Scroll" type="ScrollContainer" parent="PageHost/SkillsPage/SkillRoster"]
+offset_left = 4.0
+offset_top = 22.0
+offset_right = 210.0
+offset_bottom = 148.0
+horizontal_scroll_mode = 0
+
+[node name="List" type="VBoxContainer" parent="PageHost/SkillsPage/SkillRoster/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SkillDetail" type="Panel" parent="PageHost/SkillsPage"]
+offset_left = 222.0
+offset_right = 516.0
+offset_bottom = 204.0
+
+[node name="Name" type="Label" parent="PageHost/SkillsPage/SkillDetail"]
+offset_left = 8.0
+offset_top = 6.0
+offset_right = 284.0
+offset_bottom = 23.0
+mouse_filter = 2
+text = "Chọn một kỹ năng"
+theme_override_font_sizes/font_size = 10
+
+[node name="Meta" type="Label" parent="PageHost/SkillsPage/SkillDetail"]
+offset_left = 8.0
+offset_top = 27.0
+offset_right = 284.0
+offset_bottom = 40.0
+mouse_filter = 2
+text = "CHƯA MỞ KHÓA"
+theme_override_font_sizes/font_size = 8
+
+[node name="Description" type="Label" parent="PageHost/SkillsPage/SkillDetail"]
+offset_left = 8.0
+offset_top = 47.0
+offset_right = 284.0
+offset_bottom = 96.0
+mouse_filter = 2
+text = "Kỹ năng sẽ xuất hiện khi nhân vật học được."
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 8
+
+[node name="EquipButton" type="Button" parent="PageHost/SkillsPage/SkillDetail"]
+offset_left = 8.0
+offset_top = 102.0
+offset_right = 284.0
+offset_bottom = 130.0
+text = "Trang bị vào ô R"
+theme_override_font_sizes/font_size = 8
+
+[node name="Status" type="Label" parent="PageHost/SkillsPage/SkillDetail"]
+offset_left = 8.0
+offset_top = 135.0
+offset_right = 284.0
+offset_bottom = 198.0
+mouse_filter = 2
+text = ""
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 8
 [node name="SettingsPage" type="Control" parent="PageHost"]
 visible = false
 layout_mode = 1

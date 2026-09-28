@@ -325,7 +325,13 @@ const worldInteractRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
 
 const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx),input=objectPayload(payload);
-  if(Object.keys(input).length!==1||typeof input.targetId!=="string") return fail(nkruntime.Codes.INVALID_ARGUMENT,"Only targetId is accepted");
+  if(Object.keys(input).some(function(key){return key!=="targetId"&&key!=="skillId";})||
+      typeof input.targetId!=="string"||(input.skillId!==undefined&&typeof input.skillId!=="string"))
+    return fail(nkruntime.Codes.INVALID_ARGUMENT,"Expected targetId and optional skillId only");
+  const requestedSkillId=typeof input.skillId==="string"?input.skillId:"";
+  const activeSkill=requestedSkillId?catalogSkill(requestedSkillId):undefined;
+  if(requestedSkillId&&(!activeSkill||activeSkill.equipSlot!=="active_1"))
+    return fail(nkruntime.Codes.FAILED_PRECONDITION,"Skill cannot be used in the active slot");
   for(let attempt=0;attempt<5;attempt++) {
     const current=worldReadSession(nk,userId),session=JSON.parse(JSON.stringify(current.session)) as WorldSession;
     const map=WORLD_MAPS[session.mapId];
@@ -340,14 +346,16 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     if(worldDistance(session.x,session.y,target.x,target.y)>WORLD_TILE*2.2||!worldPathWalkable(map,[session.x,session.y],[target.x,target.y]))
       return fail(nkruntime.Codes.FAILED_PRECONDITION,"Move closer to the monster before attacking");
     const profile=loadCharacter(nk,userId).state;
-    let attack=16;
+    if(activeSkill&&(profile.equippedSkills.active_1!==requestedSkillId||profile.learnedSkills.indexOf(requestedSkillId)<0))
+      return fail(nkruntime.Codes.FAILED_PRECONDITION,"Equip and learn this skill before using it");
+    let attack=16+(activeSkill?Number(activeSkill.powerBonus||0):0);
     for(let i=0;i<profile.inventory.length;i++) {
       const item=profile.inventory[i],definition=catalogItem(item.itemId);
       if(item.instanceId===profile.equipped.weapon&&definition.equipSlot==="weapon") attack+=Number(definition.attackBonus||0);
     }
     const damage=Math.max(1,Math.floor(attack*100/(100+target.defense)));
     target.hp=Math.max(0,target.hp-damage); target.mode=target.hp===0?"dead":"hit";
-    session.attackReadyAt=now+700;
+    session.attackReadyAt=now+(activeSkill?Number(activeSkill.cooldownMs||700):700);
     if(target.hp===0) {
       target.respawnAt=now+target.respawnMs;
       const xp=target.rewardXp;
@@ -383,12 +391,14 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
       const pityStatus=equipmentName?{itemId:target.equipmentDropItemId,misses:pityMisses,guaranteedAfter:pityLimit,guaranteed:pityGuaranteed}:null;
       return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,damage:damage,killed:true,
         profile:rewardData.profile,receipt:rewardData.receipt,fieldMobs:worldFieldMobSnapshot(session,session.mapId),
-        equipmentPity:pityStatus,message:"Đã hạ "+target.name+" • "+lootText+pityText+xpText+"."});
+        equipmentPity:pityStatus,skillId:requestedSkillId,
+        message:(activeSkill?activeSkill.name+" • ":"")+"Đã hạ "+target.name+" • "+lootText+pityText+xpText+"."});
     }
     try {
       worldWrite(nk,userId,session,current.version);
       return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,damage:damage,killed:false,
-        fieldMobs:worldFieldMobSnapshot(session,session.mapId),message:"Đã gây "+damage+" sát thương lên "+target.name+"."});
+        fieldMobs:worldFieldMobSnapshot(session,session.mapId),skillId:requestedSkillId,
+        message:(activeSkill?activeSkill.name+" • ":"")+"Đã gây "+damage+" sát thương lên "+target.name+"."});
     } catch(_error) { /* Retry after a concurrent world movement or attack. */ }
   }
   return fail(nkruntime.Codes.UNAVAILABLE,"World combat is busy; retry");

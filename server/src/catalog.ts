@@ -22,6 +22,23 @@ const ITEM_CATALOG: ItemDefinition[] = [
   itemDefinition("it_array_shard", "Mảnh trận", false, true),
   itemDefinition("it_well_key", "Chìa khóa Cổ Tỉnh", false, true)
 ];
+interface SkillDefinition {
+  id: string; name: string; kind: string; description: string; unlockText: string;
+  equipSlot: string; hotkey?: string; powerBonus?: number; cooldownMs?: number;
+}
+const SKILL_CATALOG: SkillDefinition[] = [
+  {id:"sk_scan",name:"Mạch Bàn • Truy Dấu",kind:"utility",
+    description:"Dò dấu linh mạch và ghi nhận dấu nước trong nhiệm vụ.",
+    unlockText:"Mở qua nhiệm vụ khảo sát tại Trúc Âm.",equipSlot:""},
+  {id:"sk_phi_nhan",name:"Phi Nhận",kind:"active",
+    description:"Phóng phi nhận vào mục tiêu gần, tăng 18 sát thương.",
+    unlockText:"Mở sau nghi thức Hơi Thở Đầu Tiên.",equipSlot:"active_1",
+    hotkey:"R",powerBonus:18,cooldownMs:1800}
+];
+function catalogSkill(id: string): SkillDefinition | undefined {
+  for (let i = 0; i < SKILL_CATALOG.length; i++) if (SKILL_CATALOG[i].id === id) return SKILL_CATALOG[i];
+  return undefined;
+}
 function itemDefinition(id: string, name: string, instance: boolean = false, bound: boolean = false,
     stats: {[key: string]: unknown} = {}): ItemDefinition {
   const definition: ItemDefinition = { id: id, name: name, stackMax: instance || bound ? 1 : 99, instance: instance, bound: bound };

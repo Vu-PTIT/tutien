@@ -66,6 +66,7 @@ func _ready() -> void:
 	hud.action_requested.connect(_action)
 	character_panel.inventory_requested.connect(_open_equipment_bag)
 	character_panel.touch_layout_changed.connect(_on_touch_layout_changed)
+	character_panel.profile_updated.connect(hud.apply_profile)
 	touch_controls.action_requested.connect(game_input.request_action)
 	touch_layout_enabled = OS.has_feature("mobile") or character_panel.touch_layout_enabled or OS.get_cmdline_user_args().has("--touch-preview")
 	hud.set_touch_layout(touch_layout_enabled)
@@ -293,6 +294,15 @@ func _action(action: String) -> void:
 				pending_action = "sk_basic" if action == "attack" else "sk_dodge"
 			elif action == "attack":
 				_attack_field_mob()
+		"skill_1":
+			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible:
+				return
+			if not api.match_id.is_empty():
+				hud.notify("Phi Nhận hiện dùng được khi săn quái ngoài bản đồ.")
+			elif hud.equipped_skill_id.is_empty():
+				hud.notify("Mở Nhân vật > Kỹ năng để trang bị Phi Nhận vào ô R.")
+			else:
+				_attack_field_mob(hud.equipped_skill_id)
 		"interact":
 			if not api.match_id.is_empty():
 				return
@@ -512,7 +522,7 @@ func _update_field_combat_controls() -> void:
 		return
 	touch_controls.set_field_combat_mode(current_map_id == "m_truc_am" and api != null and api.match_id.is_empty())
 
-func _attack_field_mob() -> void:
+func _attack_field_mob(skill_id: String = "") -> void:
 	if busy or api.match_id.is_empty() == false:
 		return
 	var target_id := map_world.nearest_field_mob(player.position, 70.0)
@@ -520,7 +530,7 @@ func _attack_field_mob() -> void:
 		if current_map_id != "m_truc_am":
 			hud.notify("Sơn Trư và Độc Chu xuất hiện trên bản đồ Trúc Âm.")
 		else:
-			hud.notify("Đến gần Sơn Trư hoặc Độc Chu rồi nhấn J để đánh.")
+			hud.notify("Đến gần Sơn Trư hoặc Độc Chu rồi nhấn R hoặc chạm Kỹ năng." if not skill_id.is_empty() else "Đến gần Sơn Trư hoặc Độc Chu rồi nhấn J để đánh.")
 		return
 	if api.token.is_empty():
 		hud.notify("Đang đăng nhập để lưu XP và vật phẩm farm…")
@@ -550,7 +560,10 @@ func _attack_field_mob() -> void:
 		else:
 			hud.notify("Quái farm hiện chỉ xuất hiện ở Trúc Âm.")
 		return
-	var result: Dictionary = await api.call_rpc("world_attack", {"targetId": target_id})
+	var payload: Dictionary = {"targetId": target_id}
+	if not skill_id.is_empty():
+		payload["skillId"] = skill_id
+	var result: Dictionary = await api.call_rpc("world_attack", payload)
 	if result.has("error"):
 		hud.notify(str(result.error))
 	else:

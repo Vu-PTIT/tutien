@@ -14,12 +14,15 @@ var _touch_index := -1
 var _mouse_held := false
 var _combat_mode := false
 var _field_combat_mode := false
+var equipped_skill_id: String = ""
+var equipped_skill_name: String = "Kỹ năng"
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$Interact.pressed.connect(func() -> void: action_requested.emit("interact"))
 	$Attack.pressed.connect(func() -> void: action_requested.emit("attack"))
 	$Dodge.pressed.connect(func() -> void: action_requested.emit("dodge"))
+	$Skill.pressed.connect(func() -> void: action_requested.emit("skill_1"))
 	set_combat_mode(false)
 	visible = false
 
@@ -39,6 +42,7 @@ func set_combat_mode(enabled: bool) -> void:
 	$Interact.visible = not enabled
 	$Attack.visible = enabled
 	$Dodge.visible = enabled
+	$Skill.visible = false
 	$Interact.position = Vector2(548.0, 268.0)
 	$Interact.size = Vector2(80.0, 74.0)
 	clear_input()
@@ -51,9 +55,20 @@ func set_field_combat_mode(enabled: bool) -> void:
 	$Interact.visible = true
 	$Attack.visible = enabled
 	$Dodge.visible = false
+	$Skill.visible = enabled and not equipped_skill_id.is_empty()
+	$Skill.text = equipped_skill_name
+	$Skill.position = Vector2(548.0, 204.0)
+	$Skill.size = Vector2(80.0, 54.0)
 	$Interact.position = Vector2(468.0, 208.0) if enabled else Vector2(548.0, 268.0)
 	$Interact.size = Vector2(72.0, 54.0) if enabled else Vector2(80.0, 74.0)
 	clear_input()
+
+func set_equipped_skill(skill_id: String, skill_name: String) -> void:
+	equipped_skill_id = skill_id
+	equipped_skill_name = skill_name
+	if _field_combat_mode:
+		$Skill.visible = not equipped_skill_id.is_empty()
+		$Skill.text = equipped_skill_name
 
 func clear_input() -> void:
 	direction = Vector2.ZERO

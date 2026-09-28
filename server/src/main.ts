@@ -7,6 +7,7 @@ function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkr
   initializer.registerRpc("inventory_get", inventoryGetRpc);
   initializer.registerRpc("inventory_claim_starter", inventoryClaimStarterRpc);
   initializer.registerRpc("inventory_equip", inventoryEquipRpc);
+  initializer.registerRpc("skill_equip", skillEquipRpc);
   initializer.registerRpc("inventory_use", inventoryUseRpc);
   initializer.registerRpc("inventory_discard", inventoryDiscardRpc);
   initializer.registerRpc("economy_action", economyActionRpc);
