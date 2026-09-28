@@ -13,15 +13,18 @@ const KEY_BINDINGS := {
 	"interact": [KEY_E],
 	"attack": [KEY_J, KEY_Q],
 	"dodge": [KEY_SPACE],
+	"hop": [KEY_H],
+	"run": [KEY_SHIFT],
 	"inventory": [KEY_I],
 	"map": [KEY_M],
 	"locked": [KEY_1, KEY_2, KEY_R],
 	"close": [KEY_ESCAPE],
 	"touch_preview": [KEY_F9],
 }
-const COMMANDS := ["inventory", "map", "interact", "attack", "dodge", "locked"]
+const COMMANDS := ["inventory", "map", "interact", "attack", "dodge", "hop", "locked"]
 
 var last_touch_aim := Vector2.RIGHT
+var _touch_sprint := false
 
 func _ready() -> void:
 	var needs_mouse_attack := not InputMap.has_action("attack")
@@ -40,6 +43,12 @@ func _ready() -> void:
 
 func movement(touch_direction: Vector2) -> Vector2:
 	return (Input.get_vector("move_left", "move_right", "move_up", "move_down") + touch_direction).limit_length()
+
+func is_running() -> bool:
+	return _touch_sprint or Input.is_action_pressed("run")
+
+func set_touch_sprint(enabled: bool) -> void:
+	_touch_sprint = enabled
 
 func aim(movement_direction: Vector2, touch_enabled: bool, pointer: Vector2, origin: Vector2) -> Vector2:
 	if movement_direction.length_squared() > 0.01:

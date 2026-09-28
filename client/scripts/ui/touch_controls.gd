@@ -4,6 +4,7 @@ extends Control
 ## Input is tracked by touch index so a second finger can press an action button.
 
 signal action_requested(action: String)
+signal sprint_changed(enabled: bool)
 
 const JOYSTICK_CENTER := Vector2(78, 282)
 const JOYSTICK_RADIUS := 48.0
@@ -20,6 +21,8 @@ func _ready() -> void:
 	$Interact.pressed.connect(func() -> void: action_requested.emit("interact"))
 	$Attack.pressed.connect(func() -> void: action_requested.emit("attack"))
 	$Dodge.pressed.connect(func() -> void: action_requested.emit("dodge"))
+	$Hop.pressed.connect(func() -> void: action_requested.emit("hop"))
+	$Run.toggled.connect(_on_run_toggled)
 	set_combat_mode(false)
 	visible = false
 
@@ -28,7 +31,7 @@ func set_controls_visible(enabled: bool) -> void:
 		return
 	visible = enabled
 	if not enabled:
-		clear_input()
+		clear_input(true)
 	queue_redraw()
 
 func set_combat_mode(enabled: bool) -> void:
@@ -39,27 +42,52 @@ func set_combat_mode(enabled: bool) -> void:
 	$Interact.visible = not enabled
 	$Attack.visible = enabled
 	$Dodge.visible = enabled
-	$Interact.position = Vector2(548.0, 268.0)
-	$Interact.size = Vector2(80.0, 74.0)
-	clear_input()
+	$Dodge.text = "Né"
+	$Run.visible = false
+	$Hop.visible = false
+	$Interact.position = Vector2(552.0, 207.0)
+	$Interact.size = Vector2(80.0, 52.0)
+	$Attack.position = Vector2(552.0, 207.0)
+	$Attack.size = Vector2(80.0, 52.0)
+	$Dodge.position = Vector2(552.0, 267.0)
+	$Dodge.size = Vector2(80.0, 62.0)
+	clear_input(true)
 
 func set_field_combat_mode(enabled: bool) -> void:
-	if _field_combat_mode == enabled and $Interact.visible:
+	if _field_combat_mode == enabled and $Interact.visible and $Run.visible:
 		return
 	_combat_mode = false
 	_field_combat_mode = enabled
 	$Interact.visible = true
 	$Attack.visible = enabled
-	$Dodge.visible = false
-	$Interact.position = Vector2(468.0, 208.0) if enabled else Vector2(548.0, 268.0)
-	$Interact.size = Vector2(72.0, 54.0) if enabled else Vector2(80.0, 74.0)
-	clear_input()
+	$Dodge.visible = true
+	$Dodge.text = "Lướt"
+	$Run.visible = true
+	$Hop.visible = true
+	$Interact.position = Vector2(468.0, 207.0) if enabled else Vector2(552.0, 207.0)
+	$Interact.size = Vector2(76.0, 52.0) if enabled else Vector2(80.0, 52.0)
+	$Attack.position = Vector2(552.0, 207.0)
+	$Attack.size = Vector2(76.0, 52.0)
+	$Dodge.position = Vector2(552.0, 267.0)
+	$Dodge.size = Vector2(76.0, 62.0)
+	$Hop.position = Vector2(468.0, 267.0)
+	$Hop.size = Vector2(76.0, 62.0)
+	$Run.position = Vector2(384.0, 267.0)
+	$Run.size = Vector2(76.0, 62.0)
+	clear_input(true)
 
-func clear_input() -> void:
+func clear_input(reset_sprint: bool = false) -> void:
 	direction = Vector2.ZERO
 	_touch_index = -1
 	_mouse_held = false
+	if reset_sprint and $Run.button_pressed:
+		$Run.set_pressed_no_signal(false)
+		sprint_changed.emit(false)
 	queue_redraw()
+
+func _on_run_toggled(enabled: bool) -> void:
+	$Run.text = "Chạy ✓" if enabled else "Chạy"
+	sprint_changed.emit(enabled)
 
 func _input(event: InputEvent) -> void:
 	if not visible:

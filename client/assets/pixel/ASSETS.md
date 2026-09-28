@@ -12,7 +12,13 @@ không phải tileset vẽ/tách thủ công.
 | `truc_am_world_v1.png` | 1448 × 1086 RGB | Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư; nền prototype ba khu |
 | `thach_can_world_v1.png` | 1448 × 1086 RGB | Ngoại Vi và Mỏ Cũ; nền prototype hai khu |
 | `co_tinh_world_v1.png` | 1448 × 1086 RGB | Năm phòng nối tiếp; nền prototype dungeon Cổ Tỉnh |
-| `cultivator.png` | 1182 × 1330 transparent PNG | 4 hướng × 4 frame, nền trong suốt |
+| `cultivator.png` | 1182 × 1330 transparent PNG | Idle 4 hướng từ atlas cũ |
+| `player_actions/walk/sheet-transparent.png` | 2048 × 2048 transparent PNG | Đi bộ, 4 hướng × 4 frame, cell 512 px |
+| `player_actions/run/sheet-transparent.png` | 2048 × 2048 transparent PNG | Chạy, cùng scale profile và mốc chân |
+| `player_actions/dash/sheet-transparent.png` | 2048 × 2048 transparent PNG | Lướt, cùng scale profile và mốc chân |
+| `player_actions/hop/sheet-transparent.png` | 2048 × 2048 transparent PNG | Nhún, căn giữa riêng để thân nâng mà bóng/collider ở đất |
+| `player_actions/*/pipeline-meta.json` | JSON | Thông số xử lý và kết quả QC 16 frame |
+| `player_actions/character-scale-profile.json` | JSON | Scale chuẩn dùng chung cho chuyển động tiếp đất |
 | `icons.png` | 1254 × 1254 transparent PNG | 16 icon, nền trong suốt |
 | `maps/bai_son_tru.png` | 1586 × 992 RGB | Nền bãi săn cố định; chỉ là phông chiến đấu, bounds do server điều khiển |
 | `maps/world_route_overview.png` | 768 × 256 RGB | Sơ đồ tổng quan UI: một đường liên tục An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh; không dùng làm map runtime |
@@ -63,8 +69,8 @@ không phải tileset vẽ/tách thủ công.
 - Nearest filtering, viewport 640 × 360, integer window scaling.
 - Icon dùng ô 313.5 px. Nhân vật bước 295.5 × 332.5 px, crop 225 × 305 px.
   Đây là số theo ảnh sinh ra, **không phải atlas native 16/32 px chuẩn
-  production**. Cần kiểm animation/jitter và chuẩn hóa trước phát hành;
-  chưa nghiệm thu animation bằng Godot tại đây.
+  production**. Bộ action sheet mới đã normalize theo scale profile và được
+  kiểm riêng bằng metadata pipeline cùng movement smoke trong CI.
 - Nền làng là một ảnh, không gọi là TileMap; chưa tách tiles/lớp foreground.
 - `an_khe_world_v1.png` được thu phóng nearest lên kích thước world 1536×1152;
   va chạm prototype là các blocker chữ nhật, chưa khớp từng bụi cây/hàng rào.
@@ -74,3 +80,11 @@ không phải tileset vẽ/tách thủ công.
   cùng encounter Sơn Trư server-authoritative; đây không phải phần hoàn thiện
   overworld Bãi Sơn Trư.
 - Bám phong cách concept, không coi là bản khớp từng pixel.
+
+
+## Chuyển động nhân vật và appearance
+
+- `player_actions/{walk,run,dash,hop}/sheet-transparent.png` là các sheet 4 × 4 theo hàng trước/trái/phải/sau. Đi, chạy và lướt dùng chung scale profile/mốc chân; hop căn giữa riêng để thể hiện độ nâng bằng sprite, trong khi bóng và collider vẫn nằm ở mặt đất.
+- Mỗi sheet có `pipeline-meta.json` với thống kê QC. Tài nguyên runtime chỉ nạp sheet trong suốt; frame rời, GIF và ảnh nền magenta là đầu ra kiểm tra.
+- `PixelActor.set_appearance_id(id)` chọn bộ sheet ngoại hình và không chạm vào trang bị, chỉ số phòng thủ hoặc profile máy chủ. Hiện có `cultivator_default`; thêm trang phục mới bằng cách cung cấp đủ sheet hành động cùng chuẩn 4 hướng/4 frame và đăng ký ID trong `APPEARANCE_LIBRARY`. Giao diện tủ đồ và lưu lựa chọn trên tài khoản chưa nối trong lát cắt này.
+- PC: WASD di chuyển, giữ Shift để chạy, Space lướt, H nhún. Mobile dùng cần điều hướng và nút Chạy/Lướt/Nhảy. Lướt ngắn được giới hạn để nằm trong ngưỡng `world_move` hiện có; va chạm thân và bóng không nhấc theo hop.

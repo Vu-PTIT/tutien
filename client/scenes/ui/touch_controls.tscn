@@ -10,24 +10,41 @@ mouse_filter = 2
 script = ExtResource("1")
 
 [node name="Interact" type="Button" parent="."]
-offset_left = 548.0
-offset_top = 268.0
-offset_right = 628.0
-offset_bottom = 342.0
+offset_left = 552.0
+offset_top = 207.0
+offset_right = 632.0
+offset_bottom = 259.0
 text = "Tương tác"
 
 [node name="Attack" type="Button" parent="."]
 visible = false
-offset_left = 548.0
-offset_top = 268.0
+offset_left = 552.0
+offset_top = 207.0
 offset_right = 628.0
-offset_bottom = 342.0
+offset_bottom = 259.0
 text = "Đánh"
 
 [node name="Dodge" type="Button" parent="."]
 visible = false
-offset_left = 473.0
-offset_top = 283.0
-offset_right = 541.0
-offset_bottom = 342.0
+offset_left = 552.0
+offset_top = 267.0
+offset_right = 628.0
+offset_bottom = 329.0
 text = "Né"
+
+[node name="Hop" type="Button" parent="."]
+visible = false
+offset_left = 468.0
+offset_top = 267.0
+offset_right = 544.0
+offset_bottom = 329.0
+text = "Nhảy"
+
+[node name="Run" type="Button" parent="."]
+visible = false
+offset_left = 384.0
+offset_top = 267.0
+offset_right = 460.0
+offset_bottom = 329.0
+toggle_mode = true
+text = "Chạy"

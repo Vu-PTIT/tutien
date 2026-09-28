@@ -70,6 +70,10 @@ jobs:
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/import.log
           /tmp/godot/engine --headless --path client --quit-after 60 -- --no-auto-connect 2>&1 | tee /tmp/run.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/run.log
+      - name: Character movement and appearance smoke
+        run: |
+          timeout 90 /tmp/godot/engine --headless --path client --script res://tests/character_movement_smoke.gd -- --no-auto-connect 2>&1 | tee /tmp/movement.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/movement.log
       - name: Offline presentation interaction smoke
         run: |
           timeout 90 /tmp/godot/engine --headless --path client --script res://tests/presentation_smoke.gd -- --no-auto-connect 2>&1 | tee /tmp/presentation.log

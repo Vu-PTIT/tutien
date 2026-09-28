@@ -10,6 +10,15 @@ const ARENA_SCALE := 2.0 / 3.0
 const PVE_SCALE := 0.6
 const PVE_OFFSET := Vector2(32.0, 0.0)
 const WALK_SPEED := 72.0
+const RUN_SPEED := 96.0
+const DASH_SPEED := 150.0
+## The burst plus braking fits under world_move's existing per-elapsed-time allowance.
+const DASH_DURATION := 0.14
+const DASH_COOLDOWN := 0.68
+const DASH_ANIMATION_DURATION := 0.34
+const HOP_DURATION := 0.48
+const MOVE_ACCELERATION := 720.0
+const MOVE_BRAKING := 1000.0
 
 @onready var hud: PixelHUD = $Presentation/HUD
 @onready var inventory_panel: InventoryPanel = $Presentation/HUD/Inventory
@@ -35,6 +44,11 @@ var fighters: Dictionary = {}
 var local_map_flags: Dictionary = {}
 var offline_position := Vector2(768, 576)
 var touch_layout_enabled := false
+var dash_time_remaining := 0.0
+var dash_animation_remaining := 0.0
+var dash_cooldown_remaining := 0.0
+var dash_direction := Vector2.DOWN
+var hop_time_remaining := 0.0
 var game_input: GameInput
 var boar_sprite: Sprite2D
 var world_seq: int = 0
@@ -63,6 +77,7 @@ func _ready() -> void:
 	api.match_connection_lost.connect(_connection_lost)
 	hud.action_requested.connect(_action)
 	touch_controls.action_requested.connect(game_input.request_action)
+	touch_controls.sprint_changed.connect(game_input.set_touch_sprint)
 	touch_layout_enabled = OS.has_feature("mobile") or OS.get_cmdline_user_args().has("--touch-preview")
 	hud.set_touch_layout(touch_layout_enabled)
 	world_map.map_requested.connect(_travel_to_map)
@@ -164,6 +179,10 @@ func _apply_world_location(state: Dictionary, force_position: bool = true) -> bo
 	world_seq = server_seq
 	if apply_position:
 		player.position = Vector2(px, py)
+		player.velocity = Vector2.ZERO
+		dash_time_remaining = 0.0
+		dash_animation_remaining = 0.0
+		hop_time_remaining = 0.0
 		offline_position = player.position
 		world_last_synced_position = player.position
 		var area_name := map_world.update_player_context(player.position)
@@ -269,13 +288,19 @@ func _action(action: String) -> void:
 			room.release_focus()
 		"leave":
 			_leave_match()
-		"attack", "dodge":
-			if inventory_panel.visible or dock.visible or world_map.visible:
+		"attack", "dodge", "hop":
+			if _movement_blocked():
 				return
-			if api.snapshot.get("phase", "") == "active":
+			if action == "hop":
+				if api.match_id.is_empty():
+					_start_hop()
+				return
+			if not api.match_id.is_empty() and api.snapshot.get("phase", "") == "active":
 				pending_action = "sk_basic" if action == "attack" else "sk_dodge"
 			elif action == "attack":
 				_attack_field_mob()
+			else:
+				_start_dash()
 		"interact":
 			if not api.match_id.is_empty():
 				return
@@ -384,10 +409,27 @@ func _unhandled_input(event: InputEvent) -> void:
 	if game_input.handle_event(event, touch_layout_enabled, room.has_focus()):
 		get_viewport().set_input_as_handled()
 
+func _movement_blocked() -> bool:
+	return busy or inventory_panel.visible or dock.visible or world_map.visible or (service_menu != null and service_menu.visible)
+
 func _movement() -> Vector2:
-	if busy or inventory_panel.visible or dock.visible or world_map.visible:
+	if _movement_blocked():
 		return Vector2.ZERO
 	return game_input.movement(touch_controls.direction)
+
+func _start_dash() -> void:
+	if _movement_blocked() or not api.match_id.is_empty() or dash_cooldown_remaining > 0.0 or hop_time_remaining > 0.0:
+		return
+	var direction := _movement()
+	dash_direction = direction.normalized() if direction.length_squared() > 0.01 else player.last_direction
+	dash_time_remaining = DASH_DURATION
+	dash_animation_remaining = DASH_ANIMATION_DURATION
+	dash_cooldown_remaining = DASH_COOLDOWN
+
+func _start_hop() -> void:
+	if _movement_blocked() or not api.match_id.is_empty() or dash_time_remaining > 0.0 or dash_animation_remaining > 0.0:
+		return
+	hop_time_remaining = HOP_DURATION
 
 func can_walk(at: Vector2) -> bool:
 	return map_world != null and map_world.is_walkable(at)
@@ -396,10 +438,31 @@ func _physics_process(delta: float) -> void:
 	if api == null or map_world == null or not api.match_id.is_empty():
 		return
 	var old_position := player.position
-	player.velocity = _movement() * WALK_SPEED
+	var movement := _movement()
+	dash_cooldown_remaining = maxf(0.0, dash_cooldown_remaining - delta)
+	if _movement_blocked():
+		dash_time_remaining = 0.0
+		dash_animation_remaining = 0.0
+		hop_time_remaining = 0.0
+	var dashing := dash_time_remaining > 0.0
+	var running := movement.length_squared() > 0.01 and game_input.is_running()
+	var target_velocity := movement * (RUN_SPEED if running else WALK_SPEED)
+	if dashing:
+		dash_time_remaining = maxf(0.0, dash_time_remaining - delta)
+		player.velocity = dash_direction * DASH_SPEED
+	else:
+		var response := MOVE_ACCELERATION if target_velocity.length_squared() > 0.01 else MOVE_BRAKING
+		player.velocity = player.velocity.move_toward(target_velocity, response * delta)
 	player.move_and_slide()
 	offline_position = player.position
-	player.present(player.position - old_position, delta)
+	dash_animation_remaining = maxf(0.0, dash_animation_remaining - delta)
+	hop_time_remaining = maxf(0.0, hop_time_remaining - delta)
+	var facing := player.position - old_position
+	if facing.length_squared() <= 0.01 and dashing:
+		facing = dash_direction
+	var dash_progress := 1.0 - dash_animation_remaining / DASH_ANIMATION_DURATION if dash_animation_remaining > 0.0 else -1.0
+	var hop_progress := 1.0 - hop_time_remaining / HOP_DURATION if hop_time_remaining > 0.0 else -1.0
+	player.present(facing, delta, running, dash_progress, hop_progress)
 	var area_name := map_world.update_player_context(player.position)
 	var focused: MapInteractable = map_world.update_interaction_focus(player.position)
 	var nearby_mob := map_world.nearest_field_mob(player.position, 72.0)
@@ -430,6 +493,10 @@ func _sync_world_position(force: bool = false) -> Dictionary:
 			var authoritative := Vector2(float(result.get("x", here.x)), float(result.get("y", here.y)))
 			if player.position.distance_to(authoritative) > 14.0:
 				player.position = authoritative
+				player.velocity = Vector2.ZERO
+				dash_time_remaining = 0.0
+				dash_animation_remaining = 0.0
+				hop_time_remaining = 0.0
 		if result.has("fieldMobs"):
 			map_world.update_field_mobs(result.fieldMobs)
 	else:
@@ -478,9 +545,9 @@ func _poll_world_field() -> void:
 	world_field_poll_busy = false
 
 func _update_field_combat_controls() -> void:
-	if touch_controls == null:
+	if touch_controls == null or (api != null and not api.match_id.is_empty()):
 		return
-	touch_controls.set_field_combat_mode(current_map_id == "m_truc_am" and api != null and api.match_id.is_empty())
+	touch_controls.set_field_combat_mode(current_map_id == "m_truc_am")
 
 func _attack_field_mob() -> void:
 	if busy or api.match_id.is_empty() == false:

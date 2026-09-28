@@ -13,7 +13,7 @@ func _ready() -> void:
 	$SparringButton.tooltip_text = "Farm trên map • xem trạng thái máy chủ và đấu tập online"
 	$SparringButton.pressed.connect(func() -> void: action_requested.emit("dock"))
 	$HelpButton.pressed.connect(func() -> void:
-		notify("Kéo cần trái để đi • chạm Đánh khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh quái • M: map • I: túi • E: tương tác"))
+		notify("Kéo cần trái để đi • Chạy/Lướt/Nhảy ở bên phải" if touch_layout else "WASD: đi • Shift: chạy • Space: lướt • H: nhảy • Q / J: đánh • M: map • I: túi • E: tương tác"))
 	for index in range(6):
 		var action_id: String = ["item_heal", "item_herb", "attack", "interact", "locked", "dodge"][index]
 		get_node("Hotbar/Slot%d" % index).pressed.connect(
@@ -30,7 +30,7 @@ func _ready() -> void:
 		button.tooltip_text = "Chọn Hồi Nguyên Hoàn trong Túi đồ để hồi tối đa 40 HP." if index == 0 else "Ô này chưa có hành động vật phẩm."
 	$Hotbar/Slot2.tooltip_text = "Q / J / chuột trái: đánh quái ở gần ngay trên map"
 	$Hotbar/Slot3.tooltip_text = "E / chạm: tương tác với điểm gần nhất"
-	$Hotbar/Slot5.tooltip_text = "Space: né trong đấu tập online"
+	$Hotbar/Slot5.tooltip_text = "Space: lướt trên map • né trong đấu tập online"
 
 func _process(delta: float) -> void:
 	$ModalShade.visible = $Inventory.visible or $Dock.visible
