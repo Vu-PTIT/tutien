@@ -16,6 +16,22 @@ test('world_get creates a server-owned starting point and current opening quest'
   assert.equal(s.rows.get(`${A}/world_sessions/main`).permissionWrite,0);
 });
 
+test('first online login keeps an offline preview on a reachable map, then respects saved progress', () => {
+  const first=setup();
+  const initial=first.rpc('world_get',{preferredMapId:'m_truc_am'});
+  assert.deepEqual([initial.mapId,initial.x,initial.y],['m_truc_am',160,928]);
+  assert.equal(initial.fieldMobs.length,4);
+
+  const returning=setup();
+  returning.rpc('world_get');
+  const adopted=returning.rpc('world_get',{preferredMapId:'m_truc_am'});
+  assert.deepEqual([adopted.mapId,adopted.x,adopted.y],['m_truc_am',160,928]);
+  setPosition(returning,'m_truc_am',164,928,1);
+  const saved=returning.rpc('world_get',{preferredMapId:'m_an_khe'});
+  assert.deepEqual([saved.mapId,saved.x,saved.y],['m_truc_am',164,928]);
+  rejectsCode(()=>setup().rpc('world_get',{preferredMapId:'unknown_map'}),3);
+});
+
 test('movement rejects forged position, extra fields, and stale sequence', () => {
   const s=setup(); s.rpc('world_get');
   rejectsCode(()=>s.rpc('world_move',{x:1300,y:900,seq:1}),3);

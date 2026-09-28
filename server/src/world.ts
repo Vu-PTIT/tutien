@@ -102,6 +102,28 @@ function worldFindPoint(map: WorldMapDefinition, id: string): WorldPoint | undef
   for(let i=0;i<map.points.length;i++) if(map.points[i].id===id) return map.points[i];
   return undefined;
 }
+function worldMapReachable(targetId: string): boolean {
+  const target=WORLD_MAPS[targetId];
+  if (!target || !worldWalkable(target,[target.spawnX,target.spawnY])) return false;
+  const pending: string[] = ["m_an_khe"];
+  const visited: {[mapId: string]: boolean} = {"m_an_khe": true};
+  while (pending.length > 0) {
+    const mapId = pending[0];
+    pending.splice(0, 1);
+    if (mapId === targetId) return true;
+    const map = WORLD_MAPS[mapId];
+    for (let i = 0; i < map.points.length; i++) {
+      const point = map.points[i];
+      if (point.kind !== "gate" || !point.destination || visited[point.destination] || !WORLD_MAPS[point.destination]) continue;
+      const destination = WORLD_MAPS[point.destination];
+      if (!worldWalkable(map,[point.x,point.y]) || typeof point.arrivalX !== "number" || typeof point.arrivalY !== "number" ||
+          !worldWalkable(destination,[point.arrivalX,point.arrivalY])) continue;
+      visited[point.destination] = true;
+      pending.push(point.destination);
+    }
+  }
+  return false;
+}
 function worldDistance(ax: number, ay: number, bx: number, by: number): number {
   const dx=ax-bx, dy=ay-by;
   return Math.sqrt(dx*dx+dy*dy);
@@ -146,17 +168,30 @@ function worldFieldMobSnapshot(session: WorldSession, mapId: string): WorldField
       respawnMs:mob.respawnMs,hp:mob.hp,generation:mob.generation,respawnAt:mob.respawnAt,mode:mob.mode};
   });
 }
-function worldReadSession(nk: nkruntime.Nakama,userId: string): {session:WorldSession,version:string} {
+function worldReadSession(nk: nkruntime.Nakama,userId: string,preferredMapId: string = ""): {session:WorldSession,version:string} {
   for(let attempt=0;attempt<5;attempt++) {
     const row=nk.storageRead([worldObject(userId)])[0];
     if(row) {
       const v=row.value;
       if(!WORLD_MAPS[v.mapId]||typeof v.x!=="number"||typeof v.y!=="number"||typeof v.seq!=="number"||typeof v.updatedAt!=="number"||!worldWalkable(WORLD_MAPS[v.mapId],[v.x,v.y]))
         return fail(nkruntime.Codes.FAILED_PRECONDITION,"World position requires review");
+      const startingMap=WORLD_MAPS.m_an_khe;
+      if(preferredMapId&&preferredMapId!=="m_an_khe"&&v.mapId==="m_an_khe"&&v.x===startingMap.spawnX&&v.y===startingMap.spawnY&&v.seq===0) {
+        const preferredMap=WORLD_MAPS[preferredMapId];
+        if(preferredMap&&worldMapReachable(preferredMapId)) {
+          const adopted=JSON.parse(JSON.stringify(v)) as WorldSession;
+          adopted.mapId=preferredMapId; adopted.x=preferredMap.spawnX; adopted.y=preferredMap.spawnY; adopted.updatedAt=Date.now();
+          try {
+            const version=nk.storageWrite([worldSessionWriteRequest(userId,adopted,row.version)])[0].version;
+            return {session:adopted,version:version};
+          } catch(_error) { continue; }
+        }
+      }
       return {session:v as WorldSession,version:row.version};
     }
-    const map=WORLD_MAPS.m_an_khe;
-    const value:WorldSession={mapId:"m_an_khe",x:map.spawnX,y:map.spawnY,seq:0,updatedAt:Date.now(),fieldMobsByMap:{},attackReadyAt:0};
+    const initialMapId=preferredMapId&&worldMapReachable(preferredMapId)?preferredMapId:"m_an_khe";
+    const map=WORLD_MAPS[initialMapId];
+    const value:WorldSession={mapId:initialMapId,x:map.spawnX,y:map.spawnY,seq:0,updatedAt:Date.now(),fieldMobsByMap:{},attackReadyAt:0};
     try {
       const version=nk.storageWrite([{collection:"world_sessions",key:"main",userId:userId,value:value,version:"*",permissionRead:0,permissionWrite:0}])[0].version;
       return {session:value,version:version};
@@ -167,10 +202,18 @@ function worldReadSession(nk: nkruntime.Nakama,userId: string): {session:WorldSe
 function worldWrite(nk:nkruntime.Nakama,userId:string,value:WorldSession,version:string):string {
   return nk.storageWrite([worldSessionWriteRequest(userId,value,version)])[0].version;
 }
-const worldGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,_payload) {
+const worldGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx),loaded=loadCharacter(nk,userId);
+  const input=objectPayload(payload);
+  if(Object.keys(input).some(k=>k!=="preferredMapId")) return fail(nkruntime.Codes.INVALID_ARGUMENT,"Only preferredMapId is accepted");
+  let preferredMapId="";
+  if(input.preferredMapId!==undefined) {
+    if(typeof input.preferredMapId!=="string"||!WORLD_MAPS[input.preferredMapId]||!worldMapReachable(input.preferredMapId))
+      return fail(nkruntime.Codes.INVALID_ARGUMENT,"Preferred starting map is not reachable");
+    preferredMapId=input.preferredMapId;
+  }
   for(let attempt=0;attempt<5;attempt++) {
-    const current=worldReadSession(nk,userId),session=JSON.parse(JSON.stringify(current.session)) as WorldSession;
+    const current=worldReadSession(nk,userId,preferredMapId),session=JSON.parse(JSON.stringify(current.session)) as WorldSession;
     const changed=worldEnsureFieldMobs(session,session.mapId,Date.now());
     if(changed) { try { worldWrite(nk,userId,session,current.version); } catch(_error) { continue; } }
     return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,seq:session.seq,quest:worldQuestView(loaded.state),

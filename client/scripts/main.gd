@@ -655,7 +655,7 @@ func _connect_backend() -> void:
 			result = await api.call_rpc("get_profile")
 			if not result.has("error"):
 				hud.apply_profile(result)
-				var world_result: Dictionary = await api.call_rpc("world_get")
+				var world_result: Dictionary = await api.call_rpc("world_get", {"preferredMapId": current_map_id})
 				if not world_result.has("error"):
 					world_seq = int(world_result.get("seq", 0))
 					var world_map_id := str(world_result.get("mapId", current_map_id))
