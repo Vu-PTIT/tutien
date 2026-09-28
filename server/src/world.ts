@@ -15,26 +15,49 @@ const WORLD_MAPS: {[key: string]: WorldMapDefinition} = {
     [0,0,48,1],[0,35,48,1],[0,0,1,36],[47,0,1,36],[42,1,5,34],
     [5,7,4,4],[27,7,4,3],[31,16,4,2],[37,17,4,3],[5,25,4,3],[23,26,4,3],[39,8,2,2],[19,32,1,1]
   ], points: [
-    {id:"ak.npc.ba_sam",x:272,y:432,radius:1.8,kind:"npc"},
-    {id:"ak.npc.luc_vi",x:784,y:1008,radius:1.8,kind:"npc"},
-    {id:"ak.shrine.breathing",x:816,y:656,radius:1.7,kind:"shrine"},
-    {id:"ak.service.do_khe",x:1008,y:432,radius:1.8,kind:"service"},
-    {id:"ak.board.village",x:496,y:560,radius:1.7,kind:"service"},
-    {id:"ak.market.village",x:1264,y:656,radius:1.7,kind:"service"},
-    {id:"ak.garden.home",x:592,y:784,radius:1.8,kind:"service"},
-    {id:"ak.gate.truc_am",x:720,y:112,radius:1.8,kind:"gate",destination:"m_truc_am",arrivalX:176,arrivalY:848}
+    {id:"ak.npc.ba_sam",x:240,y:384,radius:1.8,kind:"npc"},
+    {id:"ak.npc.luc_vi",x:768,y:992,radius:1.8,kind:"npc"},
+    {id:"ak.shrine.breathing",x:800,y:640,radius:1.7,kind:"shrine"},
+    {id:"ak.service.do_khe",x:1024,y:480,radius:1.8,kind:"service"},
+    {id:"ak.board.village",x:480,y:544,radius:1.7,kind:"service"},
+    {id:"ak.market.village",x:1248,y:672,radius:1.7,kind:"shop"},
+    {id:"ak.garden.home",x:320,y:864,radius:1.8,kind:"garden"},
+    {id:"ak.gate.truc_am",x:704,y:96,radius:1.8,kind:"gate",destination:"m_truc_am",arrivalX:160,arrivalY:928}
   ]},
-  m_truc_am: {width:48,height:36,spawnX:160,spawnY:832,solids:[
+  m_truc_am: {width:48,height:36,spawnX:160,spawnY:928,solids:[
     [0,0,48,1],[0,35,48,1],[0,0,1,36],[47,0,1,36],[9,4,7,6],[20,3,10,6],
     [34,5,9,6],[18,20,9,7],[34,23,9,7],[27,13,3,4]
   ],points:[
-    {id:"ta.node.cam_lo",x:176,y:560,radius:1.7,kind:"service"},
-    {id:"ta.poi.water_trace_west",x:272,y:592,radius:1.7,kind:"scan"},
-    {id:"ta.mach_ban.scan",x:912,y:592,radius:1.6,kind:"scan"},
-    {id:"ta.poi.water_trace_east",x:464,y:976,radius:1.7,kind:"scan"},
-    {id:"ta.trail.boar_sign",x:1136,y:560,radius:1.8,kind:"encounter"},
-    {id:"ta.gate.thach_can",x:1424,y:144,radius:1.8,kind:"locked"},
-    {id:"ta.retreat.ankhe",x:176,y:1008,radius:1.8,kind:"gate",destination:"m_an_khe",arrivalX:720,arrivalY:112}
+    {id:"ta.node.cam_lo",x:160,y:544,radius:1.7,kind:"resource"},
+    {id:"ta.poi.water_trace_west",x:256,y:576,radius:1.7,kind:"scan"},
+    {id:"ta.mach_ban.scan",x:896,y:576,radius:1.6,kind:"scan"},
+    {id:"ta.poi.water_trace_east",x:448,y:960,radius:1.7,kind:"scan"},
+    {id:"ta.trail.boar_sign",x:1120,y:544,radius:1.8,kind:"encounter"},
+    {id:"ta.gate.thach_can",x:1408,y:128,radius:1.8,kind:"gate",destination:"m_thach_can",arrivalX:128,arrivalY:544},
+    {id:"ta.retreat.ankhe",x:160,y:992,radius:1.8,kind:"gate",destination:"m_an_khe",arrivalX:704,arrivalY:128}
+  ]},
+  m_thach_can: {width:48,height:36,spawnX:288,spawnY:576,solids:[
+    [0,0,48,1],[0,35,48,1],[0,0,1,36],[47,0,1,36],
+    [5,4,10,5],[20,8,4,13],[28,4,7,6],[34,13,3,8],
+    [8,27,10,5],[38,26,8,7],[26,30,8,4]
+  ],points:[
+    {id:"tc.checkpoint.ngoai_vi",x:160,y:992,radius:1.8,kind:"service"},
+    {id:"tc.node.iron_ore",x:992,y:672,radius:1.8,kind:"resource"},
+    {id:"tc.mach_ban.flow_pillar",x:1344,y:576,radius:1.8,kind:"scan"},
+    {id:"tc.retreat.truc_am",x:96,y:576,radius:1.8,kind:"gate",destination:"m_truc_am",arrivalX:1344,arrivalY:128},
+    {id:"tc.gate.co_tinh",x:1344,y:768,radius:1.8,kind:"gate",destination:"m_co_tinh",arrivalX:352,arrivalY:800}
+  ]},
+  m_co_tinh: {width:48,height:36,spawnX:352,spawnY:992,solids:[
+    [0,0,48,1],[0,35,48,1],[0,0,1,36],[47,0,1,36],
+    [1,8,3,11],[10,8,4,13],[16,1,4,9],[27,1,4,9],[33,4,2,4],[41,3,2,4],
+    [36,10,2,3],[44,10,2,3],[33,22,3,2],[40,22,3,2],[32,24,2,5],
+    [42,24,2,5],[33,29,3,2],[40,29,3,2],[3,27,6,5]
+  ],points:[
+    {id:"ct.checkpoint.entrance",x:352,y:992,radius:1.8,kind:"service"},
+    {id:"ct.mach_ban.balance",x:736,y:352,radius:1.8,kind:"scan"},
+    {id:"ct.formation.panel",x:1216,y:352,radius:1.8,kind:"service"},
+    {id:"ct.boss.heart_well",x:1152,y:832,radius:1.8,kind:"service"},
+    {id:"ct.retreat.thach_can",x:256,y:800,radius:1.8,kind:"gate",destination:"m_thach_can",arrivalX:1280,arrivalY:768}
   ]}
 };
 function worldObject(userId: string): nkruntime.StorageReadRequest {
@@ -121,6 +144,11 @@ const worldInteractRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     const next:WorldSession={mapId:point.destination,x:point.arrivalX!,y:point.arrivalY!,seq:session.seq,updatedAt:Date.now()};
     worldWrite(nk,userId,next,current.version);
     return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,quest:worldQuestView(loadCharacter(nk,userId).state),message:"Đã đi qua cổng do máy chủ xác nhận."});
+  }
+  if(point.kind==="resource") {
+    const gathered=gatherWorldResource(nk,userId,input.entityId);
+    return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,profile:gathered.profile,
+      message:"Đã thu thập tài nguyên. Nút sẽ hồi lại sau một phút."});
   }
   const result=applyWorldQuestInteraction(nk,userId,input.entityId);
   return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,quest:result.quest,profile:result.profile,message:result.message});

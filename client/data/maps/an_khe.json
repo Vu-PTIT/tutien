@@ -129,6 +129,7 @@
   "props_atlas": "res://assets/pixel/props/an_khe_props.png",
   "props_columns": 8,
   "props_cell_px": 128,
+  "solid_tile_ids": [32, 33, 34, 35, 36, 37, 38, 39],
   "props": [
     {
       "name": "ak_prop_north_gate",
@@ -168,7 +169,7 @@
         32.5,
         17
       ],
-      "tile": 52
+      "texture_path": "res://assets/pixel/props/an_khe_blacksmith.png"
     },
     {
       "name": "ak_prop_well",
@@ -181,7 +182,7 @@
     {
       "name": "ak_prop_medicine_garden",
       "position_tiles": [
-        6.5,
+        7.5,
         27
       ],
       "tile": 56

@@ -19,11 +19,11 @@
     "74163052741630527416305FDEF89ABCDEF89ABCDEF89ABF",
     "27416305274163052741630CEF89ABCDEF89ABCDEF89ABCC",
     "527416305274163052741639F89ABCDEF89ABCDEF89ABCD9",
-    "05274163052741630527416pmnopmnopmnopCDEF89ABCDEE",
-    "305KLMNGHIJKLMNGHIJKLMNmnopmnopmnopmDEF89ABCDEFB",
-    "630LMNKLIJKLMNGHIJKLMNGnopmnopmnopmnEF89ABCDEF88",
-    "163052LM163052741630527opmnopWXYZmnoF89ABCDEF89D",
-    "416305MN416305274163052pmnopmXYZanop89ABCDEF89AA",
+    "052741630527416305274160330050100300CDEF89ABCDEE",
+    "305KLMNGHIJKLMNGHIJKLMN0013100350001DEF89ABCDEFB",
+    "630LMNKLIJKLMNGHIJKLMNG1013001003015EF89ABCDEF88",
+    "163052LM163052741630527100000WXYZ001F89ABCDEF89D",
+    "416305MN416305274163052530300XYZa13189ABCDEF89AA",
     "741630NK741630527416305FDEF89YZabEF89ABCDEF89ABF",
     "274163KL274163052741630CEF89AZabcF89ABCfghefABCC",
     "527416LM5274163052741639F89ABCLMNGHIJKLghefgBCD9",
@@ -108,30 +108,18 @@
   "props_atlas": "res://assets/pixel/props/thach_can_props.png",
   "props_columns": 8,
   "props_cell_px": 128,
+  "solid_tile_ids": [22, 23, 30, 31],
   "props": [
     {
-      "name": "tc_prop_outer_cliff",
-      "position_tiles": [
-        6.5,
-        7
-      ],
-      "tile": 53
-    },
-    {
       "name": "tc_prop_mine_entrance",
-      "position_tiles": [
-        21.5,
-        11
-      ],
-      "tile": 52
+      "position_tiles": [41, 22],
+      "texture_path": "res://assets/pixel/props/thach_can_mine_entrance.png"
     },
     {
       "name": "tc_prop_ore_vein",
-      "position_tiles": [
-        29.5,
-        7
-      ],
-      "tile": 62
+      "position_tiles": [30.5, 20],
+      "texture_path": "res://assets/pixel/props/thach_can_ore_vein.png",
+      "foot_padding_px": 18
     },
     {
       "name": "tc_prop_mine_support",
@@ -139,15 +127,14 @@
         35.5,
         16
       ],
-      "tile": 60
+      "texture_path": "res://assets/pixel/props/thach_can_mine_support.png",
+      "foot_padding_px": 21
     },
     {
       "name": "tc_prop_rest_cart",
-      "position_tiles": [
-        9.5,
-        30
-      ],
-      "tile": 61
+      "position_tiles": [4.5, 30],
+      "texture_path": "res://assets/pixel/props/thach_can_rest_cart.png",
+      "foot_padding_px": 34
     },
     {
       "name": "tc_prop_deep_crystal",
@@ -155,15 +142,13 @@
         39.5,
         29
       ],
-      "tile": 63
+      "texture_path": "res://assets/pixel/props/thach_can_deep_crystal.png",
+      "foot_padding_px": 25
     },
     {
       "name": "tc_prop_flow_pillar",
-      "position_tiles": [
-        27.5,
-        33
-      ],
-      "tile": 54
+      "position_tiles": [42, 17],
+      "texture_path": "res://assets/pixel/props/thach_can_flow_pillar.png"
     }
   ]
 }

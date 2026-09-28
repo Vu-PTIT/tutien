@@ -41,6 +41,8 @@ var world_sync_clock: float = 0.0
 var world_sync_busy: bool = false
 var world_last_synced_position := Vector2(-10000.0, -10000.0)
 var world_quest: Dictionary = {}
+var service_menu: PopupMenu
+var service_kind: String = ""
 
 func _ready() -> void:
 	get_window().min_size = Vector2i(640, 360)
@@ -59,6 +61,10 @@ func _ready() -> void:
 	touch_layout_enabled = OS.has_feature("mobile") or OS.get_cmdline_user_args().has("--touch-preview")
 	hud.set_touch_layout(touch_layout_enabled)
 	world_map.map_requested.connect(_travel_to_map)
+	service_menu = PopupMenu.new()
+	service_menu.name = "VillageServiceMenu"
+	add_child(service_menu)
+	service_menu.id_pressed.connect(_service_action)
 	world_map.set_current_map(current_map_id)
 	var background := Sprite2D.new()
 	background.name = "SonTruBackground"
@@ -144,10 +150,14 @@ func _action(action: String) -> void:
 			inventory_panel.hide()
 			dock.hide()
 			world_map.hide()
+			if service_menu != null:
+				service_menu.hide()
 		"touch_preview":
 			touch_layout_enabled = not touch_layout_enabled
 			hud.set_touch_layout(touch_layout_enabled)
 		"inventory":
+			if service_menu != null:
+				service_menu.hide()
 			if not api.match_id.is_empty():
 				hud.notify("Túi đồ bị khóa trong trận online.")
 			elif inventory_panel.visible:
@@ -157,6 +167,8 @@ func _action(action: String) -> void:
 				dock.hide()
 				inventory_panel.open_inventory()
 		"map":
+			if service_menu != null:
+				service_menu.hide()
 			if not api.match_id.is_empty():
 				hud.notify("Bản đồ tuyến đóng trong trận online.")
 			elif world_map.visible:
@@ -166,6 +178,8 @@ func _action(action: String) -> void:
 				dock.hide()
 				world_map.open_map()
 		"dock":
+			if service_menu != null:
+				service_menu.hide()
 			world_map.hide()
 			inventory_panel.hide()
 			dock.visible = not dock.visible
@@ -204,6 +218,9 @@ func _action(action: String) -> void:
 
 func _interact_with_world_object(target: MapInteractable) -> void:
 	var details := target.interaction_data
+	if target.entity_id in ["ak.market.village", "ak.garden.home", "ak.service.do_khe"]:
+		_open_service_menu(target.entity_id)
+		return
 	if not api.token.is_empty():
 		await _sync_world_position(true)
 		var result: Dictionary = await api.call_rpc("world_interact", {"entityId": target.entity_id})
@@ -252,6 +269,53 @@ func _interact_with_world_object(target: MapInteractable) -> void:
 	if message.is_empty():
 		message = "Đã tương tác. Thay đổi chỉ có hiệu lực trong phiên thử cục bộ."
 	hud.notify(message)
+
+func _open_service_menu(entity_id: String) -> void:
+	if api.token.is_empty():
+		hud.notify("Dịch vụ cần kết nối máy chủ để lưu giao dịch và vật phẩm.")
+		return
+	await _sync_world_position(true)
+	service_kind = entity_id
+	service_menu.clear()
+	if entity_id == "ak.market.village":
+		service_menu.add_item("Mua Hạt Cam Lộ — 3 linh thạch", 1)
+		service_menu.add_item("Mua nước — 1 linh thạch", 2)
+		service_menu.add_item("Mua Hồi Nguyên Hoàn — 8 linh thạch", 3)
+		service_menu.add_item("Bán da Sơn Trư — 3 linh thạch", 4)
+	elif entity_id == "ak.service.do_khe":
+		service_menu.add_item("Luyện Hồi Nguyên Hoàn — 2 Cam Lộ + 1 nước + 2 linh thạch", 5)
+		service_menu.add_item("Rèn Thanh Thiết Kiếm — 6 quặng + 2 trúc + 8 linh thạch", 6)
+	else:
+		service_menu.add_item("Gieo Hạt Cam Lộ ở ô 1", 7)
+		service_menu.add_item("Thu hoạch ô 1 nếu đã chín", 8)
+	service_menu.position = Vector2i(get_window().size.x / 2, get_window().size.y / 2)
+	service_menu.popup()
+
+func _service_action(action_id: int) -> void:
+	var operation_id := "svc_" + str(Time.get_ticks_usec()) + "_" + str(randi())
+	var result: Dictionary
+	var payload: Dictionary
+	if action_id in [7, 8]:
+		payload = {"operationId": operation_id, "action": "plant" if action_id == 7 else "harvest", "plotId": 0}
+		if action_id == 7:
+			payload["cropId"] = "crop_cam_lo"
+		result = await api.call_rpc("garden_action", payload)
+	else:
+		payload = {"operationId": operation_id, "quantity": 1}
+		match action_id:
+			1: payload.merge({"action": "buy", "itemId": "it_seed_cam_lo"})
+			2: payload.merge({"action": "buy", "itemId": "it_water"})
+			3: payload.merge({"action": "buy", "itemId": "it_heal_pill"})
+			4: payload.merge({"action": "sell", "itemId": "it_boar_hide"})
+			5: payload.merge({"action": "craft", "recipeId": "rc_heal"})
+			6: payload.merge({"action": "craft", "recipeId": "rc_sword"})
+		result = await api.call_rpc("economy_action", payload)
+	if result.has("error"):
+		hud.notify("Giao dịch chưa thực hiện: " + str(result.error))
+		return
+	if result.has("profile"):
+		hud.apply_profile(result.profile)
+		hud.notify("Đã cập nhật túi đồ và linh thạch.")
 
 func _unhandled_input(event: InputEvent) -> void:
 	if game_input.handle_event(event, touch_layout_enabled, room.has_focus()):

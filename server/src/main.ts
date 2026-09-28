@@ -9,6 +9,8 @@ function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkr
   initializer.registerRpc("inventory_equip", inventoryEquipRpc);
   initializer.registerRpc("inventory_use", inventoryUseRpc);
   initializer.registerRpc("inventory_discard", inventoryDiscardRpc);
+  initializer.registerRpc("economy_action", economyActionRpc);
+  initializer.registerRpc("garden_action", gardenActionRpc);
   initializer.registerRpc("pve_son_tru_create", pveSonTruCreateRpc);
   initializer.registerRpc("pve_son_tru_claim_pending", pveSonTruClaimPendingRpc);
   initializer.registerRpc("world_get", worldGetRpc);

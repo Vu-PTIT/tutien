@@ -129,3 +129,11 @@ The four map prototypes use reusable biome `TileSet` atlases and authored layout
 - Chưa có scene mobile export, safe-area theo notch và playtest trên thiết bị thật. PNG world chỉ dùng preview tuyến; minimap lấy ô runtime. Phần lớn art props vẫn còn nền cỏ/đất trong ô atlas; cây anh đào An Khê là cutout đầu tiên.
 - `client/scripts/game_input.gd` gom bind phím trong InputMap và đổi keyboard/mouse/touch thành action, movement, aim chung. `main.gd` chỉ xử lý lệnh semantic; phím có thể đổi ở InputMap mà không sửa gameplay.
 - Kiểm tra tĩnh: `node scripts/check-pixel-scenes.cjs` và `node scripts/check-png-integrity.cjs`. Godot import, runtime và `client/tests/presentation_smoke.gd` phải được chạy ở CI sau khi push; không coi kiểm tra tĩnh là bằng chứng chạy engine.
+
+### Tích hợp P2/P3 và vòng kinh tế prototype — 27/09/2026
+
+- P2 đã được merge vào `main` tại `235ae37693a715fb987d774436b77e797bb28142` sau CI xanh. Ghi chú trạng thái PR cũ phía trên là lịch sử trước khi merge.
+- Nhánh P3 hiện ghép chuỗi quest 001–003 với map quality: bốn map nối bằng cổng reciprocal, UI tuyến có tóm tắt đường đi, POI/collision khớp tọa độ server và arrival được kiểm. Đã sửa vị trí tương tác chợ/vườn để vùng va chạm không chặn lối tới điểm dịch vụ.
+- Prototype kinh tế có giao dịch mua/bán theo bảng giá server, năm công thức craft, node Cam Lộ/quặng có cooldown, sáu ô vườn với hạt/nước, thời gian chín server-side và harvest bằng inventory receipt. Chợ, lò rèn, vườn và node kiểm tra vị trí server. HUD mở menu dịch vụ qua E/chạm. Hiện menu vườn chỉ thao tác ô 1; tutorial boost, ba quest kinh tế P4 và nhịp combat Độc Chu chưa nối.
+- Có sprite Độc Chu 4 frame RGBA trong `client/assets/pixel/enemies/doc_chu/processed/`; chưa gắn vào trận/loot. Asset được lưu để bước encounter kế tiếp dùng được.
+- Local verification: 90/90 test server; static map/scene audit và PNG integrity pass; `git diff --check` pass. Chưa có Godot executable hoặc Docker local nên GDScript parse, import/runtime, PostgreSQL integration và kiểm PC/mobile thật cần CI/playtest.

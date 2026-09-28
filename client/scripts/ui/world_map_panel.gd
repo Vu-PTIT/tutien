@@ -86,6 +86,9 @@ func _build_route() -> void:
 		button.name = str(map_data.get("id", "Map%d" % index))
 		button.text = str(map_data.get("name", "Map"))
 		button.tooltip_text = str(map_data.get("route_label", button.text)).replace("\n", " • ")
+		var route_summary := _route_summary(str(map_data.get("id", "")))
+		if not route_summary.is_empty():
+			button.tooltip_text += " • " + route_summary
 		button.position = node_layout.get(str(map_data.get("id", "")), Vector2.ZERO)
 		button.custom_minimum_size = Vector2(84, 24)
 		button.add_theme_font_size_override("font_size", 7)
@@ -95,16 +98,33 @@ func _build_route() -> void:
 		route_nodes.add_child(button)
 		route_buttons[str(map_data.get("id", ""))] = button
 
+func _route_summary(map_id: String) -> String:
+	var labels := PackedStringArray()
+	for value: Variant in route_connections:
+		if not value is Dictionary:
+			continue
+		var connection: Dictionary = value
+		var source := str(connection.get("from_map_id", ""))
+		var target := str(connection.get("to_map_id", ""))
+		if source != map_id and target != map_id:
+			continue
+		var other_id := target if source == map_id else source
+		var other: Dictionary = maps_by_id.get(other_id, {})
+		labels.append("%s → %s" % [str(connection.get("label", "lối nối")), str(other.get("name", other_id))])
+	return " • ".join(labels)
+
 func _select_map(map_id: String) -> void:
 	if not maps_by_id.has(map_id):
 		return
 	selected_id = map_id
 	route_overview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var map_data: Dictionary = maps_by_id[map_id]
-	info.text = "%s  •  %s\n%s" % [
+	var route_summary := _route_summary(map_id)
+	info.text = "%s  •  %s\n%s\nLối nối: %s" % [
 		str(map_data.get("name", "Map")),
 		str(map_data.get("summary", "")),
-		str(map_data.get("details", ""))
+		str(map_data.get("details", "")),
+		route_summary if not route_summary.is_empty() else "chưa nối"
 	]
 	var button: Button = route_buttons.get(map_id)
 	if button != null:

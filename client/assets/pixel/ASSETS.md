@@ -17,6 +17,7 @@ không phải tileset vẽ/tách thủ công.
 | `maps/bai_son_tru.png` | 1586 × 992 RGB | Nền bãi săn cố định; chỉ là phông chiến đấu, bounds do server điều khiển |
 | `maps/world_route_overview.png` | 768 × 256 RGB | Sơ đồ tổng quan UI: một đường liên tục An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh; không dùng làm map runtime |
 | `enemies/son_tru/clean.png` | 128 × 128 transparent PNG | Sơn Trư idle, sprite riêng; chưa có animation |
+| `enemies/doc_chu/processed/combat-1.png` … `combat-4.png` | 64 × 64 transparent PNG each | Độc Chu 4 frame; art prototype, chưa nối encounter runtime |
 | `hero_idle.tres` | AtlasTexture | Nhân vật trong editor và chân dung HUD |
 | `icon_0.tres` … `icon_15.tres` | AtlasTexture | Icon dùng lại trong HUD/túi |
 | `ui_font.ttf` | DejaVu Sans | Tiếng Việt; license `FONT-LICENSE.txt` |
@@ -52,6 +53,9 @@ không phải tileset vẽ/tách thủ công.
    animation.
 10. **Sơ đồ tuyến:** `maps/world_route_overview.prompt.txt`; panorama pixel RPG
     liền mạch bốn vùng. Đây là nền UI; tên và điểm chọn được vẽ riêng trong Godot.
+11. **Độc Chu:** `enemies/doc_chu/prompt-used.txt`; sheet 2×2 bốn pose chiến đấu,
+    tách magenta thành PNG RGBA và GIF preview bằng pipeline sprite. Chưa có logic
+    combat/loot của Độc Chu trong runtime.
 
 ## Quy tắc và việc còn thiếu
 
