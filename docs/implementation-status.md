@@ -8,6 +8,7 @@ Nền map trước đó gồm bốn layout TileMap từ atlas 32 px, prop Y-sort
 
 - HUD chuyển từ bảng mục tiêu nhiệm vụ sang thông tin khu vực/farm. Tiến độ nhiệm vụ cũ vẫn được giữ ở backend để phát triển sau, nhưng không còn là điều kiện để đánh quái hoặc nhận XP farm.
 - Trúc Âm có hai Sơn Trư và hai Độc Chu xuất hiện trực tiếp trên TileMap. Người chơi đi tới quái và đánh bằng J/nút chạm; client chỉ vẽ snapshot, còn vị trí, tầm đánh, đường cản, hồi đòn, HP, respawn và receipt thưởng do server quyết định. Không còn nút mở trận Sơn Trư riêng trên HUD.
+- Đòn đánh đầu tự đăng nhập thiết bị để farm; nếu backend không phản hồi, bảng Farm mở kèm hướng dẫn khởi động Nakama. Nút Farm cũng mở bảng trạng thái/kết nối. Loot tự cộng thẳng vào Túi đồ; phiên bản hiện tại không tạo vật thể rơi trên đất để nhặt.
 - Hạ quái luôn cấp da Sơn Trư hoặc tơ nhện vào túi. Một Sơn Trư có 20% cơ hội rơi Thanh Thiết Kiếm; một Độc Chu có 10% cơ hội rơi Áo vải. Trang bị có instance riêng và chỉ rơi theo kết quả server gắn với từng lượt spawn.
 - Nhân vật phàm nhân nhận XP farm ngay từ đầu: 100 XP mở Luyện Khí 1; các mốc 300/600/1000 XP tự lên cảnh giới tiếp theo. Cấp tối đa vẫn nhận vật phẩm nhưng không nhận XP.
 - Lát cắt này chưa thêm AI đi tuần/tấn công người chơi, vật phẩm chưa nằm trên đất để nhặt, quái mới có ở Trúc Âm, và trạng thái mob vẫn theo từng tài khoản chứ chưa chia sẻ realtime giữa người chơi. Bốn TileMap/prop hiện tại được giữ làm nền; chưa có đợt vẽ biome/đạo cụ mới trong thay đổi này.
@@ -45,7 +46,7 @@ Chi tiết: [combat](combat-prototype.md), [tài sản/P2](inventory-and-rewards
 | --- | --- | --- |
 | P1 — một Sơn Trư | Runtime đã có trong lát cắt P2 | Đọc đòn/né/phản công; server xác nhận |
 | P2 — chuyến săn có thành quả | CI hoàn tất trên PR #8; PR chưa merge | Nhận đúng một lần; đầy túi giữ thưởng; restart còn; đồ và HP có tác dụng/lưu |
-| P3 — farm field Trúc Âm | Đang có lát cắt local, chờ Godot/CI | Mob spawn ngay trên map, đánh authoritative, vật phẩm/XP/đột phá; bổ sung AI và nhặt loot dưới đất |
+| P3 — farm field Trúc Âm | Đã push lên nhánh feature; 94/94 server tests đạt, cần CI Godot và playtest | Mob spawn ngay trên map, đánh authoritative, vật phẩm/XP/đột phá; bổ sung AI và mở rộng khu farm |
 | P3b — mở rộng khu farm | Chưa làm | Spawn/loot và cân bằng ở Thạch Cạn/Cổ Tỉnh; polish art/prop theo biome |
 | Quest/chương 001–012 | Hoãn theo hướng sản phẩm mới | Giữ dữ liệu/backend hiện tại; chỉ quay lại sau vòng farm, lên cấp, rớt trang bị và map đã ổn |
 | Kinh tế/craft | Có prototype riêng, chưa ưu tiên | Kết nối loot thường và trang bị farm với shop/craft sau khi vòng farm ổn |

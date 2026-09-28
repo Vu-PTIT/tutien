@@ -211,12 +211,8 @@ func _action(action: String) -> void:
 				return
 			if api.snapshot.get("phase", "") == "active":
 				pending_action = "sk_basic" if action == "attack" else "sk_dodge"
-			elif action == "attack" and not api.token.is_empty():
+			elif action == "attack":
 				_attack_field_mob()
-			elif action == "dodge":
-				return
-			else:
-				hud.notify("Đánh quái trên map cần kết nối máy chủ và đến gần quái.")
 		"interact":
 			if not api.match_id.is_empty():
 				return
@@ -437,13 +433,38 @@ func _attack_field_mob() -> void:
 		return
 	var target_id := map_world.nearest_field_mob(player.position, 70.0)
 	if target_id.is_empty():
-		hud.notify("Đến gần Sơn Trư hoặc Độc Chu rồi nhấn J để đánh.")
+		if current_map_id != "m_truc_am":
+			hud.notify("Sơn Trư và Độc Chu xuất hiện trên bản đồ Trúc Âm.")
+		else:
+			hud.notify("Đến gần Sơn Trư hoặc Độc Chu rồi nhấn J để đánh.")
 		return
+	if api.token.is_empty():
+		hud.notify("Đang đăng nhập để lưu XP và vật phẩm farm…")
+		await _connect_backend()
+		if api.token.is_empty():
+			return
+		# Login restores the server-owned map position, so reacquire the target
+		# instead of attacking a preview actor left behind by offline exploration.
+		target_id = map_world.nearest_field_mob(player.position, 70.0)
+		if target_id.is_empty():
+			if current_map_id == "m_truc_am":
+				hud.notify("Đã đồng bộ vị trí. Hãy tới gần Sơn Trư hoặc Độc Chu rồi đánh.")
+			else:
+				hud.notify("Đã đồng bộ vị trí. Quái farm hiện chỉ xuất hiện ở Trúc Âm.")
+			return
 	busy = true
 	var sync_result: Dictionary = await _sync_world_position(true)
 	if sync_result.has("error"):
 		hud.notify("Chưa đồng bộ được vị trí với máy chủ.")
 		busy = false
+		return
+	target_id = map_world.nearest_field_mob(player.position, 70.0)
+	if target_id.is_empty():
+		busy = false
+		if current_map_id == "m_truc_am":
+			hud.notify("Chưa có quái trong tầm đánh. Hãy lại gần một Sơn Trư hoặc Độc Chu.")
+		else:
+			hud.notify("Quái farm hiện chỉ xuất hiện ở Trúc Âm.")
 		return
 	var result: Dictionary = await api.call_rpc("world_attack", {"targetId": target_id})
 	if result.has("error"):
@@ -649,7 +670,14 @@ func _connect_backend() -> void:
 	if not result.has("error") and not api.match_id.is_empty():
 		result = await api.rejoin_current_match()
 	if result.has("error"):
-		_message("Kết nối thất bại: " + str(result.error))
+		dock.show()
+		var reason := str(result.error)
+		if int(result.get("status", 0)) == 0:
+			if api.token.is_empty():
+				reason = "Backend chưa phản hồi. Bật Docker rồi chạy: docker compose up --build -d"
+			else:
+				reason = "Đăng nhập được một phần nhưng máy chủ chưa hoàn tất kết nối. Nhấn Kết nối để thử lại."
+		_message("Kết nối thất bại: " + reason)
 	else:
 		hud.get_node("Mode").text = "ONLINE • FARM TRÊN MAP"
 		_message("Đã kết nối. Vị trí, quái trên map, tương tác và túi đồ được máy chủ xác nhận.")

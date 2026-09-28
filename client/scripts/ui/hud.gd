@@ -9,7 +9,8 @@ var touch_layout: bool = false
 func _ready() -> void:
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
 	$MapButton.pressed.connect(func() -> void: action_requested.emit("map"))
-	$SparringButton.tooltip_text = "Kết nối để farm trên map hoặc đấu tập online"
+	$SparringButton.text = "Farm"
+	$SparringButton.tooltip_text = "Farm trên map • xem trạng thái máy chủ và đấu tập online"
 	$SparringButton.pressed.connect(func() -> void: action_requested.emit("dock"))
 	$HelpButton.pressed.connect(func() -> void:
 		notify("Kéo cần trái để đi • chạm Đánh khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh quái • M: map • I: túi • E: tương tác"))

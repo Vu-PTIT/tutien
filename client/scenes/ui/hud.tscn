@@ -413,7 +413,7 @@ offset_top = 32.0
 offset_right = 526.0
 offset_bottom = 64.0
 mouse_filter = 2
-text = "Kết nối để farm quái, nhận XP/vật phẩm và vào đấu tập. Farm được lưu trên server."
+text = "Đánh quái sẽ tự kết nối để lưu XP và vật phẩm. Loot được gửi thẳng vào Túi đồ."
 autowrap_mode = 2
 theme_override_font_sizes/font_size = 9
 
