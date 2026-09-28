@@ -2,10 +2,22 @@ interface WorldPoint {
   id: string; x: number; y: number; radius: number; kind: string;
   destination?: string; arrivalX?: number; arrivalY?: number;
 }
+interface WorldFieldMobDefinition {
+  id: string; enemyId: string; name: string; x: number; y: number; maxHp: number;
+  attack: number; defense: number; rewardXp: number; rewardItemId: string; respawnMs: number;
+  equipmentDropItemId?: string; equipmentDropBasisPoints?: number;
+}
+interface WorldFieldMobState extends WorldFieldMobDefinition {
+  hp: number; generation: number; respawnAt: number; mode: string;
+}
 interface WorldMapDefinition {
   width: number; height: number; spawnX: number; spawnY: number; solids: number[][]; points: WorldPoint[];
+  fieldMobs?: WorldFieldMobDefinition[];
 }
-interface WorldSession { mapId: string; x: number; y: number; seq: number; updatedAt: number; }
+interface WorldSession {
+  mapId: string; x: number; y: number; seq: number; updatedAt: number;
+  fieldMobsByMap?: {[mapId: string]: WorldFieldMobState[]}; attackReadyAt?: number;
+}
 
 const WORLD_TILE = 32;
 const WORLD_SPEED = 72;
@@ -32,9 +44,14 @@ const WORLD_MAPS: {[key: string]: WorldMapDefinition} = {
     {id:"ta.poi.water_trace_west",x:256,y:576,radius:1.7,kind:"scan"},
     {id:"ta.mach_ban.scan",x:896,y:576,radius:1.6,kind:"scan"},
     {id:"ta.poi.water_trace_east",x:448,y:960,radius:1.7,kind:"scan"},
-    {id:"ta.trail.boar_sign",x:1120,y:544,radius:1.8,kind:"encounter"},
+    {id:"ta.trail.boar_sign",x:1072,y:560,radius:1.8,kind:"encounter"},
     {id:"ta.gate.thach_can",x:1408,y:128,radius:1.8,kind:"gate",destination:"m_thach_can",arrivalX:128,arrivalY:544},
     {id:"ta.retreat.ankhe",x:160,y:992,radius:1.8,kind:"gate",destination:"m_an_khe",arrivalX:704,arrivalY:128}
+  ], fieldMobs:[
+    {id:"ta.mob.son_tru.01",enemyId:"en_boar",name:"Sơn Trư",x:1136,y:560,maxHp:60,attack:12,defense:5,rewardXp:10,rewardItemId:"it_boar_hide",respawnMs:45000,equipmentDropItemId:"it_iron_sword",equipmentDropBasisPoints:2000},
+    {id:"ta.mob.son_tru.02",enemyId:"en_boar",name:"Sơn Trư",x:1200,y:592,maxHp:60,attack:12,defense:5,rewardXp:10,rewardItemId:"it_boar_hide",respawnMs:45000},
+    {id:"ta.mob.doc_chu.01",enemyId:"en_spider",name:"Độc Chu",x:464,y:560,maxHp:45,attack:8,defense:0,rewardXp:15,rewardItemId:"it_spider_silk",respawnMs:60000},
+    {id:"ta.mob.doc_chu.02",enemyId:"en_spider",name:"Độc Chu",x:528,y:592,maxHp:45,attack:8,defense:0,rewardXp:15,rewardItemId:"it_spider_silk",respawnMs:60000,equipmentDropItemId:"it_cloth_armor",equipmentDropBasisPoints:1000}
   ]},
   m_thach_can: {width:48,height:36,spawnX:288,spawnY:576,solids:[
     [0,0,48,1],[0,35,48,1],[0,0,1,36],[47,0,1,36],
@@ -63,6 +80,9 @@ const WORLD_MAPS: {[key: string]: WorldMapDefinition} = {
 function worldObject(userId: string): nkruntime.StorageReadRequest {
   return {collection:"world_sessions",key:"main",userId:userId};
 }
+function worldSessionWriteRequest(userId: string,value:WorldSession,version:string):nkruntime.StorageWriteRequest {
+  return {collection:"world_sessions",key:"main",userId:userId,value:value,version:version,permissionRead:0,permissionWrite:0};
+}
 function worldWalkable(map: WorldMapDefinition, point: number[]): boolean {
   const x=point[0], y=point[1];
   if (x<WORLD_RADIUS || y<WORLD_RADIUS || x>=map.width*WORLD_TILE-WORLD_RADIUS || y>=map.height*WORLD_TILE-WORLD_RADIUS) return false;
@@ -86,6 +106,46 @@ function worldDistance(ax: number, ay: number, bx: number, by: number): number {
   const dx=ax-bx, dy=ay-by;
   return Math.sqrt(dx*dx+dy*dy);
 }
+function worldEnsureFieldMobs(session: WorldSession, mapId: string, now: number): boolean {
+  let changed = false;
+  if (!session.fieldMobsByMap) { session.fieldMobsByMap = {}; changed = true; }
+  if (!session.fieldMobsByMap[mapId]) {
+    const definitions = WORLD_MAPS[mapId].fieldMobs || [];
+    session.fieldMobsByMap[mapId] = definitions.map(function (mob): WorldFieldMobState {
+      return {id:mob.id,enemyId:mob.enemyId,name:mob.name,x:mob.x,y:mob.y,maxHp:mob.maxHp,
+        attack:mob.attack,defense:mob.defense,rewardXp:mob.rewardXp,rewardItemId:mob.rewardItemId,
+        respawnMs:mob.respawnMs,equipmentDropItemId:mob.equipmentDropItemId,
+        equipmentDropBasisPoints:mob.equipmentDropBasisPoints,hp:mob.maxHp,generation:1,respawnAt:0,mode:"idle"};
+    });
+    changed = true;
+  }
+  const mobs = session.fieldMobsByMap[mapId];
+  const definitions = WORLD_MAPS[mapId].fieldMobs || [];
+  for (let i = 0; i < mobs.length; i++) {
+    const mob = mobs[i];
+    for (let j = 0; j < definitions.length; j++) {
+      if (definitions[j].id !== mob.id) continue;
+      if (definitions[j].equipmentDropItemId && !mob.equipmentDropItemId) {
+        mob.equipmentDropItemId = definitions[j].equipmentDropItemId;
+        mob.equipmentDropBasisPoints = definitions[j].equipmentDropBasisPoints;
+        changed = true;
+      }
+      break;
+    }
+    if (mob.hp <= 0 && mob.respawnAt > 0 && now >= mob.respawnAt) {
+      mob.hp = mob.maxHp; mob.generation++; mob.respawnAt = 0; mob.mode = "idle"; changed = true;
+    }
+  }
+  return changed;
+}
+function worldFieldMobSnapshot(session: WorldSession, mapId: string): WorldFieldMobState[] {
+  const source=(session.fieldMobsByMap && session.fieldMobsByMap[mapId]) || [];
+  return source.map(function (mob): WorldFieldMobState {
+    return {id:mob.id,enemyId:mob.enemyId,name:mob.name,x:mob.x,y:mob.y,maxHp:mob.maxHp,
+      attack:mob.attack,defense:mob.defense,rewardXp:mob.rewardXp,rewardItemId:mob.rewardItemId,
+      respawnMs:mob.respawnMs,hp:mob.hp,generation:mob.generation,respawnAt:mob.respawnAt,mode:mob.mode};
+  });
+}
 function worldReadSession(nk: nkruntime.Nakama,userId: string): {session:WorldSession,version:string} {
   for(let attempt=0;attempt<5;attempt++) {
     const row=nk.storageRead([worldObject(userId)])[0];
@@ -96,7 +156,7 @@ function worldReadSession(nk: nkruntime.Nakama,userId: string): {session:WorldSe
       return {session:v as WorldSession,version:row.version};
     }
     const map=WORLD_MAPS.m_an_khe;
-    const value:WorldSession={mapId:"m_an_khe",x:map.spawnX,y:map.spawnY,seq:0,updatedAt:Date.now()};
+    const value:WorldSession={mapId:"m_an_khe",x:map.spawnX,y:map.spawnY,seq:0,updatedAt:Date.now(),fieldMobsByMap:{},attackReadyAt:0};
     try {
       const version=nk.storageWrite([{collection:"world_sessions",key:"main",userId:userId,value:value,version:"*",permissionRead:0,permissionWrite:0}])[0].version;
       return {session:value,version:version};
@@ -105,11 +165,18 @@ function worldReadSession(nk: nkruntime.Nakama,userId: string): {session:WorldSe
   return fail(nkruntime.Codes.UNAVAILABLE,"World session is busy; retry");
 }
 function worldWrite(nk:nkruntime.Nakama,userId:string,value:WorldSession,version:string):string {
-  return nk.storageWrite([{collection:"world_sessions",key:"main",userId:userId,value:value,version:version,permissionRead:0,permissionWrite:0}])[0].version;
+  return nk.storageWrite([worldSessionWriteRequest(userId,value,version)])[0].version;
 }
 const worldGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,_payload) {
-  const userId=authenticated(ctx),loaded=loadCharacter(nk,userId),state=worldReadSession(nk,userId);
-  return JSON.stringify({mapId:state.session.mapId,x:state.session.x,y:state.session.y,seq:state.session.seq,quest:worldQuestView(loaded.state)});
+  const userId=authenticated(ctx),loaded=loadCharacter(nk,userId);
+  for(let attempt=0;attempt<5;attempt++) {
+    const current=worldReadSession(nk,userId),session=JSON.parse(JSON.stringify(current.session)) as WorldSession;
+    const changed=worldEnsureFieldMobs(session,session.mapId,Date.now());
+    if(changed) { try { worldWrite(nk,userId,session,current.version); } catch(_error) { continue; } }
+    return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,seq:session.seq,quest:worldQuestView(loaded.state),
+      fieldMobs:worldFieldMobSnapshot(session,session.mapId)});
+  }
+  return fail(nkruntime.Codes.UNAVAILABLE,"World field state is busy; retry");
 };
 const worldMoveRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx),input=objectPayload(payload);
@@ -123,8 +190,11 @@ const worldMoveRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     const maxDistance=WORLD_SPEED*Math.min(elapsed,3)*1.35+10;
     if(distance>maxDistance) return fail(nkruntime.Codes.INVALID_ARGUMENT,"World movement exceeds server speed limit");
     if(!worldPathWalkable(map,[s.x,s.y],[input.x,input.y])) return fail(nkruntime.Codes.INVALID_ARGUMENT,"World movement crosses a blocker");
-    const next:WorldSession={mapId:s.mapId,x:input.x,y:input.y,seq:input.seq,updatedAt:Date.now()};
-    try { worldWrite(nk,userId,next,current.version); return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,seq:next.seq,replayed:false}); }
+    const next=JSON.parse(JSON.stringify(s)) as WorldSession;
+    next.x=input.x; next.y=input.y; next.seq=input.seq; next.updatedAt=Date.now();
+    worldEnsureFieldMobs(next,next.mapId,Date.now());
+    try { worldWrite(nk,userId,next,current.version); return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,seq:next.seq,replayed:false,
+      fieldMobs:worldFieldMobSnapshot(next,next.mapId)}); }
     catch(_error) { /* CAS retry */ }
   }
   return fail(nkruntime.Codes.UNAVAILABLE,"World position is busy; retry");
@@ -141,9 +211,12 @@ const worldInteractRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   if(point.kind==="locked") return fail(nkruntime.Codes.FAILED_PRECONDITION,"Lối sang Thạch Cạn chưa mở trong phần chơi hiện tại.");
   if(point.kind==="gate") {
     if(!point.destination||!WORLD_MAPS[point.destination]||!worldWalkable(WORLD_MAPS[point.destination],[point.arrivalX!,point.arrivalY!])) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Gate destination requires review");
-    const next:WorldSession={mapId:point.destination,x:point.arrivalX!,y:point.arrivalY!,seq:session.seq,updatedAt:Date.now()};
+    const next=JSON.parse(JSON.stringify(session)) as WorldSession;
+    next.mapId=point.destination; next.x=point.arrivalX!; next.y=point.arrivalY!; next.updatedAt=Date.now();
+    worldEnsureFieldMobs(next,next.mapId,Date.now());
     worldWrite(nk,userId,next,current.version);
-    return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,quest:worldQuestView(loadCharacter(nk,userId).state),message:"Đã đi qua cổng do máy chủ xác nhận."});
+    return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,quest:worldQuestView(loadCharacter(nk,userId).state),
+      fieldMobs:worldFieldMobSnapshot(next,next.mapId),message:"Đã đi qua cổng do máy chủ xác nhận."});
   }
   if(point.kind==="resource") {
     const gathered=gatherWorldResource(nk,userId,input.entityId);
@@ -152,4 +225,62 @@ const worldInteractRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   }
   const result=applyWorldQuestInteraction(nk,userId,input.entityId);
   return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,quest:result.quest,profile:result.profile,message:result.message});
+};
+
+const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
+  const userId=authenticated(ctx),input=objectPayload(payload);
+  if(Object.keys(input).length!==1||typeof input.targetId!=="string") return fail(nkruntime.Codes.INVALID_ARGUMENT,"Only targetId is accepted");
+  for(let attempt=0;attempt<5;attempt++) {
+    const current=worldReadSession(nk,userId),session=JSON.parse(JSON.stringify(current.session)) as WorldSession;
+    const map=WORLD_MAPS[session.mapId];
+    worldEnsureFieldMobs(session,session.mapId,Date.now());
+    const mobs=session.fieldMobsByMap![session.mapId];
+    let target:WorldFieldMobState|undefined;
+    for(let i=0;i<mobs.length;i++) if(mobs[i].id===input.targetId) { target=mobs[i]; break; }
+    if(!target) return fail(nkruntime.Codes.NOT_FOUND,"This monster is not on the current map");
+    const now=Date.now();
+    if(target.hp<=0) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Monster is down; wait for it to respawn");
+    if(now<Number(session.attackReadyAt||0)) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED,"Attack is recovering");
+    if(worldDistance(session.x,session.y,target.x,target.y)>WORLD_TILE*2.2||!worldPathWalkable(map,[session.x,session.y],[target.x,target.y]))
+      return fail(nkruntime.Codes.FAILED_PRECONDITION,"Move closer to the monster before attacking");
+    const profile=loadCharacter(nk,userId).state;
+    let attack=16;
+    for(let i=0;i<profile.inventory.length;i++) {
+      const item=profile.inventory[i],definition=catalogItem(item.itemId);
+      if(item.instanceId===profile.equipped.weapon&&definition.equipSlot==="weapon") attack+=Number(definition.attackBonus||0);
+    }
+    const damage=Math.max(1,Math.floor(attack*100/(100+target.defense)));
+    target.hp=Math.max(0,target.hp-damage); target.mode=target.hp===0?"dead":"hit";
+    session.attackReadyAt=now+700;
+    if(target.hp===0) {
+      target.respawnAt=now+target.respawnMs;
+      const xp=target.rewardXp;
+      const items=[{itemId:target.rewardItemId,quantity:1}];
+      let equipmentDropped=false;
+      if(target.equipmentDropItemId&&Number(target.equipmentDropBasisPoints||0)>0) {
+        const lootHash=nk.sha256Hash(userId+":world:"+session.mapId+":"+target.id+":"+target.generation);
+        const lootRoll=(parseInt(lootHash.substring(0,4),16)%100)*100;
+        if(lootRoll<Number(target.equipmentDropBasisPoints)) {
+          items.push({itemId:target.equipmentDropItemId,quantity:1});
+          equipmentDropped=true;
+        }
+      }
+      const reward=grantReward(nk,userId,"field_"+target.id.replace(/[^a-zA-Z0-9_-]/g,"_")+"_"+target.generation,
+        "world:"+session.mapId+":"+target.id+":"+target.generation,
+        {spiritStones:0,cultivationXp:xp,items:items},[worldSessionWriteRequest(userId,session,current.version)]);
+      const rewardData=reward as {[key:string]:any};
+      const awardedXp=Number(rewardData.receipt.granted.cultivationXp||0);
+      const xpText=awardedXp>0?" • +"+awardedXp+" XP":"";
+      const lootText=equipmentDropped?"rơi "+catalogItem(target.equipmentDropItemId!).name+" và vật phẩm săn":"nhận vật phẩm săn";
+      return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,damage:damage,killed:true,
+        profile:rewardData.profile,receipt:rewardData.receipt,fieldMobs:worldFieldMobSnapshot(session,session.mapId),
+        message:"Đã hạ "+target.name+" • "+lootText+xpText+"."});
+    }
+    try {
+      worldWrite(nk,userId,session,current.version);
+      return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,damage:damage,killed:false,
+        fieldMobs:worldFieldMobSnapshot(session,session.mapId),message:"Đã gây "+damage+" sát thương lên "+target.name+"."});
+    } catch(_error) { /* Retry after a concurrent world movement or attack. */ }
+  }
+  return fail(nkruntime.Codes.UNAVAILABLE,"World combat is busy; retry");
 };

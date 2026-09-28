@@ -1,8 +1,18 @@
-# Tiến độ triển khai và thứ tự mới — cập nhật 27/09/2026
+# Tiến độ triển khai và thứ tự mới — cập nhật 28/09/2026
 
 > P2 nằm ở PR #8 (`feat/p2-son-tru-settlement` → `main`), head `e8348b8`, trên nền `5d45df9` (P1 đã merge qua PR #5–#6). Server build và 80/80 unit test đạt; scene audit gồm 11 scene/79 resource refs và 22 PNG qua kiểm tra tĩnh. Sơ đồ tuyến là một panorama nối bốn khu. GitHub Actions run #127 đạt các gate Docker/Nakama/PostgreSQL và Godot 4.6.1, gồm inventory/settlement, combat/PvE, presentation và ảnh desktop/touch. PR còn mở, chưa merge; playtest thiết bị thật vẫn còn.
 
 Nền map trước đó gồm bốn layout TileMap từ atlas 32 px, prop Y-sort riêng, 21 POI cục bộ, cổng có điểm đến và smoke test tuyến. An Khê có nền/collision chỉnh theo ảnh runtime, minimap từ dữ liệu map, sprite cây tách nền, gốc cây có va chạm và bố cục touch thử nghiệm. Bàn phím/chuột và cảm ứng dùng chung `GameInput`/InputMap. Foreground toàn map, fog-of-war, quest/unlock server, lưu trạng thái map và bản xuất mobile chưa hoàn thành.
+
+## Chuyển trọng tâm: farm quái ngay trên map — 28/09/2026
+
+- HUD chuyển từ bảng mục tiêu nhiệm vụ sang thông tin khu vực/farm. Tiến độ nhiệm vụ cũ vẫn được giữ ở backend để phát triển sau, nhưng không còn là điều kiện để đánh quái hoặc nhận XP farm.
+- Trúc Âm có hai Sơn Trư và hai Độc Chu xuất hiện trực tiếp trên TileMap. Người chơi đi tới quái và đánh bằng J/nút chạm; client chỉ vẽ snapshot, còn vị trí, tầm đánh, đường cản, hồi đòn, HP, respawn và receipt thưởng do server quyết định. Không còn nút mở trận Sơn Trư riêng trên HUD.
+- Hạ quái luôn cấp da Sơn Trư hoặc tơ nhện vào túi. Một Sơn Trư có 20% cơ hội rơi Thanh Thiết Kiếm; một Độc Chu có 10% cơ hội rơi Áo vải. Trang bị có instance riêng và chỉ rơi theo kết quả server gắn với từng lượt spawn.
+- Nhân vật phàm nhân nhận XP farm ngay từ đầu: 100 XP mở Luyện Khí 1; các mốc 300/600/1000 XP tự lên cảnh giới tiếp theo. Cấp tối đa vẫn nhận vật phẩm nhưng không nhận XP.
+- Lát cắt này chưa thêm AI đi tuần/tấn công người chơi, vật phẩm chưa nằm trên đất để nhặt, quái mới có ở Trúc Âm, và trạng thái mob vẫn theo từng tài khoản chứ chưa chia sẻ realtime giữa người chơi. Bốn TileMap/prop hiện tại được giữ làm nền; chưa có đợt vẽ biome/đạo cụ mới trong thay đổi này.
+- PvE Sơn Trư dạng match vẫn còn ở backend để tương thích và chạy smoke test cũ, nhưng client không còn luồng săn thường mở match riêng. Bước tiếp theo là AI field đơn giản, loot rơi dưới đất, rồi mở spawn/loot cho Thạch Cạn và Cổ Tỉnh; quest/chương được xếp sau.
+- Kiểm tra local sau chuyển đổi: `npm test --prefix server` đạt 94/94; scene/map audit đạt 12 scene/83 resource refs; 42 PNG qua integrity check; `git diff --check` sạch. Máy hiện tại không có Godot executable, nên `presentation_smoke.gd` và Godot import/runtime cần CI xác nhận.
 
 ## 1. Mốc mã nguồn và phạm vi hiện tại
 
@@ -35,9 +45,10 @@ Chi tiết: [combat](combat-prototype.md), [tài sản/P2](inventory-and-rewards
 | --- | --- | --- |
 | P1 — một Sơn Trư | Runtime đã có trong lát cắt P2 | Đọc đòn/né/phản công; server xác nhận |
 | P2 — chuyến săn có thành quả | CI hoàn tất trên PR #8; PR chưa merge | Nhận đúng một lần; đầy túi giữ thưởng; restart còn; đồ và HP có tác dụng/lưu |
-| P3 — mở đầu nhân vật | Đang triển khai trên `feat/p3-world-quests`; chưa qua CI Godot hoặc merge | World movement/interaction server-authoritative; quest 001–003, Mạch Bàn, `sk_scan`, dẫn khí, Phi Nhận, UI mục tiêu |
-| P4 — vòng Trúc Âm | Chưa làm | Node, shop nhỏ, garden/craft, 004–006, Độc Chu và đột phá tầng 2 |
-| P5 — chương đầu | Chưa làm | 007–012, Thạch Cạn/Cổ Tỉnh, quái/công thức còn lại, tầng 3–4 |
+| P3 — farm field Trúc Âm | Đang có lát cắt local, chờ Godot/CI | Mob spawn ngay trên map, đánh authoritative, vật phẩm/XP/đột phá; bổ sung AI và nhặt loot dưới đất |
+| P3b — mở rộng khu farm | Chưa làm | Spawn/loot và cân bằng ở Thạch Cạn/Cổ Tỉnh; polish art/prop theo biome |
+| Quest/chương 001–012 | Hoãn theo hướng sản phẩm mới | Giữ dữ liệu/backend hiện tại; chỉ quay lại sau vòng farm, lên cấp, rớt trang bị và map đã ổn |
+| Kinh tế/craft | Có prototype riêng, chưa ưu tiên | Kết nối loot thường và trang bị farm với shop/craft sau khi vòng farm ổn |
 
 P2 dùng fixture Luyện Khí riêng trong smoke; không đổi trạng thái người chơi thật
 và không thêm debug grant RPC. P3 lưu vị trí map và quest trong storage theo tài khoản;

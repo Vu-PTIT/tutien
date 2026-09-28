@@ -91,7 +91,7 @@ function applyWorldQuestInteraction(nk: nkruntime.Nakama, userId: string, entity
       return {profile: before, quest: worldQuestView(before), message: message};
     }
     let updated = next;
-    if (reward) updated = addReward(updated, reward, nk);
+    if (reward) updated = addReward(updated, reward, nk).state;
     else updated.revision++;
     updated.worldQuests = progress;
     if (updated.revision >= 1000000000) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "Character revision limit reached");

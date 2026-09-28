@@ -68,9 +68,9 @@ func _capture_son_tru_preview(main) -> void:
 	main.hud.configure_map(main.map_world.map_data)
 	main._update_buttons()
 
-func check_quest_visible(hud: PixelHUD) -> void:
-	var body: Label = hud.get_node("Quest/Body")
-	check(body.get_visible_line_count() == body.get_line_count(), "Quest text must fit the HUD on " + hud.get_node("Location/Title").text)
+func check_field_info_visible(hud: PixelHUD) -> void:
+	var body: Label = hud.get_node("FieldInfo/Body")
+	check(body.get_visible_line_count() == body.get_line_count(), "Field guidance must fit the HUD on " + hud.get_node("Location/Title").text)
 
 func check_map_assets(world: GameMap) -> void:
 	var ground: TileMapLayer = world.get_node("WorldLayers/GroundLayer")
@@ -122,9 +122,9 @@ func _run() -> void:
 	main.map_world.update_player_context(Vector2(30 * 32, 13 * 32))
 	check(main.map_world.get_node("LocationLabels/Landmark_1").visible, "Landmark label appears when the player approaches")
 	main.map_world.update_player_context(main.player.position)
-	check(hud.get_node("Quest/Body").text.contains("nhấn E hoặc Chạm"), "Initial objective reads map data and includes touch input")
-	check(hud.get_node("Quest/Body").autowrap_mode == TextServer.AUTOWRAP_WORD, "Long quest objectives wrap inside the HUD panel")
-	check_quest_visible(hud)
+	check(hud.get_node("FieldInfo/Body").text.contains("Cổng Bắc"), "An Khê HUD points toward the farm route")
+	check(hud.get_node("FieldInfo/Body").autowrap_mode == TextServer.AUTOWRAP_WORD, "Long zone guidance wraps inside the HUD panel")
+	check_field_info_visible(hud)
 	check(not main.map_world._has_clear_interaction_path(Vector2(8 * 32, 5 * 32), Vector2(8 * 32, 13 * 32)), "Building collision also blocks interactions through its walls")
 	var sakura: MapProp = main.map_world.get_node("Actors/ak_prop_sakura") as MapProp
 	check(not sakura.get_node("Sprite").texture is AtlasTexture, "Sakura uses an independent transparent cutout")
@@ -147,6 +147,10 @@ func _run() -> void:
 	hud.set_touch_layout(true)
 	var touch: TouchControls = hud.touch_controls
 	check(touch.visible and not hud.get_node("Hotbar").visible, "Touch layout shows controls without desktop hotbar")
+	touch.set_field_combat_mode(true)
+	check(touch.get_node("Attack").visible and touch.get_node("Interact").visible and not touch.get_node("Dodge").visible,
+		"Touch map combat exposes attack and interaction without arena dodge")
+	touch.set_field_combat_mode(false)
 	var finger_down := InputEventScreenTouch.new()
 	finger_down.index = 2
 	finger_down.pressed = true
@@ -223,7 +227,7 @@ func _run() -> void:
 	check(hud.get_node("InteractionHint").visible, "Focused POI appears in the HUD")
 	main._action("interact")
 	check(main.local_map_flags.has("ak.ba_sam_intro"), "Herbalist interaction advances the local preview flag")
-	check(hud.get_node("Quest/Body").text.contains("Ven Suối"), "Herbalist updates the tracked map objective")
+	check(hud.get_node("FieldInfo/Body").text.contains("Cổng Bắc"), "Dialogue does not replace the farm guidance panel")
 	var village_gate: MapInteractable = main.map_world.get_interactable("ak.gate.truc_am")
 	main.player.position = village_gate.position
 	main._action("interact")
@@ -233,7 +237,9 @@ func _run() -> void:
 	check_map_assets(main.map_world)
 	var entry_bridge: MapProp = main.map_world.get_node("Actors/ta_prop_entry_bridge") as MapProp
 	check(entry_bridge.z_index < main.player.z_index, "Entry bridge renders below the player at Trúc Âm spawn")
-	check_quest_visible(hud)
+	check_field_info_visible(hud)
+	check(hud.get_node("FieldInfo/Title").text == "SĂN QUÁI TỰ DO", "Trúc Âm foregrounds map farming")
+	check(not main.map_world.nearest_field_mob(Vector2(464, 560), 8.0).is_empty(), "Field monsters are present inside the map runtime")
 	await _capture("truc-am-runtime.png")
 	await _capture_touch_layout(main, "truc-am-touch-runtime.png")
 	check(main.player.position == Vector2(5 * 32, 29 * 32), "An Khê gate arrives beside its paired Trúc Âm exit")
@@ -254,7 +260,7 @@ func _run() -> void:
 	await _capture("world-route-overview.png")
 	map_panel.route_buttons["m_truc_am"].emit_signal("pressed")
 	check(map_panel.selected_id == "m_truc_am", "Route selection updates selected map")
-	check(map_panel.info.text.contains("Ven Suối"), "Map selection shows zone information")
+	check(map_panel.info.text.contains("Sơn Trư"), "Map selection shows field monster information")
 	var initial_position: Vector2 = main.player.position
 	check(map_panel.route_connections.size() == 3, "Route panel loads all three linked map passages")
 	check(map_panel._route_summary("m_truc_am").contains("Lối núi → Thạch Cạn"), "Route card shows the named link to Thạch Cạn")
@@ -294,7 +300,7 @@ func _run() -> void:
 			check(not cutout.get_node("Sprite").texture is AtlasTexture, prop_id + " uses a separate cutout")
 			check(cutout.get_node("Sprite").texture.get_image().detect_alpha() != Image.ALPHA_NONE, prop_id + " has no opaque square background")
 	check(main.can_walk(flow_pillar.position), "Thạch Cạn flow pillar is reachable on dry ground")
-	check_quest_visible(hud)
+	check_field_info_visible(hud)
 	await _capture("thach-can-runtime.png")
 	await _capture_touch_layout(main, "thach-can-touch-runtime.png")
 	main.player.position = flow_pillar.position + Vector2(0, 32)
@@ -315,7 +321,7 @@ func _run() -> void:
 	await process_frame
 	check(main.current_map_id == "m_co_tinh", "Travel action loads Cổ Tỉnh")
 	check_map_assets(main.map_world)
-	check_quest_visible(hud)
+	check_field_info_visible(hud)
 	await _capture("co-tinh-runtime.png")
 	await _capture_touch_layout(main, "co-tinh-touch-runtime.png")
 	check(main.player.position == Vector2(11 * 32, 25 * 32), "Thạch Cạn gate arrives beside its paired Cổ Tỉnh exit")

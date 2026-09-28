@@ -74,6 +74,80 @@ test('physical gate changes server map and cannot be used from too far away', ()
   rejectsCode(()=>s.rpc('world_interact',{entityId:'ak.gate.truc_am'}),5);
 });
 
+test('Trúc Âm exposes its Sơn Trư and Độc Chu as live field mobs on the current map', () => {
+  const s=setup();
+  setPosition(s,'m_truc_am',160,928);
+  const world=s.rpc('world_get');
+  assert.equal(world.mapId,'m_truc_am');
+  assert.deepEqual(world.fieldMobs.map(m=>m.enemyId).sort(),['en_boar','en_boar','en_spider','en_spider']);
+  assert.ok(world.fieldMobs.every(m=>m.hp===m.maxHp&&m.mode==='idle'));
+  assert.equal(s.rows.has(`${A}/pve_son_tru_sessions/active`),false,'field spawning does not create a solo hunt session');
+});
+
+test('field attack checks map, range, target id, cooldown, and grants one durable kill reward', async () => {
+  const s=setup();
+  const profile=s.rpc('get_profile');
+  profile.realm='luyen_khi'; profile.realmStage=1;
+  s.put(profile);
+  setPosition(s,'m_truc_am',1136,560);
+  const world=s.rpc('world_get');
+  const boar=world.fieldMobs.find(m=>m.id==='ta.mob.son_tru.01');
+  assert.ok(boar);
+  rejectsCode(()=>s.rpc('world_attack',{targetId:boar.id,items:[{itemId:'it_iron_sword'}]}),3);
+  setPosition(s,'m_an_khe',768,576);
+  rejectsCode(()=>s.rpc('world_attack',{targetId:boar.id}),5);
+  setPosition(s,'m_truc_am',700,800);
+  rejectsCode(()=>s.rpc('world_attack',{targetId:boar.id}),9);
+  setPosition(s,'m_truc_am',1136,560);
+  s.rpc('world_get');
+  let hit=s.rpc('world_attack',{targetId:boar.id});
+  assert.equal(hit.damage,15);
+  assert.equal(hit.killed,false);
+  let lostAtomicRewardAck=false;
+  const storageWrite=s.nk.storageWrite;
+  s.nk.storageWrite=writes=>{
+    const result=storageWrite(writes);
+    if(!lostAtomicRewardAck&&writes.some(w=>w.collection==='characters')&&writes.some(w=>w.collection==='world_sessions')&&writes.some(w=>w.collection==='asset_receipts')) {
+      lostAtomicRewardAck=true;
+      throw Error('response lost after atomic field kill commit');
+    }
+    return result;
+  };
+  for(let strike=0;strike<3;strike++) {
+    await new Promise(resolve=>setTimeout(resolve,710));
+    hit=s.rpc('world_attack',{targetId:boar.id});
+  }
+  assert.equal(lostAtomicRewardAck,true);
+  assert.equal(hit.killed,true);
+  assert.equal(hit.profile.cultivationXp,10);
+  assert.equal(hit.profile.inventory.find(i=>i.itemId==='it_boar_hide').quantity,1);
+  const sword=hit.profile.inventory.find(i=>i.itemId==='it_iron_sword');
+  assert.ok(sword&&sword.instanceId,'server loot roll can award a unique weapon instance');
+  assert.match(hit.message,/rơi Thanh Thiết Kiếm/);
+  assert.equal(hit.fieldMobs.find(m=>m.id===boar.id).hp,0);
+  rejectsCode(()=>s.rpc('world_attack',{targetId:boar.id}),9);
+  const replay=s.rpc('world_get');
+  assert.equal(replay.fieldMobs.find(m=>m.id===boar.id).generation,1);
+  assert.equal(s.state().inventory.find(i=>i.itemId==='it_boar_hide').quantity,1);
+  assert.equal(s.state().inventory.find(i=>i.itemId==='it_iron_sword').quantity,1);
+});
+
+test('a mortal character can start farming immediately and earn XP toward the first breakthrough', async () => {
+  const s=setup();
+  setPosition(s,'m_truc_am',464,560);
+  const spider=s.rpc('world_get').fieldMobs.find(m=>m.id==='ta.mob.doc_chu.01');
+  assert.ok(spider);
+  let hit;
+  for(let strike=0;strike<3;strike++) {
+    if(strike>0) await new Promise(resolve=>setTimeout(resolve,710));
+    hit=s.rpc('world_attack',{targetId:spider.id});
+  }
+  assert.equal(hit.killed,true);
+  assert.equal(hit.profile.realm,'mortal');
+  assert.equal(hit.profile.cultivationXp,15);
+  assert.equal(hit.profile.inventory.find(i=>i.itemId==='it_spider_silk').quantity,1);
+});
+
 test('the four maps form a server-authoritative, reciprocal gate route', () => {
   const s=setup(); s.rpc('world_get');
   setPosition(s,'m_truc_am',1408,128);

@@ -40,8 +40,8 @@
 	  "spawn_tiles": [24, 18],
 	  "summary": "Hub an toàn • làng khởi đầu",
 	  "details": "An Khê 48×36 tile, có dịch vụ làng, điểm tương tác và cổng sang Trúc Âm. Gameplay dùng TileMapLayer 32 px và prop 128 px; ảnh world cũ chỉ là ý tưởng tuyến. Minimap đọc layout thật.",
-	  "quest_title": "VIỆC Ở AN KHÊ",
-	  "quest_body": "Ghé hiệu thuốc Bà Sâm.\nLại gần NPC rồi nhấn E hoặc Chạm.",
+	  "region_title": "AN KHÊ • KHU AN TOÀN",
+	  "region_body": "Chuẩn bị đồ, hồi phục.\nCổng Bắc → Trúc Âm.",
 	  "preview": "res://assets/pixel/an_khe_world_v1.png",
 	  "interactables": [
 		{
@@ -92,12 +92,12 @@
 		},
 		{
 		  "entity_id": "ak.board.village",
-		  "display_name": "Bảng việc trong làng",
+		  "display_name": "Bảng tin An Khê",
 		  "position_tiles": [15, 17],
 		  "interaction_radius_tiles": 1.7,
 		  "action_kind": "read",
-		  "action_label": "Đọc bảng việc",
-		  "message": "Bảng việc: chuẩn bị nước và thuốc trước chuyến đi; đường Ven Suối là lối rút an toàn.",
+		  "action_label": "Xem tin làng",
+		  "message": "Bảng tin: chuẩn bị thuốc trước khi qua cổng Bắc tới đường săn Trúc Âm.",
 		  "icon": "res://assets/pixel/icon_9.tres"
 		},
 		{
@@ -165,11 +165,17 @@
 	  "size_status": "prototype_canvas_only",
 	  "camera_mode": "map",
 	  "spawn_tiles": [5, 26],
-	  "summary": "Dược liệu • học né đòn",
-	  "details": "Ba khu: Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư. Lối mở và hai dấu nước được xác nhận từ vị trí phía server.",
-	  "quest_title": "KHẢO SÁT TRÚC ÂM",
-	  "quest_body": "Ba khu đã có nền và vùng đi thử.\nQuest, quái và thu thập chưa kết nối.",
+	  "summary": "Bãi săn • Sơn Trư và Độc Chu",
+	  "details": "Ba khu: Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư. Sơn Trư và Độc Chu xuất hiện trực tiếp trên đường rừng; chiến đấu ngay trong map.",
+	  "region_title": "SĂN QUÁI TỰ DO",
+	  "region_body": "Sơn Trư: da/kiếm\nĐộc Chu: tơ/áo\nJ / Chạm: đánh.",
 	  "preview": "res://assets/pixel/truc_am_world_v1.png",
+	  "field_spawns": [
+		{"spawn_id":"ta.mob.son_tru.01","enemy_id":"en_boar","name":"Sơn Trư","max_hp":60,"position_tiles":[35.5,17.5]},
+		{"spawn_id":"ta.mob.son_tru.02","enemy_id":"en_boar","name":"Sơn Trư","max_hp":60,"position_tiles":[37.5,18.5]},
+		{"spawn_id":"ta.mob.doc_chu.01","enemy_id":"en_spider","name":"Độc Chu","max_hp":45,"position_tiles":[14.5,17.5]},
+		{"spawn_id":"ta.mob.doc_chu.02","enemy_id":"en_spider","name":"Độc Chu","max_hp":45,"position_tiles":[16.5,18.5]}
+	  ],
 	  "interactables": [
 		{
 		  "entity_id": "ta.node.cam_lo",
@@ -205,12 +211,11 @@
 		{
 		  "entity_id": "ta.trail.boar_sign",
 		  "display_name": "Dấu vết Sơn Trư",
-		  "position_tiles": [35, 17],
+		  "position_tiles": [33, 17],
 		  "interaction_radius_tiles": 1.8,
-		  "action_kind": "encounter",
-		  "action_label": "Đối mặt Sơn Trư",
-		  "encounter_id": "en_boar",
-		  "message": "Bãi Sơn Trư: đọc hướng gầm, né ngang cú lao rồi phản công khi nó hồi thế.",
+		  "action_kind": "inspect",
+		  "action_label": "Xem dấu vết",
+		  "message": "Dấu móng còn mới. Sơn Trư đang đi lại đâu đó trong Bãi Sơn Trư.",
 		  "icon": "res://assets/pixel/icon_15.tres"
 		},
 		{
@@ -279,8 +284,8 @@
 	  "spawn_tiles": [9, 18],
 	  "summary": "Quặng • địa hình chiến đấu",
 	  "details": "Hai khu: Ngoại Vi và Mỏ Cũ. Lối mỏ, vách đá và trụ chuyển dòng là blocker prototype; chưa có quái hoặc điều kiện quest phía server.",
-	  "quest_title": "KHẢO SÁT THẠCH CẠN",
-	  "quest_body": "Thử đường Ngoại Vi–Mỏ Cũ.\nQuặng và quái chưa mở.",
+	  "region_title": "THẠCH CẠN • SẮP MỞ",
+	  "region_body": "Địa hình đã có.\nSpawn quái và loot farm sẽ được nối sau.",
 	  "preview": "res://assets/pixel/thach_can_world_v1.png",
 	  "interactables": [
 		{
@@ -370,8 +375,8 @@
 	  "spawn_tiles": [11, 31],
 	  "summary": "Bí cảnh instance • boss chương đầu",
 	  "details": "Năm phòng cố định: Cửa Giếng, Hành Lang Rễ, Buồng Cân Mạch, Nhà Trận và Tâm Giếng. Mở chỉ để test bố cục; quyền vào thật cần server xác nhận.",
-	  "quest_title": "BÍ CẢNH CỔ TỈNH",
-	  "quest_body": "Thử tuyến năm phòng.\nBoss và cửa chờ server.",
+	  "region_title": "CỔ TỈNH • SẮP MỞ",
+	  "region_body": "Map đã có tuyến khám phá.\nQuái, boss và loot farm sẽ được nối sau.",
 	  "preview": "res://assets/pixel/co_tinh_world_v1.png",
 	  "interactables": [
 		{

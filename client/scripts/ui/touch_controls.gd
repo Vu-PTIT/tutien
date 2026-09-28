@@ -13,6 +13,7 @@ var direction := Vector2.ZERO
 var _touch_index := -1
 var _mouse_held := false
 var _combat_mode := false
+var _field_combat_mode := false
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -34,9 +35,24 @@ func set_combat_mode(enabled: bool) -> void:
 	if _combat_mode == enabled and $Interact.visible == not enabled:
 		return
 	_combat_mode = enabled
+	_field_combat_mode = false
 	$Interact.visible = not enabled
 	$Attack.visible = enabled
 	$Dodge.visible = enabled
+	$Interact.position = Vector2(548.0, 268.0)
+	$Interact.size = Vector2(80.0, 74.0)
+	clear_input()
+
+func set_field_combat_mode(enabled: bool) -> void:
+	if _field_combat_mode == enabled and $Interact.visible:
+		return
+	_combat_mode = false
+	_field_combat_mode = enabled
+	$Interact.visible = true
+	$Attack.visible = enabled
+	$Dodge.visible = false
+	$Interact.position = Vector2(468.0, 208.0) if enabled else Vector2(548.0, 268.0)
+	$Interact.size = Vector2(72.0, 54.0) if enabled else Vector2(80.0, 74.0)
 	clear_input()
 
 func clear_input() -> void:

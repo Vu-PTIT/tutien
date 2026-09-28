@@ -16,6 +16,7 @@ function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkr
   initializer.registerRpc("world_get", worldGetRpc);
   initializer.registerRpc("world_move", worldMoveRpc);
   initializer.registerRpc("world_interact", worldInteractRpc);
+  initializer.registerRpc("world_attack", worldAttackRpc);
   initializer.registerRpc("combat_create", combatCreateRpc);
   initializer.registerMatch("sparring", {
     matchInit: combatInit, matchJoinAttempt: combatJoinAttempt, matchJoin: combatJoin,

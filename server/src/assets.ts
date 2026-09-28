@@ -96,7 +96,7 @@ function loadCharacter(nk: nkruntime.Nakama, userId: string): LoadedCharacter {
 }
 
 // Pure preparation: the loaded state is never mutated, including on bag overflow.
-function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Nakama): CharacterState {
+function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Nakama): {state: CharacterState; cultivationXp: number} {
   validateCharacter(state);
   const offeredXp = bundle.cultivationXp === undefined ? 0 : bundle.cultivationXp;
   if (!assetInteger(bundle.spiritStones, 0, ASSET_LIMIT) || !assetInteger(offeredXp, 0, ASSET_LIMIT) ||
@@ -107,10 +107,28 @@ function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Na
   if (next.spiritStones + bundle.spiritStones > ASSET_LIMIT || next.revision >= ASSET_LIMIT) {
     return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "Asset limit reached");
   }
-  if (next.realm === "luyen_khi" && next.realmStage < 4) {
-    const thresholds = [300, 600, 1000];
-    const capacity = thresholds[next.realmStage - 1] * 2;
-    next.cultivationXp += Math.min(offeredXp, Math.max(0, capacity - next.cultivationXp));
+  const thresholds = [300, 600, 1000];
+  let progress = next.cultivationXp;
+  if (next.realm === "luyen_khi") {
+    progress += 100;
+    for (let stage = 1; stage < next.realmStage; stage++) progress += thresholds[stage - 1];
+  }
+  const maxProgress = 100 + thresholds[0] + thresholds[1] + thresholds[2];
+  const grantedXp = Math.min(offeredXp, Math.max(0, maxProgress - progress));
+  if (grantedXp > 0) {
+    next.cultivationXp += grantedXp;
+    if (next.realm === "mortal" && next.cultivationXp >= 100) {
+      next.realm = "luyen_khi";
+      next.realmStage = 1;
+      next.cultivationXp -= 100;
+    }
+    while (next.realm === "luyen_khi" && next.realmStage < 4) {
+      const threshold = thresholds[next.realmStage - 1];
+      if (next.cultivationXp < threshold) break;
+      next.cultivationXp -= threshold;
+      next.realmStage++;
+    }
+    if (next.realm === "luyen_khi" && next.realmStage >= 4) next.cultivationXp = 0;
   }
   next.spiritStones += bundle.spiritStones;
   for (let i = 0; i < bundle.items.length; i++) {
@@ -138,7 +156,7 @@ function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Na
   }
   next.revision++;
   validateCharacter(next);
-  return next;
+  return {state: next, cultivationXp: grantedXp};
 }
 
 interface AssetReceipt {
@@ -158,7 +176,8 @@ function assetResult(nk: nkruntime.Nakama, userId: string, receipt: AssetReceipt
 }
 // INTERNAL ONLY. A future quest/encounter caller must derive eligibility, sourceId
 // and bundle from authoritative state. Never expose this as a generic grant RPC.
-function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, sourceId: string, bundle: RewardBundle): JsonObject {
+function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, sourceId: string,
+    bundle: RewardBundle, additionalWrites: nkruntime.StorageWriteRequest[] = []): JsonObject {
   if (!/^[a-zA-Z0-9_-]{8,80}$/.test(operationId) || !/^[a-zA-Z0-9_:.-]{1,120}$/.test(sourceId)) {
     return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid operation or source ID");
   }
@@ -193,16 +212,17 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
       return fail(nkruntime.Codes.ALREADY_EXISTS, "Reward source already claimed");
     }
     const loaded = loadCharacter(nk, userId);
-    const next = addReward(loaded.state, bundle, nk);
+    const applied = addReward(loaded.state, bundle, nk);
+    const next = applied.state;
     const granted: RewardBundle = { spiritStones: bundle.spiritStones, items: bundle.items,
-      cultivationXp: next.cultivationXp - loaded.state.cultivationXp };
+      cultivationXp: applied.cultivationXp };
     const receipt: AssetReceipt = { operationId: operationId, sourceId: sourceId, fingerprint: fingerprint,
       revision: next.revision, granted: granted, committedAt: Date.now() };
     try {
       // Nakama storageWrite batch is transactional: all CAS checks and all three
       // writes commit together, including the create-only source uniqueness gate.
-      nk.storageWrite([characterWrite(userId, next, loaded.version),
-        receiptWrite(userId, opKey, receipt), receiptWrite(userId, sourceKey, receipt)]);
+      nk.storageWrite(additionalWrites.concat([characterWrite(userId, next, loaded.version),
+        receiptWrite(userId, opKey, receipt), receiptWrite(userId, sourceKey, receipt)]));
       return { receipt: receipt, replayed: false, profile: next };
     } catch (_error) { /* Includes lost acknowledgement after commit: re-read receipt. */ }
   }

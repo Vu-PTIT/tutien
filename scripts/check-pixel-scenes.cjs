@@ -121,9 +121,8 @@ const generatedMapProps={
 };
 const trucAm=mapCatalog.maps.find(m=>m.id==='m_truc_am');
 const boarSign=trucAm.interactables.find(p=>p.entity_id==='ta.trail.boar_sign');
-assert.equal(boarSign.action_kind,'encounter','Sơn Trư sign launches the server PvE encounter');
-assert.equal(boarSign.encounter_id,'en_boar');
-assert.deepEqual(boarSign.position_tiles,[35,17],'The encounter entrance belongs to Bãi Sơn Trư');
+assert.equal(boarSign.action_kind,'inspect','Sơn Trư tracks are map scenery, not a separate encounter entrance');
+assert.deepEqual(boarSign.position_tiles,[33,17],'The trail sign stays clear of the field spawn points');
 for(const map of mapCatalog.maps) {
   const layout=layoutByMapId.get(map.id);
   assert.ok(map.preview, 'Every route needs a map preview: '+map.id);
@@ -202,6 +201,18 @@ for(const map of mapCatalog.maps) {
         'Gate arrival has clearance for the player collider: '+poi.entity_id);
       assert.ok(target.areas.some(area=>{const [sx,sy,w,h]=area.rect_tiles;return ax>=sx&&ax<sx+w&&ay>=sy&&ay<sy+h;}), 'Gate arrival is outside named destination areas: '+poi.entity_id);
     }
+  }
+  const fieldIds=new Set();
+  for(const mob of map.field_spawns||[]) {
+    assert.ok(mob.spawn_id&&!fieldIds.has(mob.spawn_id),'Field spawn IDs are unique on '+map.id);
+    fieldIds.add(mob.spawn_id);
+    assert.ok(['en_boar','en_spider'].includes(mob.enemy_id),'Field spawn uses a known monster: '+mob.spawn_id);
+    const [x,y]=mob.position_tiles;
+    assert.ok(Number.isFinite(x)&&Number.isFinite(y)&&x>=0&&x<map.size_tiles[0]&&y>=0&&y<map.size_tiles[1],
+      'Field spawn is inside its map: '+mob.spawn_id);
+    assert.ok(walkable(Math.floor(x),Math.floor(y))&&reachable.has(`${Math.floor(x)},${Math.floor(y)}`),
+      'Field spawn is on reachable walkable terrain: '+mob.spawn_id);
+    assert.ok(Number.isInteger(mob.max_hp)&&mob.max_hp>0,'Field spawn has a valid health value: '+mob.spawn_id);
   }
   for(const ripple of map.water_ripples||[]) {
     const [x,y]=ripple.position_tiles;
@@ -339,8 +350,14 @@ const routeOverview=fs.readFileSync(path.join(root,'assets/pixel/maps/world_rout
 assert.equal(routeOverview.readUInt32BE(16),768,'Route overview uses the expected compact width');
 assert.equal(routeOverview.readUInt32BE(20),256,'Route overview uses the expected compact height');
 const combatApi=read('scripts/combat_api.gd');
-assert.ok(hud.includes('name="Hunt" type="Button"') && main.includes('func _create_son_tru()') && main.includes('api.match_kind == "pve_son_tru"'), 'Hunt button starts the Sơn Trư encounter and renders its server state');
-assert.ok(main.includes('target.action_kind == "encounter"') && main.includes('current_map_id != "m_truc_am"'), 'Sơn Trư hunt remains tied to its Trúc Âm map entrance');
+assert.ok(!hud.includes('name="Hunt" type="Button"') && !main.includes('func _create_son_tru()'), 'The client no longer opens a separate solo hunt');
+assert.ok(hud.includes('name="FieldInfo" type="Panel"')&&!hud.includes('name="Quest" type="Panel"'), 'The HUD presents field information instead of quest tracking');
+assert.ok(mapCatalog.maps.every(map=>typeof map.region_title==='string'&&typeof map.region_body==='string'), 'Every map supplies field or region guidance');
+assert.ok(main.includes('api.call_rpc("world_attack"') && main.includes('map_world.update_field_mobs'), 'The client attacks and renders monsters inside the active map');
+const worldServer=fs.readFileSync(path.join(__dirname,'../server/src/world.ts'),'utf8');
+for(const mob of trucAm.field_spawns) assert.ok(worldServer.includes('id:"'+mob.spawn_id+'"'),'Server owns field spawn '+mob.spawn_id);
+assert.ok(worldServer.includes('const worldAttackRpc')&&worldServer.includes('grantReward(nk,userId,"field_"'), 'Map combat validates attacks and uses durable reward receipts');
+assert.ok(worldServer.includes('equipmentDropBasisPoints')&&worldServer.includes('equipmentDropped'), 'Map monsters can award server-rolled equipment');
 assert.ok(combatApi.includes('create_son_tru') && combatApi.includes('rejoin_current_match'), 'PvE uses the shared socket and mode-aware reconnect adapter');
 const pveServer=fs.readFileSync(path.join(__dirname,'../server/src/pve_son_tru.ts'),'utf8');
 assert.ok(main.includes('SON_TRU_SPRITE') && main.includes('boar_sprite'), 'Battle renderer uses the transparent generated boar sprite');

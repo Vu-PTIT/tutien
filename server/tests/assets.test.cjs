@@ -114,20 +114,26 @@ function luyenKhi(s, stage=1) {
   const profile=s.rpc('get_profile');profile.realm='luyen_khi';profile.realmStage=stage;
   s.put(profile);return profile;
 }
-test('repeatable XP caps at two next thresholds; stage four and mortal keep loot without XP',()=>{
+test('monster XP opens cultivation and advances stages while max stage keeps loot without XP',()=>{
   const one=setup();luyenKhi(one,1);
   const first=grant(one,'repeatable_xp_001','pve:boar:one',{spiritStones:0,cultivationXp:700,items:[{itemId:'it_boar_hide',quantity:1}]});
-  assert.equal(first.profile.cultivationXp,600);assert.equal(first.receipt.granted.cultivationXp,600);
+  assert.equal(first.profile.realmStage,2);assert.equal(first.profile.cultivationXp,400);assert.equal(first.receipt.granted.cultivationXp,700);
   const two=setup();luyenKhi(two,2);
   const second=grant(two,'repeatable_xp_002','pve:boar:two',{spiritStones:0,cultivationXp:1500,items:[{itemId:'it_boar_hide',quantity:1}]});
-  assert.equal(second.profile.cultivationXp,1200);assert.equal(second.receipt.granted.cultivationXp,1200);
+  assert.equal(second.profile.realmStage,3);assert.equal(second.profile.cultivationXp,900);assert.equal(second.receipt.granted.cultivationXp,1500);
+  const nearMax=setup();const advanced=luyenKhi(nearMax,3);advanced.cultivationXp=999;nearMax.put(advanced);
+  const finalStep=grant(nearMax,'repeatable_xp_003','pve:boar:near-max',{spiritStones:0,cultivationXp:5000,items:[{itemId:'it_boar_hide',quantity:1}]});
+  assert.equal(finalStep.profile.realmStage,4);assert.equal(finalStep.profile.cultivationXp,0);assert.equal(finalStep.receipt.granted.cultivationXp,1);
   const four=setup();luyenKhi(four,4);
   const max=grant(four,'repeatable_xp_004','pve:boar:four',{spiritStones:0,cultivationXp:10,items:[{itemId:'it_boar_hide',quantity:1}]});
   assert.equal(max.profile.cultivationXp,0);assert.equal(max.receipt.granted.cultivationXp,0);
   assert.equal(max.profile.inventory[0].itemId,'it_boar_hide');
   const mortal=setup();
   const training=grant(mortal,'repeatable_xp_000','pve:boar:mortal',{spiritStones:0,cultivationXp:10,items:[{itemId:'it_boar_hide',quantity:1}]});
-  assert.equal(training.profile.cultivationXp,0);
+  assert.equal(training.profile.realm,'mortal');assert.equal(training.profile.cultivationXp,10);
+  const breakthrough=grant(mortal,'repeatable_xp_005','pve:boar:mortal:2',{spiritStones:0,cultivationXp:90,items:[{itemId:'it_spider_silk',quantity:1}]});
+  assert.equal(breakthrough.profile.realm,'luyen_khi');assert.equal(breakthrough.profile.realmStage,1);
+  assert.equal(breakthrough.profile.cultivationXp,0);assert.equal(breakthrough.receipt.granted.cultivationXp,90);
 });
 test('equip toggles server-owned instances and has idempotent mutation receipts',()=>{
   const s=setup();

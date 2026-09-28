@@ -152,30 +152,30 @@ offset_right = 632.0
 offset_bottom = 34.0
 text = "Rời bãi"
 
-[node name="Quest" type="Panel" parent="."]
+[node name="FieldInfo" type="Panel" parent="."]
 offset_left = 488.0
 offset_top = 95.0
 offset_right = 632.0
 offset_bottom = 161.0
 
-[node name="Title" type="Label" parent="Quest"]
+[node name="Title" type="Label" parent="FieldInfo"]
 offset_left = 8.0
 offset_top = 5.0
 offset_right = 136.0
 offset_bottom = 18.0
 mouse_filter = 2
-text = "VIỆC Ở AN KHÊ"
+text = "AN KHÊ • KHU AN TOÀN"
 theme_override_font_sizes/font_size = 10
 
-[node name="Body" type="Label" parent="Quest"]
+[node name="Body" type="Label" parent="FieldInfo"]
 offset_left = 8.0
 offset_top = 24.0
 offset_right = 136.0
 offset_bottom = 60.0
 mouse_filter = 2
-text = "Ghé hiệu thuốc Bà Sâm.\n[E] Xem lời nhắn tại cửa."
+text = "Chuẩn bị đồ, hồi phục.\nCổng Bắc → Trúc Âm."
 autowrap_mode = 2
-theme_override_font_sizes/font_size = 9
+theme_override_font_sizes/font_size = 8
 
 [node name="InteractionHint" type="Panel" parent="."]
 visible = false
@@ -223,7 +223,7 @@ offset_left = 583.0
 offset_top = 170.0
 offset_right = 632.0
 offset_bottom = 193.0
-text = "Đấu tập"
+text = "Online"
 
 [node name="Hotbar" type="Panel" parent="."]
 offset_left = 180.0
@@ -413,7 +413,7 @@ offset_top = 32.0
 offset_right = 526.0
 offset_bottom = 64.0
 mouse_filter = 2
-text = "Kết nối backend để tạo hoặc vào phòng. Không mất đồ."
+text = "Kết nối để farm quái, nhận XP/vật phẩm và vào đấu tập. Farm được lưu trên server."
 autowrap_mode = 2
 theme_override_font_sizes/font_size = 9
 
@@ -458,13 +458,6 @@ offset_top = 100.0
 offset_right = 184.0
 offset_bottom = 124.0
 text = "Rời trận"
-
-[node name="Hunt" type="Button" parent="Dock"]
-offset_left = 400.0
-offset_top = 100.0
-offset_right = 505.0
-offset_bottom = 124.0
-text = "Săn Sơn Trư"
 
 [node name="Safety" type="Label" parent="Dock"]
 offset_left = 195.0

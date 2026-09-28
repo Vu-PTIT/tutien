@@ -9,6 +9,7 @@ const TILE_SYMBOLS := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstu
 const INTERACTABLE_SCENE = preload("res://scenes/map_interactable.tscn")
 const WATER_RIPPLE_SCENE = preload("res://scenes/map_water_ripple.tscn")
 const MAP_PROP_SCENE = preload("res://scenes/map_prop.tscn")
+const FIELD_MOB_SCENE = preload("res://scenes/field_mob_actor.tscn")
 
 const MAP_LAYOUTS := {
 	"m_an_khe": "res://data/maps/an_khe.json",
@@ -33,6 +34,7 @@ var _solid_terrain_cells: Dictionary = {}
 var _areas: Array[Dictionary] = []
 var _interactables: Array[MapInteractable] = []
 var _props: Array[MapProp] = []
+var _field_mobs: Dictionary = {}
 
 func configure(data: Dictionary, tile_size: int = TILE_SIZE_DEFAULT) -> void:
 	map_data = data.duplicate(true)
@@ -260,6 +262,42 @@ func update_interaction_focus(point: Vector2) -> MapInteractable:
 		interactable.set_focused(interactable == nearest)
 	active_interactable = nearest
 	return active_interactable
+
+func update_field_mobs(snapshots: Array) -> void:
+	var wanted: Dictionary = {}
+	for value: Variant in snapshots:
+		if not value is Dictionary:
+			continue
+		var mob_id := str(value.get("id", ""))
+		if mob_id.is_empty():
+			continue
+		var actor := _field_mobs.get(mob_id) as FieldMobActor
+		if actor == null:
+			actor = FIELD_MOB_SCENE.instantiate() as FieldMobActor
+			$Actors.add_child(actor)
+			_field_mobs[mob_id] = actor
+		actor.present(value)
+		wanted[mob_id] = true
+	for mob_id: Variant in _field_mobs.keys():
+		if wanted.has(mob_id):
+			continue
+		var actor := _field_mobs[mob_id] as FieldMobActor
+		if actor != null:
+			actor.queue_free()
+		_field_mobs.erase(mob_id)
+
+func nearest_field_mob(point: Vector2, max_distance: float) -> String:
+	var best_id := ""
+	var best_distance := max_distance
+	for mob_id: Variant in _field_mobs.keys():
+		var actor := _field_mobs[mob_id] as FieldMobActor
+		if actor == null or not actor.visible or actor.hp <= 0:
+			continue
+		var distance := point.distance_to(actor.position)
+		if distance <= best_distance:
+			best_distance = distance
+			best_id = str(mob_id)
+	return best_id
 
 func _has_clear_interaction_path(from: Vector2, to: Vector2) -> bool:
 	# A nearby object must not be usable through the solid footprint of a building.
