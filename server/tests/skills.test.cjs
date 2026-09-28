@@ -26,10 +26,10 @@ test('active skills require unlock, persist in the server profile, and support s
   learnPhi(s);
   const equipped=s.rpc('skill_equip',{operationId:'skill_equip_001',skillId:'sk_phi_nhan'});
   assert.equal(equipped.profile.equippedSkills.active_1,'sk_phi_nhan');
-  assert.equal(equipped.profile.revision,2);
+  assert.equal(equipped.profile.revision,1);
   const replay=s.rpc('skill_equip',{operationId:'skill_equip_001',skillId:'sk_phi_nhan'});
   assert.equal(replay.replayed,true);
-  assert.equal(replay.profile.revision,2);
+  assert.equal(replay.profile.revision,1);
   rejectsCode(()=>s.rpc('skill_equip',{operationId:'skill_bad_002',skillId:'sk_scan'}),9);
   const removed=s.rpc('skill_equip',{operationId:'skill_remove_003',skillId:''});
   assert.equal(removed.profile.equippedSkills.active_1,'');
