@@ -27,6 +27,7 @@ func check_social_typography() -> void:
 		return
 	check(social_theme.is_type_variation(&"SocialHeader", &"Label"), "Social header is a Label theme variation")
 	check(social_theme.get_font_size(&"font_size", &"SocialHeader") == 16, "Social desktop header uses the large type token")
+	check(social_theme.get_color(&"font_shadow_color", &"Label").a <= 0.01, "HUD labels do not add a doubled pixel shadow")
 	check(social_theme.get_font_size(&"font_size", &"SocialBodyMobile") == 14, "Social mobile body uses the mobile type token")
 	check(social_theme.get_font_size(&"normal_font_size", &"SocialChatLogMobile") == 14, "Mobile chat history uses readable message text")
 	var chat_entry := LineEdit.new()
@@ -127,6 +128,7 @@ func _run() -> void:
 	var hud = main.hud
 	var bag: InventoryPanel = main.inventory_panel
 	check_map_assets(main.map_world)
+	await _capture("font-map-hud.png")
 	check(main.map_world.resource_trees_size() == 1, "An Khê loads one stateful harvestable tree")
 	check(main.map_world.flowers_size() == 4, "An Khê loads four foot-reactive flower clumps")
 	var blacksmith: MapProp = main.map_world.get_node("Actors/ak_prop_blacksmith") as MapProp
