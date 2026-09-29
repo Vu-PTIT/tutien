@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 10190)
-Total output lines: 955
-
 class_name GameMap
 extends Node2D
 ## Shared world runtime for the four maps.
@@ -434,7 +431,26 @@ func _terrain_neighbor_mask(tile_rows: Array, x: int, y: int, terrain_group: Str
 		var matches := false
 		match terrain_group:
 			"path":
-				matches = neighbor_terrain …190 tokens truncated…st", -1)
+				matches = neighbor_terrain >= 16 and neighbor_terrain <= 23
+			"land":
+				matches = neighbor_terrain >= 0 and neighbor_terrain < 32
+			"water_and_shore":
+				matches = neighbor_terrain >= 32 and neighbor_terrain <= 39
+			"shore":
+				matches = neighbor_terrain >= 36 and neighbor_terrain <= 39
+		if matches:
+			mask |= bits[index]
+	return mask
+
+func _path_transition_tile(path_mask: int, path_edges: Dictionary, path_corners: Dictionary) -> Variant:
+	if path_mask == 0:
+		return -1
+	if path_mask == (TRANSITION_NORTH | TRANSITION_WEST):
+		return path_corners.get("path_north_west", -1)
+	if path_mask == (TRANSITION_NORTH | TRANSITION_EAST):
+		return path_corners.get("path_north_east", -1)
+	if path_mask == (TRANSITION_SOUTH | TRANSITION_WEST):
+		return path_corners.get("path_south_west", -1)
 	if path_mask == (TRANSITION_SOUTH | TRANSITION_EAST):
 		return path_corners.get("path_south_east", -1)
 	if (path_mask & (TRANSITION_NORTH | TRANSITION_WEST)) == (TRANSITION_NORTH | TRANSITION_WEST):
