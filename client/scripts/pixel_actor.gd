@@ -2,6 +2,7 @@ class_name PixelActor
 extends CharacterBody2D
 ## Sprite atlas frames are presentation only; combat stays on the server.
 const SHEET = preload("res://assets/pixel/cultivator.png")
+const CELL_SIZE := 64
 var clock: float = 0.0
 var row: int = 0
 var frame_texture: AtlasTexture
@@ -30,6 +31,6 @@ func present(direction: Vector2, delta: float) -> void:
 		else:
 			row = 0 if direction.y > 0 else 3
 	else:
-		clock = 1.0
+		clock = 0.0
 	var frame := int(clock) % 4
-	frame_texture.region = Rect2(frame * 295.5 + 40, row * 332.5 + 20, 225, 305)
+	frame_texture.region = Rect2(frame * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE)

@@ -14,8 +14,8 @@ shape = SubResource("foot_collision")
 polygon = PackedVector2Array(-11, -3, 11, -3, 14, 0, 10, 3, -10, 3, -14, 0)
 color = Color(0.035, 0.055, 0.08, 0.45)
 [node name="Sprite" type="Sprite2D" parent="."]
-position = Vector2(0, -21)
-scale = Vector2(0.14, 0.14)
+position = Vector2(0, -27)
+scale = Vector2.ONE
 texture_filter = 1
 texture = ExtResource("2")
 

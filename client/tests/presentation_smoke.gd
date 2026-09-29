@@ -66,7 +66,7 @@ func _capture_son_tru_preview(main) -> void:
 	main._present_fighters(0.05)
 	await process_frame
 	check(main.get_node("Arena/SonTruBackground").texture != null, "Sơn Trư arena uses its generated map art")
-	check(main.boar_sprite.visible and main.boar_sprite.texture.get_size() == Vector2(128, 128), "PVE encounter presents the transparent boar sprite")
+	check(main.boar_sprite.visible and main.boar_sprite.texture.get_size() == Vector2(64, 64), "PVE encounter presents the transparent boar sprite")
 	check(main.boar_sprite.position.distance_to(Vector2(446, 234)) < 0.01, "Server boar position maps into the arena viewport")
 	check(main.hud.get_node("Location/Title").text == "BÃI SƠN TRƯ", "PvE HUD identifies the hunting area")
 	await _capture("son-tru-runtime.png")
@@ -537,6 +537,7 @@ func _run() -> void:
 		await create_timer(0.55).timeout
 		check(absf(flower.sprite.scale.y - 0.88) < 0.02, "Flower springs back after the player steps off")
 	var atlas := load("res://assets/pixel/cultivator.png") as Texture2D
+	check(atlas.get_size() == Vector2(256, 256), "Character atlas uses sixteen native 64 px frames")
 	check(atlas.get_image().detect_alpha() != Image.ALPHA_NONE, "Sprite must be transparent")
 	main.queue_free()
 	await process_frame

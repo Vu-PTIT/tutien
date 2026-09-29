@@ -2,7 +2,7 @@ extends Node2D
 ## Presentation only. Position, phase and health come from the server snapshot.
 
 const SHEET: Texture2D = preload("res://assets/pixel/enemies/son_tru.png")
-const CELL_SIZE := 128
+const CELL_SIZE := 64
 const ARENA_SCALE := 2.0 / 3.0
 
 var frame_texture: AtlasTexture
@@ -14,8 +14,8 @@ func _ready() -> void:
 	frame_texture.atlas = SHEET
 	frame_texture.filter_clip = true
 	$Sprite.texture = frame_texture
-	$Sprite.scale = Vector2(0.72, 0.72)
-	$Sprite.position = Vector2(0, -38)
+	$Sprite.scale = Vector2(1.5, 1.5)
+	$Sprite.position = Vector2(0, -17)
 
 func present(snapshot: Dictionary) -> void:
 	position = Vector2(float(snapshot.get("x", 0)), float(snapshot.get("y", 0))) * ARENA_SCALE
