@@ -25,7 +25,7 @@ An Khê and Trúc Âm use the same transition contract. Their older full-width A
 
 ## Surface response
 
-Moving across configured grass, soil, stone, and water cells leaves a brief handful of nearest-filtered pixel flecks. Shore-adjacent steps can include a snapped, hard-edged water pixel; rain changes the grass/soil palette. Surface flecks and existing water ripples use integer-aligned rectangles and stepped rings, with a short stepped fade. Existing animated river shimmer and rain rings remain in place.
+Moving across configured grass, soil, stone, and water cells leaves a brief handful of nearest-filtered pixel flecks. Shore-adjacent steps can include a snapped, hard-edged water pixel; rain changes the grass/soil palette. Surface flecks, shimmer, and rain rings all use 4 px-aligned rectangles and stepped rings, with a short stepped fade. Existing animated river shimmer and rain rings remain in place.
 
 ## Verification
 
