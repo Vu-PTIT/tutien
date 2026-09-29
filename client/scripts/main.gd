@@ -112,6 +112,8 @@ func _ready() -> void:
 func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	if world_map == null or not world_map.maps_by_id.has(map_id):
 		return false
+	if map_world != null:
+		local_resource_states.merge(map_world.get_resource_tree_states(), true)
 	var data: Dictionary = world_map.maps_by_id[map_id].duplicate(true)
 	if arrival_tiles.size() >= 2:
 		data["spawn_tiles"] = arrival_tiles.duplicate()

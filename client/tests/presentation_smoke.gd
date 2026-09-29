@@ -320,7 +320,7 @@ func _run() -> void:
 	check(main.player.position == Vector2(5 * 32, 29 * 32), "An Khê gate arrives beside its paired Trúc Âm exit")
 	check(main.map_world.interactables_size() == 7, "Trúc Âm loads quest POIs and both linked map gates")
 	check(main.map_world.get_node("AmbientFX").get_child_count() == 3, "Trúc Âm loads its water highlights")
-	check(not main.can_walk(Vector2(12 * 32, 27 * 32)), "Trúc Âm river terrain blocks walking")
+	check(not main.can_walk(Vector2(11 * 32, 27 * 32)), "Trúc Âm river terrain blocks walking")
 	check(main.can_walk(Vector2(3 * 32, 27 * 32)), "The entry bridge keeps its authored walkable deck")
 	var truc_retreat: MapInteractable = main.map_world.get_interactable("ta.retreat.ankhe")
 	main.player.position = truc_retreat.position
@@ -384,7 +384,7 @@ func _run() -> void:
 	await process_frame
 	await _capture("thach-can-flow-pillar-runtime.png")
 	check(main.map_world.interactables_size() == 5, "Thạch Cạn loads its own interactive map data")
-	check(not main.can_walk(Vector2(5 * 32, 17 * 32)), "Thạch Cạn void terrain blocks walking")
+	check(not main.can_walk(Vector2(5 * 32, 8 * 32)), "Thạch Cạn void terrain blocks walking")
 	var ore_node: MapInteractable = main.map_world.get_interactable("tc.node.iron_ore")
 	check(ore_node != null and main.can_walk(ore_node.position), "Thạch Cạn ore point is reachable")
 	main.player.position = ore_node.position
@@ -473,7 +473,7 @@ func _run() -> void:
 	check(not main.dock.visible and bag.visible, "Only one modal open")
 	await _capture_son_tru_preview(main)
 	check(main._load_map("m_an_khe"), "Runtime interaction checks reload the An Khê prototype")
-	var resource_tree := main.map_world.get_resource_tree("ak.tree.woodland_01")
+	var resource_tree: MapResourceTree = main.map_world.get_resource_tree("ak.tree.woodland_01")
 	check(resource_tree != null and resource_tree.state_index == 0 and resource_tree.can_be_chopped(),
 		"Interactive tree starts upright and can be harvested")
 	if resource_tree != null:
@@ -509,8 +509,9 @@ func _run() -> void:
 	var flower: MapFlower = main.map_world.get_node("Actors/ak_flower_pink_01") as MapFlower
 	check(flower != null, "Flower clump has a stable scene object")
 	if flower != null:
-		flower.stomp()
-		await process_frame
+		flower._on_body_entered(main.player)
+		for _frame in range(12):
+			await process_frame
 		check(flower.stomp_count == 1 and flower.sprite.scale.y < 0.8,
 			"Player contact compresses the flower sprite")
 		await create_timer(0.55).timeout

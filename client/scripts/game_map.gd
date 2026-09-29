@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 10190)
+Total output lines: 955
+
 class_name GameMap
 extends Node2D
 ## Shared world runtime for the four maps.
@@ -392,7 +395,7 @@ func _build_terrain_transition_cells(tile_rows: Array, transition_layout: Dictio
 					if shore_tile >= 0:
 						var shore_flip := 0
 						if _is_single_transition_direction(water_mask):
-						shore_flip = _shore_transition_flip(_first_transition_direction(water_mask), cell, seed)
+							shore_flip = _shore_transition_flip(_first_transition_direction(water_mask), cell, seed)
 						transition_cells[cell] = {"tile": shore_tile, "alternative": shore_flip}
 			elif terrain_index >= 32 and terrain_index <= 35:
 				if shore_water_edges.is_empty() and shore_water_corners.is_empty():
@@ -431,26 +434,7 @@ func _terrain_neighbor_mask(tile_rows: Array, x: int, y: int, terrain_group: Str
 		var matches := false
 		match terrain_group:
 			"path":
-				matches = neighbor_terrain >= 16 and neighbor_terrain <= 23
-			"land":
-				matches = neighbor_terrain >= 0 and neighbor_terrain < 32
-			"water_and_shore":
-				matches = neighbor_terrain >= 32 and neighbor_terrain <= 39
-			"shore":
-				matches = neighbor_terrain >= 36 and neighbor_terrain <= 39
-		if matches:
-			mask |= bits[index]
-	return mask
-
-func _path_transition_tile(path_mask: int, path_edges: Dictionary, path_corners: Dictionary) -> Variant:
-	if path_mask == 0:
-		return -1
-	if path_mask == (TRANSITION_NORTH | TRANSITION_WEST):
-		return path_corners.get("path_north_west", -1)
-	if path_mask == (TRANSITION_NORTH | TRANSITION_EAST):
-		return path_corners.get("path_north_east", -1)
-	if path_mask == (TRANSITION_SOUTH | TRANSITION_WEST):
-		return path_corners.get("path_south_west", -1)
+				matches = neighbor_terrain …190 tokens truncated…st", -1)
 	if path_mask == (TRANSITION_SOUTH | TRANSITION_EAST):
 		return path_corners.get("path_south_east", -1)
 	if (path_mask & (TRANSITION_NORTH | TRANSITION_WEST)) == (TRANSITION_NORTH | TRANSITION_WEST):
@@ -681,6 +665,14 @@ func flowers_size() -> int:
 
 func get_resource_tree(tree_id: String) -> MapResourceTree:
 	return _resource_trees.get(tree_id) as MapResourceTree
+
+func get_resource_tree_states() -> Dictionary:
+	var states: Dictionary = {}
+	for tree_id: Variant in _resource_trees:
+		var tree := _resource_trees[tree_id] as MapResourceTree
+		if tree != null:
+			states[str(tree_id)] = {"hit_count": tree.hit_count}
+	return states
 
 func nearest_choppable_tree(point: Vector2, facing: Vector2, max_distance: float = 58.0) -> MapResourceTree:
 	if facing.length_squared() <= 0.01:
