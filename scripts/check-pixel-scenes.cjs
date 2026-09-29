@@ -34,20 +34,32 @@ for(const file of files.filter(p=>/\.(tscn|tres|gd)$/.test(p))) {
 }
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const main=read('scripts/main.gd'), hud=read('scenes/ui/hud.tscn');
-const uiFont=fs.readFileSync(path.join(root,'assets/pixel/ui_font.ttf'));
-const uiFontSignature=uiFont.subarray(0,4).toString('hex');
-assert.ok(['00010000','4f54544f','74727565','74797031'].includes(uiFontSignature),
-  'UI font must be a valid TrueType/OpenType SFNT file');
-assert.ok(read('themes/tutien_theme.tres').includes('res://assets/pixel/ui_font.ttf'),
-  'Social typography retains the checked Handjet font');
-const tiny5Font=fs.readFileSync(path.join(root,'assets/pixel/tiny5_pixel_ui.ttf'));
-const tiny5Signature=tiny5Font.subarray(0,4).toString('hex');
-assert.ok(['00010000','4f54544f','74727565','74797031'].includes(tiny5Signature),
-  'Map HUD font must be a valid TrueType/OpenType SFNT file');
-assert.ok(read('themes/tutien_theme.tres').includes('res://assets/pixel/tiny5_pixel_ui.ttf'),
-  'Map HUD theme must use the Vietnamese Tiny5 font');
-assert.ok(hud.includes('theme_type_variation = &"MapPixelText"'),
-  'Map HUD labels must opt into the readable pixel typography variation');
+const theme=read('themes/tutien_theme.tres');
+const validSfnt=font=>['00010000','4f54544f','74727565','74797031'].includes(font.subarray(0,4).toString('hex'));
+const uiFont=fs.readFileSync(path.join(root,'assets/fonts/BeVietnamPro-Regular.ttf'));
+const uiFontSemibold=fs.readFileSync(path.join(root,'assets/fonts/BeVietnamPro-SemiBold.ttf'));
+assert.ok(validSfnt(uiFont)&&validSfnt(uiFontSemibold),
+  'Shared Vietnamese UI fonts must be valid TrueType/OpenType SFNT files');
+assert.ok(theme.includes('res://assets/fonts/BeVietnamPro-Regular.ttf') &&
+  theme.includes('res://assets/fonts/BeVietnamPro-SemiBold.ttf'),
+  'Shared theme must use the bundled Be Vietnam Pro family');
+for(const token of ['UIHeading','UIBody','UISmall','UIMicro','UIButtonSmall','UIChatLogMobile']) {
+  assert.ok(theme.includes(token+'/base_type'), 'Shared theme defines typography token '+token);
+}
+assert.ok(hud.includes('theme_type_variation = &"UISmall"') &&
+  hud.includes('theme_type_variation = &"UIHeading"'),
+  'HUD labels must use centralized typography tokens');
+const typographyFiles=[
+  'scenes/ui/character.tscn','scenes/ui/inventory.tscn','scenes/ui/touch_controls.tscn',
+  'scenes/an_khe.tscn','scenes/map_interactable.tscn','scenes/ui/hud.tscn',
+  'scripts/ui/character_panel.gd','scripts/ui/hud.gd','scripts/ui/world_map_panel.gd','scripts/game_map.gd'
+];
+for(const file of typographyFiles) {
+  const source=read(file);
+  assert.ok(!source.includes('theme_override_font_sizes/font_size') &&
+    !source.includes('add_theme_font_size_override'),
+    file+': font sizes must come from named shared theme tokens');
+}
 assert.ok(!/^@tool/m.test(main), 'Runtime must not run in editor');
 assert.ok(!main.includes('_draw_editor_ui_preview'), 'No alternate/fake editor HUD');
 assert.equal((read('scenes/ui/inventory.tscn').match(/name="Slot\d+" type="Button"/g)||[]).length,24);
@@ -580,5 +592,5 @@ assert.ok(routePanel.includes('signal map_requested'), 'Route panel emits travel
 assert.ok(routePanel.includes('route_connections')&&routePanel.includes('_route_summary(')&&routePanel.includes('connection.get("label"'),
   'World map route cards render names from the connected gate graph');
 assert.ok(main.includes('world_map.map_requested.connect(_travel_to_map)'), 'Main connects map travel');
-console.log('PASS static map and scene audit: '+scenes+' scenes, '+references+' resource references, connected reciprocal routes, walkable POIs, transparent Thạch Cạn props, aligned ripples, valid PNG assets, valid Handjet and Tiny5 pixel UI fonts.');
+console.log('PASS static map and scene audit: '+scenes+' scenes, '+references+' resource references, connected reciprocal routes, walkable POIs, transparent Thạch Cạn props, aligned ripples, valid PNG assets, valid centralized Be Vietnam Pro UI typography.');
 console.log('Not a GDScript parser or Godot runtime test. Run presentation_smoke.gd in Godot.');
