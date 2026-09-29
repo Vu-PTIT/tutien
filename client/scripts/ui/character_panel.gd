@@ -46,6 +46,13 @@ func _ready() -> void:
 	$PageHost/SettingsPage/SettingsCard/Volume.value_changed.connect(_on_volume_changed)
 	$PageHost/SettingsPage/SettingsCard/Fullscreen.toggled.connect(_on_fullscreen_toggled)
 	$PageHost/SettingsPage/SettingsCard/TouchLayout.toggled.connect(_on_touch_layout_toggled)
+	var language_selector: OptionButton = $PageHost/SettingsPage/SettingsCard/Language
+	language_selector.add_item("Tiếng Việt")
+	language_selector.set_item_metadata(0, "vi")
+	language_selector.add_item("English")
+	language_selector.set_item_metadata(1, "en")
+	language_selector.item_selected.connect(_on_language_selected)
+	LanguageManager.locale_changed.connect(_on_language_changed)
 	_load_settings()
 	_apply_volume()
 	_apply_fullscreen()
@@ -68,6 +75,10 @@ func show_page(page: String) -> void:
 	$Refresh.visible = page == "profile"
 	for entry in [["ProfileTab", "profile"], ["SkillsTab", "skills"], ["SettingsTab", "settings"]]:
 		get_node(entry[0]).modulate = Color("efcd87") if page == entry[1] else Color.WHITE
+	if page == "profile":
+		_render_profile()
+	elif page == "skills":
+		_render_skills()
 
 func refresh() -> void:
 	if loading:
@@ -82,7 +93,7 @@ func refresh() -> void:
 	loading = false
 	$Refresh.disabled = false
 	if result.has("error"):
-		$DataState.text = "CHƯA TẢI ĐƯỢC • " + str(result.error)
+		$DataState.text = tr("CHƯA TẢI ĐƯỢC • %s") % tr(str(result.error))
 		return
 	profile = result.get("profile", {}).duplicate(true)
 	inventory = profile.get("inventory", []).duplicate(true)
@@ -114,11 +125,11 @@ func _render_profile() -> void:
 		return
 	var realm_id := str(profile.get("realm", "mortal"))
 	var stage := int(profile.get("realmStage", 0))
-	var realm_name := "Phàm nhân" if realm_id == "mortal" else "Luyện Khí • tầng %d" % stage
-	$PageHost/ProfilePage/PortraitCard/AvatarCaption.text = display_name if not display_name.is_empty() else "TU SĨ"
+	var realm_name := tr("Phàm nhân") if realm_id == "mortal" else tr("Luyện Khí • tầng %d") % stage
+	$PageHost/ProfilePage/PortraitCard/AvatarCaption.text = display_name if not display_name.is_empty() else tr("TU SĨ")
 	$PageHost/ProfilePage/PortraitCard/Realm.text = realm_name.to_upper()
-	$PageHost/ProfilePage/StatsCard/Name.text = display_name if not display_name.is_empty() else "Tu sĩ"
-	$PageHost/ProfilePage/StatsCard/RealmLine.text = "Cảnh giới • " + realm_name
+	$PageHost/ProfilePage/StatsCard/Name.text = display_name if not display_name.is_empty() else tr("Tu sĩ")
+	$PageHost/ProfilePage/StatsCard/RealmLine.text = tr("Cảnh giới • %s") % realm_name
 
 	var cultivation_xp := int(profile.get("cultivationXp", 0))
 	var threshold := 100
@@ -129,23 +140,23 @@ func _render_profile() -> void:
 	$PageHost/ProfilePage/StatsCard/Cultivation.max_value = maxf(float(threshold), 1.0)
 	$PageHost/ProfilePage/StatsCard/Cultivation.value = 0.0 if max_realm_reached else clampi(cultivation_xp, 0, threshold)
 	if max_realm_reached:
-		$PageHost/ProfilePage/StatsCard/CultivationText.text = "Tu vi • đã đạt cảnh giới cao nhất"
+		$PageHost/ProfilePage/StatsCard/CultivationText.text = tr("Tu vi • đã đạt cảnh giới cao nhất")
 	else:
-		$PageHost/ProfilePage/StatsCard/CultivationText.text = "Tu vi • %d / %d XP" % [cultivation_xp, threshold]
+		$PageHost/ProfilePage/StatsCard/CultivationText.text = tr("Tu vi • %d / %d XP") % [cultivation_xp, threshold]
 
 	var hp := int(profile.get("hp", 100))
 	$PageHost/ProfilePage/StatsCard/Health.max_value = 100
 	$PageHost/ProfilePage/StatsCard/Health.value = clampi(hp, 0, 100)
-	$PageHost/ProfilePage/StatsCard/HealthText.text = "Sinh lực • %d / 100" % hp
+	$PageHost/ProfilePage/StatsCard/HealthText.text = tr("Sinh lực • %d / 100") % hp
 	var weapon := _equipped_item("weapon")
 	var armor := _equipped_item("armor")
 	var weapon_definition := _definition_for(weapon)
 	var armor_definition := _definition_for(armor)
 	var attack_bonus := int(weapon_definition.get("attackBonus", 0))
 	var defense_bonus := int(armor_definition.get("defenseBonus", 0))
-	$PageHost/ProfilePage/StatsCard/Attack.text = "Công kích • %d" % (16 + attack_bonus)
-	$PageHost/ProfilePage/StatsCard/Defense.text = "Phòng ngự • %d" % (5 + defense_bonus)
-	$PageHost/ProfilePage/StatsCard/Stones.text = "Linh thạch • %d" % int(profile.get("spiritStones", 0))
+	$PageHost/ProfilePage/StatsCard/Attack.text = tr("Công kích • %d") % (16 + attack_bonus)
+	$PageHost/ProfilePage/StatsCard/Defense.text = tr("Phòng ngự • %d") % (5 + defense_bonus)
+	$PageHost/ProfilePage/StatsCard/Stones.text = tr("Linh thạch • %d") % int(profile.get("spiritStones", 0))
 	_set_equipment_slot("WeaponSlot", "Kiếm", weapon, weapon_definition, "attackBonus", "Công kích")
 	_set_equipment_slot("ArmorSlot", "Áo", armor, armor_definition, "defenseBonus", "Phòng ngự")
 	_render_skills()
@@ -175,16 +186,16 @@ func _set_equipment_slot(node_name: String, slot_title: String, item: Dictionary
 	var bonus_label: Label = slot.get_node("Bonus")
 	if item.is_empty():
 		icon.texture = null
-		name_label.text = slot_title + " • Chưa trang bị"
-		bonus_label.text = "Mở Túi đồ để chọn " + slot_title.to_lower()
+		name_label.text = tr("%s • Chưa trang bị") % tr(slot_title)
+		bonus_label.text = tr("Mở Túi đồ để chọn %s") % tr(slot_title)
 		return
 	var item_id := str(item.get("itemId", ""))
 	var fallback: Array = Visuals.definition(item_id)
-	var item_name := str(definition.get("name", fallback[0]))
+	var item_name := tr(str(definition.get("name", fallback[0])))
 	var bonus := int(definition.get(bonus_key, 0))
 	icon.texture = Visuals.icon(item_id)
 	name_label.text = item_name
-	bonus_label.text = "%s +%d" % [bonus_title, bonus] if bonus > 0 else slot_title + " đang mặc"
+	bonus_label.text = tr("%s +%d") % [tr(bonus_title), bonus] if bonus > 0 else tr("%s đang mặc") % tr(slot_title)
 
 func _set_skill_definitions(definitions: Array) -> void:
 	skill_definitions = definitions.duplicate(true)
@@ -204,9 +215,9 @@ func _render_skills() -> void:
 	var equipped: Dictionary = profile.get("equippedSkills", {"active_1": ""})
 	var active_id := str(equipped.get("active_1", ""))
 	var active_definition: Dictionary = skill_catalog.get(active_id, {})
-	var active_name := str(active_definition.get("name", active_id))
+	var active_name := tr(str(active_definition.get("name", active_id)))
 	$PageHost/SkillsPage/SkillLoadoutCard/EquippedSkill.text = (
-		"Ô R • Chưa trang bị kỹ năng" if active_id.is_empty() else "Ô R • " + active_name)
+		tr("Ô R • Chưa trang bị kỹ năng") if active_id.is_empty() else tr("Ô R • %s") % active_name)
 	$PageHost/SkillsPage/SkillLoadoutCard/RemoveSkill.disabled = (
 		active_id.is_empty() or preview_mode or loading)
 	var first_skill := ""
@@ -221,10 +232,11 @@ func _render_skills() -> void:
 		var is_learned := learned.has(skill_id)
 		var is_equipped := active_id == skill_id
 		var button := Button.new()
-		button.text = ("[R] " if is_equipped else "") + str(definition.get("name", skill_id))
+		var skill_name := tr(str(definition.get("name", skill_id)))
+		button.text = (tr("[R] %s") % skill_name) if is_equipped else skill_name
 		if not is_learned:
 			button.text += " • Chưa mở"
-		button.tooltip_text = str(definition.get("description", ""))
+		button.tooltip_text = tr(str(definition.get("description", "")))
 		button.custom_minimum_size = Vector2(0, 30)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.pressed.connect(_select_skill.bind(skill_id))
@@ -254,15 +266,15 @@ func _render_skill_detail() -> void:
 	var is_learned := learned.has(selected_skill_id)
 	var is_equippable := str(definition.get("equipSlot", "")) == "active_1"
 	var is_equipped := str(equipped.get("active_1", "")) == selected_skill_id
-	$PageHost/SkillsPage/SkillDetail/Name.text = str(definition.get("name", selected_skill_id))
+	$PageHost/SkillsPage/SkillDetail/Name.text = tr(str(definition.get("name", selected_skill_id)))
 	$PageHost/SkillsPage/SkillDetail/Meta.text = "ĐÃ HỌC" if is_learned else "CHƯA MỞ KHÓA"
-	$PageHost/SkillsPage/SkillDetail/Description.text = str(definition.get("description", ""))
+	$PageHost/SkillsPage/SkillDetail/Description.text = tr(str(definition.get("description", "")))
 	if not is_learned:
-		$PageHost/SkillsPage/SkillDetail/Status.text = str(definition.get("unlockText", "Hoàn thành nhiệm vụ để mở kỹ năng."))
+		$PageHost/SkillsPage/SkillDetail/Status.text = tr(str(definition.get("unlockText", "Hoàn thành nhiệm vụ để mở kỹ năng.")))
 	elif not is_equippable:
-		$PageHost/SkillsPage/SkillDetail/Status.text = "Kỹ năng hỗ trợ • tự dùng trong nhiệm vụ, không chiếm ô R."
+		$PageHost/SkillsPage/SkillDetail/Status.text = tr("Kỹ năng hỗ trợ • tự dùng trong nhiệm vụ, không chiếm ô R.")
 	else:
-		$PageHost/SkillsPage/SkillDetail/Status.text = "Ô R • hồi chiêu 1,8 giây • dùng khi săn quái trên bản đồ."
+		$PageHost/SkillsPage/SkillDetail/Status.text = tr("Ô R • hồi chiêu 1,8 giây • dùng khi săn quái trên bản đồ.")
 	if not is_learned:
 		equip_button.text = "Chưa mở khóa"
 	elif not is_equippable:
@@ -294,7 +306,7 @@ func _equip_skill(skill_id: String) -> void:
 	loading = false
 	$Refresh.disabled = false
 	if result.has("error"):
-		$PageHost/SkillsPage/SkillDetail/Status.text = "Chưa trang bị được • " + str(result.error)
+		$PageHost/SkillsPage/SkillDetail/Status.text = tr("Chưa trang bị được • %s") % tr(str(result.error))
 		_render_skills()
 		return
 	profile = result.get("profile", profile).duplicate(true)
@@ -310,6 +322,7 @@ func _load_settings() -> void:
 		touch_layout_enabled = bool(config.get_value("controls", "touch_layout", OS.has_feature("mobile")))
 	else:
 		touch_layout_enabled = OS.has_feature("mobile")
+	$PageHost/SettingsPage/SettingsCard/Language.select(0 if LanguageManager.get_locale() == "vi" else 1)
 	$PageHost/SettingsPage/SettingsCard/Volume.set_value(master_volume)
 	$PageHost/SettingsPage/SettingsCard/VolumeValue.text = "%d%%" % roundi(master_volume * 100.0)
 	$PageHost/SettingsPage/SettingsCard/Fullscreen.set_pressed_no_signal(fullscreen_enabled)
@@ -317,12 +330,32 @@ func _load_settings() -> void:
 
 func _save_settings() -> void:
 	var config := ConfigFile.new()
+	config.load(SETTINGS_PATH)
 	config.set_value("audio", "master", master_volume)
 	config.set_value("display", "fullscreen", fullscreen_enabled)
 	config.set_value("controls", "touch_layout", touch_layout_enabled)
+	config.set_value("general", "language", LanguageManager.get_locale())
 	var status := config.save(SETTINGS_PATH)
 	if status != OK:
 		$PageHost/SettingsPage/SettingsCard/SettingsNote.text = "Không lưu được cài đặt trên thiết bị này."
+
+func _on_language_selected(index: int) -> void:
+	var selector: OptionButton = $PageHost/SettingsPage/SettingsCard/Language
+	LanguageManager.set_locale(str(selector.get_item_metadata(index)))
+	_save_settings()
+
+func _on_language_changed(locale: String) -> void:
+	if not is_node_ready():
+		return
+	$PageHost/SettingsPage/SettingsCard/Language.select(0 if locale == "vi" else 1)
+	if preview_mode:
+		$DataState.text = tr("BẢN XEM THỬ • OFFLINE • KHÔNG PHẢI DỮ LIỆU TÀI KHOẢN")
+	elif loading:
+		$DataState.text = tr("ĐANG TẢI HỒ SƠ TỪ MÁY CHỦ…")
+	else:
+		$DataState.text = tr("DỮ LIỆU NHÂN VẬT • ĐÃ ĐỒNG BỘ TỪ MÁY CHỦ")
+	_render_profile()
+	_render_skills()
 
 func _on_volume_changed(value: float) -> void:
 	master_volume = clampf(value, 0.0, 1.0)

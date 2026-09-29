@@ -53,7 +53,7 @@ func set_focused(focused: bool) -> void:
 	title_label.visible = focused
 
 func prompt_text() -> String:
-	return "E / Chạm  •  " + action_label
+	return tr("E / Chạm  •  %s") % tr(action_label)
 
 func _process(delta: float) -> void:
 	_animation_clock += delta

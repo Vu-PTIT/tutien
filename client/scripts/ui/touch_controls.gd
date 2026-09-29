@@ -20,6 +20,7 @@ var _field_action_label := "Đánh"
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	LanguageManager.locale_changed.connect(_on_language_changed)
 	$Interact.pressed.connect(func() -> void: action_requested.emit("interact"))
 	$Attack.pressed.connect(func() -> void: action_requested.emit("attack"))
 	$Dodge.pressed.connect(func() -> void: action_requested.emit("dodge"))
@@ -57,10 +58,10 @@ func set_field_combat_mode(enabled: bool, action_label: String = "Đánh") -> vo
 	_field_action_label = action_label
 	$Interact.visible = true
 	$Attack.visible = enabled
-	$Attack.text = action_label if enabled else "Đánh"
+	$Attack.text = tr(action_label) if enabled else tr("Đánh")
 	$Dodge.visible = false
 	$Skill.visible = enabled and not equipped_skill_id.is_empty()
-	$Skill.text = equipped_skill_name
+	$Skill.text = tr(equipped_skill_name)
 	$Skill.position = Vector2(548.0, 204.0)
 	$Skill.size = Vector2(80.0, 54.0)
 	$Interact.position = Vector2(468.0, 208.0) if enabled else Vector2(548.0, 268.0)
@@ -72,7 +73,12 @@ func set_equipped_skill(skill_id: String, skill_name: String) -> void:
 	equipped_skill_name = skill_name
 	if _field_combat_mode:
 		$Skill.visible = not equipped_skill_id.is_empty()
-		$Skill.text = equipped_skill_name
+		$Skill.text = tr(equipped_skill_name)
+
+func _on_language_changed(_locale: String) -> void:
+	if _field_combat_mode:
+		$Attack.text = tr(_field_action_label) if $Attack.visible else tr("Đánh")
+		$Skill.text = tr(equipped_skill_name)
 
 func clear_input() -> void:
 	direction = Vector2.ZERO

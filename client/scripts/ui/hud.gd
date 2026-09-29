@@ -6,11 +6,23 @@ var toast_time: float = 0.0
 var touch_layout: bool = false
 var equipped_skill_id: String = ""
 var phi_ren_icon: Texture2D
+var _last_weather_state: Dictionary = {}
+var _last_map_data: Dictionary = {}
+var _last_profile: Dictionary = {}
+var _last_prompt := ""
+var _last_position := Vector2.ZERO
+var _last_map_size := Vector2(640, 360)
+var _last_tile_size := 32
+var _last_area_name := ""
+var _last_notification := ""
+var _last_notification_key := ""
+var _last_notification_args: Array = []
 
 @onready var touch_controls: TouchControls = $TouchControls
 @onready var character_panel: CharacterPanel = $CharacterPanel
 
 func _ready() -> void:
+	LanguageManager.locale_changed.connect(_on_language_changed)
 	$WeatherInfo/EffectsToggle.toggled.connect(func(enabled: bool) -> void: weather_flash_reduced_changed.emit(enabled))
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
 	$MapButton.pressed.connect(func() -> void: action_requested.emit("map"))
@@ -74,23 +86,42 @@ func set_touch_layout(enabled: bool) -> void:
 	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible)
 
 func notify(message: String) -> void:
-	$Toast/Message.text = message
+	_last_notification = message
+	_last_notification_key = ""
+	_last_notification_args.clear()
+	_render_notification()
 	$Toast/Message.clip_text = true
 	$Toast.show()
 	toast_time = 4.0
 
+func notify_format(template: String, arguments: Array) -> void:
+	_last_notification = ""
+	_last_notification_key = template
+	_last_notification_args = arguments.duplicate(true)
+	_render_notification()
+	$Toast/Message.clip_text = true
+	$Toast.show()
+	toast_time = 4.0
+
+func _render_notification() -> void:
+	if not _last_notification_key.is_empty():
+		$Toast/Message.text = LanguageManager.format_message(_last_notification_key, _last_notification_args)
+	else:
+		$Toast/Message.text = LanguageManager.translate_message(_last_notification)
+
 func set_weather(state: Dictionary) -> void:
-	$WeatherInfo/Time.text = "%s • %s" % [
-		str(state.get("time_text", "08:00")), str(state.get("phase_label", "BAN NGÀY"))
+	_last_weather_state = state.duplicate(true)
+	$WeatherInfo/Time.text = tr("%s • %s") % [
+		str(state.get("time_text", "08:00")), tr(str(state.get("phase_label", "BAN NGÀY")))
 	]
-	$WeatherInfo/Condition.text = str(state.get("condition_label", "TRỜI QUANG"))
+	$WeatherInfo/Condition.text = tr(str(state.get("condition_label", "TRỜI QUANG")))
 	var weather := str(state.get("weather", "clear"))
 	match weather:
 		"rain": $WeatherInfo/Condition.modulate = Color("c5e4f5")
 		"storm": $WeatherInfo/Condition.modulate = Color("b7cced")
 		_: $WeatherInfo/Condition.modulate = Color("ffe5a6") if not bool(state.get("is_night", false)) else Color("d3def8")
-	$WeatherInfo.tooltip_text = "%s • %s. Ngày trong game kéo dài 24 phút; thời tiết vẫn tiếp diễn cả ban đêm." % [
-		str(state.get("phase_label", "BAN NGÀY")), str(state.get("condition_label", "TRỜI QUANG"))
+	$WeatherInfo.tooltip_text = tr("%s • %s. Ngày trong game kéo dài 24 phút; thời tiết vẫn tiếp diễn cả ban đêm.") % [
+		tr(str(state.get("phase_label", "BAN NGÀY"))), tr(str(state.get("condition_label", "TRỜI QUANG")))
 	]
 
 func set_weather_flashes_reduced(enabled: bool) -> void:
@@ -99,14 +130,15 @@ func set_weather_flashes_reduced(enabled: bool) -> void:
 	toggle.tooltip_text = "Đang giảm nháy sấm sét" if enabled else "Giảm nháy sáng và âm thanh sấm sét"
 
 func configure_map(map_data: Dictionary) -> void:
+	_last_map_data = map_data.duplicate(true)
 	var preview_path := str(map_data.get("preview", ""))
 	var texture: Texture2D = load(preview_path) if not preview_path.is_empty() else null
 	var authored_map := _build_authored_minimap(map_data)
 	$Minimap/Map.texture = authored_map if authored_map != null else texture
 	$Minimap/Map.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	$Location/Title.text = str(map_data.get("name", "Map")).to_upper()
-	$Location/State.text = str(map_data.get("summary", ""))
-	$Minimap/Coordinates.tooltip_text = str(map_data.get("name", "Map"))
+	$Location/Title.text = tr(str(map_data.get("name", "Map"))).to_upper()
+	$Location/State.text = tr(str(map_data.get("summary", "")))
+	$Minimap/Coordinates.tooltip_text = tr(str(map_data.get("name", "Map")))
 
 func _build_authored_minimap(data: Dictionary) -> ImageTexture:
 	var layout_path := str(GameMap.MAP_LAYOUTS.get(str(data.get("id", "")), ""))
@@ -161,6 +193,7 @@ func _build_authored_minimap(data: Dictionary) -> ImageTexture:
 	return ImageTexture.create_from_image(image)
 
 func set_interaction_prompt(message: String) -> void:
+	_last_prompt = message
 	$InteractionHint/Message.text = message
 	$InteractionHint.visible = not message.is_empty()
 
@@ -169,6 +202,10 @@ func update_position(
 		map_size_px: Vector2 = Vector2(640, 360),
 		tile_size_px: int = 32,
 		area_name: String = "") -> void:
+	_last_position = point
+	_last_map_size = map_size_px
+	_last_tile_size = tile_size_px
+	_last_area_name = area_name
 	var map_view: TextureRect = $Minimap/Map
 	var marker: ColorRect = $Minimap/Marker
 	var travel := (map_view.size - marker.size).max(Vector2.ZERO)
@@ -181,15 +218,16 @@ func update_position(
 		int(point.x / maxi(tile_size_px, 1)), int(point.y / maxi(tile_size_px, 1))
 	]
 	$Minimap/Coordinates.text = coordinates
-	$Minimap/Coordinates.tooltip_text = "%s • %s" % [area_name, coordinates] if not area_name.is_empty() else coordinates
+	$Minimap/Coordinates.tooltip_text = (tr("%s • %s") % [tr(area_name), coordinates]) if not area_name.is_empty() else coordinates
 
 func set_health(hp: int) -> void:
 	$Vitals/HP.value = clampi(hp, 0, 100)
 	$Vitals/HPText.text = "%d / 100" % hp
 
 func apply_profile(profile: Dictionary) -> void:
+	_last_profile = profile.duplicate(true)
 	var realm := str(profile.get("realm", "mortal"))
-	$Vitals/Realm.text = "PHÀM NHÂN" if realm == "mortal" else "LUYỆN KHÍ • %d" % int(profile.get("realmStage", 1))
+	$Vitals/Realm.text = tr("PHÀM NHÂN") if realm == "mortal" else tr("LUYỆN KHÍ • %d") % int(profile.get("realmStage", 1))
 	set_health(int(profile.get("hp", 100)))
 	if realm == "luyen_khi":
 		var thresholds := [300, 600, 1000]
@@ -198,16 +236,31 @@ func apply_profile(profile: Dictionary) -> void:
 		var xp := int(profile.get("cultivationXp", 0))
 		$Vitals/Qi.max_value = capacity
 		$Vitals/Qi.value = clampi(xp, 0, capacity)
-		$Vitals/QiText.text = ("Tu vi • %d / %d XP" % [xp, capacity]) if stage < 4 else "Tu vi • đã đạt cảnh giới cao nhất"
+		$Vitals/QiText.text = (tr("Tu vi • %d / %d XP") % [xp, capacity]) if stage < 4 else tr("Tu vi • đã đạt cảnh giới cao nhất")
 	else:
 		$Vitals/Qi.max_value = 100
 		$Vitals/Qi.value = clampi(int(profile.get("cultivationXp", 0)), 0, 100)
-		$Vitals/QiText.text = "Đột phá đầu tiên • %d / 100 XP" % int(profile.get("cultivationXp", 0))
+		$Vitals/QiText.text = tr("Đột phá đầu tiên • %d / 100 XP") % int(profile.get("cultivationXp", 0))
 	var equipped_skills: Dictionary = profile.get("equippedSkills", {"active_1": ""})
 	equipped_skill_id = str(equipped_skills.get("active_1", ""))
 	var skill_name := "Phi Nhận" if equipped_skill_id == "sk_phi_nhan" else "Kỹ năng"
 	$Hotbar/Slot4.modulate = Color.WHITE if not equipped_skill_id.is_empty() else Color(0.6, 0.6, 0.6)
-	$Hotbar/Slot4.tooltip_text = "R: " + skill_name + " • dùng khi săn quái trên bản đồ." if not equipped_skill_id.is_empty() else "R: trang bị Phi Nhận trong Nhân vật > Kỹ năng."
+	$Hotbar/Slot4.tooltip_text = (tr("R: %s • dùng khi săn quái trên bản đồ.") % tr(skill_name)) if not equipped_skill_id.is_empty() else tr("R: trang bị Phi Nhận trong Nhân vật > Kỹ năng.")
 	$Hotbar/Slot4.icon = phi_ren_icon if equipped_skill_id == "sk_phi_nhan" else null
 	$Hotbar/Slot4.text = "" if equipped_skill_id == "sk_phi_nhan" else "—"
 	touch_controls.set_equipped_skill(equipped_skill_id, skill_name)
+
+func _on_language_changed(_locale: String) -> void:
+	if not is_node_ready():
+		return
+	if not _last_weather_state.is_empty():
+		set_weather(_last_weather_state)
+	if not _last_map_data.is_empty():
+		configure_map(_last_map_data)
+	if not _last_profile.is_empty():
+		apply_profile(_last_profile)
+	if not _last_prompt.is_empty():
+		set_interaction_prompt(_last_prompt)
+	update_position(_last_position, _last_map_size, _last_tile_size, _last_area_name)
+	if not _last_notification.is_empty() or not _last_notification_key.is_empty():
+		_render_notification()

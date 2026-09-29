@@ -18,6 +18,16 @@ config/name="Tu Tien — Prototype"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 
+[autoload]
+
+LanguageManager="*res://scripts/language_manager.gd"
+
+[internationalization]
+
+locale/fallback="vi"
+locale/translations=PackedStringArray("res://translations/game.csv")
+rendering/root_node_auto_translate=true
+
 [display]
 
 window/size/viewport_width=640
