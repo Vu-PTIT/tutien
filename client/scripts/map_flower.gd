@@ -2,7 +2,7 @@ class_name MapFlower
 extends Area2D
 ## Low vegetation that reacts to the player's feet and springs back.
 
-const FLOWER_VARIANTS: Texture2D = preload("res://assets/pixel/props/generated/an_khe_interactables/flowers/sheet-transparent.png")
+const FLOWER_VARIANTS: Texture2D = preload("res://assets/pixel/props/generated/an_khe_interactables/flowers_v2/sheet-transparent.png")
 const CELL_SIZE := 64
 
 @onready var sprite: Sprite2D = $Sprite

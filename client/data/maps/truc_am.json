@@ -121,6 +121,35 @@
       "position_tiles": [3.5, 27],
       "tile": 40,
       "depth_policy": "below_actors"
+    },
+    {
+      "name": "ta_detail_spirit_mushrooms",
+      "position_tiles": [6, 6],
+      "texture_path": "res://assets/pixel/props/generated/world_detail_pack_v1/props/spirit_mushrooms.png",
+      "scale_tiles": [0.4, 0.4],
+      "foot_padding_px": 5,
+      "art_role": "small_environmental_detail"
+    },
+    {
+      "name": "ta_detail_bamboo_shoots",
+      "position_tiles": [41, 18],
+      "texture_path": "res://assets/pixel/props/generated/world_detail_pack_v1/props/bamboo_shoots.png",
+      "scale_tiles": [0.4, 0.4],
+      "foot_padding_px": 5,
+      "art_role": "small_environmental_detail"
+    },
+    {
+      "name": "ta_detail_river_pebbles",
+      "position_tiles": [42, 22],
+      "texture_path": "res://assets/pixel/props/generated/world_detail_pack_v1/props/pebble_cluster.png",
+      "scale_tiles": [0.4, 0.4],
+      "foot_padding_px": 5,
+      "art_role": "small_environmental_detail"
     }
-  ]
+  ],
+  "ground_surface_atlas": "res://assets/pixel/terrain/generated/world_surfaces_v3/truc_am/surface_atlas.png",
+  "ground_surface_tile_px": 32,
+  "ground_surface_columns": 48,
+  "ground_surface_rows": 36,
+  "ground_surface_terrain_ids": [0, 1, 8, 9]
 }

@@ -187,6 +187,61 @@
         17
       ],
       "texture_path": "res://assets/pixel/props/thach_can_flow_pillar.png"
+    },
+    {
+      "name": "tc_detail_ore_nugget",
+      "position_tiles": [
+        40,
+        4
+      ],
+      "texture_path": "res://assets/pixel/props/generated/world_detail_pack_v1/props/ochre_ore_nugget.png",
+      "scale_tiles": [
+        0.4,
+        0.4
+      ],
+      "foot_padding_px": 5,
+      "art_role": "small_environmental_detail"
+    },
+    {
+      "name": "tc_detail_pebble_cluster",
+      "position_tiles": [
+        18,
+        5
+      ],
+      "texture_path": "res://assets/pixel/props/generated/world_detail_pack_v1/props/pebble_cluster.png",
+      "scale_tiles": [
+        0.4,
+        0.4
+      ],
+      "foot_padding_px": 5,
+      "art_role": "small_environmental_detail"
+    },
+    {
+      "name": "tc_detail_leafy_branch",
+      "position_tiles": [
+        19,
+        30
+      ],
+      "texture_path": "res://assets/pixel/props/generated/world_detail_pack_v1/props/leafy_branch.png",
+      "scale_tiles": [
+        0.4,
+        0.4
+      ],
+      "foot_padding_px": 5,
+      "art_role": "small_environmental_detail"
     }
+  ],
+  "ground_surface_atlas": "res://assets/pixel/terrain/generated/world_surfaces_v3/thach_can/surface_atlas.png",
+  "ground_surface_tile_px": 32,
+  "ground_surface_columns": 48,
+  "ground_surface_rows": 36,
+  "ground_surface_terrain_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
   ]
 }

@@ -122,9 +122,12 @@ func _build_authored_tile_layers() -> bool:
 	if tile_set == null:
 		return false
 	var atlas_columns := maxi(int(layout.get("atlas_columns", 8)), 1)
-	var meadow_source_id := _ensure_meadow_atlas_source(tile_set, layout)
-	var meadow_columns := maxi(int(layout.get("meadow_atlas_columns", 16)), 1)
-	var meadow_rows := maxi(int(layout.get("meadow_atlas_rows", 16)), 1)
+	var surface_source_id := _ensure_ground_surface_atlas_source(tile_set, layout)
+	var surface_columns := maxi(int(layout.get("ground_surface_columns", map_size_tiles.x)), 1)
+	var surface_rows := maxi(int(layout.get("ground_surface_rows", map_size_tiles.y)), 1)
+	var surface_terrain_ids: Dictionary = {}
+	for terrain_id: Variant in layout.get("ground_surface_terrain_ids", []):
+		surface_terrain_ids[int(terrain_id)] = true
 	var transition_layout: Dictionary = layout.get("terrain_transitions", {})
 	var transition_source_id := _ensure_transition_atlas_source(tile_set, transition_layout)
 	var transition_columns := maxi(int(transition_layout.get("columns", 4)), 1)
@@ -169,10 +172,10 @@ func _build_authored_tile_layers() -> bool:
 			var source_id := 0
 			var source_columns := atlas_columns
 			var alternative_tile := int(terrain_cell_alternatives.get(cell, 0))
-			if meadow_source_id >= 0 and terrain_index >= 0 and terrain_index < 16:
-				tile_index = posmod(y, meadow_rows) * meadow_columns + posmod(x, meadow_columns)
-				source_id = meadow_source_id
-				source_columns = meadow_columns
+			if surface_source_id >= 0 and surface_terrain_ids.has(terrain_index):
+				tile_index = posmod(y, surface_rows) * surface_columns + posmod(x, surface_columns)
+				source_id = surface_source_id
+				source_columns = surface_columns
 			if not _set_atlas_cell(ground, cell, tile_index, source_columns, alternative_tile, source_id):
 				return false
 			if solid_tile_ids.has(terrain_index):
@@ -245,32 +248,32 @@ func _set_atlas_cell(layer: TileMapLayer, cell: Vector2i, tile_index: int, colum
 	layer.set_cell(cell, source_id, coords, alternative_tile)
 	return true
 
-func _ensure_meadow_atlas_source(tile_set: TileSet, layout: Dictionary) -> int:
-	var texture_path := str(layout.get("meadow_atlas", ""))
+func _ensure_ground_surface_atlas_source(tile_set: TileSet, layout: Dictionary) -> int:
+	var texture_path := str(layout.get("ground_surface_atlas", ""))
 	if texture_path.is_empty():
 		return -1
 	var texture := load(texture_path) as Texture2D
 	if texture == null:
-		push_error("Missing meadow atlas: " + texture_path)
+		push_error("Missing ground surface atlas: " + texture_path)
 		return -1
 	for index in range(tile_set.get_source_count()):
 		var source_id := tile_set.get_source_id(index)
 		var existing := tile_set.get_source(source_id) as TileSetAtlasSource
 		if existing != null and existing.texture == texture:
 			return source_id
-	var region_px := maxi(int(layout.get("meadow_atlas_tile_px", 32)), 1)
-	var columns := maxi(int(layout.get("meadow_atlas_columns", 16)), 1)
-	var rows := maxi(int(layout.get("meadow_atlas_rows", 16)), 1)
+	var region_px := maxi(int(layout.get("ground_surface_tile_px", tile_size_px)), 1)
+	var columns := maxi(int(layout.get("ground_surface_columns", map_size_tiles.x)), 1)
+	var rows := maxi(int(layout.get("ground_surface_rows", map_size_tiles.y)), 1)
 	if texture.get_width() != columns * region_px or texture.get_height() != rows * region_px:
-		push_error("Meadow atlas dimensions do not match its tile contract: " + texture_path)
+		push_error("Ground surface atlas dimensions do not match its tile contract: " + texture_path)
 		return -1
-	var meadow_source := TileSetAtlasSource.new()
-	meadow_source.texture = texture
-	meadow_source.texture_region_size = Vector2i(region_px, region_px)
+	var surface_source := TileSetAtlasSource.new()
+	surface_source.texture = texture
+	surface_source.texture_region_size = Vector2i(region_px, region_px)
 	for y in range(rows):
 		for x in range(columns):
-			meadow_source.create_tile(Vector2i(x, y))
-	return tile_set.add_source(meadow_source)
+			surface_source.create_tile(Vector2i(x, y))
+	return tile_set.add_source(surface_source)
 
 func _ensure_transition_atlas_source(tile_set: TileSet, transition_layout: Dictionary) -> int:
 	var texture_path := str(transition_layout.get("atlas", ""))

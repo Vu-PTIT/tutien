@@ -258,20 +258,36 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
     const tres=fs.readFileSync(tresPath,'utf8');
     assert.equal((tres.match(/\/0 = 0/g)||[]).length,64,'TileSet must expose 64 atlas cells: '+tresPath);
   }
+  const terrainTresText=fs.readFileSync(terrainTres,'utf8');
+  assert.ok(terrainTresText.includes('res://assets/pixel/terrain/'+name+'_terrain.png'),
+    'Runtime TileSet keeps its authored terrain cells: '+name);
   const layout=layoutByMapId.get('m_'+name);
   assert.equal(layout.props_cell_px,128, 'Props must retain 128 px source detail');
   assert.equal(layout.atlas_columns,8,'Terrain atlas must use 8 columns: '+name);
   assert.ok(layout.tile_set && Array.isArray(layout.ground_rows), 'Missing authored map layout data: '+name);
-  const expectedPropCount={an_khe:7,truc_am:1,thach_can:6,co_tinh:0}[name];
+  const expectedPropCount={an_khe:7,truc_am:4,thach_can:9,co_tinh:2}[name];
   assert.ok(layout.props_atlas && Array.isArray(layout.props) && layout.props.length===expectedPropCount, 'Map prop count matches its authored layout: '+name);
   for(const prop of layout.props) {
     if(prop.texture_path) {
       const assetPath=path.join(root,prop.texture_path.replace('res://',''));
       assert.ok(fs.existsSync(assetPath),'Missing standalone prop texture: '+prop.name);
       const png=fs.readFileSync(assetPath);
-      assert.equal(png.readUInt32BE(16),128,'Standalone map prop width: '+prop.name);
-      assert.equal(png.readUInt32BE(20),128,'Standalone map prop height: '+prop.name);
+      const expectedSourcePx=prop.art_role==='small_environmental_detail'?96:128;
+      assert.equal(png.readUInt32BE(16),expectedSourcePx,'Standalone map prop width: '+prop.name);
+      assert.equal(png.readUInt32BE(20),expectedSourcePx,'Standalone map prop height: '+prop.name);
       assert.equal(png[25],6,'Standalone map prop must have RGBA transparency: '+prop.name);
+      if(prop.art_role==='small_environmental_detail') {
+        const [x,y]=prop.position_tiles;
+        assert.ok(x>=0&&x<48&&y>=0&&y<35,'Small detail prop sits inside its map: '+prop.name);
+        assert.ok(Array.isArray(prop.scale_tiles)&&prop.scale_tiles.every(value=>value>0&&value<=0.5),
+          'Small detail prop uses a restrained world scale: '+prop.name);
+        const anchorX=Math.floor(x+0.5),anchorY=Math.floor(y+1.0);
+        const anchorTile=tileSymbols.indexOf(layout.ground_rows[anchorY][anchorX]);
+        assert.ok(!(layout.solid_tile_ids||[]).includes(anchorTile),
+          'Small detail prop anchor sits on walkable terrain: '+prop.name);
+        assert.ok(!(layout.solid_rects_tiles||[]).some(rect=>inRect(anchorX,anchorY,rect)),
+          'Small detail prop anchor clears authored blockers: '+prop.name);
+      }
     } else {
       assert.ok(Number.isInteger(prop.tile)&&prop.tile>=0&&prop.tile<64,'Atlas prop must reference a valid cell: '+prop.name);
     }
@@ -312,11 +328,10 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
   }
 }
 const anKheLayout=JSON.parse(read('data/maps/an_khe.json'));
-const meadowAtlas=fs.readFileSync(path.join(root,'assets/pixel/terrain/an_khe_meadow_base.png'));
-assert.equal(meadowAtlas.readUInt32BE(16),512,'An Khê continuous meadow texture is a 16×16 tile atlas');
-assert.equal(meadowAtlas.readUInt32BE(20),512,'An Khê continuous meadow texture is a 16×16 tile atlas');
+assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/an_khe_meadow_base.png')),
+  'Generated meadow foundation remains available as source art');
 assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/an_khe_meadow_base.prompt.txt')),
-  'Generated meadow foundation keeps its prompt provenance');
+  'Meadow foundation keeps its original prompt provenance');
 const transitionAtlas=fs.readFileSync(path.join(root,'assets/pixel/terrain/terrain_transition_decals.png'));
 assert.equal(transitionAtlas.readUInt32BE(16),384,'Terrain transition atlas has twelve 32 px columns');
 assert.equal(transitionAtlas.readUInt32BE(20),256,'Terrain transition atlas has eight 32 px rows');
@@ -345,10 +360,22 @@ assert.ok(fs.existsSync(path.join(root,'..','scripts/build_terrain_transition_de
   'Transparent transition decals can be rebuilt from the generated tile atlas');
 assert.ok(fs.existsSync(path.join(root,'..','scripts/build_an_khe_river_shore_overlay.py')),
   'Continuous river shore can be rebuilt along its authored curve');
-assert.equal(anKheLayout.meadow_atlas,'res://assets/pixel/terrain/an_khe_meadow_base.png');
-assert.equal(anKheLayout.meadow_atlas_tile_px,32);
-assert.equal(anKheLayout.meadow_atlas_columns,16);
-assert.equal(anKheLayout.meadow_atlas_rows,16);
+const expectedSurfaceIds={an_khe:Array.from({length:16},(_,index)=>index),truc_am:[0,1,8,9],thach_can:[0,1,2,3,4,5,6],co_tinh:[0,1,2,3,4,5]};
+for(const area of Object.keys(expectedSurfaceIds)) {
+  const layout=JSON.parse(read(`data/maps/${area}.json`));
+  assert.equal(layout.ground_surface_atlas,`res://assets/pixel/terrain/generated/world_surfaces_v3/${area}/surface_atlas.png`,`${area} points at its map-wide pixel surface`);
+  assert.equal(layout.ground_surface_tile_px,32,`${area} ground surface keeps the 32 px world grid`);
+  assert.equal(layout.ground_surface_columns,48,`${area} surface has one unique tile for every map column`);
+  assert.equal(layout.ground_surface_rows,36,`${area} surface has one unique tile for every map row`);
+  assert.deepEqual(layout.ground_surface_terrain_ids,expectedSurfaceIds[area],`${area} replaces only its base-ground material IDs`);
+  const atlasPath=path.join(root,`assets/pixel/terrain/generated/world_surfaces_v3/${area}/surface_atlas.png`);
+  const atlas=fs.readFileSync(atlasPath);
+  assert.equal(atlas.readUInt32BE(16),1536,`${area} surface spans the 48 tile map width`);
+  assert.equal(atlas.readUInt32BE(20),1152,`${area} surface spans the 36 tile map height`);
+  assert.ok(fs.existsSync(path.join(root,`assets/pixel/terrain/generated/world_surfaces_v3/${area}/surface_atlas-meta.json`)),`${area} surface keeps palette/build metadata`);
+}
+assert.ok(fs.existsSync(path.join(root,'..','scripts/build_pixel_world_terrain.py')),
+  'All biome surfaces can be regenerated from the authored pixel-cluster builder');
 assert.equal(anKheLayout.terrain_transitions.atlas,'res://assets/pixel/terrain/terrain_transition_decals.png');
 assert.equal(anKheLayout.terrain_transitions.columns,12);
 assert.equal(anKheLayout.terrain_transitions.rows,8);
@@ -455,7 +482,7 @@ assert.ok(gameMap.includes('var enclosed_path_gaps: Array[Vector2i] = []')&&game
   'Path junctions fill one-cell grass gaps so the dirt network stays continuous');
 assert.ok(gameMap.includes('_encode_ground_rows(tile_rows)')&&main.includes('hud.configure_map(map_world.map_data)')&&hudScript.includes('runtime_ground_rows'),
   'Runtime river and path autoterrain also appears on the minimap');
-assert.ok(gameMap.includes('_ensure_meadow_atlas_source')&&gameMap.includes('terrain_index < 16'),'Grass tiles sample the connected meadow atlas by world coordinates');
+assert.ok(gameMap.includes('_ensure_ground_surface_atlas_source')&&gameMap.includes('surface_terrain_ids.has(terrain_index)'),'Base ground samples a unique map-wide surface tile while paths and props keep their own atlas art');
 assert.ok(gameMap.includes('_build_resource_objects(layout)')&&gameMap.includes('try_chop_tree'),'Map loads interactive resource objects from data');
 assert.ok(resourceTree.includes('func chop()')&&resourceTree.includes('_finish_felling')&&resourceTree.includes('collision_layer = 0'),
   'Harvestable tree advances through hit states, falls, then releases its blocker');

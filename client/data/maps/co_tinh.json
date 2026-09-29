@@ -153,5 +153,46 @@
     38,
     39
   ],
-  "props": []
+  "props": [
+    {
+      "name": "ct_detail_mossy_broken_brick",
+      "position_tiles": [
+        9,
+        5
+      ],
+      "texture_path": "res://assets/pixel/props/generated/world_detail_pack_v1/props/mossy_broken_brick.png",
+      "scale_tiles": [
+        0.4,
+        0.4
+      ],
+      "foot_padding_px": 5,
+      "art_role": "small_environmental_detail"
+    },
+    {
+      "name": "ct_detail_rune_fragment",
+      "position_tiles": [
+        27,
+        21
+      ],
+      "texture_path": "res://assets/pixel/props/generated/world_detail_pack_v1/props/rune_fragment.png",
+      "scale_tiles": [
+        0.4,
+        0.4
+      ],
+      "foot_padding_px": 5,
+      "art_role": "small_environmental_detail"
+    }
+  ],
+  "ground_surface_atlas": "res://assets/pixel/terrain/generated/world_surfaces_v3/co_tinh/surface_atlas.png",
+  "ground_surface_tile_px": 32,
+  "ground_surface_columns": 48,
+  "ground_surface_rows": 36,
+  "ground_surface_terrain_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ]
 }

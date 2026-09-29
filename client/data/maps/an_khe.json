@@ -282,14 +282,14 @@
       {
         "id": "ak.flower.pink_01",
         "position_tiles": [15.0, 22.0],
-        "variant": 0,
+        "variant": 1,
         "sprite_scale": 0.88,
         "stomp_radius_px": 16
       },
       {
         "id": "ak.flower.gold_01",
         "position_tiles": [17.0, 20.5],
-        "variant": 1,
+        "variant": 3,
         "sprite_scale": 0.84,
         "stomp_radius_px": 15
       },
@@ -303,14 +303,15 @@
       {
         "id": "ak.flower.violet_01",
         "position_tiles": [20.0, 24.5],
-        "variant": 3,
+        "variant": 0,
         "sprite_scale": 0.86,
         "stomp_radius_px": 16
       }
     ]
   },
-  "meadow_atlas": "res://assets/pixel/terrain/an_khe_meadow_base.png",
-  "meadow_atlas_tile_px": 32,
-  "meadow_atlas_columns": 16,
-  "meadow_atlas_rows": 16
+  "ground_surface_atlas": "res://assets/pixel/terrain/generated/world_surfaces_v3/an_khe/surface_atlas.png",
+  "ground_surface_tile_px": 32,
+  "ground_surface_columns": 48,
+  "ground_surface_rows": 36,
+  "ground_surface_terrain_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 }
