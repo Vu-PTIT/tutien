@@ -111,6 +111,9 @@ func _normalize_locale(locale: String) -> String:
 	return "en" if locale.to_lower().begins_with("en") else "vi"
 
 func _apply_locale() -> void:
+	var scene_tree := get_tree()
+	if scene_tree != null:
+		scene_tree.root.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_ALWAYS
 	TranslationServer.set_locale(_locale)
 
 func _save_locale() -> void:

@@ -6,6 +6,7 @@ var failures := 0
 var language_manager: Variant
 
 func _initialize() -> void:
+	root.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_ALWAYS
 	language_manager = root.get_node_or_null("LanguageManager")
 	if language_manager == null:
 		language_manager = load("res://scripts/language_manager.gd").new()
@@ -38,7 +39,7 @@ func _run() -> void:
 
 	language_manager.set_locale("en", false)
 	await process_frame
-	check(character_title.text == "CHARACTER", "English scene title switches at runtime")
+	check(character_title.text == "CHARACTER", "English scene title switches at runtime: " + character_title.text)
 	check(attack_label.text == "Attack • 16", "English runtime combat stats switch at runtime")
 	check(character.get_node("PageHost/SettingsPage/SettingsCard/Language").selected == 1,
 		"Language selector tracks the active English locale")
