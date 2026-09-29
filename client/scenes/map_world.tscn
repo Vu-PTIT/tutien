@@ -15,6 +15,13 @@ visible = false
 [node name="GroundLayer" type="TileMapLayer" parent="WorldLayers"]
 texture_filter = 1
 
+[node name="WaterLayer" type="TileMapLayer" parent="WorldLayers"]
+texture_filter = 1
+
+[node name="ShoreLayer" type="TileMapLayer" parent="WorldLayers"]
+texture_filter = 1
+z_index = 1
+
 [node name="DetailLayer" type="TileMapLayer" parent="WorldLayers"]
 texture_filter = 1
 z_index = 1

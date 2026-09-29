@@ -12,6 +12,7 @@ const TRANSITION_SOUTH := 4
 const TRANSITION_WEST := 8
 const INTERACTABLE_SCENE = preload("res://scenes/map_interactable.tscn")
 const WATER_RIPPLE_SCENE = preload("res://scenes/map_water_ripple.tscn")
+const SURFACE_STEP_FX_SCRIPT = preload("res://scripts/map_surface_step_fx.gd")
 const MAP_PROP_SCENE = preload("res://scenes/map_prop.tscn")
 const RESOURCE_TREE_SCENE = preload("res://scenes/map_resource_tree.tscn")
 const FLOWER_SCENE = preload("res://scenes/map_flower.tscn")
@@ -25,6 +26,7 @@ const MAP_LAYOUTS := {
 }
 
 var map_data: Dictionary = {}
+@onready var _surface_step_player: Node2D = $Actors/Player
 var map_id: String = ""
 var map_name: String = ""
 var map_size_tiles := Vector2i(48, 36)
@@ -46,6 +48,9 @@ var _field_mobs: Dictionary = {}
 var _runtime_object_states: Dictionary = {}
 var _weather_ripples: Array[MapWaterRipple] = []
 var _weather_state: Dictionary = {}
+var _last_surface_step_position := Vector2.ZERO
+var _has_last_surface_step_position: bool = false
+var _surface_step_distance: float = 0.0
 
 func configure(data: Dictionary, tile_size: int = TILE_SIZE_DEFAULT, object_states: Dictionary = {}) -> void:
 	map_data = data.duplicate(true)
@@ -128,13 +133,18 @@ func _build_authored_tile_layers() -> bool:
 	var surface_terrain_ids: Dictionary = {}
 	for terrain_id: Variant in layout.get("ground_surface_terrain_ids", []):
 		surface_terrain_ids[int(terrain_id)] = true
+	var water_surface_ids: Dictionary = {}
+	for terrain_id: Variant in layout.get("water_surface_tile_ids", []):
+		water_surface_ids[int(terrain_id)] = true
 	var transition_layout: Dictionary = layout.get("terrain_transitions", {})
 	var transition_source_id := _ensure_transition_atlas_source(tile_set, transition_layout)
 	var transition_columns := maxi(int(transition_layout.get("columns", 4)), 1)
 	var ground: TileMapLayer = $WorldLayers/GroundLayer
+	var water: TileMapLayer = $WorldLayers/WaterLayer
 	var detail: TileMapLayer = $WorldLayers/DetailLayer
+	var shore: TileMapLayer = $WorldLayers/ShoreLayer
 	var foreground: TileMapLayer = $WorldLayers/ForegroundLayer
-	for layer: TileMapLayer in [ground, detail, foreground]:
+	for layer: TileMapLayer in [ground, water, detail, shore, foreground]:
 		layer.tile_set = tile_set
 		layer.clear()
 	var rows: Array = layout.get("ground_rows", [])
@@ -163,7 +173,7 @@ func _build_authored_tile_layers() -> bool:
 		tile_rows.append(tile_row)
 	_apply_path_autoterrain(layout, tile_rows)
 	var terrain_cell_alternatives := _apply_river_autoterrain(layout, tile_rows)
-	var transition_cells := _build_terrain_transition_cells(tile_rows, transition_layout)
+	var transition_layers: Dictionary = _build_terrain_transition_cells(tile_rows, transition_layout)
 	for y in range(map_size_tiles.y):
 		for x in range(map_size_tiles.x):
 			var cell := Vector2i(x, y)
@@ -172,27 +182,31 @@ func _build_authored_tile_layers() -> bool:
 			var source_id := 0
 			var source_columns := atlas_columns
 			var alternative_tile := int(terrain_cell_alternatives.get(cell, 0))
-			if surface_source_id >= 0 and surface_terrain_ids.has(terrain_index):
-				tile_index = posmod(y, surface_rows) * surface_columns + posmod(x, surface_columns)
-				source_id = surface_source_id
-				source_columns = surface_columns
-			if not _set_atlas_cell(ground, cell, tile_index, source_columns, alternative_tile, source_id):
-				return false
+			if water_surface_ids.has(terrain_index):
+				if surface_source_id >= 0:
+					tile_index = posmod(y, surface_rows) * surface_columns + posmod(x, surface_columns)
+					source_id = surface_source_id
+					source_columns = surface_columns
+				else:
+					tile_index = 0
+				if not _set_atlas_cell(ground, cell, tile_index, source_columns, 0, source_id):
+					return false
+				if not _set_atlas_cell(water, cell, terrain_index, atlas_columns, alternative_tile):
+					return false
+			else:
+				if surface_source_id >= 0 and surface_terrain_ids.has(terrain_index):
+					tile_index = posmod(y, surface_rows) * surface_columns + posmod(x, surface_columns)
+					source_id = surface_source_id
+					source_columns = surface_columns
+				if not _set_atlas_cell(ground, cell, tile_index, source_columns, alternative_tile, source_id):
+					return false
 			if solid_tile_ids.has(terrain_index):
 				_solid_terrain_cells[cell] = true
 	_build_river_shore_overlay(layout, ground)
-	for cell_value: Variant in transition_cells.keys():
-		var cell: Vector2i = cell_value
-		var transition_spec: Dictionary = transition_cells[cell]
-		if not _set_atlas_cell(
-			detail,
-			cell,
-			int(transition_spec.get("tile", -1)),
-			transition_columns,
-			int(transition_spec.get("alternative", 0)),
-			transition_source_id
-		):
-			return false
+	if not _place_transition_cells(detail, transition_layers.get("path", {}), transition_columns, transition_source_id):
+		return false
+	if not _place_transition_cells(shore, transition_layers.get("shore", {}), transition_columns, transition_source_id):
+		return false
 	for value: Dictionary in layout.get("detail_tiles", []):
 		var tile_position: Array = value.get("position_tiles", [])
 		if tile_position.size() != 2:
@@ -202,7 +216,23 @@ func _build_authored_tile_layers() -> bool:
 	_build_props(layout)
 	_build_resource_objects(layout)
 	map_data["runtime_ground_rows"] = _encode_ground_rows(tile_rows)
+	map_data["runtime_surface_step_materials"] = layout.get("surface_step_materials", {}).duplicate(true)
 	return ground.get_used_cells().size() == map_size_tiles.x * map_size_tiles.y
+
+func _place_transition_cells(layer: TileMapLayer, transition_cells: Dictionary, columns: int, source_id: int) -> bool:
+	for cell_value: Variant in transition_cells.keys():
+		var cell: Vector2i = cell_value
+		var transition_spec: Dictionary = transition_cells[cell]
+		if not _set_atlas_cell(
+			layer,
+			cell,
+			int(transition_spec.get("tile", -1)),
+			columns,
+			int(transition_spec.get("alternative", 0)),
+			source_id
+		):
+			return false
+	return true
 
 func _build_river_shore_overlay(layout: Dictionary, ground: TileMapLayer) -> void:
 	var previous_overlay := ground.get_node_or_null("RiverShoreOverlay")
@@ -210,6 +240,11 @@ func _build_river_shore_overlay(layout: Dictionary, ground: TileMapLayer) -> voi
 		ground.remove_child(previous_overlay)
 		previous_overlay.free()
 	var river: Dictionary = layout.get("river_autoterrain", {})
+	var transitions: Dictionary = layout.get("terrain_transitions", {})
+	for group_name in ["shore_land_edge_tiles", "shore_land_corner_tiles", "shore_water_edge_tiles", "shore_water_corner_tiles"]:
+		var shore_group: Dictionary = transitions.get(group_name, {})
+		if not shore_group.is_empty():
+			return
 	var texture_path := str(river.get("shore_overlay_texture", ""))
 	if texture_path.is_empty():
 		return
@@ -368,9 +403,10 @@ func _apply_river_autoterrain(layout: Dictionary, tile_rows: Array) -> Dictionar
 	return bank_alternatives
 
 func _build_terrain_transition_cells(tile_rows: Array, transition_layout: Dictionary) -> Dictionary:
-	var transition_cells: Dictionary = {}
+	var path_transition_cells: Dictionary = {}
+	var shore_transition_cells: Dictionary = {}
 	if transition_layout.is_empty():
-		return transition_cells
+		return {"path": path_transition_cells, "shore": shore_transition_cells}
 	var path_edges: Dictionary = transition_layout.get("path_edge_tiles", {})
 	var path_corners: Dictionary = transition_layout.get("path_corner_tiles", {})
 	var shore_land_edges: Dictionary = transition_layout.get("shore_land_edge_tiles", {})
@@ -382,14 +418,14 @@ func _build_terrain_transition_cells(tile_rows: Array, transition_layout: Dictio
 		for x in range(map_size_tiles.x):
 			var terrain_index := int(tile_rows[y][x])
 			var cell := Vector2i(x, y)
-			if terrain_index >= 0 and terrain_index <= 23:
+			if terrain_index >= 0 and terrain_index < 32:
 				if terrain_index < 16:
 					var path_mask := _terrain_neighbor_mask(tile_rows, x, y, "path")
 					var path_tile_value: Variant = _path_transition_tile(path_mask, path_edges, path_corners)
 					var path_tile := _choose_transition_variant(path_tile_value, cell, seed, 0)
 					if path_tile >= 0:
 						var along_edge_flip := _path_transition_flip(path_mask, cell, seed)
-						transition_cells[cell] = {"tile": path_tile, "alternative": along_edge_flip}
+						path_transition_cells[cell] = {"tile": path_tile, "alternative": along_edge_flip}
 				if not shore_land_edges.is_empty() or not shore_land_corners.is_empty():
 					var water_mask := _terrain_neighbor_mask(tile_rows, x, y, "water_and_shore")
 					var shore_tile_value: Variant = _shore_transition_tile(water_mask, shore_land_edges, shore_land_corners)
@@ -398,7 +434,7 @@ func _build_terrain_transition_cells(tile_rows: Array, transition_layout: Dictio
 						var shore_flip := 0
 						if _is_single_transition_direction(water_mask):
 							shore_flip = _shore_transition_flip(_first_transition_direction(water_mask), cell, seed)
-						transition_cells[cell] = {"tile": shore_tile, "alternative": shore_flip}
+						shore_transition_cells[cell] = {"tile": shore_tile, "alternative": shore_flip}
 			elif terrain_index >= 32 and terrain_index <= 35:
 				if shore_water_edges.is_empty() and shore_water_corners.is_empty():
 					continue
@@ -409,8 +445,8 @@ func _build_terrain_transition_cells(tile_rows: Array, transition_layout: Dictio
 					var water_flip := 0
 					if _is_single_transition_direction(bank_mask):
 						water_flip = _shore_transition_flip(_first_transition_direction(bank_mask), cell, seed + 19)
-					transition_cells[cell] = {"tile": water_tile, "alternative": water_flip}
-	return transition_cells
+					shore_transition_cells[cell] = {"tile": water_tile, "alternative": water_flip}
+	return {"path": path_transition_cells, "shore": shore_transition_cells}
 
 func _choose_transition_variant(tile_value: Variant, cell: Vector2i, seed: int, salt: int) -> int:
 	if tile_value is Array:
@@ -451,28 +487,28 @@ func _path_transition_tile(path_mask: int, path_edges: Dictionary, path_corners:
 	if path_mask == 0:
 		return -1
 	if path_mask == (TRANSITION_NORTH | TRANSITION_WEST):
-		return path_corners.get("path_north_west", -1)
+		return path_corners.get("north_west", path_corners.get("path_north_west", -1))
 	if path_mask == (TRANSITION_NORTH | TRANSITION_EAST):
-		return path_corners.get("path_north_east", -1)
+		return path_corners.get("north_east", path_corners.get("path_north_east", -1))
 	if path_mask == (TRANSITION_SOUTH | TRANSITION_WEST):
-		return path_corners.get("path_south_west", -1)
+		return path_corners.get("south_west", path_corners.get("path_south_west", -1))
 	if path_mask == (TRANSITION_SOUTH | TRANSITION_EAST):
-		return path_corners.get("path_south_east", -1)
+		return path_corners.get("south_east", path_corners.get("path_south_east", -1))
 	if (path_mask & (TRANSITION_NORTH | TRANSITION_WEST)) == (TRANSITION_NORTH | TRANSITION_WEST):
-		return path_corners.get("path_north_west", -1)
+		return path_corners.get("north_west", path_corners.get("path_north_west", -1))
 	if (path_mask & (TRANSITION_NORTH | TRANSITION_EAST)) == (TRANSITION_NORTH | TRANSITION_EAST):
-		return path_corners.get("path_north_east", -1)
+		return path_corners.get("north_east", path_corners.get("path_north_east", -1))
 	if (path_mask & (TRANSITION_SOUTH | TRANSITION_WEST)) == (TRANSITION_SOUTH | TRANSITION_WEST):
-		return path_corners.get("path_south_west", -1)
+		return path_corners.get("south_west", path_corners.get("path_south_west", -1))
 	if (path_mask & (TRANSITION_SOUTH | TRANSITION_EAST)) == (TRANSITION_SOUTH | TRANSITION_EAST):
-		return path_corners.get("path_south_east", -1)
+		return path_corners.get("south_east", path_corners.get("path_south_east", -1))
 	if (path_mask & TRANSITION_WEST) != 0:
-		return path_edges.get("path_west", -1)
+		return path_edges.get("west", path_edges.get("path_west", -1))
 	if (path_mask & TRANSITION_EAST) != 0:
-		return path_edges.get("path_east", -1)
+		return path_edges.get("east", path_edges.get("path_east", -1))
 	if (path_mask & TRANSITION_NORTH) != 0:
-		return path_edges.get("path_north", -1)
-	return path_edges.get("path_south", -1)
+		return path_edges.get("north", path_edges.get("path_north", -1))
+	return path_edges.get("south", path_edges.get("path_south", -1))
 
 func _first_transition_direction(mask: int) -> String:
 	if (mask & TRANSITION_WEST) != 0:
@@ -749,6 +785,83 @@ func _build_water_ripples() -> void:
 		)
 		_weather_ripples.append(ripple)
 	_apply_weather_state_to_map()
+
+func _process(_delta: float) -> void:
+	if not is_instance_valid(_surface_step_player):
+		return
+	var current_position := to_local(_surface_step_player.global_position)
+	if not _has_last_surface_step_position:
+		_last_surface_step_position = current_position
+		_has_last_surface_step_position = true
+		return
+	var moved_distance := current_position.distance_to(_last_surface_step_position)
+	_last_surface_step_position = current_position
+	if moved_distance > float(tile_size_px * 2):
+		_surface_step_distance = 0.0
+		return
+	if moved_distance < 0.1:
+		return
+	_surface_step_distance += moved_distance
+	var step_interval := maxf(float(tile_size_px) * 0.58, 12.0)
+	while _surface_step_distance >= step_interval:
+		_surface_step_distance -= step_interval
+		_emit_surface_step(current_position)
+
+func _emit_surface_step(player_position: Vector2) -> void:
+	var materials: Dictionary = map_data.get("runtime_surface_step_materials", {})
+	if materials.is_empty():
+		return
+	var foot_position := player_position + Vector2(0.0, float(tile_size_px) * 0.24)
+	var material := _surface_material_at(foot_position, materials)
+	if material.is_empty():
+		return
+	var rainy := float(_weather_state.get("rain_intensity", 0.0)) > 0.2
+	var shoreline := material != "water" and _has_water_neighbor(foot_position, materials)
+	var effect := SURFACE_STEP_FX_SCRIPT.new() as MapSurfaceStepFx
+	if effect == null:
+		return
+	$AmbientFX.add_child(effect)
+	effect.position = foot_position
+	effect.configure(
+		material,
+		tile_size_px,
+		rainy,
+		shoreline,
+		int(Time.get_ticks_usec()) + floori(foot_position.x * 31.0 + foot_position.y * 17.0)
+	)
+
+func _surface_material_at(point: Vector2, materials: Dictionary) -> String:
+	var rows: Array = map_data.get("runtime_ground_rows", [])
+	var cell_x := floori(point.x / float(tile_size_px))
+	var cell_y := floori(point.y / float(tile_size_px))
+	if cell_y < 0 or cell_y >= rows.size():
+		return ""
+	var row := str(rows[cell_y])
+	if cell_x < 0 or cell_x >= row.length():
+		return ""
+	var tile_id := TILE_SYMBOLS.find(row.substr(cell_x, 1))
+	for material_name in ["grass", "soil", "stone", "water"]:
+		var material_ids: Array = materials.get(material_name, [])
+		if material_ids.has(tile_id):
+			return str(material_name)
+	return ""
+
+func _has_water_neighbor(point: Vector2, materials: Dictionary) -> bool:
+	var rows: Array = map_data.get("runtime_ground_rows", [])
+	var cell_x := floori(point.x / float(tile_size_px))
+	var cell_y := floori(point.y / float(tile_size_px))
+	var water_ids: Array = materials.get("water", [])
+	for offset: Vector2i in [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]:
+		var neighbor_x := cell_x + offset.x
+		var neighbor_y := cell_y + offset.y
+		if neighbor_y < 0 or neighbor_y >= rows.size():
+			continue
+		var row := str(rows[neighbor_y])
+		if neighbor_x < 0 or neighbor_x >= row.length():
+			continue
+		if water_ids.has(TILE_SYMBOLS.find(row.substr(neighbor_x, 1))):
+			return true
+	return false
 
 func is_walkable(point: Vector2) -> bool:
 	if not Rect2(Vector2.ZERO, map_size_px).has_point(point):

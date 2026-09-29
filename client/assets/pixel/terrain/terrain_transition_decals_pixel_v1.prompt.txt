@@ -1,0 +1,11 @@
+Create a production-ready transparent pixel-art transition atlas for a top-down 32 px tile game.
+Canvas for generation: 1536 × 1024 px, arranged as 12 columns × 8 rows of independent 128 × 128 px square cells. Every cell is centered, fully contained in its own square, has transparent empty space outside the edge decal, and contains no labels, text, grid lines, borders, or background. Art is crisp nearest-neighbor pixel art with hard pixel clusters, no antialiasing, no blur, limited cohesive colors, and a consistent small dark outline used only where needed.
+Visual setting: a gentle Vietnamese cultivation-fantasy village edge, warm green grass, ochre soil, pebbled banks, clear cool teal water with sparse pale foam. Keep decorations restrained and readable after nearest-neighbor reduction to 32 × 32 px per cell. Each variant in a group should have the same geometry but subtly varied pebble/grass pixels.
+Row-major tile contract (each number is one cell, four variants per direction):
+0–3 path-edge decal with adjoining path to the west; 4–7 path east; 8–11 path north; 12–15 path south.
+16–19 path corner north-west; 20–23 north-east; 24–27 south-west; 28–31 south-east.
+32–35 grass/soil bank edge with water touching from the east; 36–39 water touching from west; 40–43 water from south; 44–47 water from north.
+48–51 land bank corner north-east; 52–55 south-east; 56–59 south-west; 60–63 north-west.
+64–67 water-side edge with land/bank touching from the west; 68–71 land from east; 72–75 land from north; 76–79 land from south.
+80–83 water corner north-west; 84–87 north-east; 88–91 south-west; 92–95 south-east.
+All path and shore forms must be oriented consistently and leave transparent pixels away from their intended edge/corner. The atlas will be downsampled using nearest-neighbor to 384 × 256 px (96 cells at 32 px each), so build broad, clean pixel clusters rather than tiny texture noise.
