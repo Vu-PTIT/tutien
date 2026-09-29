@@ -821,7 +821,7 @@ func _emit_surface_step(player_position: Vector2) -> void:
 	if effect == null:
 		return
 	$AmbientFX.add_child(effect)
-	effect.position = foot_position
+	effect.position = Vector2(roundi(foot_position.x), roundi(foot_position.y))
 	effect.configure(
 		material,
 		tile_size_px,

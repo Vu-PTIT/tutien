@@ -19,13 +19,13 @@ The solid-tile and walkable-rectangle data remains unchanged. Water stays blocke
 
 ## Pixel atlas contract
 
-`terrain_transition_decals_pixel_v1.png` is a transparent 12×8 atlas of 32 px cells (384×256 total). Rows 0–1 are four path-edge and four path-corner variants. Rows 2–3 cover land-side shore edges/corners. Rows 4–5 cover water-side edges/corners. The data maps keep the index ranges explicit, so variant selection stays deterministic per cell.
+`terrain_transition_decals_pixel_v1.png` is a transparent 12×8 atlas of 32 px cells (384×256 total), reduced to an 16-color palette with binary alpha and nearest-neighbor 2×2 pixel clusters. Rows 0–1 are four path-edge and four path-corner variants. Rows 2–3 cover land-side shore edges/corners. Rows 4–5 cover water-side edges/corners. The data maps keep the index ranges explicit, so variant selection stays deterministic per cell.
 
 An Khê and Trúc Âm use the same transition contract. Their older full-width An Khê shoreline overlay is disabled in favor of tile-level decals. Path and shoreline decals use separate tile layers so a trail can still meet the river on the same cell.
 
 ## Surface response
 
-Moving across configured grass, soil, stone, and water cells leaves a brief handful of nearest-filtered pixel flecks. Shore-adjacent steps can include a tiny water glint; rain changes the grass/soil palette. Existing animated river shimmer and rain rings remain in place.
+Moving across configured grass, soil, stone, and water cells leaves a brief handful of nearest-filtered pixel flecks. Shore-adjacent steps can include a snapped, hard-edged water pixel; rain changes the grass/soil palette. Surface flecks and existing water ripples use integer-aligned rectangles and stepped rings, with a short stepped fade. Existing animated river shimmer and rain rings remain in place.
 
 ## Verification
 
