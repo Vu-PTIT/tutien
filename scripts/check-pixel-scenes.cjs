@@ -34,6 +34,12 @@ for(const file of files.filter(p=>/\.(tscn|tres|gd)$/.test(p))) {
 }
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const main=read('scripts/main.gd'), hud=read('scenes/ui/hud.tscn');
+const uiFont=fs.readFileSync(path.join(root,'assets/pixel/ui_font.ttf'));
+const uiFontSignature=uiFont.subarray(0,4).toString('hex');
+assert.ok(['00010000','4f54544f','74727565','74797031'].includes(uiFontSignature),
+  'UI font must be a valid TrueType/OpenType SFNT file');
+assert.ok(read('themes/tutien_theme.tres').includes('res://assets/pixel/ui_font.ttf'),
+  'Shared UI theme must use the checked pixel font');
 assert.ok(!/^@tool/m.test(main), 'Runtime must not run in editor');
 assert.ok(!main.includes('_draw_editor_ui_preview'), 'No alternate/fake editor HUD');
 assert.equal((read('scenes/ui/inventory.tscn').match(/name="Slot\d+" type="Button"/g)||[]).length,24);
@@ -559,5 +565,5 @@ assert.ok(routePanel.includes('signal map_requested'), 'Route panel emits travel
 assert.ok(routePanel.includes('route_connections')&&routePanel.includes('_route_summary(')&&routePanel.includes('connection.get("label"'),
   'World map route cards render names from the connected gate graph');
 assert.ok(main.includes('world_map.map_requested.connect(_travel_to_map)'), 'Main connects map travel');
-console.log('PASS static map and scene audit: '+scenes+' scenes, '+references+' resource references, connected reciprocal routes, walkable POIs, transparent Thạch Cạn props, aligned ripples, valid PNG assets.');
+console.log('PASS static map and scene audit: '+scenes+' scenes, '+references+' resource references, connected reciprocal routes, walkable POIs, transparent Thạch Cạn props, aligned ripples, valid PNG assets, valid pixel UI font.');
 console.log('Not a GDScript parser or Godot runtime test. Run presentation_smoke.gd in Godot.');
