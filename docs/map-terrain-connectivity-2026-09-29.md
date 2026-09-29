@@ -10,8 +10,8 @@ Keep the 32 px pixel-art grid readable while making footpaths, grassy ground, ba
 | --- | --- |
 | GroundLayer | Full map floor and the land texture beneath water |
 | WaterLayer | Water tiles only, so shore overlays can sit above them |
-| DetailLayer | Footpath edge and corner decals plus map details |
 | ShoreLayer | Two-sided shoreline decals for land and water cells |
+| DetailLayer | Footpath edge and corner decals plus map details |
 | Actors | Y-sorted characters and interactive props |
 | ForegroundLayer | Trees and scenery drawn over actors |
 
@@ -19,7 +19,7 @@ The solid-tile and walkable-rectangle data remains unchanged. Water stays blocke
 
 ## Pixel atlas contract
 
-`terrain_transition_decals_pixel_v1.png` is a transparent 12×8 atlas of 32 px cells (384×256 total), reduced to an 16-color palette with binary alpha and nearest-neighbor 2×2 pixel clusters. Rows 0–1 are four path-edge and four path-corner variants. Rows 2–3 cover land-side shore edges/corners. Rows 4–5 cover water-side edges/corners. The data maps keep the index ranges explicit, so variant selection stays deterministic per cell.
+`terrain_transition_decals_pixel_v1.png` is a transparent 12×8 atlas of 32 px cells (384×256 total), with eight opaque RGB colors, binary alpha, and nearest-neighbor 4×4 runtime pixel clusters (8×8 logical pixels per tile). Rows 0–1 are four path-edge and four path-corner variants. Rows 2–3 cover land-side shore edges/corners. Rows 4–5 cover water-side edges/corners. The data maps keep the index ranges explicit, so variant selection stays deterministic per cell.
 
 An Khê and Trúc Âm use the same transition contract. Their older full-width An Khê shoreline overlay is disabled in favor of tile-level decals. Path and shoreline decals use separate tile layers so a trail can still meet the river on the same cell.
 
@@ -29,4 +29,4 @@ Moving across configured grass, soil, stone, and water cells leaves a brief hand
 
 ## Verification
 
-The new `terrain_connectivity_smoke.gd` checks that both maps load with a full ground grid, populate separate water and shore layers, and expose material step definitions. JSON geometry, tile ranges, and atlas dimensions are statically validated. Godot runtime execution is still pending because no Godot executable is available in this workspace.
+The new `terrain_connectivity_smoke.gd` checks that both maps load with a full ground grid, populate separate water and shore layers, and expose material step definitions. JSON geometry, tile ranges, collision IDs, atlas dimensions, eight-color palette, and binary alpha were statically validated. Godot runtime execution is still pending because no Godot executable is available in this workspace.
