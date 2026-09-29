@@ -1,5 +1,6 @@
-[gd_resource type="Theme" load_steps=10 format=3]
+[gd_resource type="Theme" load_steps=11 format=3]
 [ext_resource type="FontFile" path="res://assets/pixel/ui_font.ttf" id="1"]
+[ext_resource type="FontFile" path="res://assets/pixel/tiny5_pixel_ui.ttf" id="2"]
 [sub_resource type="StyleBoxFlat" id="panel"]
 bg_color = Color(0.065, 0.095, 0.125, 0.97)
 border_width_left = 2
@@ -69,7 +70,16 @@ bg_color = Color(0.20, 0.49, 0.65, 1)
 default_font = ExtResource("1")
 default_font_size = 10
 
-# Shared social UI typography. Keep message text larger than compact HUD copy.
+MapPixelText/base_type = &"Label"
+MapPixelText/fonts/font = ExtResource("2")
+MapPixelText/font_sizes/font_size = 8
+MapPixelHeading/base_type = &"Label"
+MapPixelHeading/fonts/font = ExtResource("2")
+MapPixelHeading/font_sizes/font_size = 16
+MapPixelButton/base_type = &"Button"
+MapPixelButton/fonts/font = ExtResource("2")
+MapPixelButton/font_sizes/font_size = 8
+
 SocialHeader/base_type = &"Label"
 SocialHeader/fonts/font = ExtResource("1")
 SocialHeader/font_sizes/font_size = 16
@@ -131,9 +141,9 @@ Button/colors/font_color = Color(0.91, 0.87, 0.76, 1)
 Button/colors/font_disabled_color = Color(0.45, 0.48, 0.49, 1)
 Button/constants/icon_max_width = 26
 Label/colors/font_color = Color(0.91, 0.87, 0.76, 1)
-Label/colors/font_shadow_color = Color(0, 0, 0, 0.8)
-Label/constants/shadow_offset_x = 1
-Label/constants/shadow_offset_y = 1
+Label/colors/font_shadow_color = Color(0, 0, 0, 0)
+Label/constants/shadow_offset_x = 0
+Label/constants/shadow_offset_y = 0
 LineEdit/styles/normal = SubResource("normal")
 LineEdit/styles/focus = SubResource("hover")
 LineEdit/colors/font_color = Color(0.91, 0.87, 0.76, 1)

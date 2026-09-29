@@ -3,7 +3,7 @@
   "tile_set": "res://assets/pixel/terrain/an_khe_terrain.tres",
   "atlas_columns": 8,
   "terrain_transitions": {
-    "atlas": "res://assets/pixel/terrain/terrain_transition_decals.png",
+    "atlas": "res://assets/pixel/terrain/terrain_transition_decals_pixel_v1.png",
     "tile_px": 32,
     "columns": 12,
     "rows": 8,
@@ -20,10 +20,30 @@
       "south_west": [24, 25, 26, 27],
       "south_east": [28, 29, 30, 31]
     },
-    "shore_land_edge_tiles": {},
-    "shore_land_corner_tiles": {},
-    "shore_water_edge_tiles": {},
-    "shore_water_corner_tiles": {}
+    "shore_land_edge_tiles": {
+      "east": [32, 33, 34, 35],
+      "west": [36, 37, 38, 39],
+      "south": [40, 41, 42, 43],
+      "north": [44, 45, 46, 47]
+    },
+    "shore_land_corner_tiles": {
+      "north_east": [48, 49, 50, 51],
+      "south_east": [52, 53, 54, 55],
+      "south_west": [56, 57, 58, 59],
+      "north_west": [60, 61, 62, 63]
+    },
+    "shore_water_edge_tiles": {
+      "west": [64, 65, 66, 67],
+      "east": [68, 69, 70, 71],
+      "north": [72, 73, 74, 75],
+      "south": [76, 77, 78, 79]
+    },
+    "shore_water_corner_tiles": {
+      "north_west": [80, 81, 82, 83],
+      "north_east": [84, 85, 86, 87],
+      "south_west": [88, 89, 90, 91],
+      "south_east": [92, 93, 94, 95]
+    }
   },
   "ground_rows": [
     "A41E7CEDDDEC95815BEF189140A8CCD0E9B917B8BCA0DaYZ",
@@ -42,12 +62,12 @@
     "8450EC9KJ4DAA0DE591A5A0J9CC8B5CAA70BD07bZYEBBDAD",
     "F917114FKJ410958BDB05E1I7FA10FDCC8AFBD8aYZbAEFF4",
     "DAFED1C740LB17810158177JF8DJKJKHG40A50EEXWcDF990",
-    "C1CC8A44BCAHIDD7ILKHGLKKJGHIAFA8EB50A444bXdc78CA",
-    "1D50CA99FD79JKJGADBEC9RJGOP9DBE98EE80747cYXb5E88",
-    "4897FEE95F78A7CE7FC41TQTUTST5914487C49A9BcWXd88F",
-    "EECA99DB88C19E54A8EBC9PSGKLK40F544FE4D07C8cYXb9D",
-    "E15948C41C151A00CD910B0PSKGLKLK07CBBBA1ACFdZWaCB",
-    "D4579AE099FCEA8F18788598DJC4ABLGJKJIJGJI7CaWZd10",
+    "C1CC8A44BCAHIDD7ILKHGLPQOPQIAFA8EB50A444bXdc78CA",
+    "1D50CA99FD79JKJGADBEC9OPQRQODBE98EE80747cYXb5E88",
+    "4897FEE95F78A7CE7FC41TQTPQST5914487C49A9BcWXd88F",
+    "EECA99DB88C19E54A8EBC9PSPRSP40F544FE4D07C8cYXb9D",
+    "E15948C41C151A00CD910B0PQOGLKLK07CBBBA1ACFdZWaCB",
+    "D4579AE099FCEA8F1878859PQPC4ABLGJKJIJGJI7CaWZd10",
     "8774D4C908B0C9D9C9BF574CJGD1CC54E97DD4987BbXYc9A",
     "CDCFCDB4EA4CF45B49B1507CGH5ACE40BD4BCECA19ZYaF77",
     "9EA119CAAFF1EEF8578F4FAGJC1D0CE18A0DE87C1aYZb55D",
@@ -64,10 +84,6 @@
     "B1BD1FE8DC9F7F8BD1A7714001E7795097AC7BE7CBD4aWZd"
   ],
   "detail_tiles": [
-    {
-      "position_tiles": [25, 20],
-      "tile": 30
-    },
     {
       "position_tiles": [6, 25],
       "tile": 56
@@ -99,6 +115,30 @@
     {
       "position_tiles": [39, 8],
       "tile": 63
+    },
+    {
+      "position_tiles": [24, 20],
+      "tile": 30
+    },
+    {
+      "position_tiles": [25, 20],
+      "tile": 30
+    },
+    {
+      "position_tiles": [3, 17],
+      "tile": 62
+    },
+    {
+      "position_tiles": [3, 23],
+      "tile": 63
+    },
+    {
+      "position_tiles": [32, 5],
+      "tile": 62
+    },
+    {
+      "position_tiles": [30, 30],
+      "tile": 61
     }
   ],
   "props_atlas": "res://assets/pixel/props/an_khe_props.png",
@@ -174,18 +214,16 @@
     "seed": 10473,
     "west_bankline": [
       [44.3, 0],
-      [44.6, 4],
-      [43.0, 8],
-      [42.3, 12],
-      [43.0, 16],
+      [44.5, 4],
+      [43.2, 8],
+      [42.5, 12],
+      [43, 16],
       [42.2, 20],
-      [40.4, 24],
-      [37.8, 28],
-      [34.2, 32],
-      [31.8, 35]
-    ],
-    "shore_overlay_texture": "res://assets/pixel/terrain/an_khe_river_shore_overlay.png",
-    "shore_overlay_width_px": 96
+      [39.8, 24],
+      [36.9, 28],
+      [33.5, 32],
+      [31.5, 35]
+    ]
   },
   "path_autoterrain": {
     "seed": 5821,
@@ -233,11 +271,12 @@
         "half_width_tiles": 0.78,
         "points": [
           [26.4, 17.1],
-          [29.4, 17.2],
-          [32.4, 17.8],
-          [35.4, 18.5],
-          [38.3, 19.6],
-          [40.1, 20.5]
+          [29.1, 17.4],
+          [31.8, 17.9],
+          [34.7, 18.4],
+          [37.2, 19.1],
+          [39.2, 20],
+          [40.7, 20.6]
         ]
       },
       {
@@ -271,38 +310,38 @@
     "trees": [
       {
         "id": "ak.tree.woodland_01",
-        "position_tiles": [13.5, 21.0],
+        "position_tiles": [13.5, 21],
         "hits_to_fell": 3,
         "collision_size_px": [20, 14],
         "foot_padding_px": 5,
-        "sprite_scale": 1.0
+        "sprite_scale": 1
       }
     ],
     "flowers": [
       {
         "id": "ak.flower.pink_01",
-        "position_tiles": [15.0, 22.0],
+        "position_tiles": [15, 22],
         "variant": 1,
         "sprite_scale": 0.88,
         "stomp_radius_px": 16
       },
       {
         "id": "ak.flower.gold_01",
-        "position_tiles": [17.0, 20.5],
+        "position_tiles": [17, 20.5],
         "variant": 3,
         "sprite_scale": 0.84,
         "stomp_radius_px": 15
       },
       {
         "id": "ak.flower.blue_01",
-        "position_tiles": [18.0, 23.0],
+        "position_tiles": [18, 23],
         "variant": 2,
         "sprite_scale": 0.92,
         "stomp_radius_px": 17
       },
       {
         "id": "ak.flower.violet_01",
-        "position_tiles": [20.0, 24.5],
+        "position_tiles": [20, 24.5],
         "variant": 0,
         "sprite_scale": 0.86,
         "stomp_radius_px": 16
@@ -313,5 +352,12 @@
   "ground_surface_tile_px": 32,
   "ground_surface_columns": 48,
   "ground_surface_rows": 36,
-  "ground_surface_terrain_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+  "ground_surface_terrain_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  "water_surface_tile_ids": [32, 33, 34, 35],
+  "surface_step_materials": {
+    "grass": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "soil": [16, 17, 18, 19, 20, 21, 22, 23],
+    "stone": [24, 25, 26, 27, 28, 29, 30, 31],
+    "water": [32, 33, 34, 35, 36, 37, 38, 39]
+  }
 }
