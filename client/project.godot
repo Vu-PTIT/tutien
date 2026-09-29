@@ -25,7 +25,7 @@ LanguageManager="*res://scripts/language_manager.gd"
 [internationalization]
 
 locale/fallback="vi"
-locale/translations=PackedStringArray("res://translations/game.csv")
+locale/translations=PackedStringArray("res://translations/game.vi.translation", "res://translations/game.en.translation")
 rendering/root_node_auto_translate=true
 
 [display]
