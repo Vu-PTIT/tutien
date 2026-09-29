@@ -339,9 +339,13 @@ assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/an_khe_meadow_base.
 assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/an_khe_meadow_base.prompt.txt')),
   'Meadow foundation keeps its original prompt provenance');
 const transitionAtlas=fs.readFileSync(path.join(root,'assets/pixel/terrain/terrain_transition_decals.png'));
-assert.equal(transitionAtlas.readUInt32BE(16),384,'Terrain transition atlas has twelve 32 px columns');
-assert.equal(transitionAtlas.readUInt32BE(20),256,'Terrain transition atlas has eight 32 px rows');
-assert.equal(transitionAtlas[25],6,'Terrain transition decals preserve transparent RGBA areas');
+assert.equal(transitionAtlas.readUInt32BE(16),384,'Legacy terrain transition atlas has twelve 32 px columns');
+assert.equal(transitionAtlas.readUInt32BE(20),256,'Legacy terrain transition atlas has eight 32 px rows');
+assert.equal(transitionAtlas[25],6,'Legacy terrain transition decals preserve transparent RGBA areas');
+const pixelTransitionAtlas=fs.readFileSync(path.join(root,'assets/pixel/terrain/terrain_transition_decals_pixel_v1.png'));
+assert.equal(pixelTransitionAtlas.readUInt32BE(16),384,'Pixel terrain transition atlas has twelve 32 px columns');
+assert.equal(pixelTransitionAtlas.readUInt32BE(20),256,'Pixel terrain transition atlas has eight 32 px rows');
+assert.equal(pixelTransitionAtlas[25],6,'Pixel terrain transition decals preserve transparent RGBA areas');
 assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/terrain_transitions_source.png')),
   'Generated high-resolution transition sheet remains available alongside its runtime atlas');
 assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/terrain_transitions.prompt.txt')),
@@ -358,8 +362,10 @@ assert.equal(riverOverlay.readUInt32BE(20),1152,'An Khê river shore overlay spa
 assert.equal(riverOverlay[25],6,'An Khê river shore overlay keeps transparent pixels outside the shoreline ribbon');
 assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/an_khe_river_shore_overlay.prompt.txt')),
   'Continuous river-shore overlay records its generated source and build procedure');
-assert.equal(anKheLayout.river_autoterrain.shore_overlay_texture,'res://assets/pixel/terrain/an_khe_river_shore_overlay.png');
-assert.equal(anKheLayout.river_autoterrain.shore_overlay_width_px,96);
+assert.equal(anKheLayout.river_autoterrain.shore_overlay_texture,undefined,
+  'An Khê uses tile-level shoreline transitions instead of the old full-map overlay');
+assert.equal(anKheLayout.river_autoterrain.shore_overlay_width_px,undefined,
+  'An Khê shoreline width is now encoded by tile transitions');
 assert.ok(fs.existsSync(path.join(root,'..','scripts/build_terrain_transition_atlas.py')),
   'Generated transition atlas can be rebuilt from the preserved source sheet');
 assert.ok(fs.existsSync(path.join(root,'..','scripts/build_terrain_transition_decals.py')),
@@ -382,30 +388,31 @@ for(const area of Object.keys(expectedSurfaceIds)) {
 }
 assert.ok(fs.existsSync(path.join(root,'..','scripts/build_pixel_world_terrain.py')),
   'All biome surfaces can be regenerated from the authored pixel-cluster builder');
-assert.equal(anKheLayout.terrain_transitions.atlas,'res://assets/pixel/terrain/terrain_transition_decals.png');
-assert.equal(anKheLayout.terrain_transitions.columns,12);
-assert.equal(anKheLayout.terrain_transitions.rows,8);
-assert.deepEqual(anKheLayout.terrain_transitions.path_edge_tiles,{west:[0,1,2,3],east:[4,5,6,7],north:[8,9,10,11],south:[12,13,14,15]});
-assert.deepEqual(anKheLayout.terrain_transitions.path_corner_tiles,{north_west:[16,17,18,19],north_east:[20,21,22,23],south_west:[24,25,26,27],south_east:[28,29,30,31]});
-assert.deepEqual(anKheLayout.terrain_transitions.shore_land_edge_tiles,{},'An Khê uses its continuous palette-matched shore image instead of tiled shore patches');
-assert.deepEqual(anKheLayout.terrain_transitions.shore_land_corner_tiles,{});
-assert.deepEqual(anKheLayout.terrain_transitions.shore_water_edge_tiles,{});
-assert.deepEqual(anKheLayout.terrain_transitions.shore_water_corner_tiles,{});
+const expectedTransitionConfig={
+  path_edge_tiles:{west:[0,1,2,3],east:[4,5,6,7],north:[8,9,10,11],south:[12,13,14,15]},
+  path_corner_tiles:{north_west:[16,17,18,19],north_east:[20,21,22,23],south_west:[24,25,26,27],south_east:[28,29,30,31]},
+  shore_land_edge_tiles:{east:[32,33,34,35],west:[36,37,38,39],south:[40,41,42,43],north:[44,45,46,47]},
+  shore_land_corner_tiles:{north_east:[48,49,50,51],south_east:[52,53,54,55],south_west:[56,57,58,59],north_west:[60,61,62,63]},
+  shore_water_edge_tiles:{west:[64,65,66,67],east:[68,69,70,71],north:[72,73,74,75],south:[76,77,78,79]},
+  shore_water_corner_tiles:{north_west:[80,81,82,83],north_east:[84,85,86,87],south_west:[88,89,90,91],south_east:[92,93,94,95]}
+};
+const pixelTransitionPath='res://assets/pixel/terrain/terrain_transition_decals_pixel_v1.png';
+for(const [name,layout] of [['An Khê',anKheLayout],['Trúc Âm',JSON.parse(read('data/maps/truc_am.json'))]]) {
+  assert.equal(layout.terrain_transitions.atlas,pixelTransitionPath,`${name} uses the crisp pixel transition atlas`);
+  assert.equal(layout.terrain_transitions.tile_px,32,`${name} transitions match the 32 px world grid`);
+  assert.equal(layout.terrain_transitions.columns,12,`${name} transition atlas has twelve columns`);
+  assert.equal(layout.terrain_transitions.rows,8,`${name} transition atlas has eight rows`);
+  for(const [group,tiles] of Object.entries(expectedTransitionConfig)) {
+    assert.deepEqual(layout.terrain_transitions[group],tiles,`${name} configures ${group}`);
+  }
+}
 const trucAmLayout=JSON.parse(read('data/maps/truc_am.json'));
 assert.equal(trucAmLayout.terrain_transitions.atlas,anKheLayout.terrain_transitions.atlas,
-  'Forest map retains access to the transition atlas for future palette-matched edges');
-assert.deepEqual(trucAmLayout.terrain_transitions.path_edge_tiles,{},
-  'Trúc Âm keeps hand-painted forest path edges instead of overpainting them with the meadow palette');
-assert.deepEqual(trucAmLayout.terrain_transitions.path_corner_tiles,{},
-  'Trúc Âm keeps native path corners matched to its waterfall forest palette');
-assert.deepEqual(trucAmLayout.terrain_transitions.shore_land_edge_tiles,{},
-  'Forest waterfall edges retain their native grass and bank art');
-assert.deepEqual(trucAmLayout.terrain_transitions.shore_water_edge_tiles,{},
-  'Forest waterfall banks retain their rocky shoreline tiles');
+  'Forest map uses the shared pixel transition atlas');
 const river=anKheLayout.river_autoterrain;
 assert.ok(river && river.west_bankline.length>=6,'An Khê river bank follows a long, authored curve');
 assert.deepEqual(river.base_water_tiles,[32,34],'River interior mostly uses plain water tiles');
-assert.equal(river.bank_tile,39,'River bank keeps its blocking terrain while the generated shore ribbon supplies the visible transition');
+assert.equal(river.bank_tile,39,'River bank keeps its blocking terrain while tile-level shore decals supply the visible transition');
 const [bankMin,bankMax]=[river.minimum_bank_x,river.maximum_bank_x];
 const sampledBanks=[];
 for(let y=0;y<mapCatalog.maps[0].size_tiles[1];y++) {
