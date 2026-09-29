@@ -3,6 +3,7 @@ extends Panel
 ## Shared by the main HUD, the editor-visible inventory scene and live smoke tests.
 const Visuals = preload("res://scripts/ui/item_visuals.gd")
 var api: SocialApi
+var language_manager: Variant
 var loading: bool = false
 var preview_mode: bool = true
 var inventory: Array = []
@@ -26,6 +27,7 @@ var slot_buttons: Array[Button] = []
 var _confirm: ConfirmationDialog
 
 func _ready() -> void:
+	language_manager = get_node_or_null("/root/LanguageManager")
 	summary = $Summary
 	claim_button = $Claim
 	refresh_button = $Refresh
@@ -48,7 +50,8 @@ func _ready() -> void:
 	_confirm.title = "Xác nhận bỏ vật phẩm"
 	_confirm.confirmed.connect(_discard_selected)
 	add_child(_confirm)
-	LanguageManager.locale_changed.connect(_on_language_changed)
+	if language_manager != null:
+		language_manager.locale_changed.connect(_on_language_changed)
 	show_preview()
 
 func open_inventory() -> void:

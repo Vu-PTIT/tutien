@@ -17,10 +17,13 @@ var _field_combat_mode := false
 var equipped_skill_id: String = ""
 var equipped_skill_name: String = "Kỹ năng"
 var _field_action_label := "Đánh"
+var language_manager: Variant
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	LanguageManager.locale_changed.connect(_on_language_changed)
+	language_manager = get_node_or_null("/root/LanguageManager")
+	if language_manager != null:
+		language_manager.locale_changed.connect(_on_language_changed)
 	$Interact.pressed.connect(func() -> void: action_requested.emit("interact"))
 	$Attack.pressed.connect(func() -> void: action_requested.emit("attack"))
 	$Dodge.pressed.connect(func() -> void: action_requested.emit("dodge"))

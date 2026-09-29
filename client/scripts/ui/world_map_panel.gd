@@ -22,9 +22,12 @@ var route_connections: Array = []
 var selected_id: String = ""
 var current_map_id: String = "m_an_khe"
 var _button_group := ButtonGroup.new()
+var language_manager: Variant
 
 func _ready() -> void:
-	LanguageManager.locale_changed.connect(_on_language_changed)
+	language_manager = get_node_or_null("/root/LanguageManager")
+	if language_manager != null:
+		language_manager.locale_changed.connect(_on_language_changed)
 	close_button.pressed.connect(func() -> void:
 		visible = false
 		close_requested.emit())

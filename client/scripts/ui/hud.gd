@@ -17,12 +17,15 @@ var _last_area_name := ""
 var _last_notification := ""
 var _last_notification_key := ""
 var _last_notification_args: Array = []
+var language_manager: Variant
 
 @onready var touch_controls: TouchControls = $TouchControls
 @onready var character_panel: CharacterPanel = $CharacterPanel
 
 func _ready() -> void:
-	LanguageManager.locale_changed.connect(_on_language_changed)
+	language_manager = get_node_or_null("/root/LanguageManager")
+	if language_manager != null:
+		language_manager.locale_changed.connect(_on_language_changed)
 	$WeatherInfo/EffectsToggle.toggled.connect(func(enabled: bool) -> void: weather_flash_reduced_changed.emit(enabled))
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
 	$MapButton.pressed.connect(func() -> void: action_requested.emit("map"))
@@ -105,9 +108,9 @@ func notify_format(template: String, arguments: Array) -> void:
 
 func _render_notification() -> void:
 	if not _last_notification_key.is_empty():
-		$Toast/Message.text = LanguageManager.format_message(_last_notification_key, _last_notification_args)
+		$Toast/Message.text = language_manager.format_message(_last_notification_key, _last_notification_args)
 	else:
-		$Toast/Message.text = LanguageManager.translate_message(_last_notification)
+		$Toast/Message.text = language_manager.translate_message(_last_notification)
 
 func set_weather(state: Dictionary) -> void:
 	_last_weather_state = state.duplicate(true)

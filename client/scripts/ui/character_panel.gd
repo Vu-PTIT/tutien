@@ -31,8 +31,10 @@ var loading: bool = false
 var touch_layout_enabled: bool = false
 var fullscreen_enabled: bool = false
 var master_volume: float = 0.8
+var language_manager: Variant
 
 func _ready() -> void:
+	language_manager = get_node_or_null("/root/LanguageManager")
 	$Close.pressed.connect(hide)
 	$ProfileTab.pressed.connect(func() -> void: show_page("profile"))
 	$SkillsTab.pressed.connect(func() -> void: show_page("skills"))
@@ -52,7 +54,8 @@ func _ready() -> void:
 	language_selector.add_item("English")
 	language_selector.set_item_metadata(1, "en")
 	language_selector.item_selected.connect(_on_language_selected)
-	LanguageManager.locale_changed.connect(_on_language_changed)
+	if language_manager != null:
+		language_manager.locale_changed.connect(_on_language_changed)
 	_load_settings()
 	_apply_volume()
 	_apply_fullscreen()
@@ -322,7 +325,7 @@ func _load_settings() -> void:
 		touch_layout_enabled = bool(config.get_value("controls", "touch_layout", OS.has_feature("mobile")))
 	else:
 		touch_layout_enabled = OS.has_feature("mobile")
-	$PageHost/SettingsPage/SettingsCard/Language.select(0 if LanguageManager.get_locale() == "vi" else 1)
+	$PageHost/SettingsPage/SettingsCard/Language.select(0 if language_manager.get_locale() == "vi" else 1)
 	$PageHost/SettingsPage/SettingsCard/Volume.set_value(master_volume)
 	$PageHost/SettingsPage/SettingsCard/VolumeValue.text = "%d%%" % roundi(master_volume * 100.0)
 	$PageHost/SettingsPage/SettingsCard/Fullscreen.set_pressed_no_signal(fullscreen_enabled)
@@ -334,14 +337,15 @@ func _save_settings() -> void:
 	config.set_value("audio", "master", master_volume)
 	config.set_value("display", "fullscreen", fullscreen_enabled)
 	config.set_value("controls", "touch_layout", touch_layout_enabled)
-	config.set_value("general", "language", LanguageManager.get_locale())
+	config.set_value("general", "language", language_manager.get_locale())
 	var status := config.save(SETTINGS_PATH)
 	if status != OK:
 		$PageHost/SettingsPage/SettingsCard/SettingsNote.text = "Không lưu được cài đặt trên thiết bị này."
 
 func _on_language_selected(index: int) -> void:
 	var selector: OptionButton = $PageHost/SettingsPage/SettingsCard/Language
-	LanguageManager.set_locale(str(selector.get_item_metadata(index)))
+	if language_manager != null:
+		language_manager.set_locale(str(selector.get_item_metadata(index)))
 	_save_settings()
 
 func _on_language_changed(locale: String) -> void:

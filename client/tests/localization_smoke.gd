@@ -3,8 +3,14 @@ extends SceneTree
 
 const Main = preload("res://scenes/main.tscn")
 var failures := 0
+var language_manager: Variant
 
 func _initialize() -> void:
+	language_manager = root.get_node_or_null("LanguageManager")
+	if language_manager == null:
+		language_manager = load("res://scripts/language_manager.gd").new()
+		language_manager.name = "LanguageManager"
+		root.add_child(language_manager)
 	_run.call_deferred()
 
 func check(condition: bool, message: String) -> void:
@@ -13,10 +19,10 @@ func check(condition: bool, message: String) -> void:
 		push_error(message)
 
 func _run() -> void:
-	LanguageManager.set_locale("vi", false)
-	check(LanguageManager.translate_message("Leave the current match first") == "Hãy rời trận hiện tại trước.",
+	language_manager.set_locale("vi", false)
+	check(language_manager.translate_message("Leave the current match first") == "Hãy rời trận hiện tại trước.",
 		"English server errors are translated into Vietnamese")
-	check(LanguageManager.translate_message("Sơn Trư respawns in 12 seconds") == "Sơn Trư hồi sinh sau 12 giây.",
+	check(language_manager.translate_message("Sơn Trư respawns in 12 seconds") == "Sơn Trư hồi sinh sau 12 giây.",
 		"Dynamic server cooldown errors are translated into Vietnamese")
 	var main = Main.instantiate()
 	root.add_child(main)
@@ -30,7 +36,7 @@ func _run() -> void:
 	check(character_title.text == "NHÂN VẬT", "Vietnamese scene title loads from translations")
 	check(attack_label.text == "Công kích • 16", "Vietnamese runtime combat stats use translated templates")
 
-	LanguageManager.set_locale("en", false)
+	language_manager.set_locale("en", false)
 	await process_frame
 	check(character_title.text == "CHARACTER", "English scene title switches at runtime")
 	check(attack_label.text == "Attack • 16", "English runtime combat stats switch at runtime")
@@ -48,7 +54,7 @@ func _run() -> void:
 	check(main.hud.get_node("Toast/Message").text == "Received 18 Qi and Boar Hide ×1.",
 		"Formatted notices translate both the template and its item name")
 
-	LanguageManager.set_locale("vi", false)
+	language_manager.set_locale("vi", false)
 	await process_frame
 	check(character_title.text == "NHÂN VẬT" and attack_label.text == "Công kích • 16",
 		"Switching back restores Vietnamese dynamic and scene text")

@@ -6,6 +6,10 @@ var failures: int = 0
 var capture_dir: String = ""
 
 func _initialize() -> void:
+	if root.get_node_or_null("LanguageManager") == null:
+		var language_manager: Node = load("res://scripts/language_manager.gd").new()
+		language_manager.name = "LanguageManager"
+		root.add_child(language_manager)
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--capture-dir="):
 			capture_dir = arg.trim_prefix("--capture-dir=")
