@@ -115,6 +115,8 @@ func _apply_locale() -> void:
 	if scene_tree != null:
 		scene_tree.root.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_ALWAYS
 	TranslationServer.set_locale(_locale)
+	if scene_tree != null:
+		scene_tree.root.propagate_notification(Node.NOTIFICATION_TRANSLATION_CHANGED)
 
 func _save_locale() -> void:
 	var config := ConfigFile.new()
