@@ -31,7 +31,9 @@ func _draw() -> void:
 	for index in range(3):
 		var phase := fposmod(_clock * (0.42 + rain_intensity * 0.48) + phase_offset + float(index) / 3.0, 1.0)
 		var pixel_step := floori(phase * 5.0)
-		var width := (1 + pixel_step) * _pixel_scale
+		var shimmer_cell_width := 1 + pixel_step
+		var width := shimmer_cell_width * _pixel_scale
+		var offset_x := -floori(float(shimmer_cell_width) / 2.0) * _pixel_scale
 		var offset_y := (index - 1) * 3 * _pixel_scale
 		var shimmer_alpha: float = 0.36
 		if phase < 0.34:
