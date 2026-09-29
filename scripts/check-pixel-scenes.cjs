@@ -248,7 +248,11 @@ for(const map of mapCatalog.maps) for(const poi of map.interactables) {
   assert.ok(reachableByMapId.get(poi.target_map_id).has(`${arrivalX},${arrivalY}`),
     'Gate arrival is reachable from the destination spawn: '+poi.entity_id);
 }
-assert.ok(read('project.godot').includes('window/stretch/scale_mode="integer"'));
+const projectSettings=read('project.godot');
+assert.ok(projectSettings.includes('window/stretch/scale_mode="fractional"'),
+  'PC fullscreen must use the full display area at non-integer resolutions');
+assert.ok(projectSettings.includes('window/size/mode=4'),
+  'PC game must start in exclusive fullscreen');
 assert.ok(read('project.godot').includes('window/size/viewport_width=640'));
 assert.ok(read('scripts/inventory_panel.gd').includes('"operationId": "starter_claim_v1"'));
 assert.ok(read('scripts/inventory_panel.gd').includes('inventory.clear()'));
