@@ -16,6 +16,21 @@ func check(condition: bool, message: String) -> void:
 		failures += 1
 		push_error(message)
 
+func check_social_typography() -> void:
+	var social_theme := load("res://themes/tutien_theme.tres") as Theme
+	check(social_theme != null, "Shared theme loads for social typography")
+	if social_theme == null:
+		return
+	check(social_theme.is_type_variation(&"SocialHeader", &"Label"), "Social header is a Label theme variation")
+	check(social_theme.get_font_size(&"font_size", &"SocialHeader") == 16, "Social desktop header uses the large type token")
+	check(social_theme.get_font_size(&"font_size", &"SocialBodyMobile") == 14, "Social mobile body uses the mobile type token")
+	check(social_theme.get_font_size(&"normal_font_size", &"SocialChatLogMobile") == 14, "Mobile chat history uses readable message text")
+	var chat_entry := LineEdit.new()
+	chat_entry.theme = social_theme
+	check(SocialTypography.apply_profile(chat_entry, &"chat_entry", true), "Social typography applies a known mobile profile")
+	check(chat_entry.theme_type_variation == &"SocialChatEntryMobile", "Chat entry receives its mobile theme variation")
+	chat_entry.free()
+
 func _capture(filename: String) -> void:
 	if capture_dir.is_empty():
 		return
@@ -90,6 +105,7 @@ func check_map_assets(world: GameMap) -> void:
 	check(not world.get_node("Background").visible, "No painted PNG fallback: " + world.map_id)
 
 func _run() -> void:
+	check_social_typography()
 	var main = Main.instantiate()
 	root.add_child(main)
 	await process_frame

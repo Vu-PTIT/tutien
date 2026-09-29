@@ -198,6 +198,26 @@ Các hàm trả Dictionary; lỗi có `error` và `status`. Tắt nút khi đang
 UI cần cung cấp nhập email/mật khẩu, danh sách bạn, danh sách nhóm và cửa sổ chat;
 các màn hình đó chưa được dựng trong thay đổi backend này.
 
+### Typography cho giao diện xã hội
+
+Client hiện có adapter/backend xã hội, chưa có scene bạn bè, chat hoặc tông môn/bang
+hội. Theme dùng chung đã có sẵn các biến thể để màn hình mới không tự đặt cỡ chữ:
+
+| Vai trò | Desktop | Mobile |
+|---|---:|---:|
+| Tiêu đề nhóm/màn hình | `SocialHeader` — 16 px | `SocialHeaderMobile` — 18 px |
+| Tên người chơi/nội dung | `SocialBody` — 12 px | `SocialBodyMobile` — 14 px |
+| Trạng thái/thời gian | `SocialCaption` — 10 px | `SocialCaptionMobile` — 12 px |
+| Lịch sử chat (`RichTextLabel`) | `SocialChatLog` — 12 px | `SocialChatLogMobile` — 14 px |
+| Ô nhập chat | `SocialChatEntry` — 12 px | `SocialChatEntryMobile` — 14 px |
+| Nút thao tác | `SocialAction` — 12 px | `SocialActionMobile` — 14 px |
+
+Các biến thể dùng cùng pixel font Handjet với phần UI còn lại, giữ bảng màu xanh
+ngọc/đồng của theme hiện tại.
+`SocialTypography.apply_profile(control, &"chat_log", mobile)` chọn biến thể cho
+thiết bị; các profile khác dùng `header`, `body`, `caption`, `chat_entry`, `action`.
+Font được đóng gói tại `client/assets/pixel/ui_font.ttf` và có giấy phép OFL.
+
 ## Giới hạn vận hành của bản đầu
 
 Giới hạn: email/guest auth 30 lần/phút/IP, thay đổi bạn bè 30 lần/phút/người,
