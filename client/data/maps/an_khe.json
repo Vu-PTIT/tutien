@@ -9,40 +9,160 @@
     "rows": 8,
     "seed": 3871,
     "path_edge_tiles": {
-      "west": [0, 1, 2, 3],
-      "east": [4, 5, 6, 7],
-      "north": [8, 9, 10, 11],
-      "south": [12, 13, 14, 15]
+      "west": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "east": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "north": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "south": [
+        12,
+        13,
+        14,
+        15
+      ]
     },
     "path_corner_tiles": {
-      "north_west": [16, 17, 18, 19],
-      "north_east": [20, 21, 22, 23],
-      "south_west": [24, 25, 26, 27],
-      "south_east": [28, 29, 30, 31]
+      "north_west": [
+        16,
+        17,
+        18,
+        19
+      ],
+      "north_east": [
+        20,
+        21,
+        22,
+        23
+      ],
+      "south_west": [
+        24,
+        25,
+        26,
+        27
+      ],
+      "south_east": [
+        28,
+        29,
+        30,
+        31
+      ]
     },
     "shore_land_edge_tiles": {
-      "east": [32, 33, 34, 35],
-      "west": [36, 37, 38, 39],
-      "south": [40, 41, 42, 43],
-      "north": [44, 45, 46, 47]
+      "east": [
+        32,
+        33,
+        34,
+        35
+      ],
+      "west": [
+        36,
+        37,
+        38,
+        39
+      ],
+      "south": [
+        40,
+        41,
+        42,
+        43
+      ],
+      "north": [
+        44,
+        45,
+        46,
+        47
+      ]
     },
     "shore_land_corner_tiles": {
-      "north_east": [48, 49, 50, 51],
-      "south_east": [52, 53, 54, 55],
-      "south_west": [56, 57, 58, 59],
-      "north_west": [60, 61, 62, 63]
+      "north_east": [
+        48,
+        49,
+        50,
+        51
+      ],
+      "south_east": [
+        52,
+        53,
+        54,
+        55
+      ],
+      "south_west": [
+        56,
+        57,
+        58,
+        59
+      ],
+      "north_west": [
+        60,
+        61,
+        62,
+        63
+      ]
     },
     "shore_water_edge_tiles": {
-      "west": [64, 65, 66, 67],
-      "east": [68, 69, 70, 71],
-      "north": [72, 73, 74, 75],
-      "south": [76, 77, 78, 79]
+      "west": [
+        64,
+        65,
+        66,
+        67
+      ],
+      "east": [
+        68,
+        69,
+        70,
+        71
+      ],
+      "north": [
+        72,
+        73,
+        74,
+        75
+      ],
+      "south": [
+        76,
+        77,
+        78,
+        79
+      ]
     },
     "shore_water_corner_tiles": {
-      "north_west": [80, 81, 82, 83],
-      "north_east": [84, 85, 86, 87],
-      "south_west": [88, 89, 90, 91],
-      "south_east": [92, 93, 94, 95]
+      "north_west": [
+        80,
+        81,
+        82,
+        83
+      ],
+      "north_east": [
+        84,
+        85,
+        86,
+        87
+      ],
+      "south_west": [
+        88,
+        89,
+        90,
+        91
+      ],
+      "south_east": [
+        92,
+        93,
+        94,
+        95
+      ]
     }
   },
   "ground_rows": [
@@ -62,12 +182,12 @@
     "8450EC9KJ4DAA0DE591A5A0J9CC8B5CAA70BD07bZYEBBDAD",
     "F917114FKJ410958BDB05E1I7FA10FDCC8AFBD8aYZbAEFF4",
     "DAFED1C740LB17810158177JF8DJKJKHG40A50EEXWcDF990",
-    "C1CC8A44BCAHIDD7ILKHGLKKJGHIAFA8EB50A444bXdc78CA",
-    "1D50CA99FD79JKJGADBEC9RJGOP9DBE98EE80747cYXb5E88",
-    "4897FEE95F78A7CE7FC41TQTUTST5914487C49A9BcWXd88F",
-    "EECA99DB88C19E54A8EBC9PSGKLK40F544FE4D07C8cYXb9D",
-    "E15948C41C151A00CD910B0PSKGLKLK07CBBBA1ACFdZWaCB",
-    "D4579AE099FCEA8F18788598DJC4ABLGJKJIJGJI7CaWZd10",
+    "C1CC8A44BCAHIDD7ILKHGLPQOPQIAFA8EB50A444bXdc78CA",
+    "1D50CA99FD79JKJGADBEC9OPQRQODBE98EE80747cYXb5E88",
+    "4897FEE95F78A7CE7FC41TQTPQST5914487C49A9BcWXd88F",
+    "EECA99DB88C19E54A8EBC9PSPRSP40F544FE4D07C8cYXb9D",
+    "E15948C41C151A00CD910B0PQOGLKLK07CBBBA1ACFdZWaCB",
+    "D4579AE099FCEA8F1878859PQPC4ABLGJKJIJGJI7CaWZd10",
     "8774D4C908B0C9D9C9BF574CJGD1CC54E97DD4987BbXYc9A",
     "CDCFCDB4EA4CF45B49B1507CGH5ACE40BD4BCECA19ZYaF77",
     "9EA119CAAFF1EEF8578F4FAGJC1D0CE18A0DE87C1aYZb55D",
@@ -85,89 +205,193 @@
   ],
   "detail_tiles": [
     {
-      "position_tiles": [25, 20],
-      "tile": 30
-    },
-    {
-      "position_tiles": [6, 25],
+      "position_tiles": [
+        6,
+        25
+      ],
       "tile": 56
     },
     {
-      "position_tiles": [7, 25],
+      "position_tiles": [
+        7,
+        25
+      ],
       "tile": 57
     },
     {
-      "position_tiles": [8, 25],
+      "position_tiles": [
+        8,
+        25
+      ],
       "tile": 58
     },
     {
-      "position_tiles": [6, 26],
+      "position_tiles": [
+        6,
+        26
+      ],
       "tile": 57
     },
     {
-      "position_tiles": [7, 26],
+      "position_tiles": [
+        7,
+        26
+      ],
       "tile": 56
     },
     {
-      "position_tiles": [8, 26],
+      "position_tiles": [
+        8,
+        26
+      ],
       "tile": 58
     },
     {
-      "position_tiles": [2, 6],
+      "position_tiles": [
+        2,
+        6
+      ],
       "tile": 61
     },
     {
-      "position_tiles": [39, 8],
+      "position_tiles": [
+        39,
+        8
+      ],
       "tile": 63
+    },
+    {
+      "position_tiles": [
+        24,
+        20
+      ],
+      "tile": 30
+    },
+    {
+      "position_tiles": [
+        25,
+        20
+      ],
+      "tile": 30
+    },
+    {
+      "position_tiles": [
+        3,
+        17
+      ],
+      "tile": 62
+    },
+    {
+      "position_tiles": [
+        3,
+        23
+      ],
+      "tile": 63
+    },
+    {
+      "position_tiles": [
+        32,
+        5
+      ],
+      "tile": 62
+    },
+    {
+      "position_tiles": [
+        30,
+        30
+      ],
+      "tile": 61
     }
   ],
   "props_atlas": "res://assets/pixel/props/an_khe_props.png",
   "props_columns": 8,
   "props_cell_px": 128,
-  "solid_tile_ids": [32, 33, 34, 35, 36, 37, 38, 39],
+  "solid_tile_ids": [
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+  ],
   "props": [
     {
       "name": "ak_prop_north_gate",
-      "position_tiles": [22.5, 4],
+      "position_tiles": [
+        22.5,
+        4
+      ],
       "texture_path": "res://assets/pixel/props/generated/an_khe_north_gate/processed/clean.png",
-      "scale_tiles": [1.18, 1.18],
+      "scale_tiles": [
+        1.18,
+        1.18
+      ],
       "foot_padding_px": 12
     },
     {
       "name": "ak_prop_herbalist",
-      "position_tiles": [6.5, 10],
+      "position_tiles": [
+        6.5,
+        10
+      ],
       "texture_path": "res://assets/pixel/props/generated/an_khe_herbalist_hut/processed/clean.png",
-      "scale_tiles": [1.12, 1.12],
+      "scale_tiles": [
+        1.12,
+        1.12
+      ],
       "foot_padding_px": 9
     },
     {
       "name": "ak_prop_guest_house",
-      "position_tiles": [28.5, 9],
+      "position_tiles": [
+        28.5,
+        9
+      ],
       "texture_path": "res://assets/pixel/props/generated/an_khe_guest_house/processed/clean.png",
-      "scale_tiles": [1.05, 1.05],
+      "scale_tiles": [
+        1.05,
+        1.05
+      ],
       "foot_padding_px": 13
     },
     {
       "name": "ak_prop_village_board",
-      "position_tiles": [14.5, 16],
+      "position_tiles": [
+        14.5,
+        16
+      ],
       "texture_path": "res://assets/pixel/props/generated/an_khe_notice_board/processed/clean.png",
       "foot_padding_px": 8
     },
     {
       "name": "ak_prop_market_stall",
-      "position_tiles": [38.5, 19],
+      "position_tiles": [
+        38.5,
+        19
+      ],
       "texture_path": "res://assets/pixel/props/generated/an_khe_market_stall/processed/clean.png",
-      "scale_tiles": [1.18, 1.18],
+      "scale_tiles": [
+        1.18,
+        1.18
+      ],
       "foot_padding_px": 10
     },
     {
       "name": "ak_prop_blacksmith",
-      "position_tiles": [32.5, 17],
+      "position_tiles": [
+        32.5,
+        17
+      ],
       "texture_path": "res://assets/pixel/props/an_khe_blacksmith.png"
     },
     {
       "name": "ak_prop_sakura",
-      "position_tiles": [18.5, 32],
+      "position_tiles": [
+        18.5,
+        32
+      ],
       "tile": 59,
       "texture_path": "res://assets/pixel/props/an_khe_sakura.png",
       "foot_padding_px": 6,
@@ -187,100 +411,263 @@
     "bank_tile": 39,
     "bank_fringe_tile": 23,
     "bank_fringe_chance": 58,
-    "base_water_tiles": [32, 34],
-    "detail_water_tiles": [33, 35],
+    "base_water_tiles": [
+      32,
+      34
+    ],
+    "detail_water_tiles": [
+      33,
+      35
+    ],
     "detail_water_chance": 0.045,
-    "replacement_grass_tiles": [0, 1, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "replacement_grass_tiles": [
+      0,
+      1,
+      4,
+      5,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
     "seed": 10473,
     "west_bankline": [
-      [44.3, 0],
-      [44.6, 4],
-      [43.0, 8],
-      [42.3, 12],
-      [43.0, 16],
-      [42.2, 20],
-      [40.4, 24],
-      [37.8, 28],
-      [34.2, 32],
-      [31.8, 35]
+      [
+        44.3,
+        0
+      ],
+      [
+        44.5,
+        4
+      ],
+      [
+        43.2,
+        8
+      ],
+      [
+        42.5,
+        12
+      ],
+      [
+        43,
+        16
+      ],
+      [
+        42.2,
+        20
+      ],
+      [
+        39.8,
+        24
+      ],
+      [
+        36.9,
+        28
+      ],
+      [
+        33.5,
+        32
+      ],
+      [
+        31.5,
+        35
+      ]
     ]
   },
   "path_autoterrain": {
     "seed": 5821,
     "edge_roughness_tiles": 0.4,
     "replacement_grass_tile": 0,
-    "interior_tiles": [16],
-    "edge_tiles": [16],
+    "interior_tiles": [
+      16
+    ],
+    "edge_tiles": [
+      16
+    ],
     "paths": [
       {
         "id": "north_gate_to_plaza",
         "half_width_tiles": 0.9,
         "points": [
-          [22.8, 0.5],
-          [23.2, 5],
-          [23.6, 9],
-          [23.2, 13.5],
-          [23.9, 16.5]
+          [
+            22.8,
+            0.5
+          ],
+          [
+            23.2,
+            5
+          ],
+          [
+            23.6,
+            9
+          ],
+          [
+            23.2,
+            13.5
+          ],
+          [
+            23.9,
+            16.5
+          ]
         ]
       },
       {
         "id": "plaza_to_herbalist",
         "half_width_tiles": 0.72,
         "points": [
-          [22.6, 16.4],
-          [19.5, 16.5],
-          [16.5, 16.6],
-          [13.5, 15.1],
-          [10.2, 13.6],
-          [7.1, 12.5]
+          [
+            22.6,
+            16.4
+          ],
+          [
+            19.5,
+            16.5
+          ],
+          [
+            16.5,
+            16.6
+          ],
+          [
+            13.5,
+            15.1
+          ],
+          [
+            10.2,
+            13.6
+          ],
+          [
+            7.1,
+            12.5
+          ]
         ]
       },
       {
         "id": "plaza_to_guest_house",
         "half_width_tiles": 0.62,
         "points": [
-          [24.3, 16.2],
-          [25.4, 15.2],
-          [26.1, 13.4],
-          [27.5, 12],
-          [29, 10.8]
+          [
+            24.3,
+            16.2
+          ],
+          [
+            25.4,
+            15.2
+          ],
+          [
+            26.1,
+            13.4
+          ],
+          [
+            27.5,
+            12
+          ],
+          [
+            29,
+            10.8
+          ]
         ]
       },
       {
         "id": "plaza_to_market_and_river",
         "half_width_tiles": 0.78,
         "points": [
-          [26.4, 17.1],
-          [29.4, 17.2],
-          [32.4, 17.8],
-          [35.4, 18.5],
-          [38.3, 19.6],
-          [40.1, 20.5]
+          [
+            26.4,
+            17.1
+          ],
+          [
+            29.1,
+            17.4
+          ],
+          [
+            31.8,
+            17.9
+          ],
+          [
+            34.7,
+            18.4
+          ],
+          [
+            37.2,
+            19.1
+          ],
+          [
+            39.2,
+            20
+          ],
+          [
+            40.7,
+            20.6
+          ]
         ]
       },
       {
         "id": "plaza_to_sakura",
         "half_width_tiles": 0.72,
         "points": [
-          [24.1, 19.8],
-          [24, 22.3],
-          [23.4, 25],
-          [22.4, 27.6],
-          [20.6, 29.6],
-          [19.2, 32.2],
-          [18.7, 35.3]
+          [
+            24.1,
+            19.8
+          ],
+          [
+            24,
+            22.3
+          ],
+          [
+            23.4,
+            25
+          ],
+          [
+            22.4,
+            27.6
+          ],
+          [
+            20.6,
+            29.6
+          ],
+          [
+            19.2,
+            32.2
+          ],
+          [
+            18.7,
+            35.3
+          ]
         ]
       },
       {
         "id": "south_lane_to_garden",
         "half_width_tiles": 0.62,
         "points": [
-          [21.7, 28.1],
-          [18.8, 27.7],
-          [16, 27.5],
-          [13.2, 27],
-          [10.5, 26.5],
-          [8, 25.4]
+          [
+            21.7,
+            28.1
+          ],
+          [
+            18.8,
+            27.7
+          ],
+          [
+            16,
+            27.5
+          ],
+          [
+            13.2,
+            27
+          ],
+          [
+            10.5,
+            26.5
+          ],
+          [
+            8,
+            25.4
+          ]
         ]
       }
     ]
@@ -289,38 +676,56 @@
     "trees": [
       {
         "id": "ak.tree.woodland_01",
-        "position_tiles": [13.5, 21.0],
+        "position_tiles": [
+          13.5,
+          21
+        ],
         "hits_to_fell": 3,
-        "collision_size_px": [20, 14],
+        "collision_size_px": [
+          20,
+          14
+        ],
         "foot_padding_px": 5,
-        "sprite_scale": 1.0
+        "sprite_scale": 1
       }
     ],
     "flowers": [
       {
         "id": "ak.flower.pink_01",
-        "position_tiles": [15.0, 22.0],
+        "position_tiles": [
+          15,
+          22
+        ],
         "variant": 1,
         "sprite_scale": 0.88,
         "stomp_radius_px": 16
       },
       {
         "id": "ak.flower.gold_01",
-        "position_tiles": [17.0, 20.5],
+        "position_tiles": [
+          17,
+          20.5
+        ],
         "variant": 3,
         "sprite_scale": 0.84,
         "stomp_radius_px": 15
       },
       {
         "id": "ak.flower.blue_01",
-        "position_tiles": [18.0, 23.0],
+        "position_tiles": [
+          18,
+          23
+        ],
         "variant": 2,
         "sprite_scale": 0.92,
         "stomp_radius_px": 17
       },
       {
         "id": "ak.flower.violet_01",
-        "position_tiles": [20.0, 24.5],
+        "position_tiles": [
+          20,
+          24.5
+        ],
         "variant": 0,
         "sprite_scale": 0.86,
         "stomp_radius_px": 16
@@ -331,12 +736,78 @@
   "ground_surface_tile_px": 32,
   "ground_surface_columns": 48,
   "ground_surface_rows": 36,
-  "ground_surface_terrain_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-  "water_surface_tile_ids": [32, 33, 34, 35],
+  "ground_surface_terrain_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "water_surface_tile_ids": [
+    32,
+    33,
+    34,
+    35
+  ],
   "surface_step_materials": {
-    "grass": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-    "soil": [16, 17, 18, 19, 20, 21, 22, 23],
-    "stone": [24, 25, 26, 27, 28, 29, 30, 31],
-    "water": [32, 33, 34, 35, 36, 37, 38, 39]
+    "grass": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "soil": [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "stone": [
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "water": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39
+    ]
   }
 }
