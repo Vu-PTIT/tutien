@@ -29,4 +29,4 @@ Moving across configured grass, soil, stone, and water cells leaves a brief hand
 
 ## Verification
 
-The new `terrain_connectivity_smoke.gd` checks that both maps load with a full ground grid, populate separate water and shore layers, and expose material step definitions. JSON geometry, tile ranges, collision IDs, atlas dimensions, eight-color palette, and binary alpha were statically validated. Godot runtime execution is still pending because no Godot executable is available in this workspace.
+The new `terrain_connectivity_smoke.gd` checks that both maps load with a full ground grid, populate separate water and shore layers, and expose material step definitions. JSON geometry, tile ranges, collision IDs, atlas dimensions, eight-color palette, and binary alpha were statically validated. GitHub Actions run #220 passed the Godot 4.6.1 import, presentation/localization/weather smoke tests, layout capture, and server integration checks.
