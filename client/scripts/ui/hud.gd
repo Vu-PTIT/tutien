@@ -36,7 +36,6 @@ func _ready() -> void:
 	$HelpButton.pressed.connect(func() -> void:
 		notify("Kéo cần trái để đi • chạm Đánh / Kỹ năng khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh • R: kỹ năng • M: map • C: hồ sơ • I: túi • E: tương tác"))
 	phi_ren_icon = _make_phi_ren_icon()
-	$Hotbar/Slot4.add_theme_font_size_override("font_size", 8)
 	$Hotbar/Slot4.icon = null
 	$Hotbar/Slot4.text = "—"
 	for index in range(6):
@@ -84,7 +83,18 @@ func set_touch_layout(enabled: bool) -> void:
 	touch_layout = enabled
 	$Hotbar.visible = not enabled
 	$Controls.visible = not enabled
-	$HelpButton.position = Vector2(8, 170) if enabled else Vector2(8, 328)
+	if enabled:
+		$HelpButton.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		$HelpButton.offset_left = 8.0
+		$HelpButton.offset_top = 170.0
+		$HelpButton.offset_right = 154.0
+		$HelpButton.offset_bottom = 195.0
+	else:
+		$HelpButton.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+		$HelpButton.offset_left = 8.0
+		$HelpButton.offset_top = -32.0
+		$HelpButton.offset_right = 154.0
+		$HelpButton.offset_bottom = -7.0
 	$HelpButton.text = "Hướng dẫn" if enabled else "Hướng dẫn / trạng thái"
 	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible)
 

@@ -29,7 +29,7 @@ var selected_skill_id: String = ""
 var preview_mode: bool = true
 var loading: bool = false
 var touch_layout_enabled: bool = false
-var fullscreen_enabled: bool = false
+var fullscreen_enabled: bool = true
 var master_volume: float = 0.8
 var language_manager: Variant
 
@@ -242,6 +242,7 @@ func _render_skills() -> void:
 		if not is_learned:
 			button.text += " • Chưa mở"
 		button.tooltip_text = tr(str(definition.get("description", "")))
+		button.theme_type_variation = &"UIButtonSmall"
 		button.custom_minimum_size = Vector2(0, 30)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.pressed.connect(_select_skill.bind(skill_id))
@@ -323,10 +324,10 @@ func _load_settings() -> void:
 	var status := config.load(SETTINGS_PATH)
 	if status == OK:
 		master_volume = clampf(float(config.get_value("audio", "master", 0.8)), 0.0, 1.0)
-		fullscreen_enabled = bool(config.get_value("display", "fullscreen", false))
 		touch_layout_enabled = bool(config.get_value("controls", "touch_layout", OS.has_feature("mobile")))
 	else:
 		touch_layout_enabled = OS.has_feature("mobile")
+	fullscreen_enabled = true
 	$PageHost/SettingsPage/SettingsCard/Language.select(0 if language_manager.get_locale() == "vi" else 1)
 	$PageHost/SettingsPage/SettingsCard/Volume.set_value(master_volume)
 	$PageHost/SettingsPage/SettingsCard/VolumeValue.text = "%d%%" % roundi(master_volume * 100.0)
@@ -337,7 +338,6 @@ func _save_settings() -> void:
 	var config := ConfigFile.new()
 	config.load(SETTINGS_PATH)
 	config.set_value("audio", "master", master_volume)
-	config.set_value("display", "fullscreen", fullscreen_enabled)
 	config.set_value("controls", "touch_layout", touch_layout_enabled)
 	config.set_value("general", "language", language_manager.get_locale())
 	var status := config.save(SETTINGS_PATH)
@@ -384,7 +384,7 @@ func _on_fullscreen_toggled(enabled: bool) -> void:
 	_save_settings()
 
 func _apply_fullscreen() -> void:
-	var target_mode := DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen_enabled else DisplayServer.WINDOW_MODE_WINDOWED
+	var target_mode := DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN if fullscreen_enabled else DisplayServer.WINDOW_MODE_WINDOWED
 	if DisplayServer.window_get_mode() != target_mode:
 		DisplayServer.window_set_mode(target_mode)
 

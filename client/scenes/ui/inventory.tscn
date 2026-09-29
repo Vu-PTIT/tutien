@@ -4,10 +4,15 @@
 [ext_resource type="Texture2D" path="res://assets/pixel/icon_4.tres" id="sword"]
 
 [node name="Inventory" type="Panel"]
-offset_left = 48.0
-offset_top = 24.0
-offset_right = 592.0
-offset_bottom = 334.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -272.0
+offset_top = -156.0
+offset_right = 272.0
+offset_bottom = 154.0
 theme = ExtResource("theme")
 script = ExtResource("script")
 
@@ -18,7 +23,7 @@ offset_right = 264.0
 offset_bottom = 31.0
 mouse_filter = 2
 text = "TÚI ĐỒ"
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"UIHeading"
 
 [node name="Close" type="Button" parent="."]
 offset_left = 502.0
@@ -34,7 +39,7 @@ offset_right = 524.0
 offset_bottom = 48.0
 mouse_filter = 2
 text = "Mẫu giao diện • không lưu vào tài khoản"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UISmall"
 
 [node name="All" type="Button" parent="."]
 offset_left = 14.0
@@ -85,7 +90,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot1" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -99,7 +104,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot2" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -113,7 +118,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot3" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -127,7 +132,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot4" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -141,7 +146,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot5" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -155,7 +160,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot6" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -169,7 +174,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot7" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -183,7 +188,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot8" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -197,7 +202,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot9" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -211,7 +216,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot10" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -225,7 +230,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot11" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -239,7 +244,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot12" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -253,7 +258,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot13" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -267,7 +272,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot14" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -281,7 +286,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot15" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -295,7 +300,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot16" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -309,7 +314,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot17" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -323,7 +328,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot18" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -337,7 +342,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot19" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -351,7 +356,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot20" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -365,7 +370,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot21" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -379,7 +384,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot22" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -393,7 +398,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Slot23" type="Button" parent="Grid"]
 custom_minimum_size = Vector2(43, 43)
@@ -407,7 +412,7 @@ offset_right = 40.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = ""
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Detail" type="Panel" parent="."]
 offset_left = 304.0
@@ -432,7 +437,7 @@ offset_right = 217.0
 offset_bottom = 44.0
 mouse_filter = 2
 text = "Chọn một vật phẩm"
-theme_override_font_sizes/font_size = 11
+theme_type_variation = &"UIBody"
 
 [node name="Body" type="Label" parent="Detail"]
 offset_left = 10.0
@@ -441,7 +446,7 @@ offset_right = 216.0
 offset_bottom = 136.0
 mouse_filter = 2
 text = "Thông tin vật phẩm và nguồn thu thập."
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"UISmall"
 autowrap_mode = 2
 
 [node name="Action" type="Button" parent="Detail"]
@@ -450,7 +455,7 @@ offset_top = 145.0
 offset_right = 111.0
 offset_bottom = 168.0
 text = "Dùng / trang bị"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UIButtonSmall"
 
 [node name="Discard" type="Button" parent="Detail"]
 offset_left = 118.0
@@ -458,7 +463,7 @@ offset_top = 145.0
 offset_right = 216.0
 offset_bottom = 168.0
 text = "Bỏ vật phẩm"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UIButtonSmall"
 
 [node name="Summary" type="Label" parent="."]
 offset_left = 14.0
@@ -467,7 +472,7 @@ offset_right = 249.0
 offset_bottom = 299.0
 mouse_filter = 2
 text = "24 ô • bản xem thử"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UISmall"
 
 [node name="Claim" type="Button" parent="."]
 offset_left = 253.0

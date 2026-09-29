@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=11 format=3]
-[ext_resource type="FontFile" path="res://assets/pixel/ui_font.ttf" id="1"]
-[ext_resource type="FontFile" path="res://assets/pixel/tiny5_pixel_ui.ttf" id="2"]
+[ext_resource type="FontFile" path="res://assets/fonts/BeVietnamPro-Regular.ttf" id="1"]
+[ext_resource type="FontFile" path="res://assets/fonts/BeVietnamPro-SemiBold.ttf" id="2"]
 [sub_resource type="StyleBoxFlat" id="panel"]
 bg_color = Color(0.065, 0.095, 0.125, 0.97)
 border_width_left = 2
@@ -68,67 +68,55 @@ bg_color = Color(0.63, 0.22, 0.23, 1)
 bg_color = Color(0.20, 0.49, 0.65, 1)
 [resource]
 default_font = ExtResource("1")
-default_font_size = 10
+default_font_size = 12
+Button/fonts/font = ExtResource("2")
+Button/font_sizes/font_size = 12
 
-MapPixelText/base_type = &"Label"
-MapPixelText/fonts/font = ExtResource("2")
-MapPixelText/font_sizes/font_size = 8
-MapPixelHeading/base_type = &"Label"
-MapPixelHeading/fonts/font = ExtResource("2")
-MapPixelHeading/font_sizes/font_size = 16
-MapPixelButton/base_type = &"Button"
-MapPixelButton/fonts/font = ExtResource("2")
-MapPixelButton/font_sizes/font_size = 8
+UIHeading/base_type = &"Label"
+UIHeading/fonts/font = ExtResource("2")
+UIHeading/font_sizes/font_size = 16
+UIBody/base_type = &"Label"
+UIBody/fonts/font = ExtResource("1")
+UIBody/font_sizes/font_size = 12
+UISmall/base_type = &"Label"
+UISmall/fonts/font = ExtResource("1")
+UISmall/font_sizes/font_size = 10
+UIMicro/base_type = &"Label"
+UIMicro/fonts/font = ExtResource("1")
+UIMicro/font_sizes/font_size = 9
 
-SocialHeader/base_type = &"Label"
-SocialHeader/fonts/font = ExtResource("1")
-SocialHeader/font_sizes/font_size = 16
-SocialHeader/colors/font_color = Color(0.91, 0.72, 0.4, 1)
-SocialHeaderMobile/base_type = &"Label"
-SocialHeaderMobile/fonts/font = ExtResource("1")
-SocialHeaderMobile/font_sizes/font_size = 18
-SocialHeaderMobile/colors/font_color = Color(0.91, 0.72, 0.4, 1)
+UIButton/base_type = &"Button"
+UIButton/fonts/font = ExtResource("2")
+UIButton/font_sizes/font_size = 12
+UIButtonSmall/base_type = &"Button"
+UIButtonSmall/fonts/font = ExtResource("2")
+UIButtonSmall/font_sizes/font_size = 10
 
-SocialBody/base_type = &"Label"
-SocialBody/fonts/font = ExtResource("1")
-SocialBody/font_sizes/font_size = 12
-SocialBody/colors/font_color = Color(0.91, 0.87, 0.76, 1)
-SocialBodyMobile/base_type = &"Label"
-SocialBodyMobile/fonts/font = ExtResource("1")
-SocialBodyMobile/font_sizes/font_size = 14
-SocialBodyMobile/colors/font_color = Color(0.91, 0.87, 0.76, 1)
+UIHeadingMobile/base_type = &"Label"
+UIHeadingMobile/fonts/font = ExtResource("2")
+UIHeadingMobile/font_sizes/font_size = 18
+UIBodyMobile/base_type = &"Label"
+UIBodyMobile/fonts/font = ExtResource("1")
+UIBodyMobile/font_sizes/font_size = 14
+UISmallMobile/base_type = &"Label"
+UISmallMobile/fonts/font = ExtResource("1")
+UISmallMobile/font_sizes/font_size = 12
+UIButtonMobile/base_type = &"Button"
+UIButtonMobile/fonts/font = ExtResource("2")
+UIButtonMobile/font_sizes/font_size = 14
 
-SocialCaption/base_type = &"Label"
-SocialCaption/fonts/font = ExtResource("1")
-SocialCaption/font_sizes/font_size = 10
-SocialCaption/colors/font_color = Color(0.64, 0.75, 0.72, 1)
-SocialCaptionMobile/base_type = &"Label"
-SocialCaptionMobile/fonts/font = ExtResource("1")
-SocialCaptionMobile/font_sizes/font_size = 12
-SocialCaptionMobile/colors/font_color = Color(0.64, 0.75, 0.72, 1)
-
-SocialChatLog/base_type = &"RichTextLabel"
-SocialChatLog/fonts/normal_font = ExtResource("1")
-SocialChatLog/font_sizes/normal_font_size = 12
-SocialChatLog/colors/default_color = Color(0.91, 0.87, 0.76, 1)
-SocialChatLogMobile/base_type = &"RichTextLabel"
-SocialChatLogMobile/fonts/normal_font = ExtResource("1")
-SocialChatLogMobile/font_sizes/normal_font_size = 14
-SocialChatLogMobile/colors/default_color = Color(0.91, 0.87, 0.76, 1)
-
-SocialChatEntry/base_type = &"LineEdit"
-SocialChatEntry/fonts/font = ExtResource("1")
-SocialChatEntry/font_sizes/font_size = 12
-SocialChatEntryMobile/base_type = &"LineEdit"
-SocialChatEntryMobile/fonts/font = ExtResource("1")
-SocialChatEntryMobile/font_sizes/font_size = 14
-
-SocialAction/base_type = &"Button"
-SocialAction/fonts/font = ExtResource("1")
-SocialAction/font_sizes/font_size = 12
-SocialActionMobile/base_type = &"Button"
-SocialActionMobile/fonts/font = ExtResource("1")
-SocialActionMobile/font_sizes/font_size = 14
+UIChatLog/base_type = &"RichTextLabel"
+UIChatLog/fonts/normal_font = ExtResource("1")
+UIChatLog/font_sizes/normal_font_size = 12
+UIChatLogMobile/base_type = &"RichTextLabel"
+UIChatLogMobile/fonts/normal_font = ExtResource("1")
+UIChatLogMobile/font_sizes/normal_font_size = 14
+UIChatEntry/base_type = &"LineEdit"
+UIChatEntry/fonts/font = ExtResource("1")
+UIChatEntry/font_sizes/font_size = 12
+UIChatEntryMobile/base_type = &"LineEdit"
+UIChatEntryMobile/fonts/font = ExtResource("1")
+UIChatEntryMobile/font_sizes/font_size = 14
 
 Panel/styles/panel = SubResource("panel")
 PanelContainer/styles/panel = SubResource("panel")

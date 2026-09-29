@@ -6,10 +6,18 @@
 texture_filter = 1
 
 [node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 640.0
-offset_bottom = 360.0
+offset_right = 0.0
+offset_bottom = 0.0
 mouse_filter = 2
 texture = ExtResource("map")
 expand_mode = 1
@@ -22,7 +30,7 @@ offset_right = 180.0
 offset_bottom = 117.0
 mouse_filter = 2
 text = "Hiệu thuốc Bà Sâm"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UISmall"
 theme = ExtResource("theme")
 
 [node name="Forge" type="Label" parent="."]
@@ -32,7 +40,7 @@ offset_right = 446.0
 offset_bottom = 123.0
 mouse_filter = 2
 text = "Lò rèn Đỗ Khê"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UISmall"
 theme = ExtResource("theme")
 
 [node name="Player" parent="." instance=ExtResource("player")]

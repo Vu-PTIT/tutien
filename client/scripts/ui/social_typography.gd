@@ -2,12 +2,12 @@ extends RefCounted
 class_name SocialTypography
 
 const PROFILES: Dictionary = {
-	&"header": {"desktop": &"SocialHeader", "mobile": &"SocialHeaderMobile"},
-	&"body": {"desktop": &"SocialBody", "mobile": &"SocialBodyMobile"},
-	&"caption": {"desktop": &"SocialCaption", "mobile": &"SocialCaptionMobile"},
-	&"chat_log": {"desktop": &"SocialChatLog", "mobile": &"SocialChatLogMobile"},
-	&"chat_entry": {"desktop": &"SocialChatEntry", "mobile": &"SocialChatEntryMobile"},
-	&"action": {"desktop": &"SocialAction", "mobile": &"SocialActionMobile"},
+	&"header": {"desktop": &"UIHeading", "mobile": &"UIHeadingMobile"},
+	&"body": {"desktop": &"UIBody", "mobile": &"UIBodyMobile"},
+	&"caption": {"desktop": &"UISmall", "mobile": &"UISmallMobile"},
+	&"chat_log": {"desktop": &"UIChatLog", "mobile": &"UIChatLogMobile"},
+	&"chat_entry": {"desktop": &"UIChatEntry", "mobile": &"UIChatEntryMobile"},
+	&"action": {"desktop": &"UIButton", "mobile": &"UIButtonMobile"},
 }
 
 

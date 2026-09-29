@@ -1015,7 +1015,7 @@ func _build_location_labels() -> void:
 		label.offset_top -= 10.0
 		label.offset_bottom += 10.0
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.add_theme_font_size_override("font_size", 9)
+		label.theme_type_variation = &"UISmall"
 		label.theme = load("res://themes/tutien_theme.tres") as Theme
 		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		label.z_index = 20

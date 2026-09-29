@@ -5,11 +5,16 @@
 [ext_resource type="Texture2D" path="res://assets/pixel/hero_idle.tres" id="hero"]
 
 [node name="CharacterPanel" type="Panel"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -272.0
+offset_top = -156.0
+offset_right = 272.0
+offset_bottom = 154.0
 visible = false
-offset_left = 48.0
-offset_top = 24.0
-offset_right = 592.0
-offset_bottom = 334.0
 theme = ExtResource("theme")
 script = ExtResource("script")
 
@@ -20,7 +25,7 @@ offset_right = 300.0
 offset_bottom = 29.0
 mouse_filter = 2
 text = "NHÂN VẬT"
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"UIHeading"
 
 [node name="DataState" type="Label" parent="."]
 offset_left = 14.0
@@ -29,7 +34,7 @@ offset_right = 500.0
 offset_bottom = 46.0
 mouse_filter = 2
 text = "BẢN XEM THỬ • OFFLINE"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Close" type="Button" parent="."]
 offset_left = 502.0
@@ -103,7 +108,7 @@ offset_bottom = 150.0
 mouse_filter = 2
 horizontal_alignment = 1
 text = "TU SĨ"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UISmall"
 
 [node name="Realm" type="Label" parent="PageHost/ProfilePage/PortraitCard"]
 offset_left = 5.0
@@ -114,7 +119,7 @@ mouse_filter = 2
 horizontal_alignment = 1
 text = "PHÀM NHÂN"
 autowrap_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="StatsCard" type="Panel" parent="PageHost/ProfilePage"]
 offset_left = 113.0
@@ -128,7 +133,7 @@ offset_right = 171.0
 offset_bottom = 21.0
 mouse_filter = 2
 text = "Tu sĩ"
-theme_override_font_sizes/font_size = 11
+theme_type_variation = &"UIBody"
 
 [node name="RealmLine" type="Label" parent="PageHost/ProfilePage/StatsCard"]
 offset_left = 8.0
@@ -137,7 +142,7 @@ offset_right = 171.0
 offset_bottom = 38.0
 mouse_filter = 2
 text = "Cảnh giới • Phàm nhân"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="CultivationText" type="Label" parent="PageHost/ProfilePage/StatsCard"]
 offset_left = 8.0
@@ -146,7 +151,7 @@ offset_right = 171.0
 offset_bottom = 55.0
 mouse_filter = 2
 text = "Tu vi • 0 / 100 XP"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Cultivation" type="ProgressBar" parent="PageHost/ProfilePage/StatsCard"]
 offset_left = 8.0
@@ -164,7 +169,7 @@ offset_right = 171.0
 offset_bottom = 87.0
 mouse_filter = 2
 text = "Sinh lực • 100 / 100"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Health" type="ProgressBar" parent="PageHost/ProfilePage/StatsCard"]
 offset_left = 8.0
@@ -182,7 +187,7 @@ offset_right = 171.0
 offset_bottom = 120.0
 mouse_filter = 2
 text = "Công kích • 16"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Defense" type="Label" parent="PageHost/ProfilePage/StatsCard"]
 offset_left = 8.0
@@ -191,7 +196,7 @@ offset_right = 171.0
 offset_bottom = 139.0
 mouse_filter = 2
 text = "Phòng ngự • 5"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Stones" type="Label" parent="PageHost/ProfilePage/StatsCard"]
 offset_left = 8.0
@@ -200,7 +205,7 @@ offset_right = 171.0
 offset_bottom = 158.0
 mouse_filter = 2
 text = "Linh thạch • 0"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="StatNote" type="Label" parent="PageHost/ProfilePage/StatsCard"]
 offset_left = 8.0
@@ -210,7 +215,7 @@ offset_bottom = 198.0
 mouse_filter = 2
 text = "Chỉ số chiến đấu dùng trong săn Sơn Trư."
 autowrap_mode = 2
-theme_override_font_sizes/font_size = 7
+theme_type_variation = &"UIMicro"
 
 [node name="EquipmentCard" type="Panel" parent="PageHost/ProfilePage"]
 offset_left = 300.0
@@ -224,7 +229,7 @@ offset_right = 206.0
 offset_bottom = 17.0
 mouse_filter = 2
 text = "TRANG BỊ ĐANG MẶC"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UISmall"
 
 [node name="WeaponSlot" type="Panel" parent="PageHost/ProfilePage/EquipmentCard"]
 offset_left = 6.0
@@ -248,7 +253,7 @@ offset_right = 198.0
 offset_bottom = 22.0
 mouse_filter = 2
 text = "Kiếm • Chưa trang bị"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Bonus" type="Label" parent="PageHost/ProfilePage/EquipmentCard/WeaponSlot"]
 offset_left = 44.0
@@ -257,7 +262,7 @@ offset_right = 198.0
 offset_bottom = 42.0
 mouse_filter = 2
 text = "Ô trang bị vũ khí"
-theme_override_font_sizes/font_size = 7
+theme_type_variation = &"UIMicro"
 
 [node name="ArmorSlot" type="Panel" parent="PageHost/ProfilePage/EquipmentCard"]
 offset_left = 6.0
@@ -281,7 +286,7 @@ offset_right = 198.0
 offset_bottom = 22.0
 mouse_filter = 2
 text = "Áo • Chưa trang bị"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Bonus" type="Label" parent="PageHost/ProfilePage/EquipmentCard/ArmorSlot"]
 offset_left = 44.0
@@ -290,7 +295,7 @@ offset_right = 198.0
 offset_bottom = 42.0
 mouse_filter = 2
 text = "Ô trang bị áo"
-theme_override_font_sizes/font_size = 7
+theme_type_variation = &"UIMicro"
 
 [node name="OpenEquipmentBag" type="Button" parent="PageHost/ProfilePage/EquipmentCard"]
 offset_left = 6.0
@@ -298,7 +303,7 @@ offset_top = 143.0
 offset_right = 210.0
 offset_bottom = 188.0
 text = "Mở Túi đồ để trang bị"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIButtonSmall"
 
 [node name="SkillsPage" type="Control" parent="PageHost"]
 visible = false
@@ -320,7 +325,7 @@ offset_right = 260.0
 offset_bottom = 17.0
 mouse_filter = 2
 text = "KỸ NĂNG ĐANG TRANG BỊ"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UISmall"
 
 [node name="EquippedSkill" type="Label" parent="PageHost/SkillsPage/SkillLoadoutCard"]
 offset_left = 8.0
@@ -329,7 +334,7 @@ offset_right = 400.0
 offset_bottom = 39.0
 mouse_filter = 2
 text = "Ô R • Chưa trang bị kỹ năng"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UISmall"
 
 [node name="RemoveSkill" type="Button" parent="PageHost/SkillsPage/SkillLoadoutCard"]
 offset_left = 425.0
@@ -337,7 +342,7 @@ offset_top = 7.0
 offset_right = 508.0
 offset_bottom = 37.0
 text = "Tháo ô R"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIButtonSmall"
 
 [node name="SkillRoster" type="Panel" parent="PageHost/SkillsPage"]
 offset_top = 50.0
@@ -351,7 +356,7 @@ offset_right = 204.0
 offset_bottom = 18.0
 mouse_filter = 2
 text = "KỸ NĂNG ĐÃ BIẾT"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Scroll" type="ScrollContainer" parent="PageHost/SkillsPage/SkillRoster"]
 offset_left = 4.0
@@ -376,7 +381,7 @@ offset_right = 284.0
 offset_bottom = 23.0
 mouse_filter = 2
 text = "Chọn một kỹ năng"
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"UISmall"
 
 [node name="Meta" type="Label" parent="PageHost/SkillsPage/SkillDetail"]
 offset_left = 8.0
@@ -385,7 +390,7 @@ offset_right = 284.0
 offset_bottom = 40.0
 mouse_filter = 2
 text = "CHƯA MỞ KHÓA"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="Description" type="Label" parent="PageHost/SkillsPage/SkillDetail"]
 offset_left = 8.0
@@ -395,7 +400,7 @@ offset_bottom = 96.0
 mouse_filter = 2
 text = "Kỹ năng sẽ xuất hiện khi nhân vật học được."
 autowrap_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="EquipButton" type="Button" parent="PageHost/SkillsPage/SkillDetail"]
 offset_left = 8.0
@@ -403,7 +408,7 @@ offset_top = 102.0
 offset_right = 284.0
 offset_bottom = 130.0
 text = "Trang bị vào ô R"
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIButtonSmall"
 
 [node name="Status" type="Label" parent="PageHost/SkillsPage/SkillDetail"]
 offset_left = 8.0
@@ -413,7 +418,7 @@ offset_bottom = 198.0
 mouse_filter = 2
 text = ""
 autowrap_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 [node name="SettingsPage" type="Control" parent="PageHost"]
 visible = false
 layout_mode = 1
@@ -434,7 +439,7 @@ offset_right = 230.0
 offset_bottom = 30.0
 mouse_filter = 2
 text = "Âm lượng tổng"
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"UISmall"
 
 [node name="Volume" type="HSlider" parent="PageHost/SettingsPage/SettingsCard"]
 offset_left = 12.0
@@ -454,7 +459,7 @@ offset_bottom = 55.0
 mouse_filter = 2
 horizontal_alignment = 2
 text = "80%"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UISmall"
 
 [node name="Fullscreen" type="CheckButton" parent="PageHost/SettingsPage/SettingsCard"]
 offset_left = 12.0
@@ -462,7 +467,7 @@ offset_top = 75.0
 offset_right = 245.0
 offset_bottom = 101.0
 text = "Toàn màn hình"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UIButtonSmall"
 
 [node name="TouchLayout" type="CheckButton" parent="PageHost/SettingsPage/SettingsCard"]
 offset_left = 12.0
@@ -470,7 +475,7 @@ offset_top = 111.0
 offset_right = 310.0
 offset_bottom = 137.0
 text = "Hiện nút điều khiển cảm ứng"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UIButtonSmall"
 
 [node name="SettingsNote" type="Label" parent="PageHost/SettingsPage/SettingsCard"]
 offset_left = 12.0
@@ -480,7 +485,7 @@ offset_bottom = 194.0
 mouse_filter = 2
 text = "Cài đặt lưu trên thiết bị này. Bố cục cảm ứng cũng có thể đổi bằng F9."
 autowrap_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 
 [node name="LanguageLabel" type="Label" parent="PageHost/SettingsPage/SettingsCard"]
 offset_left = 12.0
@@ -489,11 +494,11 @@ offset_right = 100.0
 offset_bottom = 161.0
 mouse_filter = 2
 text = "Ngôn ngữ"
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UISmall"
 
 [node name="Language" type="OptionButton" parent="PageHost/SettingsPage/SettingsCard"]
 offset_left = 105.0
 offset_top = 139.0
 offset_right = 230.0
 offset_bottom = 163.0
-theme_override_font_sizes/font_size = 9
+theme_type_variation = &"UIButtonSmall"

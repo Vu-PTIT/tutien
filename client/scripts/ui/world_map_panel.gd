@@ -98,7 +98,7 @@ func _build_route() -> void:
 			button.tooltip_text += " • " + route_summary
 		button.position = node_layout.get(str(map_data.get("id", "")), Vector2.ZERO)
 		button.custom_minimum_size = Vector2(84, 24)
-		button.add_theme_font_size_override("font_size", 7)
+		button.theme_type_variation = &"UIButtonSmall"
 		button.toggle_mode = true
 		button.button_group = _button_group
 		button.pressed.connect(_select_map.bind(str(map_data.get("id", ""))))

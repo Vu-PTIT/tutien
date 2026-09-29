@@ -16,10 +16,17 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/character.tscn" id="character"]
 
 [node name="HUD" type="Control"]
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 640.0
-offset_bottom = 360.0
+offset_right = 0.0
+offset_bottom = 0.0
 mouse_filter = 2
 theme = ExtResource("theme")
 script = ExtResource("script")
@@ -41,7 +48,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="Realm" type="Label" parent="Vitals"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 44.0
 offset_top = 4.0
 offset_right = 177.0
@@ -59,7 +66,7 @@ value = 100.0
 show_percentage = false
 
 [node name="HPText" type="Label" parent="Vitals"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 47.0
 offset_top = 18.0
 offset_right = 169.0
@@ -78,7 +85,7 @@ value = 0.0
 show_percentage = false
 
 [node name="QiText" type="Label" parent="Vitals"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 47.0
 offset_top = 43.0
 offset_right = 177.0
@@ -87,41 +94,55 @@ mouse_filter = 2
 text = "Linh lực • chưa khai mở"
 
 [node name="Location" type="Panel" parent="."]
-offset_left = 246.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_top = 0.0
+anchor_right = 0.5
+anchor_bottom = 0.0
+offset_left = -75.0
 offset_top = 8.0
-offset_right = 396.0
-offset_bottom = 39.0
+offset_right = 75.0
+offset_bottom = 48.0
 
 [node name="Title" type="Label" parent="Location"]
-theme_type_variation = &"MapPixelHeading"
+layout_mode = 1
 offset_left = 0.0
 offset_top = 0.0
 offset_right = 150.0
-offset_bottom = 17.0
+offset_bottom = 21.0
+theme_type_variation = &"UIHeading"
 mouse_filter = 2
 horizontal_alignment = 1
 text = "AN KHÊ"
 
 [node name="State" type="Label" parent="Location"]
-theme_type_variation = &"MapPixelText"
+layout_mode = 1
 offset_left = 0.0
-offset_top = 17.0
+offset_top = 22.0
 offset_right = 150.0
-offset_bottom = 29.0
+offset_bottom = 40.0
+theme_type_variation = &"UISmall"
 mouse_filter = 2
 horizontal_alignment = 1
 text = "Làng khởi đầu • an toàn"
 
 [node name="WeatherInfo" type="Panel" parent="."]
-offset_left = 400.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -240.0
 offset_top = 8.0
-offset_right = 526.0
+offset_right = -114.0
 offset_bottom = 39.0
 mouse_filter = 2
 tooltip_text = "Thời tiết thay đổi theo chu kỳ thế giới."
 
 [node name="Time" type="Label" parent="WeatherInfo"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 2.0
 offset_top = 1.0
 offset_right = 124.0
@@ -131,7 +152,7 @@ horizontal_alignment = 1
 text = "08:00 • BAN NGÀY"
 
 [node name="Condition" type="Label" parent="WeatherInfo"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 2.0
 offset_top = 16.0
 offset_right = 94.0
@@ -141,7 +162,7 @@ horizontal_alignment = 1
 text = "NẮNG"
 
 [node name="EffectsToggle" type="Button" parent="WeatherInfo"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 98.0
 offset_top = 16.0
 offset_right = 122.0
@@ -151,9 +172,15 @@ toggle_mode = true
 text = "FX"
 
 [node name="Minimap" type="Panel" parent="."]
-offset_left = 532.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -108.0
 offset_top = 8.0
-offset_right = 632.0
+offset_right = -8.0
 offset_bottom = 94.0
 
 [node name="Map" type="TextureRect" parent="Minimap"]
@@ -175,7 +202,7 @@ mouse_filter = 2
 color = Color(1, 0.85, 0.4, 1)
 
 [node name="Coordinates" type="Label" parent="Minimap"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 6.0
 offset_top = 73.0
 offset_right = 96.0
@@ -184,22 +211,34 @@ mouse_filter = 2
 text = "An Khê  (10, 7)"
 
 [node name="LeaveEncounter" type="Button" parent="."]
-theme_type_variation = &"MapPixelButton"
-visible = false
-offset_left = 540.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -100.0
 offset_top = 8.0
-offset_right = 632.0
+offset_right = -8.0
 offset_bottom = 34.0
+theme_type_variation = &"UIButtonSmall"
+visible = false
 text = "Rời bãi"
 
 [node name="FieldInfo" type="Panel" parent="."]
-offset_left = 488.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -152.0
 offset_top = 95.0
-offset_right = 632.0
+offset_right = -8.0
 offset_bottom = 161.0
 
 [node name="Title" type="Label" parent="FieldInfo"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 8.0
 offset_top = 5.0
 offset_right = 136.0
@@ -208,7 +247,7 @@ mouse_filter = 2
 text = "AN KHÊ • KHU AN TOÀN"
 
 [node name="Body" type="Label" parent="FieldInfo"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 8.0
 offset_top = 24.0
 offset_right = 136.0
@@ -218,15 +257,21 @@ text = "Chuẩn bị đồ, hồi phục.\nCổng Bắc → Trúc Âm."
 autowrap_mode = 2
 
 [node name="InteractionHint" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -93.0
+offset_right = 160.0
+offset_bottom = -63.0
 visible = false
-offset_left = 160.0
-offset_top = 267.0
-offset_right = 480.0
-offset_bottom = 297.0
 mouse_filter = 2
 
 [node name="Message" type="Label" parent="InteractionHint"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 5.0
 offset_top = 2.0
 offset_right = 315.0
@@ -236,7 +281,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Mode" type="Label" parent="."]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 8.0
 offset_top = 72.0
 offset_right = 193.0
@@ -245,45 +290,75 @@ mouse_filter = 2
 text = "BẢN XEM THỬ • OFFLINE"
 
 [node name="BagButton" type="Button" parent="."]
-theme_type_variation = &"MapPixelButton"
-offset_left = 530.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -110.0
 offset_top = 170.0
-offset_right = 579.0
+offset_right = -61.0
 offset_bottom = 193.0
+theme_type_variation = &"UIButtonSmall"
 text = "Túi [I]"
 
 [node name="MapButton" type="Button" parent="."]
-theme_type_variation = &"MapPixelButton"
-offset_left = 477.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -163.0
 offset_top = 170.0
-offset_right = 526.0
+offset_right = -114.0
 offset_bottom = 193.0
+theme_type_variation = &"UIButtonSmall"
 text = "Map [M]"
 
 [node name="CharacterButton" type="Button" parent="."]
-theme_type_variation = &"MapPixelButton"
-offset_left = 394.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -246.0
 offset_top = 170.0
-offset_right = 473.0
+offset_right = -167.0
 offset_bottom = 193.0
+theme_type_variation = &"UIButtonSmall"
 text = "Nhân vật [C]"
 
 [node name="SparringButton" type="Button" parent="."]
-theme_type_variation = &"MapPixelButton"
-offset_left = 583.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -57.0
 offset_top = 170.0
-offset_right = 632.0
+offset_right = -8.0
 offset_bottom = 193.0
+theme_type_variation = &"UIButtonSmall"
 text = "Online"
 
 [node name="Hotbar" type="Panel" parent="."]
-offset_left = 180.0
-offset_top = 306.0
-offset_right = 462.0
-offset_bottom = 353.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -140.0
+offset_top = -54.0
+offset_right = 142.0
+offset_bottom = -7.0
 
 [node name="Slot0" type="Button" parent="Hotbar"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 6.0
 offset_top = 4.0
 offset_right = 46.0
@@ -293,7 +368,7 @@ icon = ExtResource("icon0")
 expand_icon = true
 
 [node name="Key0" type="Label" parent="Hotbar"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 6.0
 offset_top = 33.0
 offset_right = 46.0
@@ -303,7 +378,7 @@ horizontal_alignment = 1
 text = "1"
 
 [node name="Slot1" type="Button" parent="Hotbar"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 51.0
 offset_top = 4.0
 offset_right = 91.0
@@ -313,7 +388,7 @@ icon = ExtResource("icon1")
 expand_icon = true
 
 [node name="Key1" type="Label" parent="Hotbar"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 51.0
 offset_top = 33.0
 offset_right = 91.0
@@ -323,7 +398,7 @@ horizontal_alignment = 1
 text = "2"
 
 [node name="Slot2" type="Button" parent="Hotbar"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 96.0
 offset_top = 4.0
 offset_right = 136.0
@@ -333,7 +408,7 @@ icon = ExtResource("icon2")
 expand_icon = true
 
 [node name="Key2" type="Label" parent="Hotbar"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 96.0
 offset_top = 33.0
 offset_right = 136.0
@@ -343,7 +418,7 @@ horizontal_alignment = 1
 text = "Q"
 
 [node name="Slot3" type="Button" parent="Hotbar"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 141.0
 offset_top = 4.0
 offset_right = 181.0
@@ -353,7 +428,7 @@ icon = ExtResource("icon3")
 expand_icon = true
 
 [node name="Key3" type="Label" parent="Hotbar"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 141.0
 offset_top = 33.0
 offset_right = 181.0
@@ -363,7 +438,7 @@ horizontal_alignment = 1
 text = "E"
 
 [node name="Slot4" type="Button" parent="Hotbar"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 186.0
 offset_top = 4.0
 offset_right = 226.0
@@ -373,7 +448,7 @@ icon = ExtResource("icon4")
 expand_icon = true
 
 [node name="Key4" type="Label" parent="Hotbar"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 186.0
 offset_top = 33.0
 offset_right = 226.0
@@ -383,7 +458,7 @@ horizontal_alignment = 1
 text = "R"
 
 [node name="Slot5" type="Button" parent="Hotbar"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 231.0
 offset_top = 4.0
 offset_right = 271.0
@@ -393,7 +468,7 @@ icon = ExtResource("icon5")
 expand_icon = true
 
 [node name="Key5" type="Label" parent="Hotbar"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 231.0
 offset_top = 33.0
 offset_right = 271.0
@@ -403,31 +478,49 @@ horizontal_alignment = 1
 text = "Space"
 
 [node name="HelpButton" type="Button" parent="."]
-theme_type_variation = &"MapPixelButton"
+layout_mode = 1
+anchors_preset = 2
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 0.0
+anchor_bottom = 1.0
 offset_left = 8.0
-offset_top = 328.0
+offset_top = -32.0
 offset_right = 154.0
-offset_bottom = 353.0
+offset_bottom = -7.0
+theme_type_variation = &"UIButtonSmall"
 text = "Hướng dẫn / trạng thái"
 
 [node name="Controls" type="Label" parent="."]
-theme_type_variation = &"MapPixelText"
-offset_left = 474.0
-offset_top = 321.0
-offset_right = 632.0
-offset_bottom = 351.0
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -166.0
+offset_top = -39.0
+offset_right = -8.0
+offset_bottom = -9.0
+theme_type_variation = &"UISmall"
 mouse_filter = 2
 text = "WASD di chuyển • E tương tác\nC hồ sơ • I túi đồ"
 
 [node name="Toast" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -170.0
+offset_top = -88.0
+offset_right = 170.0
+offset_bottom = -61.0
 visible = false
-offset_left = 150.0
-offset_top = 272.0
-offset_right = 490.0
-offset_bottom = 299.0
 
 [node name="Message" type="Label" parent="Toast"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 9.0
 offset_top = 3.0
 offset_right = 331.0
@@ -436,21 +529,37 @@ mouse_filter = 2
 text = "Chào mừng đến An Khê. Nhấn I để xem túi đồ."
 
 [node name="ModalShade" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
 visible = false
-offset_right = 640.0
-offset_bottom = 360.0
 mouse_filter = 0
 color = Color(0.015, 0.025, 0.04, 0.65)
 
 [node name="Dock" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -270.0
+offset_top = -71.0
+offset_right = 270.0
+offset_bottom = 59.0
 visible = false
-offset_left = 50.0
-offset_top = 109.0
-offset_right = 590.0
-offset_bottom = 239.0
 
 [node name="Title" type="Label" parent="Dock"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 12.0
 offset_top = 8.0
 offset_right = 452.0
@@ -459,7 +568,7 @@ mouse_filter = 2
 text = "ONLINE • ĐẤU TẬP VÀ SĂN QUÁI"
 
 [node name="Close" type="Button" parent="Dock"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 503.0
 offset_top = 6.0
 offset_right = 531.0
@@ -467,7 +576,7 @@ offset_bottom = 28.0
 text = "X"
 
 [node name="Status" type="Label" parent="Dock"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 12.0
 offset_top = 32.0
 offset_right = 526.0
@@ -477,7 +586,7 @@ text = "Đánh quái sẽ tự kết nối để lưu XP và vật phẩm. Loot 
 autowrap_mode = 2
 
 [node name="Connect" type="Button" parent="Dock"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 12.0
 offset_top = 68.0
 offset_right = 98.0
@@ -485,7 +594,7 @@ offset_bottom = 92.0
 text = "Kết nối"
 
 [node name="Create" type="Button" parent="Dock"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 104.0
 offset_top = 68.0
 offset_right = 184.0
@@ -500,7 +609,7 @@ offset_bottom = 92.0
 placeholder_text = "Dán mã phòng tại đây"
 
 [node name="Join" type="Button" parent="Dock"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 400.0
 offset_top = 68.0
 offset_right = 460.0
@@ -508,7 +617,7 @@ offset_bottom = 92.0
 text = "Vào"
 
 [node name="Ready" type="Button" parent="Dock"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 12.0
 offset_top = 100.0
 offset_right = 98.0
@@ -516,7 +625,7 @@ offset_bottom = 124.0
 text = "Sẵn sàng"
 
 [node name="Leave" type="Button" parent="Dock"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 104.0
 offset_top = 100.0
 offset_right = 184.0
@@ -524,7 +633,7 @@ offset_bottom = 124.0
 text = "Rời trận"
 
 [node name="Safety" type="Label" parent="Dock"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 195.0
 offset_top = 99.0
 offset_right = 390.0
@@ -539,26 +648,52 @@ visible = false
 visible = false
 
 [node name="WorldMap" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
 visible = false
-offset_right = 640.0
-offset_bottom = 360.0
 mouse_filter = 0
 script = ExtResource("map_panel_script")
 
 [node name="Shade" type="ColorRect" parent="WorldMap"]
-offset_right = 640.0
-offset_bottom = 360.0
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
 mouse_filter = 0
 color = Color(0.015, 0.025, 0.04, 0.78)
 
 [node name="Window" type="Panel" parent="WorldMap"]
-offset_left = 24.0
-offset_top = 14.0
-offset_right = 616.0
-offset_bottom = 346.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -296.0
+offset_top = -166.0
+offset_right = 296.0
+offset_bottom = 166.0
 
 [node name="Title" type="Label" parent="WorldMap/Window"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 12.0
 offset_top = 8.0
 offset_right = 510.0
@@ -567,7 +702,7 @@ mouse_filter = 2
 text = "BẢN ĐỒ TUYẾN  •  AN KHÊ → TRÚC ÂM → THẠCH CẠN → CỔ TỈNH"
 
 [node name="Close" type="Button" parent="WorldMap/Window"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 550.0
 offset_top = 6.0
 offset_right = 578.0
@@ -601,7 +736,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="NoPreview" type="Label" parent="WorldMap/Window"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 12.0
 offset_top = 231.0
 offset_right = 134.0
@@ -612,7 +747,7 @@ vertical_alignment = 1
 text = "Chưa có ảnh preview"
 
 [node name="Info" type="Label" parent="WorldMap/Window"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 146.0
 offset_top = 230.0
 offset_right = 580.0
@@ -622,7 +757,7 @@ autowrap_mode = 2
 text = "An Khê"
 
 [node name="Note" type="Label" parent="WorldMap/Window"]
-theme_type_variation = &"MapPixelText"
+theme_type_variation = &"UISmall"
 offset_left = 12.0
 offset_top = 307.0
 offset_right = 400.0
@@ -631,7 +766,7 @@ mouse_filter = 2
 text = "Đường liền trên sơ đồ • đi thử từng khu bằng cổng runtime"
 
 [node name="Travel" type="Button" parent="WorldMap/Window"]
-theme_type_variation = &"MapPixelButton"
+theme_type_variation = &"UIButtonSmall"
 offset_left = 430.0
 offset_top = 304.0
 offset_right = 580.0

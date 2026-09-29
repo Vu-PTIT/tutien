@@ -22,13 +22,11 @@ không phải tileset vẽ/tách thủ công.
 | `enemies/doc_chu/processed/combat-1.png` … `combat-4.png` | 64 × 64 RGBA each | Bốn frame tách riêng cùng thứ tự với atlas |
 | `hero_idle.tres` | AtlasTexture | Nhân vật trong editor và chân dung HUD |
 | `icon_0.tres` … `icon_15.tres` | AtlasTexture | Icon dùng lại trong HUD/túi |
-| `tiny5_pixel_ui.ttf` | Tiny5 v2.007 | Font pixel riêng cho HUD map; đủ dấu tiếng Việt; license `TINY5-LICENSE.txt` |
-| `ui_font.ttf` | Handjet | Font xã hội dùng cho chat và các biến thể desktop/mobile; đủ dấu tiếng Việt; license `FONT-LICENSE.txt` |
+| `../fonts/BeVietnamPro-Regular.ttf` | Be Vietnam Pro Regular | Font nội dung UI dùng chung; hỗ trợ đầy đủ dấu tiếng Việt; license `../fonts/OFL-BeVietnamPro.txt` |
+| `../fonts/BeVietnamPro-SemiBold.ttf` | Be Vietnam Pro SemiBold | Font tiêu đề và nút UI dùng chung; cùng hệ chữ và license OFL 1.1 |
 
-Tiny5 Regular v2.007 lấy từ [Gissio/font_Tiny5](https://github.com/Gissio/font_Tiny5), revision `f740beb653d6839fac1f8c794668ffcf22037342`;
-đã kiểm tra glyph tiếng Việt. HUD map dùng cỡ pixel gốc 8 px và tiêu đề tên khu 16 px.
-Font Handjet lấy từ Google Fonts, revision `3918b7798e06c81da6bc558e88dfddd5a6b49807`;
-font này vẫn dùng cho typography xã hội.
+Theme `client/themes/tutien_theme.tres` là nơi khai báo toàn bộ font, độ đậm và cỡ chữ theo token (`UIHeading`, `UIBody`, `UISmall`, `UIMicro`, các kiểu nút và biến thể mobile). Scene và script chỉ chọn token, không ghi cỡ chữ riêng.
+Be Vietnam Pro được lấy từ [Google Fonts](https://github.com/google/fonts/tree/main/ofl/bevietnampro), phát hành theo SIL Open Font License 1.1. Hai font pixel cũ (`tiny5_pixel_ui.ttf` và `ui_font.ttf`) được giữ làm tài nguyên legacy, không còn được theme UI sử dụng.
 
 ## Brief tạo hình (tóm tắt prompt)
 
