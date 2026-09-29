@@ -39,7 +39,15 @@ const uiFontSignature=uiFont.subarray(0,4).toString('hex');
 assert.ok(['00010000','4f54544f','74727565','74797031'].includes(uiFontSignature),
   'UI font must be a valid TrueType/OpenType SFNT file');
 assert.ok(read('themes/tutien_theme.tres').includes('res://assets/pixel/ui_font.ttf'),
-  'Shared UI theme must use the checked pixel font');
+  'Social typography retains the checked Handjet font');
+const tiny5Font=fs.readFileSync(path.join(root,'assets/pixel/tiny5_pixel_ui.ttf'));
+const tiny5Signature=tiny5Font.subarray(0,4).toString('hex');
+assert.ok(['00010000','4f54544f','74727565','74797031'].includes(tiny5Signature),
+  'Map HUD font must be a valid TrueType/OpenType SFNT file');
+assert.ok(read('themes/tutien_theme.tres').includes('res://assets/pixel/tiny5_pixel_ui.ttf'),
+  'Map HUD theme must use the Vietnamese Tiny5 font');
+assert.ok(hud.includes('theme_type_variation = &"MapPixelText"'),
+  'Map HUD labels must opt into the readable pixel typography variation');
 assert.ok(!/^@tool/m.test(main), 'Runtime must not run in editor');
 assert.ok(!main.includes('_draw_editor_ui_preview'), 'No alternate/fake editor HUD');
 assert.equal((read('scenes/ui/inventory.tscn').match(/name="Slot\d+" type="Button"/g)||[]).length,24);
@@ -572,5 +580,5 @@ assert.ok(routePanel.includes('signal map_requested'), 'Route panel emits travel
 assert.ok(routePanel.includes('route_connections')&&routePanel.includes('_route_summary(')&&routePanel.includes('connection.get("label"'),
   'World map route cards render names from the connected gate graph');
 assert.ok(main.includes('world_map.map_requested.connect(_travel_to_map)'), 'Main connects map travel');
-console.log('PASS static map and scene audit: '+scenes+' scenes, '+references+' resource references, connected reciprocal routes, walkable POIs, transparent Thạch Cạn props, aligned ripples, valid PNG assets, valid pixel UI font.');
+console.log('PASS static map and scene audit: '+scenes+' scenes, '+references+' resource references, connected reciprocal routes, walkable POIs, transparent Thạch Cạn props, aligned ripples, valid PNG assets, valid Handjet and Tiny5 pixel UI fonts.');
 console.log('Not a GDScript parser or Godot runtime test. Run presentation_smoke.gd in Godot.');
