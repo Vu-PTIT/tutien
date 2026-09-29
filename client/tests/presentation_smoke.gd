@@ -22,28 +22,27 @@ func check(condition: bool, message: String) -> void:
 
 func check_social_typography() -> void:
 	var social_theme := load("res://themes/tutien_theme.tres") as Theme
-	check(social_theme != null, "Shared theme loads for social typography")
+	check(social_theme != null, "Shared theme loads for all UI typography")
 	if social_theme == null:
 		return
-	check(social_theme.is_type_variation(&"SocialHeader", &"Label"), "Social header is a Label theme variation")
-	check(social_theme.get_font_size(&"font_size", &"SocialHeader") == 16, "Social desktop header uses the large type token")
+	check(social_theme.is_type_variation(&"UIHeading", &"Label"), "Shared heading is a Label theme variation")
+	check(social_theme.get_font_size(&"font_size", &"UIHeading") == 16, "Desktop headings use the shared large type token")
 	check(social_theme.get_color(&"font_shadow_color", &"Label").a <= 0.01, "HUD labels do not add a doubled pixel shadow")
-	check(social_theme.is_type_variation(&"MapPixelText", &"Label"), "Map HUD uses a dedicated pixel text variation")
-	check(social_theme.is_type_variation(&"MapPixelHeading", &"Label"), "Map HUD has a dedicated pixel heading variation")
-	check(social_theme.is_type_variation(&"MapPixelButton", &"Button"), "Map HUD actions use the pixel font")
-	check(social_theme.get_font_size(&"font_size", &"MapPixelText") == 8, "Map HUD body text uses the Tiny5 design size")
-	check(social_theme.get_font_size(&"font_size", &"MapPixelHeading") == 16, "Map location heading uses an integer Tiny5 scale")
-	var map_pixel_font := social_theme.get_font(&"font", &"MapPixelText")
-	check(map_pixel_font != null, "Map HUD Tiny5 font loads")
-	if map_pixel_font != null:
+	check(social_theme.is_type_variation(&"UISmall", &"Label"), "HUD body uses a shared text variation")
+	check(social_theme.is_type_variation(&"UIButtonSmall", &"Button"), "HUD actions use a shared button variation")
+	check(social_theme.get_font_size(&"font_size", &"UISmall") == 10, "HUD body uses the shared readable size")
+	check(social_theme.get_font_size(&"font_size", &"UIHeading") == 16, "Map location uses the shared heading size")
+	var vietnamese_font := social_theme.get_font(&"font", &"UISmall")
+	check(vietnamese_font != null, "Be Vietnam Pro font loads from the central theme")
+	if vietnamese_font != null:
 		for character in ["ă", "Đ", "ơ", "ư", "ẫ", "ễ", "ợ", "ỹ"]:
-			check(map_pixel_font.has_char(character.unicode_at(0)), "Tiny5 includes Vietnamese glyph " + character)
-	check(social_theme.get_font_size(&"font_size", &"SocialBodyMobile") == 14, "Social mobile body uses the mobile type token")
-	check(social_theme.get_font_size(&"normal_font_size", &"SocialChatLogMobile") == 14, "Mobile chat history uses readable message text")
+			check(vietnamese_font.has_char(character.unicode_at(0)), "Shared font includes Vietnamese glyph " + character)
+	check(social_theme.get_font_size(&"font_size", &"UIBodyMobile") == 14, "Mobile body uses the shared mobile token")
+	check(social_theme.get_font_size(&"normal_font_size", &"UIChatLogMobile") == 14, "Mobile chat history uses readable message text")
 	var chat_entry := LineEdit.new()
 	chat_entry.theme = social_theme
 	check(SocialTypography.apply_profile(chat_entry, &"chat_entry", true), "Social typography applies a known mobile profile")
-	check(chat_entry.theme_type_variation == &"SocialChatEntryMobile", "Chat entry receives its mobile theme variation")
+	check(chat_entry.theme_type_variation == &"UIChatEntryMobile", "Chat entry uses the shared mobile theme variation")
 	chat_entry.free()
 
 func _capture(filename: String) -> void:
@@ -139,8 +138,8 @@ func _run() -> void:
 	var bag: InventoryPanel = main.inventory_panel
 	var map_body: Label = hud.get_node("FieldInfo/Body")
 	var location_title: Label = hud.get_node("Location/Title")
-	check(map_body.theme_type_variation == &"MapPixelText", "Map body uses the readable pixel font")
-	check(location_title.theme_type_variation == &"MapPixelHeading", "Map title uses the heading font size")
+	check(map_body.theme_type_variation == &"UISmall", "Map body uses the centralized readable UI font")
+	check(location_title.theme_type_variation == &"UIHeading", "Map title uses the centralized heading style")
 	check_map_assets(main.map_world)
 	await _capture("font-map-hud.png")
 	check(main.map_world.resource_trees_size() == 1, "An Khê loads one stateful harvestable tree")
