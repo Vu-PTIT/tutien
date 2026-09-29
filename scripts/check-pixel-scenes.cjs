@@ -527,8 +527,8 @@ const sonTruBackground=fs.readFileSync(path.join(root,'assets/pixel/enemies/bai_
 assert.equal(sonTruBackground.readUInt32BE(16),960,'Sơn Trư arena artwork matches the server world width');
 assert.equal(sonTruBackground.readUInt32BE(20),540,'Sơn Trư arena artwork matches the server world height');
 const sonTruSprite=fs.readFileSync(path.join(root,'assets/pixel/enemies/son_tru.png'));
-assert.equal(sonTruSprite.readUInt32BE(16),384,'Sơn Trư sprite atlas has three 128 px cells per row');
-assert.equal(sonTruSprite.readUInt32BE(20),256,'Sơn Trư sprite atlas has two rows');
+assert.equal(sonTruSprite.readUInt32BE(16),192,'Sơn Trư sprite atlas has three 64 px cells per row');
+assert.equal(sonTruSprite.readUInt32BE(20),128,'Sơn Trư sprite atlas has two 64 px rows');
 assert.equal(sonTruSprite[25],6,'Sơn Trư body sheet must have transparent pixels');
 const sonTruQc=JSON.parse(read('assets/pixel/enemies/son_tru.pipeline-meta.json'));
 assert.deepEqual(sonTruQc.edge_touch_frames,[],'Sơn Trư frames must stay inside their cells');
@@ -537,8 +537,8 @@ const pveMap=fs.readFileSync(path.join(root,'assets/pixel/maps/bai_son_tru.png')
 assert.equal(pveMap.readUInt32BE(16),1586,'Sơn Trư battle map keeps its generated landscape width');
 assert.equal(pveMap.readUInt32BE(20),992,'Sơn Trư battle map keeps its generated landscape height');
 const pveSprite=fs.readFileSync(path.join(root,'assets/pixel/enemies/son_tru/clean.png'));
-assert.equal(pveSprite.readUInt32BE(16),128,'Runtime boar sprite is a single 128 px frame');
-assert.equal(pveSprite.readUInt32BE(20),128,'Runtime boar sprite is a single 128 px frame');
+assert.equal(pveSprite.readUInt32BE(16),64,'Runtime boar sprite is a single 64 px frame');
+assert.equal(pveSprite.readUInt32BE(20),64,'Runtime boar sprite is a single 64 px frame');
 assert.equal(pveSprite[25],6,'Runtime boar sprite has transparent RGBA pixels');
 const routeOverview=fs.readFileSync(path.join(root,'assets/pixel/maps/world_route_overview.png'));
 assert.equal(routeOverview.readUInt32BE(16),768,'Route overview uses the expected compact width');
