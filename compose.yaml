@@ -24,11 +24,11 @@ services:
         attempt=0
         until /nakama/nakama migrate up --database.address postgres:localdb@postgres:5432/nakama; do
           attempt=$((attempt + 1))
-          if [ "$attempt" -ge 30 ]; then
+          if [ "$$attempt" -ge 30 ]; then
             echo "PostgreSQL was unavailable after 60 seconds; Nakama migration stopped." >&2
             exit 1
           fi
-          echo "PostgreSQL is not ready; retrying Nakama migration ($attempt/30)..."
+          echo "PostgreSQL is not ready; retrying Nakama migration ($$attempt/30)..."
           sleep 2
         done
         exec /nakama/nakama --name tutien-local \
