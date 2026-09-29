@@ -112,6 +112,44 @@ horizontal_alignment = 1
 text = "Làng khởi đầu • an toàn"
 theme_override_font_sizes/font_size = 8
 
+[node name="WeatherInfo" type="Panel" parent="."]
+offset_left = 400.0
+offset_top = 8.0
+offset_right = 526.0
+offset_bottom = 39.0
+mouse_filter = 2
+tooltip_text = "Thời tiết thay đổi theo chu kỳ thế giới."
+
+[node name="Time" type="Label" parent="WeatherInfo"]
+offset_left = 2.0
+offset_top = 1.0
+offset_right = 124.0
+offset_bottom = 16.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "08:00 • BAN NGÀY"
+theme_override_font_sizes/font_size = 8
+
+[node name="Condition" type="Label" parent="WeatherInfo"]
+offset_left = 2.0
+offset_top = 16.0
+offset_right = 94.0
+offset_bottom = 29.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "NẮNG"
+theme_override_font_sizes/font_size = 8
+
+[node name="EffectsToggle" type="Button" parent="WeatherInfo"]
+offset_left = 98.0
+offset_top = 16.0
+offset_right = 122.0
+offset_bottom = 29.0
+tooltip_text = "Giảm nháy sáng và âm thanh sấm sét"
+toggle_mode = true
+text = "FX"
+theme_override_font_sizes/font_size = 7
+
 [node name="Minimap" type="Panel" parent="."]
 offset_left = 532.0
 offset_top = 8.0

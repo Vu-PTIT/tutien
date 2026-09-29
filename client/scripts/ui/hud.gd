@@ -1,6 +1,7 @@
 class_name PixelHUD
 extends Control
 signal action_requested(action: String)
+signal weather_flash_reduced_changed(enabled: bool)
 var toast_time: float = 0.0
 var touch_layout: bool = false
 var equipped_skill_id: String = ""
@@ -10,6 +11,7 @@ var phi_ren_icon: Texture2D
 @onready var character_panel: CharacterPanel = $CharacterPanel
 
 func _ready() -> void:
+	$WeatherInfo/EffectsToggle.toggled.connect(func(enabled: bool) -> void: weather_flash_reduced_changed.emit(enabled))
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
 	$MapButton.pressed.connect(func() -> void: action_requested.emit("map"))
 	$CharacterButton.pressed.connect(func() -> void: action_requested.emit("character"))
@@ -76,6 +78,25 @@ func notify(message: String) -> void:
 	$Toast/Message.clip_text = true
 	$Toast.show()
 	toast_time = 4.0
+
+func set_weather(state: Dictionary) -> void:
+	$WeatherInfo/Time.text = "%s • %s" % [
+		str(state.get("time_text", "08:00")), str(state.get("phase_label", "BAN NGÀY"))
+	]
+	$WeatherInfo/Condition.text = str(state.get("condition_label", "TRỜI QUANG"))
+	var weather := str(state.get("weather", "clear"))
+	match weather:
+		"rain": $WeatherInfo/Condition.modulate = Color("c5e4f5")
+		"storm": $WeatherInfo/Condition.modulate = Color("b7cced")
+		_: $WeatherInfo/Condition.modulate = Color("ffe5a6") if not bool(state.get("is_night", false)) else Color("d3def8")
+	$WeatherInfo.tooltip_text = "%s • %s. Ngày trong game kéo dài 24 phút; thời tiết vẫn tiếp diễn cả ban đêm." % [
+		str(state.get("phase_label", "BAN NGÀY")), str(state.get("condition_label", "TRỜI QUANG"))
+	]
+
+func set_weather_flashes_reduced(enabled: bool) -> void:
+	var toggle: Button = $WeatherInfo/EffectsToggle
+	toggle.set_pressed_no_signal(enabled)
+	toggle.tooltip_text = "Đang giảm nháy sấm sét" if enabled else "Giảm nháy sáng và âm thanh sấm sét"
 
 func configure_map(map_data: Dictionary) -> void:
 	var preview_path := str(map_data.get("preview", ""))

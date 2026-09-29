@@ -4,6 +4,7 @@ const Api = preload("res://scripts/combat_api.gd")
 const Actor = preload("res://scenes/player.tscn")
 const MapWorldScene = preload("res://scenes/map_world.tscn")
 const InputScript = preload("res://scripts/game_input.gd")
+const WorldWeatherScript = preload("res://scripts/world_weather.gd")
 const SON_TRU_BACKGROUND: Texture2D = preload("res://assets/pixel/maps/bai_son_tru.png")
 const SON_TRU_SPRITE: Texture2D = preload("res://assets/pixel/enemies/son_tru/clean.png")
 const ARENA_SCALE := 2.0 / 3.0
@@ -19,7 +20,10 @@ const WALK_SPEED := 72.0
 @onready var room: LineEdit = $Presentation/HUD/Dock/Room
 @onready var world_map: WorldMapPanel = $Presentation/HUD/WorldMap
 @onready var touch_controls: TouchControls = $Presentation/HUD/TouchControls
+@onready var weather_fx = $Presentation/WeatherFX
 var map_world: GameMap
+var world_weather
+var _weather_fx_exposure: String = ""
 var player: PixelActor
 var village_camera: Camera2D
 var current_map_id: String = "m_an_khe"
@@ -53,6 +57,13 @@ var service_kind: String = ""
 
 func _ready() -> void:
 	get_window().min_size = Vector2i(640, 360)
+	world_weather = WorldWeatherScript.new()
+	world_weather.name = "WorldWeather"
+	add_child(world_weather)
+	world_weather.state_changed.connect(_on_weather_state_changed)
+	hud.weather_flash_reduced_changed.connect(weather_fx.set_reduced_flashes)
+	hud.set_weather_flashes_reduced(weather_fx.get_reduced_flashes())
+	_on_weather_state_changed(world_weather.get_current_state())
 	game_input = InputScript.new() as GameInput
 	add_child(game_input)
 	game_input.action_requested.connect(_action)
@@ -109,6 +120,28 @@ func _ready() -> void:
 	if not OS.get_cmdline_user_args().has("--no-auto-connect"):
 		_connect_backend.call_deferred()
 
+func _on_weather_state_changed(state: Dictionary) -> void:
+	if state.is_empty():
+		return
+	if hud != null:
+		hud.set_weather(state)
+	if map_world != null:
+		map_world.apply_weather_state(state)
+	_sync_weather_fx_for_map(state)
+
+func _sync_weather_fx_for_map(state: Dictionary = {}) -> void:
+	if weather_fx == null or world_weather == null:
+		return
+	var fx_state: Dictionary = state.duplicate(true) if not state.is_empty() else world_weather.get_current_state()
+	var exposure: String = map_world.get_weather_exposure() if map_world != null else "outdoor"
+	fx_state["weather_exposure"] = exposure
+	if exposure == "indoor":
+		fx_state["rain_intensity"] = 0.0
+	elif exposure == "sheltered":
+		fx_state["rain_intensity"] = float(fx_state.get("rain_intensity", 0.0)) * 0.18
+	_weather_fx_exposure = exposure
+	weather_fx.set_weather_state(fx_state)
+
 func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	if world_map == null or not world_map.maps_by_id.has(map_id):
 		return false
@@ -124,6 +157,7 @@ func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 		map_world.queue_free()
 	map_host.add_child(next_map)
 	map_world = next_map
+	_on_weather_state_changed(world_weather.get_current_state())
 	player = map_world.get_node("Actors/Player") as PixelActor
 	village_camera = map_world.get_node("Actors/Player/Camera2D") as Camera2D
 	current_map_id = map_id
@@ -175,6 +209,8 @@ func _apply_world_location(state: Dictionary, force_position: bool = true) -> bo
 		offline_position = player.position
 		world_last_synced_position = player.position
 		var area_name := map_world.update_player_context(player.position)
+		if map_world.get_weather_exposure() != _weather_fx_exposure:
+			_sync_weather_fx_for_map()
 		var focused: MapInteractable = map_world.update_interaction_focus(player.position)
 		hud.set_interaction_prompt(focused.prompt_text() if focused != null else "")
 		hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, area_name)
@@ -454,6 +490,8 @@ func _physics_process(delta: float) -> void:
 	offline_position = player.position
 	player.present(player.position - old_position, delta)
 	var area_name := map_world.update_player_context(player.position)
+	if map_world.get_weather_exposure() != _weather_fx_exposure:
+		_sync_weather_fx_for_map()
 	var focused: MapInteractable = map_world.update_interaction_focus(player.position)
 	var nearby_mob := map_world.nearest_field_mob(player.position, 72.0)
 	var nearby_tree := map_world.nearest_choppable_tree(player.position, player.facing_direction()) != null
@@ -697,6 +735,7 @@ func _snapshot(value: Dictionary) -> void:
 	snapshot_age = 0.0
 	var phase := str(value.phase)
 	var is_pve := api.match_kind == "pve_son_tru"
+	weather_fx.set_atmosphere_active(false)
 	village_camera.enabled = false
 	map_world.hide()
 	$Arena.show()
@@ -847,6 +886,7 @@ func _leave_match() -> void:
 	last_phase = ""
 	$Arena.hide()
 	map_world.show()
+	weather_fx.set_atmosphere_active(true)
 	touch_controls.set_combat_mode(false)
 	_update_field_combat_controls()
 	village_camera.enabled = true

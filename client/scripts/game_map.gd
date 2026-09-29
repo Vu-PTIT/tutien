@@ -44,6 +44,8 @@ var _resource_trees: Dictionary = {}
 var _flowers: Array[MapFlower] = []
 var _field_mobs: Dictionary = {}
 var _runtime_object_states: Dictionary = {}
+var _weather_ripples: Array[MapWaterRipple] = []
+var _weather_state: Dictionary = {}
 
 func configure(data: Dictionary, tile_size: int = TILE_SIZE_DEFAULT, object_states: Dictionary = {}) -> void:
 	map_data = data.duplicate(true)
@@ -727,6 +729,7 @@ func _build_interactables() -> void:
 
 func _build_water_ripples() -> void:
 	var root: Node2D = $AmbientFX
+	_weather_ripples.clear()
 	for value: Variant in map_data.get("water_ripples", []):
 		if not value is Dictionary:
 			continue
@@ -741,6 +744,8 @@ func _build_water_ripples() -> void:
 			str(value.get("color", "#8eeaff")),
 			float(value.get("phase", 0.0))
 		)
+		_weather_ripples.append(ripple)
+	_apply_weather_state_to_map()
 
 func is_walkable(point: Vector2) -> bool:
 	if not Rect2(Vector2.ZERO, map_size_px).has_point(point):
@@ -764,6 +769,33 @@ func update_player_context(point: Vector2) -> String:
 	_update_prop_occlusion(point)
 	_update_location_labels(point)
 	return active_area_name
+
+func get_weather_exposure() -> String:
+	for area: Dictionary in _areas:
+		if str(area.get("id", "")) == active_area_id:
+			return str(area.get("weather_exposure", map_data.get("weather_exposure", "outdoor")))
+	return str(map_data.get("weather_exposure", "outdoor"))
+
+func apply_weather_state(state: Dictionary) -> void:
+	_weather_state = state.duplicate(true)
+	_apply_weather_state_to_map()
+
+func _apply_weather_state_to_map() -> void:
+	if _weather_state.is_empty():
+		return
+	var exposure := get_weather_exposure()
+	var weather_tint: Color = _weather_state.get("map_tint", Color.WHITE)
+	var rain_amount := float(_weather_state.get("rain_intensity", 0.0))
+	if exposure == "indoor":
+		modulate = Color("fff1d8")
+		rain_amount = 0.0
+	elif exposure == "sheltered":
+		modulate = weather_tint.lerp(Color("fff1dc"), 0.55)
+		rain_amount *= 0.18
+	else:
+		modulate = weather_tint
+	for ripple: MapWaterRipple in _weather_ripples:
+		ripple.set_rain_intensity(rain_amount)
 
 func _update_prop_occlusion(point: Vector2) -> void:
 	for prop: MapProp in _props:
@@ -891,6 +923,7 @@ func _update_area_and_camera(point: Vector2) -> void:
 	if next_id == active_area_id:
 		return
 	active_area_id = next_id
+	_apply_weather_state_to_map()
 	if str(map_data.get("camera_mode", "map")) != "room_lock":
 		return
 	var camera: Camera2D = $Actors/Player/Camera2D

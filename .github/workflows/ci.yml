@@ -74,6 +74,10 @@ jobs:
         run: |
           timeout 90 /tmp/godot/engine --headless --path client --script res://tests/presentation_smoke.gd -- --no-auto-connect 2>&1 | tee /tmp/presentation.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/presentation.log
+      - name: Offline world weather smoke
+        run: |
+          timeout 90 /tmp/godot/engine --headless --path client --script res://tests/world_weather_smoke.gd -- --no-auto-connect 2>&1 | tee /tmp/weather.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/weather.log
       - name: Capture actual Godot layout on desktop and touch
         run: |
           mkdir -p /tmp/tutien-previews

@@ -43,6 +43,7 @@
 	  "region_title": "AN KHÊ • KHU AN TOÀN",
 	  "region_body": "Chuẩn bị đồ, hồi phục.\nCổng Bắc → Trúc Âm.",
 	  "preview": "res://assets/pixel/maps/previews/p4_an_khe.png",
+	  "weather_exposure": "outdoor",
 	  "interactables": [
 		{
 		  "entity_id": "ak.npc.ba_sam",
@@ -169,6 +170,7 @@
 	  "region_title": "SĂN QUÁI TỰ DO",
 	  "region_body": "Sơn Trư: da/kiếm\nĐộc Chu: tơ/áo\nJ / Chạm: đánh.",
 	  "preview": "res://assets/pixel/maps/previews/p4_truc_am.png",
+	  "weather_exposure": "outdoor",
 	  "field_spawns": [
 		{"spawn_id":"ta.mob.son_tru.01","enemy_id":"en_boar","name":"Sơn Trư","max_hp":60,"position_tiles":[35.5,17.5]},
 		{"spawn_id":"ta.mob.son_tru.02","enemy_id":"en_boar","name":"Sơn Trư","max_hp":60,"position_tiles":[37.5,18.5]},
@@ -287,6 +289,7 @@
 	  "region_title": "THẠCH CẠN • SẮP MỞ",
 	  "region_body": "Địa hình đã có.\nSpawn quái và loot farm sẽ được nối sau.",
 	  "preview": "res://assets/pixel/maps/previews/p4_thach_can.png",
+	  "weather_exposure": "outdoor",
 	  "interactables": [
 		{
 		  "entity_id": "tc.checkpoint.ngoai_vi",
@@ -355,8 +358,8 @@
 		{"position_tiles": [32, 21], "color": "#78dffc", "phase": 0.5}
 	  ],
 	  "areas": [
-		{"id": "ngoai_vi", "name": "Ngoại Vi", "rect_tiles": [1, 1, 22, 34]},
-		{"id": "mo_cu", "name": "Mỏ Cũ", "rect_tiles": [24, 1, 23, 34]}
+		{"id": "ngoai_vi", "name": "Ngoại Vi", "rect_tiles": [1, 1, 22, 34], "weather_exposure": "outdoor"},
+		{"id": "mo_cu", "name": "Mỏ Cũ", "rect_tiles": [24, 1, 23, 34], "weather_exposure": "sheltered"}
 	  ],
 	  "solid_rects_tiles": [
 		[0, 0, 48, 1], [0, 35, 48, 1], [0, 0, 1, 36], [47, 0, 1, 36],
@@ -378,6 +381,7 @@
 	  "region_title": "CỔ TỈNH • SẮP MỞ",
 	  "region_body": "Map đã có tuyến khám phá.\nQuái, boss và loot farm sẽ được nối sau.",
 	  "preview": "res://assets/pixel/maps/previews/p4_co_tinh.png",
+	  "weather_exposure": "indoor",
 	  "interactables": [
 		{
 		  "entity_id": "ct.checkpoint.entrance",
@@ -441,11 +445,11 @@
 		{"position_tiles": [35, 26], "color": "#74f2c0", "phase": 0.85}
 	  ],
 	  "areas": [
-		{"id": "cua_gieng", "name": "Cửa Giếng", "rect_tiles": [1, 24, 13, 11]},
-		{"id": "hanh_lang_re", "name": "Hành Lang Rễ", "rect_tiles": [1, 5, 13, 18]},
-		{"id": "buong_can_mach", "name": "Buồng Cân Mạch", "rect_tiles": [14, 1, 17, 15]},
-		{"id": "nha_tran", "name": "Nhà Trận", "rect_tiles": [32, 1, 15, 15]},
-		{"id": "tam_gieng", "name": "Tâm Giếng", "rect_tiles": [24, 16, 23, 19]}
+		{"id": "cua_gieng", "name": "Cửa Giếng", "rect_tiles": [1, 24, 13, 11], "weather_exposure": "indoor"},
+		{"id": "hanh_lang_re", "name": "Hành Lang Rễ", "rect_tiles": [1, 5, 13, 18], "weather_exposure": "indoor"},
+		{"id": "buong_can_mach", "name": "Buồng Cân Mạch", "rect_tiles": [14, 1, 17, 15], "weather_exposure": "indoor"},
+		{"id": "nha_tran", "name": "Nhà Trận", "rect_tiles": [32, 1, 15, 15], "weather_exposure": "indoor"},
+		{"id": "tam_gieng", "name": "Tâm Giếng", "rect_tiles": [24, 16, 23, 19], "weather_exposure": "indoor"}
 	  ],
 	  "solid_rects_tiles": [
 		[0, 0, 48, 1], [0, 35, 48, 1], [0, 0, 1, 36], [47, 0, 1, 36],
