@@ -9,17 +9,17 @@ func configure(surface: String, tile_size_px: int, rainy: bool, shoreline: bool,
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var rng := RandomNumberGenerator.new()
 	rng.seed = abs(seed_value)
-	var pixel_scale := maxi(roundi(float(tile_size_px) / 32.0), 1)
+	var pixel_scale := maxi(roundi(float(tile_size_px) / 8.0), 1)
 	var palette: Array[Color] = []
 	match surface:
 		"grass":
-			palette = [Color("#b4d96c"), Color("#d8ec9a"), Color("#8eb94e")]
+			palette = [Color("#458551"), Color("#4f7a3c"), Color("#5c713d")]
 			if rainy:
-				palette = [Color("#8aa65d"), Color("#a9bf70"), Color("#718849")]
+				palette = [Color("#2b6e53"), Color("#4f7a3c"), Color("#5c713d")]
 		"soil":
-			palette = [Color("#bd8753"), Color("#e2af70"), Color("#8d6544")]
+			palette = [Color("#887b32"), Color("#ab9050"), Color("#5c713d")]
 			if rainy:
-				palette = [Color("#936c49"), Color("#ad8054"), Color("#76543b")]
+				palette = [Color("#5c713d"), Color("#887b32"), Color("#2b6e53")]
 		"stone":
 			palette = [Color("#aeb7c2"), Color("#d9dce0"), Color("#838b94")]
 		"water":
