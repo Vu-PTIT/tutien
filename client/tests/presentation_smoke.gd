@@ -108,8 +108,14 @@ func check_map_assets(world: GameMap) -> void:
 				var atlas_texture := texture as AtlasTexture
 				var cell_px := int(world.map_data.get("props_cell_px", 128))
 				check(atlas_texture.region.size == Vector2(cell_px, cell_px), "Atlas props preserve their authored source cell")
-	var authored_props: Array = world.map_data.get("props", [])
-	check(props_count == authored_props.size(), "Map prop count matches its authored layout: " + world.map_id)
+	var area_name := world.map_id.trim_prefix("m_")
+	var layout_file := FileAccess.open("res://data/maps/" + area_name + ".json", FileAccess.READ)
+	var authored_props: Array = []
+	if layout_file != null:
+		var authored_layout: Variant = JSON.parse_string(layout_file.get_as_text())
+		if authored_layout is Dictionary:
+			authored_props = authored_layout.get("props", [])
+	check(layout_file != null and props_count == authored_props.size(), "Map prop count matches its authored JSON: " + world.map_id)
 	check(not world.get_node("Background").visible, "No painted PNG fallback: " + world.map_id)
 
 func _run() -> void:
