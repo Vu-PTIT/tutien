@@ -99,18 +99,14 @@ for(let i=0;i<connectionQueue.length;i++) for(const neighbor of routeNeighbors.g
 assert.equal(connectedMaps.size,mapCatalog.maps.length,'The route graph connects every map');
 const reachableByMapId=new Map();
 const expectedPropTiles={
-  m_truc_am:{
-    ta_prop_lightning_bamboo:49,
-    ta_prop_deep_bamboo:48,
-    ta_prop_herb_pocket:52,
-    ta_prop_well_spring:61
-  },
-  m_co_tinh:{
-    ct_prop_jade_crystal_cluster:55,
-    ct_prop_mossy_rock_cluster:62
-  }
+  m_truc_am:{ta_prop_entry_bridge:40}
 };
 const generatedMapProps={
+  ak_prop_north_gate:'res://assets/pixel/props/generated/an_khe_north_gate/processed/clean.png',
+  ak_prop_herbalist:'res://assets/pixel/props/generated/an_khe_herbalist_hut/processed/clean.png',
+  ak_prop_guest_house:'res://assets/pixel/props/generated/an_khe_guest_house/processed/clean.png',
+  ak_prop_village_board:'res://assets/pixel/props/generated/an_khe_notice_board/processed/clean.png',
+  ak_prop_market_stall:'res://assets/pixel/props/generated/an_khe_market_stall/processed/clean.png',
   ak_prop_blacksmith:'res://assets/pixel/props/an_khe_blacksmith.png',
   tc_prop_mine_entrance:'res://assets/pixel/props/thach_can_mine_entrance.png',
   tc_prop_flow_pillar:'res://assets/pixel/props/thach_can_flow_pillar.png',
@@ -130,8 +126,8 @@ for(const map of mapCatalog.maps) {
   assert.ok(fs.existsSync(previewPath), 'Missing map preview asset: '+map.preview);
   const png=fs.readFileSync(previewPath);
   assert.equal(png.subarray(1,4).toString(),'PNG');
-  assert.equal(png.readUInt32BE(16),1448);
-  assert.equal(png.readUInt32BE(20),1086);
+  assert.equal(png.readUInt32BE(16),1536);
+  assert.equal(png.readUInt32BE(20),1152);
   const [spawnX,spawnY]=map.spawn_tiles;
   assert.equal(layout.ground_rows.length,map.size_tiles[1],'Terrain height matches map catalog: '+map.id);
   assert.ok(layout.ground_rows.every(row=>row.length===map.size_tiles[0]&&[...row].every(symbol=>tileSymbols.indexOf(symbol)>=0)),
@@ -266,8 +262,8 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
   assert.equal(layout.props_cell_px,128, 'Props must retain 128 px source detail');
   assert.equal(layout.atlas_columns,8,'Terrain atlas must use 8 columns: '+name);
   assert.ok(layout.tile_set && Array.isArray(layout.ground_rows), 'Missing authored map layout data: '+name);
-  const minPropCount=name==='thach_can'?6:7;
-  assert.ok(layout.props_atlas && Array.isArray(layout.props) && layout.props.length>=minPropCount, 'Map needs a substantial props layer: '+name);
+  const expectedPropCount={an_khe:7,truc_am:1,thach_can:6,co_tinh:0}[name];
+  assert.ok(layout.props_atlas && Array.isArray(layout.props) && layout.props.length===expectedPropCount, 'Map prop count matches its authored layout: '+name);
   for(const prop of layout.props) {
     if(prop.texture_path) {
       const assetPath=path.join(root,prop.texture_path.replace('res://',''));
@@ -295,7 +291,14 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
     const prop=layout.props.find(candidate=>candidate.name===propName);
     if(!prop) continue;
     assert.equal(prop.texture_path,texturePath,'Landmark must use its generated transparent cutout: '+propName);
-    const promptPath=path.join(root,texturePath.replace('res://','').replace('.png','.prompt.txt'));
+    const generatedPrompts={
+      ak_prop_north_gate:'assets/pixel/props/generated/an_khe_north_gate/prompt.txt',
+      ak_prop_herbalist:'assets/pixel/props/generated/an_khe_herbalist_hut/prompt.txt',
+      ak_prop_guest_house:'assets/pixel/props/generated/an_khe_guest_house/prompt.txt',
+      ak_prop_village_board:'assets/pixel/props/generated/an_khe_notice_board/prompt.txt',
+      ak_prop_market_stall:'assets/pixel/props/generated/an_khe_market_stall/prompt.txt'
+    };
+    const promptPath=path.join(root,generatedPrompts[propName]||texturePath.replace('res://','').replace('.png','.prompt.txt'));
     assert.ok(fs.existsSync(promptPath),'Generated prop keeps its prompt provenance: '+propName);
   }
   if(name==='an_khe') {
@@ -308,6 +311,164 @@ for(const name of ['an_khe','truc_am','thach_can','co_tinh']) {
     }
   }
 }
+const anKheLayout=JSON.parse(read('data/maps/an_khe.json'));
+const meadowAtlas=fs.readFileSync(path.join(root,'assets/pixel/terrain/an_khe_meadow_base.png'));
+assert.equal(meadowAtlas.readUInt32BE(16),512,'An Khê continuous meadow texture is a 16×16 tile atlas');
+assert.equal(meadowAtlas.readUInt32BE(20),512,'An Khê continuous meadow texture is a 16×16 tile atlas');
+assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/an_khe_meadow_base.prompt.txt')),
+  'Generated meadow foundation keeps its prompt provenance');
+const transitionAtlas=fs.readFileSync(path.join(root,'assets/pixel/terrain/terrain_transition_decals.png'));
+assert.equal(transitionAtlas.readUInt32BE(16),384,'Terrain transition atlas has twelve 32 px columns');
+assert.equal(transitionAtlas.readUInt32BE(20),256,'Terrain transition atlas has eight 32 px rows');
+assert.equal(transitionAtlas[25],6,'Terrain transition decals preserve transparent RGBA areas');
+assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/terrain_transitions_source.png')),
+  'Generated high-resolution transition sheet remains available alongside its runtime atlas');
+assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/terrain_transitions.prompt.txt')),
+  'Generated transition atlas keeps its prompt provenance');
+assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/terrain_transitions_source.prompt.txt')),
+  'Generated source sheet keeps its prompt provenance');
+assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/terrain_river_shore_source.png')),
+  'A continuous generated river-shore source supplies a consistent land-to-water transition');
+assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/terrain_river_shore_source.prompt.txt')),
+  'Generated river-shore source keeps its prompt provenance');
+const riverOverlay=fs.readFileSync(path.join(root,'assets/pixel/terrain/an_khe_river_shore_overlay.png'));
+assert.equal(riverOverlay.readUInt32BE(16),1536,'An Khê river shore overlay spans the full map width');
+assert.equal(riverOverlay.readUInt32BE(20),1152,'An Khê river shore overlay spans the full map height');
+assert.equal(riverOverlay[25],6,'An Khê river shore overlay keeps transparent pixels outside the shoreline ribbon');
+assert.ok(fs.existsSync(path.join(root,'assets/pixel/terrain/an_khe_river_shore_overlay.prompt.txt')),
+  'Continuous river-shore overlay records its generated source and build procedure');
+assert.equal(anKheLayout.river_autoterrain.shore_overlay_texture,'res://assets/pixel/terrain/an_khe_river_shore_overlay.png');
+assert.equal(anKheLayout.river_autoterrain.shore_overlay_width_px,96);
+assert.ok(fs.existsSync(path.join(root,'..','scripts/build_terrain_transition_atlas.py')),
+  'Generated transition atlas can be rebuilt from the preserved source sheet');
+assert.ok(fs.existsSync(path.join(root,'..','scripts/build_terrain_transition_decals.py')),
+  'Transparent transition decals can be rebuilt from the generated tile atlas');
+assert.ok(fs.existsSync(path.join(root,'..','scripts/build_an_khe_river_shore_overlay.py')),
+  'Continuous river shore can be rebuilt along its authored curve');
+assert.equal(anKheLayout.meadow_atlas,'res://assets/pixel/terrain/an_khe_meadow_base.png');
+assert.equal(anKheLayout.meadow_atlas_tile_px,32);
+assert.equal(anKheLayout.meadow_atlas_columns,16);
+assert.equal(anKheLayout.meadow_atlas_rows,16);
+assert.equal(anKheLayout.terrain_transitions.atlas,'res://assets/pixel/terrain/terrain_transition_decals.png');
+assert.equal(anKheLayout.terrain_transitions.columns,12);
+assert.equal(anKheLayout.terrain_transitions.rows,8);
+assert.deepEqual(anKheLayout.terrain_transitions.path_edge_tiles,{west:[0,1,2,3],east:[4,5,6,7],north:[8,9,10,11],south:[12,13,14,15]});
+assert.deepEqual(anKheLayout.terrain_transitions.path_corner_tiles,{north_west:[16,17,18,19],north_east:[20,21,22,23],south_west:[24,25,26,27],south_east:[28,29,30,31]});
+assert.deepEqual(anKheLayout.terrain_transitions.shore_land_edge_tiles,{},'An Khê uses its continuous palette-matched shore image instead of tiled shore patches');
+assert.deepEqual(anKheLayout.terrain_transitions.shore_land_corner_tiles,{});
+assert.deepEqual(anKheLayout.terrain_transitions.shore_water_edge_tiles,{});
+assert.deepEqual(anKheLayout.terrain_transitions.shore_water_corner_tiles,{});
+const trucAmLayout=JSON.parse(read('data/maps/truc_am.json'));
+assert.equal(trucAmLayout.terrain_transitions.atlas,anKheLayout.terrain_transitions.atlas,
+  'Forest map retains access to the transition atlas for future palette-matched edges');
+assert.deepEqual(trucAmLayout.terrain_transitions.path_edge_tiles,{},
+  'Trúc Âm keeps hand-painted forest path edges instead of overpainting them with the meadow palette');
+assert.deepEqual(trucAmLayout.terrain_transitions.path_corner_tiles,{},
+  'Trúc Âm keeps native path corners matched to its waterfall forest palette');
+assert.deepEqual(trucAmLayout.terrain_transitions.shore_land_edge_tiles,{},
+  'Forest waterfall edges retain their native grass and bank art');
+assert.deepEqual(trucAmLayout.terrain_transitions.shore_water_edge_tiles,{},
+  'Forest waterfall banks retain their rocky shoreline tiles');
+const river=anKheLayout.river_autoterrain;
+assert.ok(river && river.west_bankline.length>=6,'An Khê river bank follows a long, authored curve');
+assert.deepEqual(river.base_water_tiles,[32,34],'River interior mostly uses plain water tiles');
+assert.equal(river.bank_tile,39,'River bank keeps its blocking terrain while the generated shore ribbon supplies the visible transition');
+const [bankMin,bankMax]=[river.minimum_bank_x,river.maximum_bank_x];
+const sampledBanks=[];
+for(let y=0;y<mapCatalog.maps[0].size_tiles[1];y++) {
+  const sampleY=y+0.5;
+  let previous=river.west_bankline[0];
+  let next=river.west_bankline.find(point=>point[1]>=sampleY)||river.west_bankline.at(-1);
+  const nextIndex=river.west_bankline.indexOf(next);
+  previous=river.west_bankline[Math.max(0,nextIndex-1)];
+  const t=Math.max(0,Math.min(1,(sampleY-previous[1])/Math.max(0.001,next[1]-previous[1])));
+  const bankX=Math.max(bankMin,Math.min(bankMax,Math.floor(previous[0]+(next[0]-previous[0])*t)));
+  sampledBanks.push(bankX);
+  assert.ok(bankX>=bankMin&&bankX<=bankMax,'River bank remains inside its authored corridor at row '+y);
+  assert.ok(river.last_water_x<mapCatalog.maps[0].size_tiles[0]-1,'Water leaves the map boundary tile intact');
+}
+assert.ok(Math.max(...sampledBanks)-Math.min(...sampledBanks)>=10,'River turns inland on the southern reach');
+assert.ok(sampledBanks.every((x,i)=>i===0||Math.abs(x-sampledBanks[i-1])<=2),'River bank does not jump between rows');
+const pathNetwork=anKheLayout.path_autoterrain;
+assert.ok(pathNetwork.paths.length>=6,'An Khê paths are authored as a connected village network');
+assert.deepEqual(pathNetwork.interior_tiles,[16],'Path interiors use dirt-only tiles without embedded grass islands');
+assert.deepEqual(pathNetwork.edge_tiles,[16],'Path edges stay dirt-only and blend through separate detail decals');
+assert.ok(pathNetwork.paths.some(path=>path.id==='north_gate_to_plaza')&&pathNetwork.paths.some(path=>path.id==='plaza_to_market_and_river'),
+  'Main path links the north gate, village core, and river market');
+for(const path of pathNetwork.paths) {
+  assert.ok(path.points.length>=2&&path.half_width_tiles>=0.6,'Each path branch has a usable width and centerline: '+path.id);
+  for(const [x,y] of path.points) assert.ok(x>=0&&x<48&&y>=0&&y<36,'Path point stays inside An Khê: '+path.id);
+}
+assert.ok(!mapCatalog.maps[0].solid_rects_tiles.some(([x,y,w,h])=>x===42&&y===1&&w===5&&h===34),
+  'River collision comes from its connected water and bank cells');
+const interactive=anKheLayout.interactive_objects;
+assert.equal(interactive.trees.length,1,'An Khê prototype has one harvestable tree');
+assert.equal(interactive.flowers.length,4,'An Khê prototype has four stompable flower clumps');
+for(const object of [...interactive.trees,...interactive.flowers]) {
+  assert.ok(object.id&&object.position_tiles.length===2,'Interactive map objects have stable ids and tile anchors');
+  const [x,y]=object.position_tiles;
+  const isTree=interactive.trees.includes(object);
+  const cellX=Math.floor(x+0.5),cellY=Math.floor(y+(isTree?1:0.5));
+  assert.ok(cellX>=0&&cellX<48&&cellY>=0&&cellY<36,'Interactive object anchor stays inside An Khê: '+object.id);
+  assert.ok(reachableByMapId.get('m_an_khe').has(`${cellX},${cellY}`),'Interactive object remains reachable from the village spawn: '+object.id);
+}
+const treeSheet=fs.readFileSync(path.join(root,'assets/pixel/props/generated/an_khe_interactables/tree/sheet-transparent.png'));
+assert.equal(treeSheet.readUInt32BE(16),256,'Interactive tree atlas has two 128 px columns');
+assert.equal(treeSheet.readUInt32BE(20),256,'Interactive tree atlas has two 128 px rows');
+assert.equal(treeSheet[25],6,'Interactive tree atlas has transparent RGBA pixels');
+const treeQc=JSON.parse(read('assets/pixel/props/generated/an_khe_interactables/tree/pipeline-meta.json'));
+assert.deepEqual(treeQc.edge_touch_frames,[],'Tree states stay inside their generated cells');
+assert.deepEqual(treeQc.empty_frames,[],'Every tree state contains a visible prop');
+const livingTreeScales=treeQc.frames.slice(0,3).map(frame=>frame.source_to_output_scale);
+assert.ok(Math.max(...livingTreeScales)-Math.min(...livingTreeScales)<0.001,'Upright and leaning tree frames keep one shared scale');
+assert.ok(treeQc.frames[3].output_size[1]<treeQc.frames[0].output_size[1]*0.5,'Stump retains its natural small scale');
+const flowerSheet=fs.readFileSync(path.join(root,'assets/pixel/props/generated/an_khe_interactables/flowers/sheet-transparent.png'));
+assert.equal(flowerSheet.readUInt32BE(16),128,'Flower variant atlas has two 64 px columns');
+assert.equal(flowerSheet.readUInt32BE(20),128,'Flower variant atlas has two 64 px rows');
+assert.equal(flowerSheet[25],6,'Flower variant atlas has transparent RGBA pixels');
+const flowerQc=JSON.parse(read('assets/pixel/props/generated/an_khe_interactables/flowers/pipeline-meta.json'));
+assert.deepEqual(flowerQc.empty_frames,[],'Every flower variant has a visible cluster');
+assert.ok(fs.existsSync(path.join(root,'assets/pixel/props/generated/an_khe_interactables/tree-states-prompt.txt')));
+assert.ok(fs.existsSync(path.join(root,'assets/pixel/props/generated/an_khe_interactables/flower-pack-prompt.txt')));
+const resourceTree=read('scripts/map_resource_tree.gd');
+const flowerScript=read('scripts/map_flower.gd');
+const hudScript=read('scripts/ui/hud.gd');
+assert.ok(gameMap.includes('_apply_river_autoterrain')&&gameMap.includes('TRANSFORM_FLIP_H')&&gameMap.includes('_sample_river_bank_x'),
+  'River edge art follows a curved west bank from its authored shape');
+assert.ok(gameMap.includes('var terrain_cell_alternatives := _apply_river_autoterrain')&&gameMap.includes('bank_alternatives[Vector2i(bank_cell_x, y)] = bank_flip'),
+  'Vertical shoreline tiles are flipped toward the water and varied down the bank');
+assert.ok(gameMap.includes('_build_terrain_transition_cells')&&gameMap.includes('_ensure_transition_atlas_source'),
+  'Grass, dirt, and water edges select generated transition tiles from neighboring cells');
+assert.ok(gameMap.includes('transition_cells.keys()')&&gameMap.includes('detail,')&&gameMap.includes('transition_columns'),
+  'Generated transition decals overlay the ground while base terrain stays continuous');
+assert.ok(gameMap.includes('shore_water_edges')&&gameMap.includes('"shore"')&&gameMap.includes('_choose_transition_variant'),
+  'River transitions use seeded tile variants on both the grassy bank and shallow-water edge');
+assert.ok(gameMap.includes('_build_river_shore_overlay')&&gameMap.includes('CanvasItem.TEXTURE_FILTER_NEAREST'),
+  'A continuous generated river shore renders above ground tiles and below interactive detail layers');
+assert.ok(gameMap.includes('bank_fringe_chance = 0'),
+  'The single-tile legacy fringe is disabled only when shoreline art actually replaces it');
+assert.ok(gameMap.includes('_apply_path_autoterrain')&&gameMap.includes('_distance_to_polyline'),
+  'Dirt paths form variable-width connected lanes instead of hand-placed tile strips');
+assert.ok(gameMap.includes('\t\t\tvar tile_pool: Array = edge_tiles if nearest_distance > selected_width * 0.62 else interior_tiles'),
+  'Each path cell chooses its dirt tile inside the per-cell loop');
+assert.ok(gameMap.includes('var enclosed_path_gaps: Array[Vector2i] = []')&&gameMap.includes('if path_neighbor_count >= 3:'),
+  'Path junctions fill one-cell grass gaps so the dirt network stays continuous');
+assert.ok(gameMap.includes('_encode_ground_rows(tile_rows)')&&main.includes('hud.configure_map(map_world.map_data)')&&hudScript.includes('runtime_ground_rows'),
+  'Runtime river and path autoterrain also appears on the minimap');
+assert.ok(gameMap.includes('_ensure_meadow_atlas_source')&&gameMap.includes('terrain_index < 16'),'Grass tiles sample the connected meadow atlas by world coordinates');
+assert.ok(gameMap.includes('_build_resource_objects(layout)')&&gameMap.includes('try_chop_tree'),'Map loads interactive resource objects from data');
+assert.ok(resourceTree.includes('func chop()')&&resourceTree.includes('_finish_felling')&&resourceTree.includes('collision_layer = 0'),
+  'Harvestable tree advances through hit states, falls, then releases its blocker');
+assert.ok(flowerScript.includes('body_entered.connect')&&flowerScript.includes('func stomp()')&&flowerScript.includes('Tween.TRANS_BACK'),
+  'Flower reacts to the player collider with a spring-back animation');
+assert.ok(main.includes('try_chop_tree')&&main.includes('facing_direction()'),'World attack action can chop a tree in front of the player');
+assert.ok(main.includes('local_resource_states')&&main.includes('next_map.configure(data, int(world_map.catalog.get("tile_size_px", 32)), local_resource_states)'),
+  'Tree progress persists while changing maps during the current session');
+assert.ok(resourceTree.includes('saved_state.get("hit_count", 0)')&&resourceTree.includes('if hit_count >= hits_to_fell'),
+  'Resource tree restores a damaged or felled state when its map loads');
+assert.ok(read('tests/presentation_smoke.gd').includes('keeps its state after leaving and returning')&&read('tests/presentation_smoke.gd').includes('remains a stump after a map transition'),
+  'Runtime smoke covers resource persistence across map reloads');
+assert.ok(read('scripts/ui/touch_controls.gd').includes('action_label'),'Touch layout exposes a labeled world action button');
 assert.ok(gameMap.includes('_build_props(layout)') && gameMap.includes('MAP_PROP_SCENE'), 'Map decorative props are data-driven and Y-sorted');
 const minePack=JSON.parse(read('assets/pixel/props/thach_can_mining_props_pack.json'));
 assert.deepEqual(minePack.grid,[2,2],'Thạch Cạn compact props use a 2×2 pack');

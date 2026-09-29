@@ -103,7 +103,7 @@ func _build_authored_minimap(data: Dictionary) -> ImageTexture:
 		return null
 	var width := int(dimensions[0])
 	var height := int(dimensions[1])
-	var rows: Array = layout.get("ground_rows", [])
+	var rows: Array = data.get("runtime_ground_rows", layout.get("ground_rows", []))
 	if width <= 0 or height <= 0 or rows.size() != height:
 		return null
 	var image := Image.create(width, height, false, Image.FORMAT_RGBA8)

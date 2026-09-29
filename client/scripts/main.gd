@@ -34,6 +34,7 @@ var pending_action: String = ""
 var last_phase: String = ""
 var fighters: Dictionary = {}
 var local_map_flags: Dictionary = {}
+var local_resource_states: Dictionary = {}
 var offline_position := Vector2(768, 576)
 var touch_layout_enabled := false
 var game_input: GameInput
@@ -115,7 +116,7 @@ func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	if arrival_tiles.size() >= 2:
 		data["spawn_tiles"] = arrival_tiles.duplicate()
 	var next_map := MapWorldScene.instantiate() as GameMap
-	next_map.configure(data, int(world_map.catalog.get("tile_size_px", 32)))
+	next_map.configure(data, int(world_map.catalog.get("tile_size_px", 32)), local_resource_states)
 	if map_world != null:
 		map_host.remove_child(map_world)
 		map_world.queue_free()
@@ -141,7 +142,7 @@ func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	map_world.update_field_mobs(preview_mobs)
 	offline_position = player.position
 	world_map.set_current_map(map_id)
-	hud.configure_map(data)
+	hud.configure_map(map_world.map_data)
 	hud.get_node("FieldInfo/Title").text = str(data.get("region_title", "THÁM HIỂM"))
 	hud.get_node("FieldInfo/Body").text = str(data.get("region_body", ""))
 	hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, map_world.active_area_name)
@@ -293,7 +294,17 @@ func _action(action: String) -> void:
 			if api.snapshot.get("phase", "") == "active":
 				pending_action = "sk_basic" if action == "attack" else "sk_dodge"
 			elif action == "attack":
-				_attack_field_mob()
+				var chop_result: Dictionary = map_world.try_chop_tree(player.position, player.facing_direction())
+				if not chop_result.is_empty():
+					local_resource_states[str(chop_result.get("tree_id", ""))] = {"hit_count": int(chop_result.get("hit_count", 0))}
+					if bool(chop_result.get("falling", false)):
+						hud.notify("Cây đổ xuống, chỉ còn lại gốc.")
+					else:
+						hud.notify("Rìu trúng thân cây. Còn %d nhát." % int(chop_result.get("hits_remaining", 0)))
+				elif current_map_id == "m_an_khe":
+					hud.notify("Đến sát một cây, quay mặt về phía cây rồi nhấn J để chặt.")
+				else:
+					_attack_field_mob()
 		"skill_1":
 			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible:
 				return
@@ -443,7 +454,9 @@ func _physics_process(delta: float) -> void:
 	var area_name := map_world.update_player_context(player.position)
 	var focused: MapInteractable = map_world.update_interaction_focus(player.position)
 	var nearby_mob := map_world.nearest_field_mob(player.position, 72.0)
-	hud.set_interaction_prompt(focused.prompt_text() if focused != null else ("J / Chạm • Đánh quái gần nhất" if not nearby_mob.is_empty() else ""))
+	var nearby_tree := map_world.nearest_choppable_tree(player.position, player.facing_direction()) != null
+	var action_prompt := "J / Chạm • Chặt cây" if nearby_tree else ("J / Chạm • Đánh quái gần nhất" if not nearby_mob.is_empty() else "")
+	hud.set_interaction_prompt(focused.prompt_text() if focused != null else action_prompt)
 	hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, area_name)
 	hud.get_node("Location/State").text = "An toàn • " + area_name if current_map_id == "m_an_khe" else area_name
 	if not api.token.is_empty() and not busy:
@@ -520,7 +533,9 @@ func _poll_world_field() -> void:
 func _update_field_combat_controls() -> void:
 	if touch_controls == null:
 		return
-	touch_controls.set_field_combat_mode(current_map_id == "m_truc_am" and api != null and api.match_id.is_empty())
+	var can_use_field_action := current_map_id == "m_an_khe" or (current_map_id == "m_truc_am" and api != null and api.match_id.is_empty())
+	var action_label := "Chặt\nĐánh" if current_map_id == "m_an_khe" else "Đánh"
+	touch_controls.set_field_combat_mode(can_use_field_action, action_label)
 
 func _attack_field_mob(skill_id: String = "") -> void:
 	if busy or api.match_id.is_empty() == false:

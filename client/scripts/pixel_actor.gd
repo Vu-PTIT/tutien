@@ -13,6 +13,13 @@ func _ready() -> void:
 	$Sprite.texture = frame_texture
 	present(Vector2.ZERO, 0.0)
 
+func facing_direction() -> Vector2:
+	match row:
+		1: return Vector2.LEFT
+		2: return Vector2.RIGHT
+		3: return Vector2.UP
+		_: return Vector2.DOWN
+
 func present(direction: Vector2, delta: float) -> void:
 	if frame_texture == null:
 		return

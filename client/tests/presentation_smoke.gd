@@ -85,8 +85,8 @@ func check_map_assets(world: GameMap) -> void:
 			props_count += 1
 			var texture: Texture2D = actor.get_node("Sprite").texture
 			check(texture != null and texture.get_size() == Vector2(128, 128), "Landmarks retain full source resolution")
-	var minimum_props := 6 if world.map_id == "m_thach_can" else 7
-	check(props_count >= minimum_props, "Map has authored landmarks: " + world.map_id)
+	var expected_props := {"m_an_khe": 7, "m_truc_am": 1, "m_thach_can": 6, "m_co_tinh": 0}
+	check(props_count == int(expected_props.get(world.map_id, -1)), "Map prop count matches its authored layout: " + world.map_id)
 	check(not world.get_node("Background").visible, "No painted PNG fallback: " + world.map_id)
 
 func _run() -> void:
@@ -97,9 +97,17 @@ func _run() -> void:
 	var hud = main.hud
 	var bag: InventoryPanel = main.inventory_panel
 	check_map_assets(main.map_world)
+	check(main.map_world.resource_trees_size() == 1, "An Khê loads one stateful harvestable tree")
+	check(main.map_world.flowers_size() == 4, "An Khê loads four foot-reactive flower clumps")
 	var blacksmith: MapProp = main.map_world.get_node("Actors/ak_prop_blacksmith") as MapProp
 	check(blacksmith != null and not blacksmith.get_node("Sprite").texture is AtlasTexture, "An Khê forge uses its own transparent cutout")
 	check(blacksmith.get_node("Sprite").texture.get_image().detect_alpha() != Image.ALPHA_NONE, "An Khê forge cutout retains alpha")
+	var village_board: MapProp = main.map_world.get_node_or_null("Actors/ak_prop_village_board") as MapProp
+	check(village_board != null, "Bảng tin has a visible map prop at An Khê")
+	if village_board != null:
+		var board_texture: Texture2D = village_board.get_node("Sprite").texture
+		check(board_texture != null and board_texture.get_size() == Vector2(128, 128) and board_texture.get_image().detect_alpha() != Image.ALPHA_NONE,
+			"Village notice board loads as a transparent 128 px cutout")
 	check(not main.can_walk(Vector2(240, 304)), "House footprint must block walking")
 	check(main.can_walk(Vector2(768, 576)), "An Khê spawn must be walkable")
 	check(main.map_world.map_size_tiles == Vector2i(48, 36), "An Khê uses the agreed map size")
@@ -264,6 +272,8 @@ func _run() -> void:
 	check(minimap_image.get_size() == Vector2i(48, 36), "HUD minimap follows the authored map grid")
 	check(minimap_image.get_pixel(24, 18).r > 0.6, "Stone plaza is visible on the true minimap")
 	check(minimap_image.get_pixel(44, 18).b > minimap_image.get_pixel(44, 18).r, "Stream is blue on the true minimap")
+	check(minimap_image.get_pixel(35, 18).r > minimap_image.get_pixel(35, 18).b,
+		"Minimap uses the connected dirt path to the east market")
 	await _capture("an-khe-runtime.png")
 	var village_spawn: Vector2 = main.player.position
 	main.player.position = blacksmith.position + Vector2(0, 32)
@@ -462,6 +472,49 @@ func _run() -> void:
 	main._action("inventory")
 	check(not main.dock.visible and bag.visible, "Only one modal open")
 	await _capture_son_tru_preview(main)
+	check(main._load_map("m_an_khe"), "Runtime interaction checks reload the An Khê prototype")
+	var resource_tree := main.map_world.get_resource_tree("ak.tree.woodland_01")
+	check(resource_tree != null and resource_tree.state_index == 0 and resource_tree.can_be_chopped(),
+		"Interactive tree starts upright and can be harvested")
+	if resource_tree != null:
+		main.player.position = resource_tree.position + Vector2(40.0, 0.0)
+		main.player.row = 1
+		main._action("attack")
+		check(resource_tree.hit_count == 1 and resource_tree.state_index == 1,
+			"World attack input chops a tree in front of the player")
+		check(resource_tree.hits_remaining() == 2 and resource_tree.state_index == 1,
+			"First axe hit changes the tree art and health")
+		check(main._load_map("m_an_khe"), "Map reload preserves the local resource state")
+		resource_tree = main.map_world.get_resource_tree("ak.tree.woodland_01")
+		check(resource_tree != null and resource_tree.hit_count == 1 and resource_tree.state_index == 1,
+			"A damaged tree keeps its state after leaving and returning to An Khê")
+		resource_tree.chop()
+		check(resource_tree.state_index == 2, "Second axe hit shows the leaning tree state")
+		var final_hit: Dictionary = resource_tree.chop()
+		check(bool(final_hit.get("falling", false)), "Final axe hit starts the fall")
+		await create_timer(0.22).timeout
+		check(resource_tree.is_felled and resource_tree.state_index == 3,
+			"Felled tree becomes a small stump")
+		var tree_collider := resource_tree.get_node("CollisionShape2D") as CollisionShape2D
+		check(resource_tree.collision_layer == 0 and tree_collider.disabled,
+			"Stump no longer blocks the walking path")
+		check(main._load_map("m_an_khe"), "An Khê reloads after the tree falls")
+		resource_tree = main.map_world.get_resource_tree("ak.tree.woodland_01")
+		check(resource_tree != null and resource_tree.is_felled and resource_tree.state_index == 3,
+			"A felled tree remains a stump after a map transition")
+		if resource_tree != null:
+			var stump_collider := resource_tree.get_node("CollisionShape2D") as CollisionShape2D
+			check(resource_tree.collision_layer == 0 and stump_collider.disabled,
+				"Persisted stump keeps the path clear")
+	var flower: MapFlower = main.map_world.get_node("Actors/ak_flower_pink_01") as MapFlower
+	check(flower != null, "Flower clump has a stable scene object")
+	if flower != null:
+		flower.stomp()
+		await process_frame
+		check(flower.stomp_count == 1 and flower.sprite.scale.y < 0.8,
+			"Player contact compresses the flower sprite")
+		await create_timer(0.55).timeout
+		check(absf(flower.sprite.scale.y - 0.88) < 0.02, "Flower springs back after the player steps off")
 	var atlas := load("res://assets/pixel/cultivator.png") as Texture2D
 	check(atlas.get_image().detect_alpha() != Image.ALPHA_NONE, "Sprite must be transparent")
 	main.queue_free()

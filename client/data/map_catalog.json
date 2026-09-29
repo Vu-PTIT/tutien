@@ -42,7 +42,7 @@
 	  "details": "An Khê 48×36 tile, có dịch vụ làng, điểm tương tác và cổng sang Trúc Âm. Gameplay dùng TileMapLayer 32 px và prop 128 px; ảnh world cũ chỉ là ý tưởng tuyến. Minimap đọc layout thật.",
 	  "region_title": "AN KHÊ • KHU AN TOÀN",
 	  "region_body": "Chuẩn bị đồ, hồi phục.\nCổng Bắc → Trúc Âm.",
-	  "preview": "res://assets/pixel/an_khe_world_v1.png",
+	  "preview": "res://assets/pixel/maps/previews/p4_an_khe.png",
 	  "interactables": [
 		{
 		  "entity_id": "ak.npc.ba_sam",
@@ -98,7 +98,8 @@
 		  "action_kind": "read",
 		  "action_label": "Xem tin làng",
 		  "message": "Bảng tin: chuẩn bị thuốc trước khi qua cổng Bắc tới đường săn Trúc Âm.",
-		  "icon": "res://assets/pixel/icon_9.tres"
+		  "icon": "res://assets/pixel/icon_9.tres",
+		  "visual_prop_id": "ak_prop_village_board"
 		},
 		{
 		  "entity_id": "ak.market.village",
@@ -119,8 +120,7 @@
 		  "action_kind": "service",
 		  "action_label": "Xem vườn",
 		  "message": "Vườn sáu ô: khu trồng dược liệu cá nhân. Trồng và thu hoạch chưa kết nối.",
-		  "icon": "res://assets/pixel/icon_8.tres",
-		  "visual_prop_id": "ak_prop_medicine_garden"
+		  "icon": "res://assets/pixel/icon_8.tres"
 		},
 		{
 		  "entity_id": "ak.gate.truc_am",
@@ -151,9 +151,8 @@
 	  ],
 	  "solid_rects_tiles": [
 		[0, 0, 48, 1], [0, 35, 48, 1], [0, 0, 1, 36], [47, 0, 1, 36],
-		[42, 1, 5, 34],
 		[5, 7, 4, 4], [27, 7, 4, 3], [31, 16, 4, 2], [37, 17, 4, 3],
-		[5, 25, 4, 3], [23, 26, 4, 3], [39, 8, 2, 2], [19, 32, 1, 1]
+		[5, 25, 4, 3], [14, 16, 2, 1], [39, 8, 1, 1], [19, 32, 1, 1]
 	  ]
 	},
 	{
@@ -169,7 +168,7 @@
 	  "details": "Ba khu: Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư. Sơn Trư và Độc Chu xuất hiện trực tiếp trên đường rừng; chiến đấu ngay trong map.",
 	  "region_title": "SĂN QUÁI TỰ DO",
 	  "region_body": "Sơn Trư: da/kiếm\nĐộc Chu: tơ/áo\nJ / Chạm: đánh.",
-	  "preview": "res://assets/pixel/truc_am_world_v1.png",
+	  "preview": "res://assets/pixel/maps/previews/p4_truc_am.png",
 	  "field_spawns": [
 		{"spawn_id":"ta.mob.son_tru.01","enemy_id":"en_boar","name":"Sơn Trư","max_hp":60,"position_tiles":[35.5,17.5]},
 		{"spawn_id":"ta.mob.son_tru.02","enemy_id":"en_boar","name":"Sơn Trư","max_hp":60,"position_tiles":[37.5,18.5]},
@@ -185,8 +184,7 @@
 		  "action_kind": "gather",
 		  "action_label": "Khảo sát dược liệu",
 		  "message": "Cam Lộ mọc gần dòng nước. Điểm thu thập đang ở chế độ xem thử; chưa cấp vật phẩm.",
-		  "icon": "res://assets/pixel/icon_1.tres",
-		  "visual_prop_id": "ta_prop_herb_pocket"
+		  "icon": "res://assets/pixel/icon_1.tres"
 		},
 		{
 		  "entity_id": "ta.poi.water_trace_west",
@@ -227,8 +225,7 @@
 		  "action_label": "Dò Mạch Bàn",
 		  "message": "Mạch Bàn phát hiện một lối tắt men theo sườn rừng. Trạng thái mở lối chưa được lưu.",
 		  "completion_flag": "ta.shortcut_seen",
-		  "icon": "res://assets/pixel/icon_11.tres",
-		  "visual_prop_id": "ta_prop_stone_grove"
+		  "icon": "res://assets/pixel/icon_11.tres"
 		},
 		{
 		  "entity_id": "ta.retreat.ankhe",
@@ -269,8 +266,11 @@
 	  ],
 	  "solid_rects_tiles": [
 		[0, 0, 48, 1], [0, 35, 48, 1], [0, 0, 1, 36], [47, 0, 1, 36],
-		[9, 4, 7, 6], [20, 3, 10, 6], [34, 5, 9, 6],
-		[18, 20, 9, 7], [34, 23, 9, 7], [27, 13, 3, 4]
+		[9, 4, 4, 3], [12, 7, 4, 3], [9, 9, 2, 2],
+		[20, 3, 5, 4], [24, 6, 6, 3], [21, 8, 3, 1],
+		[34, 5, 5, 3], [38, 8, 5, 3], [34, 9, 3, 2],
+		[18, 20, 4, 4], [22, 23, 5, 3], [18, 25, 2, 2],
+		[34, 23, 5, 4], [39, 26, 4, 4], [34, 27, 3, 3], [27, 13, 3, 4]
 	  ]
 	},
 	{
@@ -286,7 +286,7 @@
 	  "details": "Hai khu: Ngoại Vi và Mỏ Cũ. Lối mỏ, vách đá và trụ chuyển dòng là blocker prototype; chưa có quái hoặc điều kiện quest phía server.",
 	  "region_title": "THẠCH CẠN • SẮP MỞ",
 	  "region_body": "Địa hình đã có.\nSpawn quái và loot farm sẽ được nối sau.",
-	  "preview": "res://assets/pixel/thach_can_world_v1.png",
+	  "preview": "res://assets/pixel/maps/previews/p4_thach_can.png",
 	  "interactables": [
 		{
 		  "entity_id": "tc.checkpoint.ngoai_vi",
@@ -377,7 +377,7 @@
 	  "details": "Năm phòng cố định: Cửa Giếng, Hành Lang Rễ, Buồng Cân Mạch, Nhà Trận và Tâm Giếng. Mở chỉ để test bố cục; quyền vào thật cần server xác nhận.",
 	  "region_title": "CỔ TỈNH • SẮP MỞ",
 	  "region_body": "Map đã có tuyến khám phá.\nQuái, boss và loot farm sẽ được nối sau.",
-	  "preview": "res://assets/pixel/co_tinh_world_v1.png",
+	  "preview": "res://assets/pixel/maps/previews/p4_co_tinh.png",
 	  "interactables": [
 		{
 		  "entity_id": "ct.checkpoint.entrance",
@@ -388,8 +388,7 @@
 		  "action_label": "Kiểm tra điểm chuẩn bị",
 		  "message": "Điểm chuẩn bị Cửa Giếng: rà soát vật tư và lối rút trước khi vào. Checkpoint chưa được lưu.",
 		  "completion_flag": "ct.entrance_seen",
-		  "icon": "res://assets/pixel/icon_9.tres",
-		  "visual_prop_id": "ct_prop_entrance_roots"
+		  "icon": "res://assets/pixel/icon_9.tres"
 		},
 		{
 		  "entity_id": "ct.mach_ban.balance",
@@ -400,8 +399,7 @@
 		  "action_label": "Dò Bàn Cân Mạch",
 		  "message": "Mạch Bàn cho thấy hai nguồn có nhịp khác nhau. Lựa chọn cơ chế chưa được lưu.",
 		  "completion_flag": "ct.balance_seen",
-		  "icon": "res://assets/pixel/icon_11.tres",
-		  "visual_prop_id": "ct_prop_balance_altar"
+		  "icon": "res://assets/pixel/icon_11.tres"
 		},
 		{
 		  "entity_id": "ct.formation.panel",
@@ -411,8 +409,7 @@
 		  "action_kind": "inspect",
 		  "action_label": "Quan sát trận pháp",
 		  "message": "Các vết sáng cho biết hướng phòng thủ của Thạch Vệ. Encounter chưa được kết nối.",
-		  "icon": "res://assets/pixel/icon_10.tres",
-		  "visual_prop_id": "ct_prop_formation_lamp"
+		  "icon": "res://assets/pixel/icon_10.tres"
 		},
 		{
 		  "entity_id": "ct.boss.heart_well",
@@ -422,8 +419,7 @@
 		  "action_kind": "inspect",
 		  "action_label": "Quan sát Tâm Giếng",
 		  "message": "Mộc Tâm Thủ Trận bảo vệ linh mạch. Kết cục hạ hoặc niêm phong sẽ được xử lý trong encounter của chương.",
-		  "icon": "res://assets/pixel/icon_10.tres",
-		  "visual_prop_id": "ct_prop_heart_well"
+		  "icon": "res://assets/pixel/icon_10.tres"
 		},
 		{
 		  "entity_id": "ct.retreat.thach_can",
@@ -440,9 +436,9 @@
 		}
 	  ],
 	  "water_ripples": [
-		{"position_tiles": [19, 6], "color": "#74f2c0", "phase": 0.15},
-		{"position_tiles": [24, 7], "color": "#77dfff", "phase": 0.55},
-		{"position_tiles": [40, 4], "color": "#74f2c0", "phase": 0.85}
+		{"position_tiles": [24, 6], "color": "#74f2c0", "phase": 0.15},
+		{"position_tiles": [38, 6], "color": "#77dfff", "phase": 0.55},
+		{"position_tiles": [35, 26], "color": "#74f2c0", "phase": 0.85}
 	  ],
 	  "areas": [
 		{"id": "cua_gieng", "name": "Cửa Giếng", "rect_tiles": [1, 24, 13, 11]},

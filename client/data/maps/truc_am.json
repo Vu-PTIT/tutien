@@ -2,179 +2,125 @@
   "version": 3,
   "tile_set": "res://assets/pixel/terrain/truc_am_terrain.tres",
   "atlas_columns": 8,
+  "terrain_transitions": {
+    "atlas": "res://assets/pixel/terrain/terrain_transition_decals.png",
+    "tile_px": 32,
+    "columns": 12,
+    "rows": 8,
+    "seed": 6721,
+    "path_edge_tiles": {},
+    "path_corner_tiles": {},
+    "shore_land_edge_tiles": {},
+    "shore_land_corner_tiles": {},
+    "shore_water_edge_tiles": {},
+    "shore_water_corner_tiles": {}
+  },
   "ground_rows": [
-    "032103210321032147654765476547658BA98BA98BA98BA9",
-    "21032103210321036547654765476547A98BA98BA98BA98B",
-    "0321032103210321AB89AB89AB89AB854523452345234529",
-    "21gefJ0674567453B89AB89AB89AB897523452345234523B",
-    "03efgH274567456189AB89AB89AB89A52345234523452349",
-    "21fgeI04567456739AB89AB89AB89AB7345234523452345B",
-    "03gefJ2567456741AB89AB89AB89AB854523452345234529",
-    "21efgH0674567453B89AB89AB89AB897523452345234523B",
-    "03fgeI274567456189AB89AB89AB89A52345234523452349",
-    "21gefJ04567456739AB89AB89AB89AB7345IJKLGHIJKL45B",
-    "03efgH2567456741AB89AB89AB89AB85452JKLGHIJKLG529",
-    "21fgeI0674567453B89AB89AB89AB897523452345234523B",
-    "03gefJ274567456189AB89AB89AB89A52345234523452349",
-    "21efgH04567456739AB89AB89AB89AB7345234523452345B",
-    "03fgeI2567456741AB89AB89AB89AB854523452345234529",
-    "21gefJ0674567453B89AB89AJKLGHIJKLGHI52345234523B",
-    "03efgH274567456189AB89ABKLGHIJKLGHIJ234523452349",
-    "21fgeI04567456HIJKLGHIJKLMNKLMN7345234523452345B",
-    "03gefJ25674567IJKLGHIJKLMNKLMNK54523452345234529",
-    "21efgH0674567453B89AB89AB89ABKL7523452345234523B",
-    "03fgeI274567456189AB89AB89AB8LM52345234523452349",
-    "21gefJ04567456739AB89AB89AB89MN7345234523452345B",
-    "03efgH2567456741AB89AB89AB89ANK54523452345234529",
-    "21fgeI0674567453B89AB89AB89ABKLMNKLMNKLMNKL4523B",
-    "03omno274567456189AB89AB89AB8LMNKLMNKLMNKLM52349",
-    "21mnoGHIJKLGHIJ39AB89AB89AB89AB7345234523452345B",
-    "03nomHIJKLGHIJK1AB89AB89AB89AB854523452345234529",
-    "2WXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXB",
-    "0WXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWXWX9",
-    "21fgeI04567456739AB89AB89AB89AB7345234523452345B",
-    "03gefJ2567456741AB89AB89AB89AB854523452345234529",
-    "21efgH0674567453B89AB89AB89AB897523452345234523B",
-    "032103274567456189AB89AB89AB89A52345234523452349",
-    "21032103210321039AB89AB89AB89AB7345234523452345B",
-    "032103210321032147654765476547658BA98BA98BA98BA9",
-    "21032103210321036547654765476547A98BA98BA98BA98B"
+    "001980891888081118810889081091890110008819100190",
+    "098188081889108190088800181009089881181118908809",
+    "010008180000898110180118981111810880119109819108",
+    "008110108091101811016EDED08101801011101110181198",
+    "000989001EDC40018918E45D51118091110001088080L881",
+    "181808019DC4C8899001DCDCD00101889156E6E10900K909",
+    "019001081CDCD8010190C4ED4565451980654C410800H118",
+    "00001000901045D509008101CDEDED9111ED54E88880G080",
+    "810901119011EDED18898DC66E456589810888EDC6C0L098",
+    "100901080DE065DE090800010101881088C6C84CDCDHI111",
+    "089880988CD80800811881101111810808DED15DC45I0100",
+    "188911110111988118998101101808011809109900IJ8998",
+    "898980191189000901010108881001119811011908J10809",
+    "189991011091101100081110118C6C18081908100L091818",
+    "1911080108901111018181000004C60081181109J1990191",
+    "898080000801911908809181111EDE01880991GH11980100",
+    "1980010000900IJILIH89899111DC6O0110098J189108081",
+    "81811HJ009KLG00819GJI08090TQPOPLKL89018100011181",
+    "110110JKHK90111180818KLKJGJPSTS89098109819109101",
+    "0100801H8110881808088100080981101001890198110181",
+    "100019L11900191910E4CD01001888988100908110018110",
+    "099189I08H01118990DC4501180110100900808001801011",
+    "890198J81HK8011101E65D09800880009811011010080000",
+    "001018G011HJ800891DC455D56E0100111C45DC910100890",
+    "081918J1010G108101081945DED19189814E6C4191188119",
+    "11081J19110JK90089D519EDED51181901ED565108918810",
+    "badcbad01908HK18815400101880111180456C6cbadcb911",
+    "ZYXWZYXbcdab1G9081090108cdabc91998C4EdaWZYXWZYab",
+    "dcbadZWXYZWXdHK19111908aYZWXYZbadcD5dZWXdcWXYZWX",
+    "10118KcdabZYXbI0180180cYXWcYXWZYXWZdXWZd45Ddabcd",
+    "8100910018dZWXdc180cbaYZWa0cbadZWXYZWad018111108",
+    "11118019001bZYXWZdXWZYXWc1000181cdabc00010111011",
+    "181900118111dcWXYZWXYZba100111810018108119188010",
+    "011001180080009dabcda101819011800181011801101011",
+    "100011000800001091900008819008089910010810018910",
+    "110801080910108901108089900901118091001801198808"
   ],
   "detail_tiles": [
     {
-      "position_tiles": [
-        8,
-        5
-      ],
-      "tile": 9
+      "position_tiles": [10, 7],
+      "tile": 52
     },
     {
-      "position_tiles": [
-        13,
-        10
-      ],
-      "tile": 11
+      "position_tiles": [21, 6],
+      "tile": 53
     },
     {
-      "position_tiles": [
-        18,
-        5
-      ],
-      "tile": 12
+      "position_tiles": [27, 16],
+      "tile": 62
     },
     {
-      "position_tiles": [
-        28,
-        7
-      ],
-      "tile": 10
+      "position_tiles": [19, 23],
+      "tile": 58
     },
     {
-      "position_tiles": [
-        31,
-        18
-      ],
-      "tile": 13
+      "position_tiles": [5, 16],
+      "tile": 50
     },
     {
-      "position_tiles": [
-        37,
-        13
-      ],
-      "tile": 9
+      "position_tiles": [41, 16],
+      "tile": 63
     },
     {
-      "position_tiles": [
-        13,
-        30
-      ],
-      "tile": 8
+      "position_tiles": [15, 15],
+      "tile": 49
     },
     {
-      "position_tiles": [
-        29,
-        29
-      ],
-      "tile": 14
+      "position_tiles": [18, 20],
+      "tile": 51
     },
     {
-      "position_tiles": [
-        41,
-        30
-      ],
-      "tile": 11
+      "position_tiles": [31, 21],
+      "tile": 55
     },
     {
-      "position_tiles": [
-        7,
-        14
-      ],
-      "tile": 10
+      "position_tiles": [40, 14],
+      "tile": 54
     },
     {
-      "position_tiles": [
-        20,
-        25
-      ],
-      "tile": 12
+      "position_tiles": [8, 23],
+      "tile": 48
+    },
+    {
+      "position_tiles": [12, 25],
+      "tile": 52
+    },
+    {
+      "position_tiles": [6, 29],
+      "tile": 50
     }
   ],
   "props_atlas": "res://assets/pixel/props/truc_am_props.png",
   "props_columns": 8,
   "props_cell_px": 128,
   "solid_tile_ids": [32, 33, 34, 35, 36, 37, 38, 39],
-  "collision_walkable_rects_tiles": [[2, 27, 4, 2]],
+  "collision_walkable_rects_tiles": [
+    [2, 25, 5, 5],
+    [14, 30, 1, 1]
+  ],
   "props": [
     {
       "name": "ta_prop_entry_bridge",
-      "position_tiles": [
-        3.5,
-        27
-      ],
+      "position_tiles": [3.5, 27],
       "tile": 40,
       "depth_policy": "below_actors"
-    },
-    {
-      "name": "ta_prop_lightning_bamboo",
-      "position_tiles": [
-        10.5,
-        7
-      ],
-      "tile": 49
-    },
-    {
-      "name": "ta_prop_deep_bamboo",
-      "position_tiles": [
-        21.5,
-        6
-      ],
-      "tile": 48
-    },
-    {
-      "name": "ta_prop_stone_grove",
-      "position_tiles": [27.5, 17],
-      "tile": 56
-    },
-    {
-      "name": "ta_prop_old_stump",
-      "position_tiles": [
-        19.5,
-        23
-      ],
-      "tile": 58
-    },
-    {
-      "name": "ta_prop_herb_pocket",
-      "position_tiles": [5.5, 17],
-      "tile": 52
-    },
-    {
-      "name": "ta_prop_well_spring",
-      "position_tiles": [
-        41.5,
-        17
-      ],
-      "tile": 61
     }
   ]
 }

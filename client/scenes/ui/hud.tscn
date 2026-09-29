@@ -367,7 +367,7 @@ offset_top = 321.0
 offset_right = 632.0
 offset_bottom = 351.0
 mouse_filter = 2
-text = "WASD di chuyển\nI túi đồ • E tương tác"
+text = "WASD di chuyển • E tương tác\nC hồ sơ • I túi đồ"
 theme_override_font_sizes/font_size = 8
 
 [node name="Toast" type="Panel" parent="."]

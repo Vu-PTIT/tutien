@@ -16,6 +16,7 @@ var _combat_mode := false
 var _field_combat_mode := false
 var equipped_skill_id: String = ""
 var equipped_skill_name: String = "Kỹ năng"
+var _field_action_label := "Đánh"
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -39,6 +40,7 @@ func set_combat_mode(enabled: bool) -> void:
 		return
 	_combat_mode = enabled
 	_field_combat_mode = false
+	_field_action_label = "Đánh"
 	$Interact.visible = not enabled
 	$Attack.visible = enabled
 	$Dodge.visible = enabled
@@ -47,13 +49,15 @@ func set_combat_mode(enabled: bool) -> void:
 	$Interact.size = Vector2(80.0, 74.0)
 	clear_input()
 
-func set_field_combat_mode(enabled: bool) -> void:
-	if _field_combat_mode == enabled and $Interact.visible:
+func set_field_combat_mode(enabled: bool, action_label: String = "Đánh") -> void:
+	if _field_combat_mode == enabled and _field_action_label == action_label and $Interact.visible:
 		return
 	_combat_mode = false
 	_field_combat_mode = enabled
+	_field_action_label = action_label
 	$Interact.visible = true
 	$Attack.visible = enabled
+	$Attack.text = action_label if enabled else "Đánh"
 	$Dodge.visible = false
 	$Skill.visible = enabled and not equipped_skill_id.is_empty()
 	$Skill.text = equipped_skill_name

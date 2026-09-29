@@ -34,11 +34,16 @@ func configure(data: Dictionary, texture: Texture2D, tile_size_px: int, atlas_co
 		atlas.filter_clip = true
 		sprite_texture = atlas
 	sprite.texture = sprite_texture
-	# The node sits at the prop's feet; transparent cutouts can supply their own padding.
-	sprite.position = Vector2(0, -sprite_texture.get_height() * 0.5 + float(data.get("foot_padding_px", 0)))
 	var scale_tiles: Array = data.get("scale_tiles", [1, 1])
 	if scale_tiles.size() >= 2:
 		sprite.scale = Vector2(float(scale_tiles[0]), float(scale_tiles[1]))
+	# Keep the texture's scaled bottom edge on the map-space feet anchor.
+	# Transparent cutouts can supply a small world-space padding when their art
+	# intentionally floats above the ground.
+	sprite.position = Vector2(
+		0,
+		-sprite_texture.get_height() * sprite.scale.y * 0.5 + float(data.get("foot_padding_px", 0))
+	)
 	var occlusion: Dictionary = data.get("occlusion", {})
 	if str(occlusion.get("policy", "")) == "fade_when_behind":
 		occlusion_radius_px = float(occlusion.get("radius_tiles", 1.5)) * tile_size_px
