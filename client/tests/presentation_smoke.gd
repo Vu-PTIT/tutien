@@ -94,7 +94,7 @@ func check_field_info_visible(hud: PixelHUD) -> void:
 func check_map_assets(world: GameMap) -> void:
 	var ground: TileMapLayer = world.get_node("WorldLayers/GroundLayer")
 	check(ground.get_used_cells().size() == world.map_size_tiles.x * world.map_size_tiles.y, "Complete terrain: " + world.map_id)
-	for layer_name in ["GroundLayer", "DetailLayer", "ForegroundLayer"]:
+	for layer_name in ["GroundLayer", "WaterLayer", "ShoreLayer", "DetailLayer", "ForegroundLayer"]:
 		var layer: TileMapLayer = world.get_node("WorldLayers/" + layer_name)
 		for cell in layer.get_used_cells():
 			check(layer.get_cell_tile_data(cell) != null, "Valid atlas cell: " + world.map_id)
@@ -103,9 +103,13 @@ func check_map_assets(world: GameMap) -> void:
 		if actor is MapProp:
 			props_count += 1
 			var texture: Texture2D = actor.get_node("Sprite").texture
-			check(texture != null and texture.get_size() == Vector2(128, 128), "Landmarks retain full source resolution")
-	var expected_props := {"m_an_khe": 7, "m_truc_am": 1, "m_thach_can": 6, "m_co_tinh": 0}
-	check(props_count == int(expected_props.get(world.map_id, -1)), "Map prop count matches its authored layout: " + world.map_id)
+			check(texture != null and texture.get_width() > 0 and texture.get_height() > 0, "Map prop loads non-empty source art")
+			if texture is AtlasTexture:
+				var atlas_texture := texture as AtlasTexture
+				var cell_px := int(world.map_data.get("props_cell_px", 128))
+				check(atlas_texture.region.size == Vector2(cell_px, cell_px), "Atlas props preserve their authored source cell")
+	var authored_props: Array = world.map_data.get("props", [])
+	check(props_count == authored_props.size(), "Map prop count matches its authored layout: " + world.map_id)
 	check(not world.get_node("Background").visible, "No painted PNG fallback: " + world.map_id)
 
 func _run() -> void:
@@ -140,7 +144,8 @@ func _run() -> void:
 	var ground_layer: TileMapLayer = main.map_world.get_node("WorldLayers/GroundLayer")
 	check(ground_layer.get_used_cells().size() == 48 * 36, "An Khê preview is split into editable tile cells")
 	check(ground_layer.get_cell_atlas_coords(Vector2i(24, 18)).y == 3, "An Khê spawn is in the stone plaza")
-	check(ground_layer.get_cell_atlas_coords(Vector2i(44, 18)).y == 4 and not main.can_walk(Vector2(44 * 32, 18 * 32)), "East stream art and collision agree")
+	var water_layer: TileMapLayer = main.map_world.get_node("WorldLayers/WaterLayer")
+	check(water_layer.get_cell_source_id(Vector2i(44, 18)) >= 0 and not main.can_walk(Vector2(44 * 32, 18 * 32)), "East stream uses its water layer and matching collision")
 	check(not main.map_world.get_node("Background").visible, "Tile layer replaces the full-screen map sprite at runtime")
 	check(main.map_world.get_node("WorldLayers/ForegroundLayer") is TileMapLayer, "Map has a dedicated foreground tile layer")
 	check(main.map_world.interactables_size() == 8, "An Khê loads eight data-driven interactive points")
