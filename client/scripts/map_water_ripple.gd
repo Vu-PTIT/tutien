@@ -41,7 +41,7 @@ func _draw() -> void:
 		elif phase < 0.68:
 			shimmer_alpha = 0.68
 		var color := Color(tint.r, tint.g, tint.b, tint.a * shimmer_alpha)
-		draw_rect(Rect2(Vector2(-floori(float(width) / 2.0), offset_y), Vector2(width, _pixel_scale)), color, true)
+		draw_rect(Rect2(Vector2(offset_x, offset_y), Vector2(width, _pixel_scale)), color, true)
 		if pixel_step > 1:
 			var glint_cell := floori(float(width) / float(_pixel_scale) / 2.0) - 1
 			var glint_x := glint_cell * _pixel_scale
