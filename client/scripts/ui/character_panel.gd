@@ -61,6 +61,8 @@ func _ready() -> void:
 	_apply_fullscreen()
 	show_page("profile")
 	_show_preview()
+	if language_manager != null:
+		_on_language_changed(language_manager.get_locale())
 
 func set_display_name(value: String) -> void:
 	display_name = value.strip_edges()
@@ -351,6 +353,10 @@ func _on_language_selected(index: int) -> void:
 func _on_language_changed(locale: String) -> void:
 	if not is_node_ready():
 		return
+	$Title.text = tr("NHÂN VẬT")
+	$ProfileTab.text = tr("Hồ sơ")
+	$SkillsTab.text = tr("Kỹ năng")
+	$SettingsTab.text = tr("Cài đặt")
 	$PageHost/SettingsPage/SettingsCard/Language.select(0 if locale == "vi" else 1)
 	if preview_mode:
 		$DataState.text = tr("BẢN XEM THỬ • OFFLINE • KHÔNG PHẢI DỮ LIỆU TÀI KHOẢN")
