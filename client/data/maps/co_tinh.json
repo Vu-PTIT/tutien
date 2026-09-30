@@ -3,182 +3,196 @@
   "tile_set": "res://assets/pixel/terrain/co_tinh_terrain.tres",
   "atlas_columns": 8,
   "ground_rows": [
-    "8BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA9",
-    "A98BA98BA98BA957135713571357135B135713571357135B",
-    "8BA98BA98BA98B6024602460246024692460246024602469",
-    "A98BA98BA98BA971357135713571357B357XYZabcdW1357B",
-    "8BA98BA98BA98B02460bWZcXadY24609460ZabcdWXY24609",
-    "A713571357135713571cXadYbWZ3571B571bcdWXYZa3571B",
-    "8024602460246024602dYbWZcXa46029602dWXYZabc46029",
-    "A135713571357135713WZcXadYb57GHIJG3XYZabcdW5713B",
-    "824602460246GHIJ024XadYbWZc60HIJGH4ZabcdWXY60249",
-    "A35713571357HIJG135YbWZcXad71IJGHI5bcdWXYZa7135B",
-    "846024602460IJGH246ZcXadYbW02JGHIJ6dWXYZabc02469",
-    "A57135713571JGHI357135713571357B357135713571357B",
-    "860246024602GHIJ46024602460246094602460246024609",
-    "A713571357135713571357135713571B571357135713571B",
-    "802460246024602460246024602HIJGHIJGHIJG460246029",
-    "A13571357135713571357135713IJGHIJGHIJGH57135713B",
-    "82460246024602A98BA98BA9024JGHIJGHIJGHI602460249",
-    "A35713571357138BA98BA98B135GHIJGHIJGHIJ71357135B",
-    "84602460246024A98BA98BA9246HIJGHIJGHIJG024602469",
-    "A57135713571358BA98BA98B35713571357135713571357B",
-    "86024602460246A98BA98BA94602460246ghefg246024609",
-    "A71357135713578BA98BA98B5713571357hefgh35713571B",
-    "80246JGHIJ2460A98BA98BA96024602460efghe460246029",
-    "A98BAGHIJG8BA98BA98BA98B7135713571fghef57135713B",
-    "82460HIJGH4602A98BA98BA90246024602ghefg602460249",
-    "A3571IJGHI57138BA98BA98B13571357135713571357135B",
-    "84602460246024A98BA98BA9246024602460246024602469",
-    "A57135713571358BA98BA98B35713571357135713571357B",
-    "86024602460246A98BA98BA9460246024602460246024609",
-    "A71357135713578BA98BA98B57135713571357135713571B",
-    "80246024602460A98BA98BA9602460246024602460246029",
-    "A13571357135718BA98BA98B71357135713571357135713B",
-    "82460246024602A98BA98BA9024602460246024602460249",
-    "A35713571357138BA98BA98B13571357135713571357135B",
-    "84602460246024A98BA98BA9246024602460246024602469",
-    "A98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98BA98B"
+    "VVOQQPOPVPQOVUQQPQVQQVQQOOQQOVOQQOQVOQOUUUQQQQVV",
+    "V005001051430504LIIO4055000HPIN0454300210201011O",
+    "U042502120352130PION0103213GNIG3204430353500405V",
+    "Q203510301000100HOON0500050PNII1425514105HH1050U",
+    "P211005052455220HOPN0002001OOLG20HL150010LH1000V",
+    "O520420225112202HGGH502cbW3LOPG01GI52dWb0LN1005U",
+    "P001450015040520GLHN12YdbXcGOON05PI40cZadPP3151Q",
+    "V225002345005340PHOH253adY5PHLL32LO12bYd0001030V",
+    "VPLO041054IIHO00NGIN3455434IHNO1330353210011040V",
+    "PLGN232435GPPN30GNPP0310035PILH0530005225200050U",
+    "PLOO315000GIHO1044510202000000414210IG001142NG1U",
+    "POHL301110PPIG051405112300312231482CNH015000NO5U",
+    "PHPI052410OLHI1553504013540113003050OG845040HG0O",
+    "QNHL305040HNPG3430240242025550011042123C0454122P",
+    "QLGN200104LNII440252342401053310511344324052501Q",
+    "PIGG010111NHPI500000C81403134513005415240055303U",
+    "OINL223000ININ301050832100031330410024324150040U",
+    "ONPO010031PNNH4544254332342400505525013C1410110V",
+    "VIHH010501PLOP140518230201020022440130435252331O",
+    "U000540321POGL000012424022424005000554320500044V",
+    "Q200420554ONNG222003554534350550003544424012303O",
+    "O0131020300410000433000241501503000120800515412Q",
+    "Q50040500504424200380100045200410RSP0000PSR5204Q",
+    "O34000000412341012204131031334233OVQ1210QVO0221U",
+    "O3430220432025401340045305453004OP30385142GH335U",
+    "Q0025045444002355540044000023004GH0a0Y0521LL253P",
+    "U5522501388213053100541554050503HN0c2Z0440LP424U",
+    "P15SVQTOR50400010012003245055432NP1cbW4233IN000P",
+    "Q03TURSPQ53343003220430033500431OH04400540IL253V",
+    "P51QPSRUT03414C430130453305040521UPS2004SPU0410O",
+    "O33ROTQVS554C10000024000212054003VOT0220TOV0501Q",
+    "V04ORUPSV34305045050115010503204540501455123001Q",
+    "U0024110405222325000050402405403005002240020331O",
+    "Q3304404405510555432112005410032240332030245324Q",
+    "Q0050044000004400450012410010405000002151100300U",
+    "OVVQUUQUQVUQVPPPQPUVPVUOOQQOOPOQVUVVQVOVQQUPQVUP"
   ],
   "detail_tiles": [
     {
       "position_tiles": [
         2,
-        6
+        10
       ],
-      "tile": 9
+      "tile": 56
     },
     {
       "position_tiles": [
-        6,
-        20
+        11,
+        10
       ],
-      "tile": 10
+      "tile": 57
     },
     {
       "position_tiles": [
-        17,
-        3
+        22,
+        9
       ],
-      "tile": 11
+      "tile": 59
+    },
+    {
+      "position_tiles": [
+        37,
+        9
+      ],
+      "tile": 61
+    },
+    {
+      "position_tiles": [
+        42,
+        5
+      ],
+      "tile": 63
+    },
+    {
+      "position_tiles": [
+        35,
+        24
+      ],
+      "tile": 60
+    },
+    {
+      "position_tiles": [
+        10,
+        29
+      ],
+      "tile": 58
     },
     {
       "position_tiles": [
         28,
-        12
-      ],
-      "tile": 13
-    },
-    {
-      "position_tiles": [
-        33,
         4
       ],
-      "tile": 14
+      "tile": 62
     },
     {
       "position_tiles": [
-        45,
-        6
+        7,
+        27
       ],
-      "tile": 9
+      "tile": 54
     },
     {
       "position_tiles": [
-        17,
-        12
+        15,
+        24
       ],
-      "tile": 12
+      "tile": 55
     },
     {
       "position_tiles": [
-        25,
-        20
+        20,
+        15
       ],
-      "tile": 10
+      "tile": 48
     },
     {
       "position_tiles": [
-        29,
-        30
+        31,
+        14
       ],
-      "tile": 11
+      "tile": 49
     },
     {
       "position_tiles": [
-        45,
-        31
+        24,
+        13
       ],
-      "tile": 13
+      "tile": 50
+    },
+    {
+      "position_tiles": [
+        39,
+        17
+      ],
+      "tile": 51
     }
   ],
   "props_atlas": "res://assets/pixel/props/co_tinh_props.png",
   "props_columns": 8,
   "props_cell_px": 128,
+  "solid_tile_ids": [
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+  ],
   "props": [
     {
-      "name": "ct_prop_root_column_west",
+      "name": "ct_detail_mossy_broken_brick",
       "position_tiles": [
-        2.5,
-        11
-      ],
-      "tile": 48
-    },
-    {
-      "name": "ct_prop_engraved_column",
-      "position_tiles": [
-        11.5,
-        11
-      ],
-      "tile": 49
-    },
-    {
-      "name": "ct_prop_balance_altar",
-      "position_tiles": [
-        17.5,
+        9,
         5
       ],
-      "tile": 51
+      "texture_path": "res://assets/pixel/props/generated/world_detail_pack_v1/props/mossy_broken_brick.png",
+      "scale_tiles": [
+        0.4,
+        0.4
+      ],
+      "foot_padding_px": 5,
+      "art_role": "small_environmental_detail"
     },
     {
-      "name": "ct_prop_formation_lamp",
+      "name": "ct_detail_rune_fragment",
       "position_tiles": [
-        34.5,
-        7
+        27,
+        21
       ],
-      "tile": 53
-    },
-    {
-      "name": "ct_prop_ancient_pillar",
-      "position_tiles": [
-        42.5,
-        6
+      "texture_path": "res://assets/pixel/props/generated/world_detail_pack_v1/props/rune_fragment.png",
+      "scale_tiles": [
+        0.4,
+        0.4
       ],
-      "tile": 55
-    },
-    {
-      "name": "ct_prop_heart_well",
-      "position_tiles": [
-        35.5,
-        22
-      ],
-      "tile": 52
-    },
-    {
-      "name": "ct_prop_entrance_roots",
-      "position_tiles": [
-        4.5,
-        30
-      ],
-      "tile": 56
-    },
-    {
-      "name": "ct_prop_jade_statue",
-      "position_tiles": [
-        28.5,
-        5
-      ],
-      "tile": 62
+      "foot_padding_px": 5,
+      "art_role": "small_environmental_detail"
     }
+  ],
+  "ground_surface_atlas": "res://assets/pixel/terrain/generated/world_surfaces_v3/co_tinh/surface_atlas.png",
+  "ground_surface_tile_px": 32,
+  "ground_surface_columns": 48,
+  "ground_surface_rows": 36,
+  "ground_surface_terrain_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
   ]
 }

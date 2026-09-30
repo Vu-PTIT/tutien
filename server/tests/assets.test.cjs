@@ -5,9 +5,11 @@ const op='starter_request_001';
 const reward={spiritStones:3,items:[{itemId:'it_water',quantity:5}]};
 const claim=s=>s.rpc('inventory_claim_starter',{operationId:op});
 const grant=(s,id=op,source='test:encounter:1',bundle=reward)=>clone(s.scope.grantReward(s.nk,A,id,source,bundle));
-test('catalog exposes exactly the 24 stable unique IDs and stack/instance policy',()=>{
-  const s=setup(),v=s.rpc('inventory_get');assert.equal(v.capacity,24);assert.equal(v.catalog.length,24);
-  assert.equal(new Set(v.catalog.map(i=>i.id)).size,24);
+const at=(s,x,y)=>s.nk.storageWrite([{collection:'world_sessions',key:'main',userId:A,value:{mapId:'m_an_khe',x,y,seq:1,updatedAt:Date.now()},version:'*',permissionRead:0,permissionWrite:0}]);
+test('catalog v2 exposes 25 stable unique IDs and stack/instance policy',()=>{
+  const s=setup(),v=s.rpc('inventory_get');assert.equal(v.capacity,24);assert.equal(v.catalogVersion,2);assert.equal(v.catalog.length,25);
+  assert.equal(new Set(v.catalog.map(i=>i.id)).size,25);
+  assert.equal(v.catalog.find(i=>i.id==='it_spider_robe').defenseBonus,20);
   assert.equal(v.catalog.find(i=>i.id==='it_mach_ban').bound,true);
   assert.equal(v.catalog.find(i=>i.id==='it_water').stackMax,99);
   assert.equal(v.starterClaimed,false);
@@ -113,20 +115,26 @@ function luyenKhi(s, stage=1) {
   const profile=s.rpc('get_profile');profile.realm='luyen_khi';profile.realmStage=stage;
   s.put(profile);return profile;
 }
-test('repeatable XP caps at two next thresholds; stage four and mortal keep loot without XP',()=>{
+test('monster XP opens cultivation and advances stages while max stage keeps loot without XP',()=>{
   const one=setup();luyenKhi(one,1);
   const first=grant(one,'repeatable_xp_001','pve:boar:one',{spiritStones:0,cultivationXp:700,items:[{itemId:'it_boar_hide',quantity:1}]});
-  assert.equal(first.profile.cultivationXp,600);assert.equal(first.receipt.granted.cultivationXp,600);
+  assert.equal(first.profile.realmStage,2);assert.equal(first.profile.cultivationXp,400);assert.equal(first.receipt.granted.cultivationXp,700);
   const two=setup();luyenKhi(two,2);
   const second=grant(two,'repeatable_xp_002','pve:boar:two',{spiritStones:0,cultivationXp:1500,items:[{itemId:'it_boar_hide',quantity:1}]});
-  assert.equal(second.profile.cultivationXp,1200);assert.equal(second.receipt.granted.cultivationXp,1200);
+  assert.equal(second.profile.realmStage,3);assert.equal(second.profile.cultivationXp,900);assert.equal(second.receipt.granted.cultivationXp,1500);
+  const nearMax=setup();const advanced=luyenKhi(nearMax,3);advanced.cultivationXp=999;nearMax.put(advanced);
+  const finalStep=grant(nearMax,'repeatable_xp_003','pve:boar:near-max',{spiritStones:0,cultivationXp:5000,items:[{itemId:'it_boar_hide',quantity:1}]});
+  assert.equal(finalStep.profile.realmStage,4);assert.equal(finalStep.profile.cultivationXp,0);assert.equal(finalStep.receipt.granted.cultivationXp,1);
   const four=setup();luyenKhi(four,4);
   const max=grant(four,'repeatable_xp_004','pve:boar:four',{spiritStones:0,cultivationXp:10,items:[{itemId:'it_boar_hide',quantity:1}]});
   assert.equal(max.profile.cultivationXp,0);assert.equal(max.receipt.granted.cultivationXp,0);
   assert.equal(max.profile.inventory[0].itemId,'it_boar_hide');
   const mortal=setup();
   const training=grant(mortal,'repeatable_xp_000','pve:boar:mortal',{spiritStones:0,cultivationXp:10,items:[{itemId:'it_boar_hide',quantity:1}]});
-  assert.equal(training.profile.cultivationXp,0);
+  assert.equal(training.profile.realm,'mortal');assert.equal(training.profile.cultivationXp,10);
+  const breakthrough=grant(mortal,'repeatable_xp_005','pve:boar:mortal:2',{spiritStones:0,cultivationXp:90,items:[{itemId:'it_spider_silk',quantity:1}]});
+  assert.equal(breakthrough.profile.realm,'luyen_khi');assert.equal(breakthrough.profile.realmStage,1);
+  assert.equal(breakthrough.profile.cultivationXp,0);assert.equal(breakthrough.receipt.granted.cultivationXp,90);
 });
 test('equip toggles server-owned instances and has idempotent mutation receipts',()=>{
   const s=setup();
@@ -158,4 +166,41 @@ test('discard removes only requested ordinary items and protects bound/equipped 
   const bound=s.state().inventory.find(item=>item.itemId==='it_mach_ban');
   rejectsCode(()=>s.rpc('inventory_discard',{operationId:'discard_bound_01',itemId:'it_mach_ban',quantity:1,instanceId:bound.instanceId}),9);
   assert.equal(s.state().spiritStones,profile.spiritStones);
+});
+test('shop buy and sell use fixed server prices and operation receipts',()=>{
+  const s=setup();claim(s);at(s,1248,672);
+  const bought=s.rpc('economy_action',{operationId:'shop_buy_water_01',action:'buy',itemId:'it_water',quantity:2});
+  assert.equal(bought.profile.spiritStones,10);assert.equal(bought.profile.inventory.find(i=>i.itemId==='it_water').quantity,6);
+  const replay=s.rpc('economy_action',{operationId:'shop_buy_water_01',action:'buy',itemId:'it_water',quantity:2});
+  assert.equal(replay.replayed,true);assert.equal(replay.profile.spiritStones,10);
+  const sold=s.rpc('economy_action',{operationId:'shop_sell_seed_02',action:'sell',itemId:'it_seed_cam_lo',quantity:1});
+  assert.equal(sold.profile.spiritStones,11);
+  rejectsCode(()=>s.rpc('economy_action',{operationId:'shop_fake_price_03',action:'buy',itemId:'it_iron',quantity:1}),9);
+});
+test('economy RPCs cannot be used remotely without reaching their server-owned service',()=>{
+  const s=setup();claim(s);const before=s.state();
+  rejectsCode(()=>s.rpc('economy_action',{operationId:'remote_shop_001',action:'buy',itemId:'it_water',quantity:1}),9);
+  rejectsCode(()=>s.rpc('garden_action',{operationId:'remote_garden_001',action:'plant',plotId:0,cropId:'crop_cam_lo'}),9);
+  assert.deepEqual(s.state(),before);
+});
+test('craft checks every ingredient and commits output, fee and inputs together',()=>{
+  const s=setup();claim(s);at(s,1024,480);
+  const before=s.state();before.inventory.find(i=>i.itemId==='it_seed_cam_lo').quantity=2;
+  before.inventory.push({itemId:'it_herb_cam_lo',quantity:2});s.put(before);
+  const crafted=s.rpc('economy_action',{operationId:'craft_heal_001',action:'craft',recipeId:'rc_heal',quantity:1});
+  assert.equal(crafted.profile.spiritStones,10);assert.equal(crafted.profile.inventory.find(i=>i.itemId==='it_herb_cam_lo'),undefined);
+  assert.equal(crafted.profile.inventory.find(i=>i.itemId==='it_heal_pill').quantity,3);
+  rejectsCode(()=>s.rpc('economy_action',{operationId:'craft_empty_002',action:'craft',recipeId:'rc_sword',quantity:1}),9);
+});
+test('garden planting consumes seed and water once; early harvest is blocked; ready harvest replays safely',()=>{
+  const s=setup();claim(s);at(s,320,864);
+  const planted=s.rpc('garden_action',{operationId:'plant_camlo_001',action:'plant',plotId:0,cropId:'crop_cam_lo'});
+  assert.equal(planted.profile.inventory.find(i=>i.itemId==='it_seed_cam_lo').quantity,1);
+  assert.equal(planted.profile.inventory.find(i=>i.itemId==='it_water').quantity,3);
+  rejectsCode(()=>s.rpc('garden_action',{operationId:'harvest_early_01',action:'harvest',plotId:0}),9);
+  const ready=s.state();ready.gardenPlots[0].readyAt=Date.now()-1;s.put(ready);
+  const harvested=s.rpc('garden_action',{operationId:'harvest_camlo_01',action:'harvest',plotId:0});
+  assert.equal(harvested.profile.inventory.find(i=>i.itemId==='it_herb_cam_lo').quantity,4);
+  assert.equal(harvested.profile.gardenPlots[0].state,'empty');
+  assert.equal(s.rpc('garden_action',{operationId:'harvest_camlo_01',action:'harvest',plotId:0}).replayed,true);
 });

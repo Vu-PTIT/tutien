@@ -48,8 +48,13 @@ nhận toàn bộ luồng kết nối cơ sở dữ liệu hay hiệu năng nhi�
 | Lấy tài khoản của mình | `GET /v2/account` |
 | Lấy/khởi tạo nhân vật | RPC `get_profile`, `{}` |
 | Liên kết email cho tài khoản khách đang đăng nhập | `POST /v2/account/link/email` |
+| Liên kết thiết bị hiện tại vào tài khoản email | `POST /v2/account/link/device`, `{"id":"<device_id>"}` |
 | Làm mới phiên | `POST /v2/account/session/refresh`, `{"token":"<refresh_token>"}` |
 | Đăng xuất phiên | `POST /v2/session/logout`, `{"token":"<token>","refresh_token":"<refresh_token>"}` |
+
+`SocialApi` tự thử làm mới một lần khi các lệnh tài khoản nhận HTTP 401: lấy tài khoản,
+liên kết email/thiết bị và cập nhật tên. Mật khẩu và token vẫn ở RAM; mã thiết bị
+ngẫu nhiên được giữ trong `user://identity.cfg` để tự đăng nhập trên cùng thiết bị.
 
 Đăng ký, đăng nhập và refresh dùng HTTP Basic `server_key:`. Các API còn lại
 dùng `Authorization: Bearer <token>`. Body đăng ký/đăng nhập email:
@@ -195,8 +200,37 @@ func _on_chat(message: Dictionary) -> void:
 Tìm/kết bạn: `api.call_rpc("social_find_player", {"username": name})` rồi
 `api.add_friend(result.userId)`. Tạo nhóm: `api.call_rpc("social_group_create", payload)`.
 Các hàm trả Dictionary; lỗi có `error` và `status`. Tắt nút khi đang gửi thao tác.
-UI cần cung cấp nhập email/mật khẩu, danh sách bạn, danh sách nhóm và cửa sổ chat;
-các màn hình đó chưa được dựng trong thay đổi backend này.
+Client có màn hình đầu vào gồm đăng nhập, tạo tài khoản, chơi thử và chơi ngoại tuyến.
+Đăng nhập nhận email hoặc tên người chơi; đăng ký kiểm tra tên 3–20 ký tự, email,
+mật khẩu tối thiểu 10 ký tự và xác nhận mật khẩu. Tài khoản khách có thể liên kết
+email/mật khẩu qua `link_email` để giữ nguyên Nakama user ID. Đăng nhập tài khoản
+email trên thiết bị mới liên kết mã thiết bị ngẫu nhiên để thiết bị tự đăng nhập
+lại ở lần mở sau. Mục Tài khoản nằm trong Cài đặt nhân vật để liên kết email hoặc
+đổi tài khoản. Adapter cũng có `link_device()` và `update_account()`.
+
+Email chưa được xác minh và hiện chưa có gửi mã/khôi phục mật khẩu. Màn hình đăng
+ký thông báo giới hạn này; cần hoàn thiện dịch vụ email và luồng khôi phục trước
+khi phát hành tài khoản công khai.
+
+### Typography cho giao diện xã hội
+
+Client hiện có adapter/backend xã hội, chưa có scene bạn bè, chat hoặc tông môn/bang
+hội. Theme dùng chung đã có sẵn các biến thể để màn hình mới không tự đặt cỡ chữ:
+
+| Vai trò | Desktop | Mobile |
+|---|---:|---:|
+| Tiêu đề nhóm/màn hình | `SocialHeader` — 16 px | `SocialHeaderMobile` — 18 px |
+| Tên người chơi/nội dung | `SocialBody` — 12 px | `SocialBodyMobile` — 14 px |
+| Trạng thái/thời gian | `SocialCaption` — 10 px | `SocialCaptionMobile` — 12 px |
+| Lịch sử chat (`RichTextLabel`) | `SocialChatLog` — 12 px | `SocialChatLogMobile` — 14 px |
+| Ô nhập chat | `SocialChatEntry` — 12 px | `SocialChatEntryMobile` — 14 px |
+| Nút thao tác | `SocialAction` — 12 px | `SocialActionMobile` — 14 px |
+
+Các biến thể dùng cùng pixel font Handjet với phần UI còn lại, giữ bảng màu xanh
+ngọc/đồng của theme hiện tại.
+`SocialTypography.apply_profile(control, &"chat_log", mobile)` chọn biến thể cho
+thiết bị; các profile khác dùng `header`, `body`, `caption`, `chat_entry`, `action`.
+Font được đóng gói tại `client/assets/pixel/ui_font.ttf` và có giấy phép OFL.
 
 ## Giới hạn vận hành của bản đầu
 

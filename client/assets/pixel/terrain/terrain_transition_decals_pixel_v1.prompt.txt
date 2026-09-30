@@ -1,0 +1,12 @@
+Pixel-art transition atlas art direction for the Tu Tien 2D game.
+Generate a transparent 1536×1024 PNG in a strict 12-column × 8-row sheet. Each source cell is 128×128 and maps to one 32×32 runtime tile. Use the existing An Khê tile sheet only for color palette and top-down viewpoint; keep transitions simpler and crisper than its ground texture. Avoid blur, antialiasing, gradients, painterly marks, soft shadows, and random texture.
+Exact row-major mapping:
+0–3 path edge west; 4–7 east; 8–11 north; 12–15 south.
+16–19 path corner north-west; 20–23 north-east; 24–27 south-west; 28–31 south-east.
+32–35 land edge where water touches east; 36–39 west; 40–43 south; 44–47 north.
+48–51 land corner north-east; 52–55 south-east; 56–59 south-west; 60–63 north-west.
+64–67 water edge where bank touches west; 68–71 east; 72–75 north; 76–79 south.
+80–83 water corner north-west; 84–87 north-east; 88–91 south-west; 92–95 south-east.
+Keep each decal compact within the intended edge or corner, on a truly transparent background, with at least half of each tile left empty. Variants differ by only a few block pixels.
+
+Pixel conversion contract for the shipped asset: threshold alpha to fully transparent or fully opaque; reduce with nearest-neighbor to 96×64 logical pixels (8×8 per tile); quantize without dithering to a shared 8-color palette; enlarge nearest-neighbor to exactly 384×256 RGBA. This yields hard 4×4 runtime pixel clusters and no subpixel alpha.

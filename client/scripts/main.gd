@@ -4,6 +4,7 @@ const Api = preload("res://scripts/combat_api.gd")
 const Actor = preload("res://scenes/player.tscn")
 const MapWorldScene = preload("res://scenes/map_world.tscn")
 const InputScript = preload("res://scripts/game_input.gd")
+const WorldWeatherScript = preload("res://scripts/world_weather.gd")
 const SON_TRU_BACKGROUND: Texture2D = preload("res://assets/pixel/maps/bai_son_tru.png")
 const SON_TRU_SPRITE: Texture2D = preload("res://assets/pixel/enemies/son_tru/clean.png")
 const ARENA_SCALE := 2.0 / 3.0
@@ -13,32 +14,68 @@ const WALK_SPEED := 72.0
 
 @onready var hud: PixelHUD = $Presentation/HUD
 @onready var inventory_panel: InventoryPanel = $Presentation/HUD/Inventory
+@onready var character_panel: CharacterPanel = $Presentation/HUD/CharacterPanel
 @onready var map_host: Node2D = $MapHost
 @onready var dock: Panel = $Presentation/HUD/Dock
 @onready var room: LineEdit = $Presentation/HUD/Dock/Room
 @onready var world_map: WorldMapPanel = $Presentation/HUD/WorldMap
+@onready var local_map_panel: CurrentMapPanel = $Presentation/HUD/LocalMap
+@onready var social_panel: SocialPanel = $Presentation/HUD/SocialPanel
+@onready var account_panel: AccountAuthPanel = $Presentation/AccountAuthPanel
 @onready var touch_controls: TouchControls = $Presentation/HUD/TouchControls
+@onready var weather_fx = $Presentation/WeatherFX
 var map_world: GameMap
+var language_manager: Variant
+var world_weather
+var _weather_fx_exposure: String = ""
 var player: PixelActor
 var village_camera: Camera2D
 var current_map_id: String = "m_an_khe"
 var api: CombatApi
 var user_id: String = ""
 var device_id: String = ""
+var identity_path: String = "user://identity.cfg"
+var current_account_data: Dictionary = {}
 var busy: bool = false
+var backend_connection_attempted: bool = false
 var send_clock: float = 0.0
 var snapshot_age: float = 0.0
 var pending_action: String = ""
 var last_phase: String = ""
 var fighters: Dictionary = {}
 var local_map_flags: Dictionary = {}
+var local_resource_states: Dictionary = {}
 var offline_position := Vector2(768, 576)
 var touch_layout_enabled := false
 var game_input: GameInput
 var boar_sprite: Sprite2D
+var world_seq: int = 0
+var world_sync_clock: float = 0.0
+var world_sync_busy: bool = false
+var world_field_poll_clock: float = 0.0
+var world_field_poll_busy: bool = false
+var world_last_synced_position := Vector2(-10000.0, -10000.0)
+var local_map_travel_pending: bool = false
+var world_transition_generation: int = 0
+var world_quest: Dictionary = {}
+var service_menu: PopupMenu
+var service_kind: String = ""
+var _last_dock_status_source := ""
+var _last_dock_status_key := ""
+var _last_dock_status_args: Array = []
 
 func _ready() -> void:
+	language_manager = get_node_or_null("/root/LanguageManager")
+	if language_manager != null:
+		language_manager.locale_changed.connect(_on_language_changed)
 	get_window().min_size = Vector2i(640, 360)
+	world_weather = WorldWeatherScript.new()
+	world_weather.name = "WorldWeather"
+	add_child(world_weather)
+	world_weather.state_changed.connect(_on_weather_state_changed)
+	hud.weather_flash_reduced_changed.connect(weather_fx.set_reduced_flashes)
+	hud.set_weather_flashes_reduced(weather_fx.get_reduced_flashes())
+	_on_weather_state_changed(world_weather.get_current_state())
 	game_input = InputScript.new() as GameInput
 	add_child(game_input)
 	game_input.action_requested.connect(_action)
@@ -46,14 +83,31 @@ func _ready() -> void:
 	offline_position = player.position
 	api = Api.new()
 	add_child(api)
+	social_panel.set_api(api)
+	account_panel.auth_completed.connect(_on_account_auth_completed)
+	account_panel.continue_offline.connect(_continue_offline)
 	inventory_panel.api = api
+	character_panel.api = api
 	api.snapshot_received.connect(_snapshot)
 	api.match_connection_lost.connect(_connection_lost)
 	hud.action_requested.connect(_action)
+	character_panel.inventory_requested.connect(_open_equipment_bag)
+	character_panel.touch_layout_changed.connect(_on_touch_layout_changed)
+	character_panel.world_zoom_changed.connect(_on_world_zoom_changed)
+	character_panel.profile_updated.connect(hud.apply_profile)
+	character_panel.account_requested.connect(_open_account_panel)
 	touch_controls.action_requested.connect(game_input.request_action)
-	touch_layout_enabled = OS.has_feature("mobile") or OS.get_cmdline_user_args().has("--touch-preview")
-	hud.set_touch_layout(touch_layout_enabled)
+	local_map_panel.route_requested.connect(func() -> void:
+		local_map_panel.close_panel()
+		_action("map")
+	)
+	touch_layout_enabled = OS.has_feature("mobile") or character_panel.touch_layout_enabled or OS.get_cmdline_user_args().has("--touch-preview")
+	character_panel.set_touch_layout_enabled(touch_layout_enabled, false)
 	world_map.map_requested.connect(_travel_to_map)
+	service_menu = PopupMenu.new()
+	service_menu.name = "VillageServiceMenu"
+	add_child(service_menu)
+	service_menu.id_pressed.connect(_service_action)
 	world_map.set_current_map(current_map_id)
 	var background := Sprite2D.new()
 	background.name = "SonTruBackground"
@@ -72,93 +126,278 @@ func _ready() -> void:
 	boar_sprite.visible = false
 	$Arena.add_child(boar_sprite)
 	$Arena.hide()
-	var identity_path := "user://identity.cfg"
+	identity_path = "user://identity.cfg"
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--guest="):
 			identity_path = "user://identity_" + argument.sha256_text().left(12) + ".cfg"
 	var config := ConfigFile.new()
 	config.load(identity_path)
 	device_id = str(config.get_value("auth", "device_id", ""))
-	if device_id.is_empty():
-		device_id = Crypto.new().generate_random_bytes(24).hex_encode()
-		config.set_value("auth", "device_id", device_id)
-		config.save(identity_path)
+	if not device_id.is_empty():
+		account_panel.configure(api, device_id, touch_layout_enabled)
 	_update_buttons()
+	if OS.get_cmdline_user_args().has("--no-auto-connect"):
+		account_panel.hide()
+	elif DisplayServer.get_name() == "headless":
+		account_panel.hide()
+		_connect_backend.call_deferred()
+	elif device_id.is_empty():
+		account_panel.open_entry(api, device_id, touch_layout_enabled)
+	else:
+		_connect_backend.call_deferred()
+
+func _on_language_changed(_locale: String) -> void:
+	if map_world == null or map_world.map_data.is_empty():
+		return
+	hud.configure_map(map_world.map_data)
+	hud.get_node("FieldInfo/Title").text = tr(str(map_world.map_data.get("region_title", "THÁM HIỂM")))
+	hud.get_node("FieldInfo/Body").text = tr(str(map_world.map_data.get("region_body", "")))
+	var area_name := map_world.active_area_name
+	hud.get_node("Location/State").text = (tr("An toàn • %s") % tr(area_name)) if current_map_id == "m_an_khe" else tr(area_name)
+	if not _last_dock_status_key.is_empty():
+		dock.get_node("Status").text = language_manager.format_message(_last_dock_status_key, _last_dock_status_args)
+	elif not _last_dock_status_source.is_empty():
+		dock.get_node("Status").text = language_manager.translate_message(_last_dock_status_source)
+	world_map.set_current_map(current_map_id)
+	var focused: MapInteractable = map_world.update_interaction_focus(player.position) if player != null else null
+	hud.set_interaction_prompt(focused.prompt_text() if focused != null else "")
+	if not character_panel.profile.is_empty():
+		hud.apply_profile(character_panel.profile)
+	_update_field_combat_controls()
+
+func _on_weather_state_changed(state: Dictionary) -> void:
+	if state.is_empty():
+		return
+	if hud != null:
+		hud.set_weather(state)
+	if map_world != null:
+		map_world.apply_weather_state(state)
+	_sync_weather_fx_for_map(state)
+
+func _sync_weather_fx_for_map(state: Dictionary = {}) -> void:
+	if weather_fx == null or world_weather == null:
+		return
+	var fx_state: Dictionary = state.duplicate(true) if not state.is_empty() else world_weather.get_current_state()
+	var exposure: String = map_world.get_weather_exposure() if map_world != null else "outdoor"
+	fx_state["weather_exposure"] = exposure
+	if exposure == "indoor":
+		fx_state["rain_intensity"] = 0.0
+	elif exposure == "sheltered":
+		fx_state["rain_intensity"] = float(fx_state.get("rain_intensity", 0.0)) * 0.18
+	_weather_fx_exposure = exposure
+	weather_fx.set_weather_state(fx_state)
 
 func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	if world_map == null or not world_map.maps_by_id.has(map_id):
 		return false
+	local_map_panel.close_panel()
+	if map_world != null:
+		local_resource_states.merge(map_world.get_resource_tree_states(), true)
 	var data: Dictionary = world_map.maps_by_id[map_id].duplicate(true)
 	if arrival_tiles.size() >= 2:
 		data["spawn_tiles"] = arrival_tiles.duplicate()
 	var next_map := MapWorldScene.instantiate() as GameMap
-	next_map.configure(data, int(world_map.catalog.get("tile_size_px", 32)))
+	next_map.configure(data, int(world_map.catalog.get("tile_size_px", 32)), local_resource_states)
 	if map_world != null:
 		map_host.remove_child(map_world)
 		map_world.queue_free()
 	map_host.add_child(next_map)
 	map_world = next_map
+	_on_weather_state_changed(world_weather.get_current_state())
 	player = map_world.get_node("Actors/Player") as PixelActor
 	village_camera = map_world.get_node("Actors/Player/Camera2D") as Camera2D
+	map_world.set_camera_zoom(character_panel.get_world_camera_zoom())
 	current_map_id = map_id
+	var preview_mobs: Array = []
+	for spawn_value: Variant in data.get("field_spawns", []):
+		if not spawn_value is Dictionary:
+			continue
+		var spawn: Dictionary = spawn_value
+		var tile_position: Array = spawn.get("position_tiles", [0, 0])
+		if tile_position.size() < 2:
+			continue
+		preview_mobs.append({
+			"id": str(spawn.get("spawn_id", "")), "enemyId": str(spawn.get("enemy_id", "")),
+			"name": str(spawn.get("name", "Quái vật")),
+			"x": (float(tile_position[0]) + 0.0) * 32.0, "y": (float(tile_position[1]) + 0.0) * 32.0,
+			"hp": int(spawn.get("max_hp", 1)), "maxHp": int(spawn.get("max_hp", 1)), "mode": "idle"
+		})
+	map_world.update_field_mobs(preview_mobs)
 	offline_position = player.position
 	world_map.set_current_map(map_id)
-	hud.configure_map(data)
-	hud.get_node("Quest/Title").text = str(data.get("quest_title", "THÁM HIỂM"))
-	hud.get_node("Quest/Body").text = str(data.get("quest_body", ""))
+	hud.configure_map(map_world.map_data)
+	hud.get_node("FieldInfo/Title").text = tr(str(data.get("region_title", "THÁM HIỂM")))
+	hud.get_node("FieldInfo/Body").text = tr(str(data.get("region_body", "")))
 	hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, map_world.active_area_name)
-	hud.get_node("Location/State").text = "An toàn • " + map_world.active_area_name if map_id == "m_an_khe" else map_world.active_area_name
+	hud.get_node("Location/State").text = (tr("An toàn • %s") % tr(map_world.active_area_name)) if map_id == "m_an_khe" else tr(map_world.active_area_name)
 	var focused: MapInteractable = map_world.update_interaction_focus(player.position)
 	hud.set_interaction_prompt(focused.prompt_text() if focused != null else "")
+	_update_field_combat_controls()
+	return true
+
+func _apply_world_location(state: Dictionary, force_position: bool = true) -> bool:
+	if not state.has("mapId") or not state.has("x") or not state.has("y"):
+		return false
+	var server_map := str(state.get("mapId", current_map_id))
+	if world_map == null or not world_map.maps_by_id.has(server_map):
+		return false
+	var px := float(state.get("x", 0.0))
+	var py := float(state.get("y", 0.0))
+	var server_seq := int(state.get("seq", world_seq))
+	var map_changed := server_map != current_map_id
+	var apply_position := force_position or map_changed or server_seq != world_seq
+	if map_changed:
+		var tile_size := maxi(int(world_map.catalog.get("tile_size_px", 32)), 1)
+		if not _load_map(server_map, [floori(px / tile_size), floori(py / tile_size)]):
+			return false
+	world_seq = server_seq
+	if apply_position:
+		player.position = Vector2(px, py)
+		offline_position = player.position
+		world_last_synced_position = player.position
+		var area_name := map_world.update_player_context(player.position)
+		if map_world.get_weather_exposure() != _weather_fx_exposure:
+			_sync_weather_fx_for_map()
+		var focused: MapInteractable = map_world.update_interaction_focus(player.position)
+		hud.set_interaction_prompt(focused.prompt_text() if focused != null else "")
+		hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, area_name)
+		hud.get_node("Location/State").text = (tr("An toàn • %s") % tr(area_name)) if server_map == "m_an_khe" else tr(area_name)
+	if state.has("profile"):
+		hud.apply_profile(state.profile)
+	if state.has("quest"):
+		_apply_world_quest(state.quest)
+	if state.has("fieldMobs"):
+		map_world.update_field_mobs(state.fieldMobs)
+	_update_field_combat_controls()
 	return true
 
 func _travel_to_map(map_id: String, arrival_tiles: Array = []) -> void:
+	if busy:
+		return
 	if api != null and not api.match_id.is_empty():
 		hud.notify("Không thể chuyển map trong đấu tập.")
 		return
 	if map_id == current_map_id:
 		world_map.hide()
-		hud.notify("Bạn đang ở " + map_world.map_name + ".")
+		hud.notify_format("Bạn đang ở %s.", [map_world.map_name])
 		return
-	if _load_map(map_id, arrival_tiles):
-		world_map.hide()
-		var quest_title := str(map_world.map_data.get("quest_title", "THÁM HIỂM"))
-		var quest_body := str(map_world.map_data.get("quest_body", ""))
-		if map_id == "m_an_khe" and local_map_flags.has("ak.ba_sam_intro"):
-			quest_body = "Đã nhận lời Bà Sâm.\nKhảo sát Ven Suối trong phiên thử cục bộ."
-		hud.get_node("Quest/Title").text = quest_title
-		hud.get_node("Quest/Body").text = quest_body
-		hud.notify("Đã chuyển map cục bộ để thử tuyến. Tiến độ chưa ghi lên server.")
+	busy = true
+	world_transition_generation += 1
+	_update_buttons()
+	if api != null and not api.token.is_empty():
+		var sync_result: Dictionary = await _sync_world_position(true)
+		if sync_result.has("error"):
+			hud.notify("Chưa đồng bộ được vị trí trước khi chuyển map.")
+		else:
+			var result: Dictionary = await api.call_rpc("world_travel", {"mapId": map_id})
+			if result.has("error"):
+				hud.notify_format("Chuyển map chưa được máy chủ xác nhận: %s", [str(result.error)])
+			elif not _apply_world_location(result):
+				hud.notify("Máy chủ trả về điểm đến không hợp lệ.")
+			else:
+				local_map_travel_pending = false
+				world_map.hide()
+				hud.notify(str(result.get("message", "Đã chuyển khu vực theo tuyến bản đồ.")))
+	else:
+		if _load_map(map_id, arrival_tiles):
+			local_map_travel_pending = true
+			world_map.hide()
+			hud.notify("Đã chuyển map cục bộ để thử tuyến. Tiến độ chưa ghi lên server.")
+		else:
+			hud.notify("Map đích chưa sẵn sàng.")
+	busy = false
+	_update_buttons()
 
 func _action(action: String) -> void:
+	if account_panel.visible:
+		return
 	match action:
 		"close":
 			inventory_panel.hide()
+			character_panel.hide()
+			social_panel.hide()
 			dock.hide()
 			world_map.hide()
+			local_map_panel.close_panel()
+			if service_menu != null:
+				service_menu.hide()
 		"touch_preview":
-			touch_layout_enabled = not touch_layout_enabled
-			hud.set_touch_layout(touch_layout_enabled)
+			character_panel.set_touch_layout_enabled(not touch_layout_enabled)
 		"inventory":
+			if service_menu != null:
+				service_menu.hide()
 			if not api.match_id.is_empty():
 				hud.notify("Túi đồ bị khóa trong trận online.")
 			elif inventory_panel.visible:
 				inventory_panel.hide()
 			else:
+				local_map_panel.close_panel()
+				character_panel.hide()
+				social_panel.hide()
 				world_map.hide()
 				dock.hide()
 				inventory_panel.open_inventory()
+		"character":
+			if service_menu != null:
+				service_menu.hide()
+			if character_panel.visible:
+				character_panel.hide()
+			else:
+				local_map_panel.close_panel()
+				inventory_panel.hide()
+				social_panel.hide()
+				world_map.hide()
+				dock.hide()
+				character_panel.open_profile()
+		"social":
+			if social_panel.visible:
+				social_panel.hide()
+			else:
+				if service_menu != null:
+					service_menu.hide()
+				local_map_panel.close_panel()
+				inventory_panel.hide()
+				character_panel.hide()
+				world_map.hide()
+				dock.hide()
+				social_panel.open_panel("friends")
 		"map":
+			if busy:
+				return
+			if service_menu != null:
+				service_menu.hide()
+			local_map_panel.close_panel()
 			if not api.match_id.is_empty():
 				hud.notify("Bản đồ tuyến đóng trong trận online.")
 			elif world_map.visible:
 				world_map.hide()
 			else:
+				character_panel.hide()
 				inventory_panel.hide()
+				social_panel.hide()
 				dock.hide()
 				world_map.open_map()
+		"current_map":
+			if busy or not api.match_id.is_empty() or map_world == null:
+				return
+			if service_menu != null:
+				service_menu.hide()
+			if local_map_panel.visible:
+				local_map_panel.close_panel()
+			else:
+				world_map.hide()
+				inventory_panel.hide()
+				character_panel.hide()
+				social_panel.hide()
+				dock.hide()
+				local_map_panel.open_map(map_world, player.position)
 		"dock":
+			if service_menu != null:
+				service_menu.hide()
+			local_map_panel.close_panel()
 			world_map.hide()
+			character_panel.hide()
+			social_panel.hide()
 			inventory_panel.hide()
 			dock.visible = not dock.visible
 		"connect":
@@ -172,19 +411,36 @@ func _action(action: String) -> void:
 			room.release_focus()
 		"leave":
 			_leave_match()
-		"hunt":
-			_create_son_tru()
 		"attack", "dodge":
-			if inventory_panel.visible or dock.visible or world_map.visible:
+			if inventory_panel.visible or character_panel.visible or social_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 				return
 			if api.snapshot.get("phase", "") == "active":
 				pending_action = "sk_basic" if action == "attack" else "sk_dodge"
+			elif action == "attack":
+				var chop_result: Dictionary = map_world.try_chop_tree(player.position, player.facing_direction())
+				if not chop_result.is_empty():
+					local_resource_states[str(chop_result.get("tree_id", ""))] = {"hit_count": int(chop_result.get("hit_count", 0))}
+					if bool(chop_result.get("falling", false)):
+						hud.notify("Cây đổ xuống, chỉ còn lại gốc.")
+					else:
+						hud.notify_format("Rìu trúng thân cây. Còn %d nhát.", [int(chop_result.get("hits_remaining", 0))])
+				elif current_map_id == "m_an_khe":
+					hud.notify("Đến sát một cây, quay mặt về phía cây rồi nhấn J để chặt.")
+				else:
+					_attack_field_mob()
+		"skill_1":
+			if inventory_panel.visible or character_panel.visible or social_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
+				return
+			if not api.match_id.is_empty():
+				hud.notify("Phi Nhận hiện dùng được khi săn quái ngoài bản đồ.")
+			elif hud.equipped_skill_id.is_empty():
+				hud.notify("Mở Nhân vật > Kỹ năng để trang bị Phi Nhận vào ô R.")
 			else:
-				hud.notify("Chiến đấu chỉ hoạt động trong trận online.")
+				_attack_field_mob(hud.equipped_skill_id)
 		"interact":
 			if not api.match_id.is_empty():
 				return
-			if inventory_panel.visible or dock.visible or world_map.visible:
+			if inventory_panel.visible or character_panel.visible or social_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 				return
 			var target: MapInteractable = map_world.update_interaction_focus(player.position)
 			if target == null:
@@ -195,11 +451,33 @@ func _action(action: String) -> void:
 			hud.notify("Chức năng chưa mở. Không tiêu hao vật phẩm.")
 
 func _interact_with_world_object(target: MapInteractable) -> void:
-	var details := target.interaction_data
-	if target.action_kind == "encounter" and str(details.get("encounter_id", "")) == "en_boar":
-		_create_son_tru()
+	if busy:
 		return
-	if target.action_kind == "gate":
+	var details := target.interaction_data
+	var entity_id := target.entity_id
+	var is_gate := target.action_kind == "gate"
+	if entity_id in ["ak.market.village", "ak.garden.home", "ak.service.do_khe"]:
+		_open_service_menu(entity_id)
+		return
+	if not api.token.is_empty():
+		busy = true
+		world_transition_generation += 1
+		_update_buttons()
+		var sync_result: Dictionary = await _sync_world_position(true)
+		if sync_result.has("error"):
+			hud.notify("Chưa đồng bộ được vị trí để tương tác.")
+		else:
+			var result: Dictionary = await api.call_rpc("world_interact", {"entityId": entity_id})
+			if result.has("error"):
+				hud.notify_format("Tương tác chưa được xác nhận: %s", [str(result.error)])
+			elif not _apply_world_location(result):
+				hud.notify("Máy chủ trả về trạng thái bản đồ không hợp lệ.")
+			else:
+				hud.notify(str(result.get("message", "Máy chủ đã xác nhận tương tác.")))
+		busy = false
+		_update_buttons()
+		return
+	if is_gate:
 		var destination := str(details.get("target_map_id", ""))
 		if destination.is_empty():
 			hud.notify("Lối chuyển map chưa có điểm đến.")
@@ -212,22 +490,86 @@ func _interact_with_world_object(target: MapInteractable) -> void:
 	var message := str(details.get("repeat_message", details.get("message", ""))) if already_used else str(details.get("message", ""))
 	if not completion_flag.is_empty():
 		local_map_flags[completion_flag] = true
-	var next_title := str(details.get("quest_title_after", ""))
-	var next_body := str(details.get("quest_body_after", ""))
-	if not next_title.is_empty():
-		hud.get_node("Quest/Title").text = next_title
-	if not next_body.is_empty():
-		hud.get_node("Quest/Body").text = next_body
 	if message.is_empty():
 		message = "Đã tương tác. Thay đổi chỉ có hiệu lực trong phiên thử cục bộ."
 	hud.notify(message)
 
+func _open_service_menu(entity_id: String) -> void:
+	if api.token.is_empty():
+		hud.notify("Dịch vụ cần kết nối máy chủ để lưu giao dịch và vật phẩm.")
+		return
+	await _sync_world_position(true)
+	service_kind = entity_id
+	service_menu.clear()
+	if entity_id == "ak.market.village":
+		service_menu.add_item("Mua Hạt Cam Lộ — 3 linh thạch", 1)
+		service_menu.add_item("Mua nước — 1 linh thạch", 2)
+		service_menu.add_item("Mua Hồi Nguyên Hoàn — 8 linh thạch", 3)
+		service_menu.add_item("Bán da Sơn Trư — 3 linh thạch", 4)
+	elif entity_id == "ak.service.do_khe":
+		service_menu.add_item("Luyện Hồi Nguyên Hoàn — 2 Cam Lộ + 1 nước + 2 linh thạch", 5)
+		service_menu.add_item("Rèn Thanh Thiết Kiếm — 6 quặng + 2 trúc + 8 linh thạch", 6)
+	else:
+		service_menu.add_item("Gieo Hạt Cam Lộ ở ô 1", 7)
+		service_menu.add_item("Thu hoạch ô 1 nếu đã chín", 8)
+	service_menu.position = Vector2i(get_window().size.x / 2, get_window().size.y / 2)
+	service_menu.popup()
+
+func _service_action(action_id: int) -> void:
+	var operation_id := "svc_" + str(Time.get_ticks_usec()) + "_" + str(randi())
+	var result: Dictionary
+	var payload: Dictionary
+	if action_id in [7, 8]:
+		payload = {"operationId": operation_id, "action": "plant" if action_id == 7 else "harvest", "plotId": 0}
+		if action_id == 7:
+			payload["cropId"] = "crop_cam_lo"
+		result = await api.call_rpc("garden_action", payload)
+	else:
+		payload = {"operationId": operation_id, "quantity": 1}
+		match action_id:
+			1: payload.merge({"action": "buy", "itemId": "it_seed_cam_lo"})
+			2: payload.merge({"action": "buy", "itemId": "it_water"})
+			3: payload.merge({"action": "buy", "itemId": "it_heal_pill"})
+			4: payload.merge({"action": "sell", "itemId": "it_boar_hide"})
+			5: payload.merge({"action": "craft", "recipeId": "rc_heal"})
+			6: payload.merge({"action": "craft", "recipeId": "rc_sword"})
+		result = await api.call_rpc("economy_action", payload)
+	if result.has("error"):
+		hud.notify_format("Giao dịch chưa thực hiện: %s", [str(result.error)])
+		return
+	if result.has("profile"):
+		hud.apply_profile(result.profile)
+		hud.notify("Đã cập nhật túi đồ và linh thạch.")
+
 func _unhandled_input(event: InputEvent) -> void:
-	if game_input.handle_event(event, touch_layout_enabled, room.has_focus()):
+	if account_panel.visible:
+		get_viewport().set_input_as_handled()
+		return
+	if game_input.handle_event(event, touch_layout_enabled, room.has_focus() or social_panel.has_text_input_focus() or account_panel.has_text_input_focus()):
 		get_viewport().set_input_as_handled()
 
+func _on_touch_layout_changed(enabled: bool) -> void:
+	touch_layout_enabled = enabled
+	hud.set_touch_layout(enabled)
+	if map_world != null:
+		map_world.set_camera_zoom(character_panel.get_world_camera_zoom())
+
+func _on_world_zoom_changed(zoom_factor: float) -> void:
+	if map_world != null:
+		map_world.set_camera_zoom(zoom_factor)
+
+func _open_equipment_bag() -> void:
+	character_panel.hide()
+	local_map_panel.close_panel()
+	if not api.match_id.is_empty():
+		hud.notify("Túi đồ bị khóa trong trận online.")
+		return
+	world_map.hide()
+	dock.hide()
+	inventory_panel.open_equipment()
+
 func _movement() -> Vector2:
-	if inventory_panel.visible or dock.visible or world_map.visible:
+	if busy or account_panel.visible or inventory_panel.visible or character_panel.visible or social_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 		return Vector2.ZERO
 	return game_input.movement(touch_controls.direction)
 
@@ -243,11 +585,56 @@ func _physics_process(delta: float) -> void:
 	offline_position = player.position
 	player.present(player.position - old_position, delta)
 	var area_name := map_world.update_player_context(player.position)
+	if map_world.get_weather_exposure() != _weather_fx_exposure:
+		_sync_weather_fx_for_map()
 	var focused: MapInteractable = map_world.update_interaction_focus(player.position)
-	hud.set_interaction_prompt(focused.prompt_text() if focused != null else "")
+	var nearby_mob := map_world.nearest_field_mob(player.position, 72.0)
+	var nearby_tree := map_world.nearest_choppable_tree(player.position, player.facing_direction()) != null
+	var action_prompt := "J / Chạm • Chặt cây" if nearby_tree else ("J / Chạm • Đánh quái gần nhất" if not nearby_mob.is_empty() else "")
+	hud.set_interaction_prompt(focused.prompt_text() if focused != null else action_prompt)
 	hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, area_name)
-	hud.get_node("Location/State").text = "An toàn • " + area_name if current_map_id == "m_an_khe" else area_name
+	if local_map_panel.visible:
+		local_map_panel.update_position(player.position, area_name)
+	hud.get_node("Location/State").text = (tr("An toàn • %s") % tr(area_name)) if current_map_id == "m_an_khe" else tr(area_name)
+	if not api.token.is_empty() and not busy:
+		world_sync_clock += delta
+		if world_sync_clock >= 0.25 and not world_sync_busy:
+			world_sync_clock = 0.0
+			_sync_world_position()
 
+func _sync_world_position(force: bool = false) -> Dictionary:
+	if api.token.is_empty() or api.match_id.is_empty() == false:
+		return {}
+	while world_sync_busy:
+		await get_tree().process_frame
+	var here := player.position
+	if not force and here.distance_to(world_last_synced_position) < 2.0:
+		return {}
+	world_sync_busy = true
+	world_seq += 1
+	var result: Dictionary = await api.call_rpc("world_move", {"x": here.x, "y": here.y, "seq": world_seq})
+	if not result.has("error"):
+		world_seq = int(result.get("seq", world_seq))
+		world_last_synced_position = here
+		if str(result.get("mapId", current_map_id)) == current_map_id:
+			var authoritative := Vector2(float(result.get("x", here.x)), float(result.get("y", here.y)))
+			if player.position.distance_to(authoritative) > 14.0:
+				player.position = authoritative
+		if result.has("fieldMobs"):
+			map_world.update_field_mobs(result.fieldMobs)
+	else:
+		var state: Dictionary = await api.call_rpc("world_get")
+		if not state.has("error"):
+			if _apply_world_location(state):
+				hud.notify("Vị trí đã đồng bộ lại với máy chủ.")
+				result = state
+			else:
+				result = {"error": "Máy chủ trả về vị trí thế giới không hợp lệ."}
+	world_sync_busy = false
+	return result
+
+func _apply_world_quest(quest: Dictionary) -> void:
+	world_quest = quest.duplicate(true)
 func _process(delta: float) -> void:
 	if api == null:
 		return
@@ -265,7 +652,78 @@ func _process(delta: float) -> void:
 			pending_action = ""
 		if snapshot_age > 2.0:
 			hud.get_node("Mode").text = "ĐANG CHỜ SERVER • chưa xác nhận"
+	elif not api.token.is_empty() and not busy and not world_field_poll_busy:
+		world_field_poll_clock += delta
+		if world_field_poll_clock >= 0.75:
+			world_field_poll_clock = 0.0
+			_poll_world_field()
 	queue_redraw()
+
+func _poll_world_field() -> void:
+	world_field_poll_busy = true
+	var request_generation := world_transition_generation
+	var result: Dictionary = await api.call_rpc("world_get")
+	if not result.has("error") and not busy and request_generation == world_transition_generation:
+		_apply_world_location(result, false)
+	world_field_poll_busy = false
+
+func _update_field_combat_controls() -> void:
+	if touch_controls == null:
+		return
+	var can_use_field_action := current_map_id == "m_an_khe" or (current_map_id == "m_truc_am" and api != null and api.match_id.is_empty())
+	var action_label := "Chặt\nĐánh" if current_map_id == "m_an_khe" else "Đánh"
+	touch_controls.set_field_combat_mode(can_use_field_action, action_label)
+
+func _attack_field_mob(skill_id: String = "") -> void:
+	if busy or api.match_id.is_empty() == false:
+		return
+	var target_id := map_world.nearest_field_mob(player.position, 70.0)
+	if target_id.is_empty():
+		if current_map_id != "m_truc_am":
+			hud.notify("Sơn Trư và Độc Chu xuất hiện trên bản đồ Trúc Âm.")
+		else:
+			hud.notify("Đến gần Sơn Trư hoặc Độc Chu rồi nhấn R hoặc chạm Kỹ năng." if not skill_id.is_empty() else "Đến gần Sơn Trư hoặc Độc Chu rồi nhấn J để đánh.")
+		return
+	if api.token.is_empty():
+		hud.notify("Đang đăng nhập để lưu XP và vật phẩm farm…")
+		await _connect_backend()
+		if api.token.is_empty():
+			return
+		# Login restores the server-owned map position, so reacquire the target
+		# instead of attacking a preview actor left behind by offline exploration.
+		target_id = map_world.nearest_field_mob(player.position, 70.0)
+		if target_id.is_empty():
+			if current_map_id == "m_truc_am":
+				hud.notify("Đã đồng bộ vị trí. Hãy tới gần Sơn Trư hoặc Độc Chu rồi đánh.")
+			else:
+				hud.notify("Đã đồng bộ vị trí. Quái farm hiện chỉ xuất hiện ở Trúc Âm.")
+			return
+	busy = true
+	var sync_result: Dictionary = await _sync_world_position(true)
+	if sync_result.has("error"):
+		hud.notify("Chưa đồng bộ được vị trí với máy chủ.")
+		busy = false
+		return
+	target_id = map_world.nearest_field_mob(player.position, 70.0)
+	if target_id.is_empty():
+		busy = false
+		if current_map_id == "m_truc_am":
+			hud.notify("Chưa có quái trong tầm đánh. Hãy lại gần một Sơn Trư hoặc Độc Chu.")
+		else:
+			hud.notify("Quái farm hiện chỉ xuất hiện ở Trúc Âm.")
+		return
+	var payload: Dictionary = {"targetId": target_id}
+	if not skill_id.is_empty():
+		payload["skillId"] = skill_id
+	var result: Dictionary = await api.call_rpc("world_attack", payload)
+	if result.has("error"):
+		hud.notify(str(result.error))
+	else:
+		if not _apply_world_location(result):
+			hud.notify("Máy chủ trả về trạng thái chiến đấu không hợp lệ.")
+		else:
+			hud.notify(str(result.get("message", "Máy chủ đã xử lý đòn đánh.")))
+	busy = false
 
 func _local_server_position() -> Vector2:
 	for p: Dictionary in api.snapshot.get("players", []):
@@ -356,25 +814,36 @@ func _update_buttons() -> void:
 	dock.get_node("Join").disabled = dock.get_node("Create").disabled
 	dock.get_node("Ready").disabled = busy or not _connected() or not in_match or api.snapshot.get("phase", "") != "waiting"
 	dock.get_node("Leave").disabled = busy or not in_match
-	dock.get_node("Hunt").disabled = busy or not _connected() or in_match or current_map_id != "m_truc_am"
 	hud.get_node("BagButton").disabled = busy or in_match
 	hud.get_node("MapButton").disabled = busy or in_match
 
 func _message(message: String) -> void:
-	dock.get_node("Status").text = message
+	_last_dock_status_source = message
+	_last_dock_status_key = ""
+	_last_dock_status_args.clear()
+	dock.get_node("Status").text = language_manager.translate_message(message)
 	hud.notify(message)
+
+func _message_format(template: String, arguments: Array) -> void:
+	_last_dock_status_source = ""
+	_last_dock_status_key = template
+	_last_dock_status_args = arguments.duplicate(true)
+	dock.get_node("Status").text = language_manager.format_message(template, arguments)
+	hud.notify_format(template, arguments)
 
 func _connection_lost() -> void:
 	pending_action = ""
 	dock.show()
 	hud.get_node("Mode").text = "MẤT KẾT NỐI"
-	_message("Mất kết nối. Kết nối lại trong 10 giây để tiếp tục encounter.")
+	_message("Mất kết nối. Kết nối lại trong 10 giây để tiếp tục phiên thế giới.")
 	_update_buttons()
 
 func _snapshot(value: Dictionary) -> void:
 	snapshot_age = 0.0
+	local_map_panel.close_panel()
 	var phase := str(value.phase)
 	var is_pve := api.match_kind == "pve_son_tru"
+	weather_fx.set_atmosphere_active(false)
 	village_camera.enabled = false
 	map_world.hide()
 	$Arena.show()
@@ -383,8 +852,8 @@ func _snapshot(value: Dictionary) -> void:
 	hud.get_node("Location/Title").text = "BÃI SƠN TRƯ" if is_pve else "VÕ ĐÀI"
 	hud.get_node("Location/State").text = "PvE • server xác nhận" if is_pve else "Đấu tập • không mất đồ"
 	hud.get_node("Minimap").hide()
-	hud.get_node("Quest/Title").text = "ĐỌC CÚ LAO" if is_pve else "ĐẤU TẬP"
-	hud.get_node("Quest/Body").text = "Gầm 0,75 giây • khóa hướng\nNé ngang rồi phản công\nLuyện Khí nhận XP + da" if is_pve else "Q / J: đánh • Space: né\nHP và vị trí từ server."
+	hud.get_node("FieldInfo/Title").text = "ĐỌC CÚ LAO" if is_pve else "ĐẤU TẬP"
+	hud.get_node("FieldInfo/Body").text = "Gầm 0,75 giây • khóa hướng\nNé ngang rồi phản công\nLuyện Khí nhận XP + da" if is_pve else "Q / J: đánh • Space: né\nHP và vị trí từ server."
 	hud.get_node("Mode").text = "ONLINE • SERVER XÁC NHẬN"
 	for p: Dictionary in value.get("players", []):
 		if p.id == user_id:
@@ -408,7 +877,7 @@ func _snapshot(value: Dictionary) -> void:
 			"reward_pending":
 				dock.show()
 				hud.get_node("Mode").text = "THƯỞNG ĐANG CHỜ • TÚI ĐẦY"
-				hud.get_node("Quest/Body").text = "Kết quả đã được lưu.\nRời bãi, dọn túi rồi\nnhận thưởng trong Túi đồ."
+				hud.get_node("FieldInfo/Body").text = "Kết quả đã được lưu.\nRời bãi, dọn túi rồi\nnhận thưởng trong Túi đồ."
 				_message("Túi đầy. Phần thưởng vẫn được giữ để nhận sau khi dọn túi.")
 			"defeated":
 				hud.get_node("Mode").text = "BẠN ĐÃ KIỆT SỨC • ĐANG HỒI PHỤC"
@@ -430,34 +899,102 @@ func _snapshot(value: Dictionary) -> void:
 				_message("Bài luyện phàm nhân hoàn tất • không có XP hoặc loot lặp.")
 			else:
 				var items: Array = settlement.get("items", [])
-				_message("Đã nhận %d tu vi và %s." % [int(settlement.get("cultivationXp", 0)), "Da Sơn Trư ×1" if not items.is_empty() else "không có loot thêm"])
+				_message_format("Đã nhận %d tu vi và %s.", [int(settlement.get("cultivationXp", 0)), "Da Sơn Trư ×1" if not items.is_empty() else "không có loot thêm"])
 	_update_buttons()
 
-func _connect_backend() -> void:
+func _connect_backend(authenticate_device: bool = true) -> void:
 	if busy:
 		return
 	busy = true
+	backend_connection_attempted = false
 	_update_buttons()
 	_message("Đang kết nối backend…")
-	var result: Dictionary = await api.login_device(device_id)
+	var result: Dictionary = {"ok": true}
+	if authenticate_device:
+		if device_id.is_empty():
+			device_id = _new_device_id()
+			_save_device_id()
+		result = await api.login_device(device_id)
 	if not result.has("error"):
 		result = await api.get_account()
 		if not result.has("error"):
+			current_account_data = result.duplicate(true)
 			user_id = str(result.user.id)
+			var account_name := str(result.user.get("username", ""))
+			character_panel.set_display_name(account_name)
+			social_panel.set_identity(user_id, account_name)
 			result = await api.call_rpc("get_profile")
 			if not result.has("error"):
 				hud.apply_profile(result)
+				var world_result: Dictionary = await api.call_rpc("world_get", {"preferredMapId": current_map_id})
+				if world_result.has("error"):
+					result = world_result
+				else:
+					if local_map_travel_pending and str(world_result.get("mapId", "")) != current_map_id:
+						var travel_result: Dictionary = await api.call_rpc("world_travel", {"mapId": current_map_id})
+						if travel_result.has("error"):
+							result = travel_result
+						else:
+							world_result = travel_result
+					if not result.has("error"):
+						if _apply_world_location(world_result):
+							local_map_travel_pending = false
+						else:
+							result = {"error": "Máy chủ trả về vị trí thế giới không hợp lệ.", "status": 0}
 	if not result.has("error"):
 		result = await api.connect_chat()
 	if not result.has("error") and not api.match_id.is_empty():
 		result = await api.rejoin_current_match()
 	if result.has("error"):
-		_message("Kết nối thất bại: " + str(result.error))
+		dock.show()
+		var reason := str(result.error)
+		if int(result.get("status", 0)) == 0:
+			if api.token.is_empty():
+				reason = "Backend chưa phản hồi. Bật Docker rồi chạy: docker compose up --build -d"
+			else:
+				reason = "Đăng nhập được một phần nhưng máy chủ chưa hoàn tất kết nối. Nhấn Kết nối để thử lại."
+		_message("Kết nối thất bại: " + reason)
 	else:
-		hud.get_node("Mode").text = "ĐÃ KẾT NỐI • đi làng vẫn là bản thử"
-		_message("Đã kết nối. Túi đồ dùng dữ liệu tài khoản.")
+		hud.get_node("Mode").text = "ONLINE • FARM TRÊN MAP"
+		_message("Đã kết nối. Vị trí, quái trên map, tương tác và túi đồ được máy chủ xác nhận.")
+		social_panel.on_backend_ready()
 	busy = false
+	backend_connection_attempted = true
+	_update_field_combat_controls()
 	_update_buttons()
+
+func _new_device_id() -> String:
+	return Crypto.new().generate_random_bytes(24).hex_encode()
+
+func _save_device_id() -> void:
+	if device_id.is_empty():
+		return
+	var config := ConfigFile.new()
+	config.load(identity_path)
+	config.set_value("auth", "device_id", device_id)
+	config.save(identity_path)
+
+func _on_account_auth_completed(new_device_id: String, account_data: Dictionary) -> void:
+	device_id = new_device_id
+	_save_device_id()
+	current_account_data = account_data.duplicate(true)
+	_connect_backend.call_deferred(false)
+
+func _continue_offline() -> void:
+	account_panel.hide()
+	hud.get_node("Mode").text = "OFFLINE • BẢN XEM THỬ"
+	_message("Đang chơi ngoại tuyến. Tiến trình chưa được đồng bộ với máy chủ.")
+
+func _open_account_panel() -> void:
+	if busy:
+		return
+	if not api.token.is_empty():
+		var result: Dictionary = await api.get_account()
+		if not result.has("error") and result.has("user"):
+			current_account_data = result.duplicate(true)
+		account_panel.open_account(api, device_id, current_account_data, touch_layout_enabled)
+	else:
+		account_panel.open_entry(api, device_id, touch_layout_enabled)
 
 func _create_match() -> void:
 	if busy:
@@ -465,26 +1002,6 @@ func _create_match() -> void:
 	busy = true
 	_update_buttons()
 	var result: Dictionary = await api.create_sparring()
-	if result.has("error"):
-		_message(str(result.error))
-	else:
-		room.text = api.match_id
-	busy = false
-	_update_buttons()
-
-func _create_son_tru() -> void:
-	if current_map_id != "m_truc_am":
-		hud.notify("Dấu vết Sơn Trư đang ở Trúc Âm. Hãy mở tuyến map để đi tới đó.")
-		return
-	if not _connected():
-		dock.show()
-		hud.notify("Kết nối máy chủ trong bảng Đấu tập trước khi vào Bãi Sơn Trư.")
-		return
-	if busy or not api.match_id.is_empty():
-		return
-	busy = true
-	_update_buttons()
-	var result: Dictionary = await api.create_son_tru()
 	if result.has("error"):
 		_message(str(result.error))
 	else:
@@ -519,19 +1036,26 @@ func _leave_match() -> void:
 	last_phase = ""
 	$Arena.hide()
 	map_world.show()
+	weather_fx.set_atmosphere_active(true)
 	touch_controls.set_combat_mode(false)
+	_update_field_combat_controls()
 	village_camera.enabled = true
 	if was_pve:
 		var profile: Dictionary = await api.call_rpc("get_profile")
 		if not profile.has("error"):
 			hud.apply_profile(profile)
+	if not api.token.is_empty():
+		var world_result: Dictionary = await api.call_rpc("world_get")
+		if not world_result.has("error"):
+			_apply_world_quest(world_result.get("quest", {}))
+			map_world.update_field_mobs(world_result.get("fieldMobs", []))
 	else:
 		hud.set_health(100)
 	hud.get_node("Minimap").show()
 	hud.configure_map(map_world.map_data)
-	hud.get_node("Quest/Title").text = str(map_world.map_data.get("quest_title", "THÁM HIỂM"))
-	hud.get_node("Quest/Body").text = str(map_world.map_data.get("quest_body", ""))
-	hud.get_node("Mode").text = "ĐÃ KẾT NỐI • đi làng vẫn là bản thử" if _connected() else "BẢN XEM THỬ • OFFLINE"
+	hud.get_node("FieldInfo/Title").text = tr(str(map_world.map_data.get("region_title", "THÁM HIỂM")))
+	hud.get_node("FieldInfo/Body").text = tr(str(map_world.map_data.get("region_body", "")))
+	hud.get_node("Mode").text = "ONLINE • FARM TRÊN MAP • server xác nhận" if _connected() else "BẢN XEM THỬ • OFFLINE"
 	_message("Đã rời trận. Trở lại map hiện tại.")
 	busy = false
 	_update_buttons()

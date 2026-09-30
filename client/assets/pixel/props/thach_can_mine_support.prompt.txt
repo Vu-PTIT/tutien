@@ -1,0 +1,1 @@
+Generated as the upper-right cell of `thach_can_mining_props_pack_source.png`, using the sibling prop-pack prompt. Isolate the timber mine support and amber lantern; remove the solid magenta background and its cast shadow. Export at 128×128 with transparent margins, keeping the support centered and its rock feet aligned to the foot anchor.

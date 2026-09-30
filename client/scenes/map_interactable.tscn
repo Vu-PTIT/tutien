@@ -31,5 +31,5 @@ offset_right = 80.0
 offset_bottom = -39.0
 mouse_filter = 2
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 8
+theme_type_variation = &"UIMicro"
 theme = ExtResource("theme")

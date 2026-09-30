@@ -3,6 +3,7 @@ extends Panel
 ## Shared by the main HUD, the editor-visible inventory scene and live smoke tests.
 const Visuals = preload("res://scripts/ui/item_visuals.gd")
 var api: SocialApi
+var language_manager: Variant
 var loading: bool = false
 var preview_mode: bool = true
 var inventory: Array = []
@@ -26,6 +27,7 @@ var slot_buttons: Array[Button] = []
 var _confirm: ConfirmationDialog
 
 func _ready() -> void:
+	language_manager = get_node_or_null("/root/LanguageManager")
 	summary = $Summary
 	claim_button = $Claim
 	refresh_button = $Refresh
@@ -48,6 +50,8 @@ func _ready() -> void:
 	_confirm.title = "Xác nhận bỏ vật phẩm"
 	_confirm.confirmed.connect(_discard_selected)
 	add_child(_confirm)
+	if language_manager != null:
+		language_manager.locale_changed.connect(_on_language_changed)
 	show_preview()
 
 func open_inventory() -> void:
@@ -56,6 +60,15 @@ func open_inventory() -> void:
 		show_preview()
 	else:
 		await refresh()
+
+func open_equipment() -> void:
+	category = "equipment"
+	show()
+	if api == null or api.token.is_empty():
+		show_preview()
+	else:
+		await refresh()
+	set_filter("equipment")
 
 func show_preview() -> void:
 	preview_mode = true
@@ -106,8 +119,8 @@ func _refresh_grid() -> void:
 			button.tooltip_text = str(Visuals.definition(item_id)[0])
 	for entry in [["All", "all"], ["Equipment", "equipment"], ["Materials", "material"], ["Consumables", "consumable"]]:
 		get_node(entry[0]).modulate = Color("efcd87") if category == entry[1] else Color.WHITE
-	summary.text = ("Mẫu • %d / 24 ô" % inventory.size()) if preview_mode else (
-		"%d tu vi • %d HP • %d đá • %d/24 ô" % [cultivation_xp, hp, stones, inventory.size()])
+	summary.text = (tr("Mẫu • %d / 24 ô") % inventory.size()) if preview_mode else (
+		tr("%d tu vi • %d HP • %d đá • %d/24 ô") % [cultivation_xp, hp, stones, inventory.size()])
 	var has_pending := not pending_settlement.is_empty()
 	claim_button.disabled = loading or preview_mode or (not has_pending and starter_claimed)
 	claim_button.text = "Kết nối để nhận vật tư" if preview_mode else ("Nhận thưởng đang chờ" if has_pending else (
@@ -130,14 +143,14 @@ func select_slot(index: int) -> void:
 	var entry := Visuals.definition(selected_id)
 	var definition: Dictionary = catalog.get(selected_id, {})
 	$Detail/Icon.texture = Visuals.icon(selected_id)
-	$Detail/Name.text = str(definition.get("name", entry[0]))
+	$Detail/Name.text = tr(str(definition.get("name", entry[0])))
 	var bound := bool(definition.get("bound", selected_id in ["it_mach_ban", "it_ledger"]))
 	var state_text := ""
 	if slot.has("instanceId") and (str(equipped.get("weapon", "")) == str(slot.instanceId) or str(equipped.get("armor", "")) == str(slot.instanceId)):
-		state_text = "\nĐang trang bị"
-	$Detail/Body.text = "%s\n\nNguồn: %s\nSố lượng: %d%s%s" % [
-		entry[3], entry[4], int(slot.quantity), "\nGắn nhân vật" if bound else "", state_text]
-	$Detail/Name.tooltip_text = "Instance: " + str(slot.instanceId) if slot.has("instanceId") else ""
+		state_text = tr("\nĐang trang bị")
+	$Detail/Body.text = tr("%s\n\nNguồn: %s\nSố lượng: %d%s%s") % [
+		tr(str(entry[3])), tr(str(entry[4])), int(slot.quantity), tr("\nGắn nhân vật") if bound else "", state_text]
+	$Detail/Name.tooltip_text = (tr("Instance: %s") % str(slot.instanceId)) if slot.has("instanceId") else ""
 	_update_item_actions()
 
 func _update_item_actions() -> void:
@@ -153,19 +166,19 @@ func _update_item_actions() -> void:
 	if equip_slot in ["weapon", "armor"] and selected_slot.has("instanceId"):
 		var instance_id := str(selected_slot.instanceId)
 		var is_equipped := str(equipped.get(equip_slot, "")) == instance_id
-		action_button.text = "Tháo trang bị" if is_equipped else "Trang bị"
+		action_button.text = tr("Tháo trang bị") if is_equipped else tr("Trang bị")
 		action_button.disabled = false
 	elif selected_id == "it_heal_pill":
-		action_button.text = "Dùng • +40 HP"
+		action_button.text = tr("Dùng • +40 HP")
 		action_button.disabled = hp >= 100 or int(selected_slot.get("quantity", 0)) <= 0
 	else:
-		action_button.text = "Chưa dùng được"
+		action_button.text = tr("Chưa dùng được")
 	var protected: bool = bool(definition.get("bound", false)) or str(Visuals.definition(selected_id)[2]) == "quest"
 	var equipped_item := false
 	if selected_slot.has("instanceId"):
 		var instance_id := str(selected_slot.instanceId)
 		equipped_item = str(equipped.get("weapon", "")) == instance_id or str(equipped.get("armor", "")) == instance_id
-	discard_button.text = "Bỏ %d" % int(selected_slot.get("quantity", 1))
+	discard_button.text = tr("Bỏ %d") % int(selected_slot.get("quantity", 1))
 	discard_button.disabled = protected or equipped_item or int(selected_slot.get("quantity", 0)) <= 0
 
 func _set_loading(value: bool) -> void:
@@ -193,7 +206,7 @@ func refresh() -> void:
 	$Mode.text = "Đang tải túi từ server…"
 	var result: Dictionary = await api.call_rpc("inventory_get")
 	if result.has("error"):
-		$Mode.text = "Không tải được túi: " + str(result.error)
+		$Mode.text = tr("Không tải được túi: %s") % tr(str(result.error))
 		_set_loading(false)
 		return
 	var profile: Dictionary = result.profile
@@ -211,7 +224,7 @@ func refresh() -> void:
 		var reward: Dictionary = pending_settlement.get("reward", {})
 		var items: Array = reward.get("items", [])
 		var count := int(items[0].quantity) if not items.is_empty() else 0
-		$Mode.text = "THƯỞNG ĐANG CHỜ • Da Sơn Trư ×%d • %d tu vi • bỏ bớt vật tư rồi nhận" % [count, int(reward.get("cultivationXp", 0))]
+		$Mode.text = tr("THƯỞNG ĐANG CHỜ • Da Sơn Trư ×%d • %d tu vi • bỏ bớt vật tư rồi nhận") % [count, int(reward.get("cultivationXp", 0))]
 	else:
 		$Mode.text = "TÚI TÀI KHOẢN • dữ liệu được xác nhận bởi server"
 	_set_loading(false)
@@ -258,7 +271,7 @@ func _use_or_equip_selected() -> void:
 	var result: Dictionary = await api.call_rpc(rpc_name, payload)
 	_set_loading(false)
 	if result.has("error"):
-		$Mode.text = "Không thể dùng vật phẩm: " + str(result.error)
+		$Mode.text = tr("Không thể dùng vật phẩm: %s") % tr(str(result.error))
 		return
 	await refresh()
 	$Mode.text = "Đã cập nhật trang bị hoặc hồi phục trên server."
@@ -267,7 +280,7 @@ func _confirm_discard() -> void:
 	if loading or preview_mode or selected_slot.is_empty() or discard_button.disabled:
 		return
 	var name := str(catalog.get(selected_id, {}).get("name", selected_id))
-	_confirm.dialog_text = "Bỏ %s ×%d? Hành động này không thể hoàn tác." % [name, int(selected_slot.get("quantity", 1))]
+	_confirm.dialog_text = tr("Bỏ %s ×%d? Hành động này không thể hoàn tác.") % [tr(name), int(selected_slot.get("quantity", 1))]
 	_confirm.popup_centered()
 
 func _discard_selected() -> void:
@@ -281,7 +294,31 @@ func _discard_selected() -> void:
 	var result: Dictionary = await api.call_rpc("inventory_discard", payload)
 	_set_loading(false)
 	if result.has("error"):
-		$Mode.text = "Không thể bỏ vật phẩm: " + str(result.error)
+		$Mode.text = tr("Không thể bỏ vật phẩm: %s") % tr(str(result.error))
 		return
 	await refresh()
 	$Mode.text = "Đã bỏ vật phẩm."
+
+func _on_language_changed(_locale: String) -> void:
+	if not is_node_ready() or not visible:
+		return
+	_refresh_grid()
+	if not selected_slot.is_empty():
+		for index in range(filtered.size()):
+			var slot: Dictionary = filtered[index]
+			var is_selected := (
+				str(slot.get("instanceId", "")) == str(selected_slot.get("instanceId", ""))
+				and str(slot.get("itemId", "")) == selected_id
+			)
+			if is_selected:
+				select_slot(index)
+				break
+	if preview_mode:
+		$Mode.text = tr("MẪU GIAO DIỆN • không phải túi tài khoản • không lưu")
+	elif not pending_settlement.is_empty():
+		var reward: Dictionary = pending_settlement.get("reward", {})
+		var items: Array = reward.get("items", [])
+		var count := int(items[0].quantity) if not items.is_empty() else 0
+		$Mode.text = tr("THƯỞNG ĐANG CHỜ • Da Sơn Trư ×%d • %d tu vi • bỏ bớt vật tư rồi nhận") % [count, int(reward.get("cultivationXp", 0))]
+	else:
+		$Mode.text = tr("TÚI TÀI KHOẢN • dữ liệu được xác nhận bởi server")

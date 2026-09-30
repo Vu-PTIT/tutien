@@ -1,19 +1,15 @@
 {
   "target": "creature",
-  "mode": "single",
-  "prompt": "",
-  "role": "",
-  "input": "/tmp/son_tru_raw.png",
-  "threshold": 100,
-  "edge_threshold": 150,
-  "duration": 200,
-  "single_size": 128,
-  "qc_config": {
-    "strict_qc": true,
-    "reject_edge_touch": false,
-    "allow_source_edge_touch": false,
-    "max_body_scale_cv": null,
-    "max_anchor_y_std": null,
-    "max_profile_scale_drift": null
-  }
+  "mode": "single_frame_from_combat_atlas",
+  "input": "combat-1 frame from updated son_tru.png atlas",
+  "source_atlas": "client/assets/pixel/enemies/son_tru.png",
+  "cell_size": 64,
+  "dimensions": [
+    64,
+    64
+  ],
+  "alpha": "binary",
+  "palette_limit_including_magenta_key": 14,
+  "strict_qc": true,
+  "edge_touch": false
 }

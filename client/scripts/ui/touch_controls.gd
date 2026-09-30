@@ -13,12 +13,21 @@ var direction := Vector2.ZERO
 var _touch_index := -1
 var _mouse_held := false
 var _combat_mode := false
+var _field_combat_mode := false
+var equipped_skill_id: String = ""
+var equipped_skill_name: String = "Kỹ năng"
+var _field_action_label := "Đánh"
+var language_manager: Variant
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	language_manager = get_node_or_null("/root/LanguageManager")
+	if language_manager != null:
+		language_manager.locale_changed.connect(_on_language_changed)
 	$Interact.pressed.connect(func() -> void: action_requested.emit("interact"))
 	$Attack.pressed.connect(func() -> void: action_requested.emit("attack"))
 	$Dodge.pressed.connect(func() -> void: action_requested.emit("dodge"))
+	$Skill.pressed.connect(func() -> void: action_requested.emit("skill_1"))
 	set_combat_mode(false)
 	visible = false
 
@@ -31,13 +40,48 @@ func set_controls_visible(enabled: bool) -> void:
 	queue_redraw()
 
 func set_combat_mode(enabled: bool) -> void:
-	if _combat_mode == enabled and $Interact.visible == not enabled:
+	if _combat_mode == enabled and $Interact.visible != enabled:
 		return
 	_combat_mode = enabled
+	_field_combat_mode = false
+	_field_action_label = "Đánh"
 	$Interact.visible = not enabled
 	$Attack.visible = enabled
 	$Dodge.visible = enabled
+	$Skill.visible = false
+	$Interact.position = Vector2(548.0, 268.0)
+	$Interact.size = Vector2(80.0, 74.0)
 	clear_input()
+
+func set_field_combat_mode(enabled: bool, action_label: String = "Đánh") -> void:
+	if _field_combat_mode == enabled and _field_action_label == action_label and $Interact.visible:
+		return
+	_combat_mode = false
+	_field_combat_mode = enabled
+	_field_action_label = action_label
+	$Interact.visible = true
+	$Attack.visible = enabled
+	$Attack.text = tr(action_label) if enabled else tr("Đánh")
+	$Dodge.visible = false
+	$Skill.visible = enabled and not equipped_skill_id.is_empty()
+	$Skill.text = tr(equipped_skill_name)
+	$Skill.position = Vector2(548.0, 204.0)
+	$Skill.size = Vector2(80.0, 54.0)
+	$Interact.position = Vector2(468.0, 208.0) if enabled else Vector2(548.0, 268.0)
+	$Interact.size = Vector2(72.0, 54.0) if enabled else Vector2(80.0, 74.0)
+	clear_input()
+
+func set_equipped_skill(skill_id: String, skill_name: String) -> void:
+	equipped_skill_id = skill_id
+	equipped_skill_name = skill_name
+	if _field_combat_mode:
+		$Skill.visible = not equipped_skill_id.is_empty()
+		$Skill.text = tr(equipped_skill_name)
+
+func _on_language_changed(_locale: String) -> void:
+	if _field_combat_mode:
+		$Attack.text = tr(_field_action_label) if $Attack.visible else tr("Đánh")
+		$Skill.text = tr(equipped_skill_name)
 
 func clear_input() -> void:
 	direction = Vector2.ZERO

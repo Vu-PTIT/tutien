@@ -1,0 +1,1 @@
+Generated as the lower-right cell of `thach_can_mining_props_pack_source.png`, using the sibling prop-pack prompt. Isolate the upright cyan-blue crystal cluster and slate stones; remove the solid magenta background and its cast shadow. Export at 128×128 with transparent margins, keeping the cluster centered and its lowest stones aligned to the foot anchor.

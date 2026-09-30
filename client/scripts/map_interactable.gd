@@ -28,6 +28,18 @@ func configure(data: Dictionary, tile_size_px: int) -> void:
 		circle.radius = interaction_radius_px
 	title_label.text = str(interaction_data.get("display_name", "Điểm tương tác"))
 	var icon_path := str(interaction_data.get("icon", ""))
+	var npc_texture_path := str(interaction_data.get("npc_texture", ""))
+	if not npc_texture_path.is_empty():
+		var npc_texture := load(npc_texture_path) as Texture2D
+		if npc_texture != null:
+			var npc_sprite := Sprite2D.new()
+			npc_sprite.name = "NpcSprite"
+			npc_sprite.texture = npc_texture
+			npc_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+			npc_sprite.position = Vector2(0.0, -28.0)
+			npc_sprite.scale = Vector2(0.5, 0.5)
+			add_child(npc_sprite)
+			marker.visible = false
 	if not icon_path.is_empty():
 		var icon := load(icon_path) as Texture2D
 		if icon != null:
@@ -41,7 +53,7 @@ func set_focused(focused: bool) -> void:
 	title_label.visible = focused
 
 func prompt_text() -> String:
-	return "E / Chạm  •  " + action_label
+	return tr("E / Chạm  •  %s") % tr(action_label)
 
 func _process(delta: float) -> void:
 	_animation_clock += delta

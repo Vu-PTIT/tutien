@@ -50,6 +50,16 @@ func _request(method: HTTPClient.Method, path: String, body: Variant = null, aut
 		return {"error": "Invalid server response", "status": response[1]}
 	return parsed
 
+func _authenticated_request(method: HTTPClient.Method, path: String, body: Variant = null) -> Dictionary:
+	if token.is_empty():
+		return {"error": "Login required", "status": 401}
+	var result: Dictionary = await _request(method, path, body, "Bearer " + token)
+	if int(result.get("status", 0)) == 401 and not refresh_token.is_empty():
+		var refreshed: Dictionary = await refresh_session()
+		if not refreshed.has("error"):
+			result = await _request(method, path, body, "Bearer " + token)
+	return result
+
 func register_account(email: String, password: String, username: String) -> Dictionary:
 	return await _authenticate(email, password, username, true)
 
@@ -100,7 +110,16 @@ func logout() -> Dictionary:
 	return result
 
 func link_email(email: String, password: String) -> Dictionary:
-	return await _request(HTTPClient.METHOD_POST, "/v2/account/link/email", {"email": email, "password": password}, "Bearer " + token)
+	return await _authenticated_request(HTTPClient.METHOD_POST, "/v2/account/link/email", {"email": email, "password": password})
+
+func link_device(device_id: String) -> Dictionary:
+	return await _authenticated_request(HTTPClient.METHOD_POST, "/v2/account/link/device", {"id": device_id})
+
+func update_account(username: String, display_name: String = "") -> Dictionary:
+	var body := {"username": username}
+	if not display_name.is_empty():
+		body["display_name"] = display_name
+	return await _authenticated_request(HTTPClient.METHOD_PUT, "/v2/account", body)
 
 func call_rpc(id: String, payload: Dictionary = {}) -> Dictionary:
 	if token.is_empty():
@@ -115,7 +134,7 @@ func call_rpc(id: String, payload: Dictionary = {}) -> Dictionary:
 	return decoded
 
 func get_account() -> Dictionary:
-	return await _request(HTTPClient.METHOD_GET, "/v2/account", null, "Bearer " + token)
+	return await _authenticated_request(HTTPClient.METHOD_GET, "/v2/account")
 
 func list_friends(state: int = -1, cursor: String = "") -> Dictionary:
 	var path := "/v2/friend?limit=30"

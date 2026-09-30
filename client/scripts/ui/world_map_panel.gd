@@ -18,11 +18,16 @@ var maps_by_id: Dictionary = {}
 var route_buttons: Dictionary = {}
 var map_entries: Array = []
 var catalog: Dictionary = {}
+var route_connections: Array = []
 var selected_id: String = ""
 var current_map_id: String = "m_an_khe"
 var _button_group := ButtonGroup.new()
+var language_manager: Variant
 
 func _ready() -> void:
+	language_manager = get_node_or_null("/root/LanguageManager")
+	if language_manager != null:
+		language_manager.locale_changed.connect(_on_language_changed)
 	close_button.pressed.connect(func() -> void:
 		visible = false
 		close_requested.emit())
@@ -44,10 +49,10 @@ func set_current_map(map_id: String) -> void:
 		var button: Button = route_buttons.get(entry_id)
 		if button == null:
 			continue
-		button.text = str(entry.get("name", "Map"))
-		button.tooltip_text = str(entry.get("route_label", button.text)).replace("\n", " • ")
+		button.text = tr(str(entry.get("name", "Map")))
+		button.tooltip_text = tr(str(entry.get("route_label", button.text))).replace("\n", " • ")
 		if entry_id == current_map_id:
-			button.tooltip_text += " • đang ở"
+			button.tooltip_text += tr(" • đang ở")
 	if visible:
 		_select_map(current_map_id)
 
@@ -61,6 +66,8 @@ func _load_catalog() -> void:
 		push_error("Map catalog has an invalid shape")
 		return
 	catalog = parsed
+	var connections: Variant = catalog.get("route_connections", [])
+	route_connections = connections if connections is Array else []
 	var entries: Variant = catalog.get("maps", null)
 	if not entries is Array:
 		push_error("Map catalog is missing its maps array")
@@ -84,16 +91,34 @@ func _build_route() -> void:
 		var map_data: Dictionary = map_entries[index]
 		var button := Button.new()
 		button.name = str(map_data.get("id", "Map%d" % index))
-		button.text = str(map_data.get("name", "Map"))
-		button.tooltip_text = str(map_data.get("route_label", button.text)).replace("\n", " • ")
+		button.text = tr(str(map_data.get("name", "Map")))
+		button.tooltip_text = tr(str(map_data.get("route_label", button.text))).replace("\n", " • ")
+		var route_summary := _route_summary(str(map_data.get("id", "")))
+		if not route_summary.is_empty():
+			button.tooltip_text += " • " + route_summary
 		button.position = node_layout.get(str(map_data.get("id", "")), Vector2.ZERO)
 		button.custom_minimum_size = Vector2(84, 24)
-		button.add_theme_font_size_override("font_size", 7)
+		button.theme_type_variation = &"UIButtonSmall"
 		button.toggle_mode = true
 		button.button_group = _button_group
 		button.pressed.connect(_select_map.bind(str(map_data.get("id", ""))))
 		route_nodes.add_child(button)
 		route_buttons[str(map_data.get("id", ""))] = button
+
+func _route_summary(map_id: String) -> String:
+	var labels := PackedStringArray()
+	for value: Variant in route_connections:
+		if not value is Dictionary:
+			continue
+		var connection: Dictionary = value
+		var source := str(connection.get("from_map_id", ""))
+		var target := str(connection.get("to_map_id", ""))
+		if source != map_id and target != map_id:
+			continue
+		var other_id := target if source == map_id else source
+		var other: Dictionary = maps_by_id.get(other_id, {})
+		labels.append(tr("%s → %s") % [tr(str(connection.get("label", "lối nối"))), tr(str(other.get("name", other_id)))])
+	return " • ".join(labels)
 
 func _select_map(map_id: String) -> void:
 	if not maps_by_id.has(map_id):
@@ -101,10 +126,12 @@ func _select_map(map_id: String) -> void:
 	selected_id = map_id
 	route_overview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var map_data: Dictionary = maps_by_id[map_id]
-	info.text = "%s  •  %s\n%s" % [
-		str(map_data.get("name", "Map")),
-		str(map_data.get("summary", "")),
-		str(map_data.get("details", ""))
+	var route_summary := _route_summary(map_id)
+	info.text = tr("%s  •  %s\n%s\nLối nối: %s") % [
+		tr(str(map_data.get("name", "Map"))),
+		tr(str(map_data.get("summary", ""))),
+		tr(str(map_data.get("details", ""))),
+		tr(route_summary) if not route_summary.is_empty() else tr("chưa nối")
 	]
 	var button: Button = route_buttons.get(map_id)
 	if button != null:
@@ -115,6 +142,24 @@ func _select_map(map_id: String) -> void:
 	preview.visible = texture != null
 	no_preview.visible = texture == null
 	if texture == null:
-		no_preview.text = "Chưa có ảnh preview"
+		no_preview.text = tr("Chưa có ảnh preview")
 	travel_button.disabled = map_id == current_map_id
-	travel_button.text = "Đang ở đây" if map_id == current_map_id else "Đi thử map này"
+	travel_button.text = tr("Đang ở đây") if map_id == current_map_id else tr("Đi đến map này")
+
+func _on_language_changed(_locale: String) -> void:
+	if not is_node_ready():
+		return
+	for entry: Dictionary in map_entries:
+		var entry_id := str(entry.get("id", ""))
+		var button: Button = route_buttons.get(entry_id)
+		if button == null:
+			continue
+		button.text = tr(str(entry.get("name", "Map")))
+		button.tooltip_text = tr(str(entry.get("route_label", button.text))).replace("\n", " • ")
+		var route_summary := _route_summary(entry_id)
+		if not route_summary.is_empty():
+			button.tooltip_text += " • " + route_summary
+		if entry_id == current_map_id:
+			button.tooltip_text += tr(" • đang ở")
+	if maps_by_id.has(selected_id):
+		_select_map(selected_id)

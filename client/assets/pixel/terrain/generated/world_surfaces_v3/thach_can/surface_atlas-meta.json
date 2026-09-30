@@ -1,0 +1,25 @@
+{
+  "area": "thach_can",
+  "size_px": [
+    1536,
+    1152
+  ],
+  "tile_px": 32,
+  "atlas_grid": [
+    48,
+    36
+  ],
+  "surface_terrain_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "style": "native-resolution 2D pixel art; hard edges; low-noise clusters; no filtering",
+  "surface": "broad ochre earth clusters, scrub and grouped stones",
+  "source_script": "scripts/build_pixel_world_terrain.py",
+  "seeded_and_reproducible": true
+}

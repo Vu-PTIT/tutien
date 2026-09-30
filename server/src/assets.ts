@@ -3,6 +3,7 @@ interface CharacterState {
   [key: string]: any;
   schemaVersion: number; characterId: string; realm: string; realmStage: number;
   cultivationXp: number; hp: number; equipped: {[slot: string]: string};
+  equippedSkills: {[slot: string]: string}; learnedSkills: string[];
   spiritStones: number; revision: number; inventory: InventorySlot[];
 }
 interface LoadedCharacter { state: CharacterState; version: string; }
@@ -16,13 +17,25 @@ function invalidCharacter(): never {
   return fail(nkruntime.Codes.FAILED_PRECONDITION, "Character data requires review; no assets were changed");
 }
 function validateCharacter(state: CharacterState): void {
-  if (state.schemaVersion !== 3 || typeof state.characterId !== "string" || !state.characterId ||
+  if (state.schemaVersion !== 4 || typeof state.characterId !== "string" || !state.characterId ||
       !((state.realm === "mortal" && state.realmStage === 0) ||
         (state.realm === "luyen_khi" && assetInteger(state.realmStage, 1, 4))) ||
       !assetInteger(state.cultivationXp, 0, ASSET_LIMIT) || !assetInteger(state.hp, 0, 100) ||
       !state.equipped || typeof state.equipped.weapon !== "string" || typeof state.equipped.armor !== "string" ||
       !assetInteger(state.spiritStones, 0, ASSET_LIMIT) || !assetInteger(state.revision, 0, ASSET_LIMIT) ||
+      !Array.isArray(state.learnedSkills) || !state.equippedSkills || typeof state.equippedSkills.active_1 !== "string" ||
+      Object.keys(state.equippedSkills).some(function (key) { return key !== "active_1"; }) ||
       !Array.isArray(state.inventory) || state.inventory.length > BAG_SIZE) invalidCharacter();
+  const learnedIds: string[] = [];
+  for (let i = 0; i < state.learnedSkills.length; i++) {
+    const skillId = state.learnedSkills[i];
+    if (typeof skillId !== "string" || !catalogSkill(skillId) || learnedIds.indexOf(skillId) >= 0) invalidCharacter();
+    learnedIds.push(skillId);
+  }
+  const equippedSkill = state.equippedSkills.active_1;
+  const equippedDefinition = equippedSkill ? catalogSkill(equippedSkill) : undefined;
+  if (equippedSkill && (!equippedDefinition || equippedDefinition.equipSlot !== "active_1" ||
+      learnedIds.indexOf(equippedSkill) < 0)) invalidCharacter();
   const instances: string[] = [];
   for (let i = 0; i < state.inventory.length; i++) {
     const slot = state.inventory[i];
@@ -47,16 +60,27 @@ function validateCharacter(state: CharacterState): void {
   }
 }
 function initialCharacter(userId: string): CharacterState {
-  return { schemaVersion: 3, characterId: userId, realm: "mortal", realmStage: 0,
+  return { schemaVersion: 4, characterId: userId, realm: "mortal", realmStage: 0,
     cultivationXp: 0, hp: 100, equipped: {weapon: "", armor: ""},
+    equippedSkills: {active_1: ""}, learnedSkills: [],
     spiritStones: 0, revision: 0, inventory: [] };
 }
 function migrateCharacter(value: {[key: string]: any}, userId: string): CharacterState {
-  if (value.schemaVersion === 3) { validateCharacter(value as CharacterState); return value as CharacterState; }
+  if (value.schemaVersion === 4) { validateCharacter(value as CharacterState); return value as CharacterState; }
+  if (value.schemaVersion === 3) {
+    const next = JSON.parse(JSON.stringify(value)) as CharacterState;
+    next.schemaVersion = 4;
+    next.equippedSkills = next.equippedSkills || {active_1: ""};
+    next.learnedSkills = next.learnedSkills || [];
+    validateCharacter(next);
+    return next;
+  }
   if (value.schemaVersion === 2) {
     const next = JSON.parse(JSON.stringify(value)) as CharacterState;
-    next.schemaVersion = 3; next.cultivationXp = 0; next.hp = 100;
+    next.schemaVersion = 4; next.cultivationXp = 0; next.hp = 100;
     next.equipped = {weapon: "", armor: ""};
+    next.equippedSkills = {active_1: ""};
+    next.learnedSkills = next.learnedSkills || [];
     validateCharacter(next);
     return next;
   }
@@ -67,11 +91,12 @@ function migrateCharacter(value: {[key: string]: any}, userId: string): Characte
       !((value.realm === "pham_nhan" && value.level === 1) ||
         (value.realm === "luyen_khi" && assetInteger(value.level, 1, 4)))) invalidCharacter();
   const next = JSON.parse(JSON.stringify(value)) as CharacterState;
-  next.schemaVersion = 3;
+  next.schemaVersion = 4;
   next.characterId = userId;
   next.realmStage = value.realm === "pham_nhan" ? 0 : value.level;
   next.realm = value.realm === "pham_nhan" ? "mortal" : "luyen_khi";
   next.cultivationXp = 0; next.hp = 100; next.equipped = {weapon: "", armor: ""};
+  next.equippedSkills = {active_1: ""}; next.learnedSkills = [];
   delete next.level;
   next.inventory = [];
   next.revision = 0;
@@ -86,7 +111,7 @@ function loadCharacter(nk: nkruntime.Nakama, userId: string): LoadedCharacter {
   for (let attempt = 0; attempt < 5; attempt++) {
     const row = nk.storageRead([{ collection: "characters", key: "main", userId: userId }])[0];
     const state = row ? migrateCharacter(row.value, userId) : initialCharacter(userId);
-    if (row && row.value.schemaVersion === 3) return { state: state, version: row.version };
+    if (row && row.value.schemaVersion === 4) return { state: state, version: row.version };
     try {
       const ack = nk.storageWrite([characterWrite(userId, state, row ? row.version : "*")])[0];
       return { state: state, version: ack.version };
@@ -96,7 +121,7 @@ function loadCharacter(nk: nkruntime.Nakama, userId: string): LoadedCharacter {
 }
 
 // Pure preparation: the loaded state is never mutated, including on bag overflow.
-function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Nakama): CharacterState {
+function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Nakama): {state: CharacterState; cultivationXp: number} {
   validateCharacter(state);
   const offeredXp = bundle.cultivationXp === undefined ? 0 : bundle.cultivationXp;
   if (!assetInteger(bundle.spiritStones, 0, ASSET_LIMIT) || !assetInteger(offeredXp, 0, ASSET_LIMIT) ||
@@ -107,10 +132,28 @@ function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Na
   if (next.spiritStones + bundle.spiritStones > ASSET_LIMIT || next.revision >= ASSET_LIMIT) {
     return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "Asset limit reached");
   }
-  if (next.realm === "luyen_khi" && next.realmStage < 4) {
-    const thresholds = [300, 600, 1000];
-    const capacity = thresholds[next.realmStage - 1] * 2;
-    next.cultivationXp += Math.min(offeredXp, Math.max(0, capacity - next.cultivationXp));
+  const thresholds = [300, 600, 1000];
+  let progress = next.cultivationXp;
+  if (next.realm === "luyen_khi") {
+    progress += 100;
+    for (let stage = 1; stage < next.realmStage; stage++) progress += thresholds[stage - 1];
+  }
+  const maxProgress = 100 + thresholds[0] + thresholds[1] + thresholds[2];
+  const grantedXp = Math.min(offeredXp, Math.max(0, maxProgress - progress));
+  if (grantedXp > 0) {
+    next.cultivationXp += grantedXp;
+    if (next.realm === "mortal" && next.cultivationXp >= 100) {
+      next.realm = "luyen_khi";
+      next.realmStage = 1;
+      next.cultivationXp -= 100;
+    }
+    while (next.realm === "luyen_khi" && next.realmStage < 4) {
+      const threshold = thresholds[next.realmStage - 1];
+      if (next.cultivationXp < threshold) break;
+      next.cultivationXp -= threshold;
+      next.realmStage++;
+    }
+    if (next.realm === "luyen_khi" && next.realmStage >= 4) next.cultivationXp = 0;
   }
   next.spiritStones += bundle.spiritStones;
   for (let i = 0; i < bundle.items.length; i++) {
@@ -138,7 +181,7 @@ function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Na
   }
   next.revision++;
   validateCharacter(next);
-  return next;
+  return {state: next, cultivationXp: grantedXp};
 }
 
 interface AssetReceipt {
@@ -158,7 +201,8 @@ function assetResult(nk: nkruntime.Nakama, userId: string, receipt: AssetReceipt
 }
 // INTERNAL ONLY. A future quest/encounter caller must derive eligibility, sourceId
 // and bundle from authoritative state. Never expose this as a generic grant RPC.
-function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, sourceId: string, bundle: RewardBundle): JsonObject {
+function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, sourceId: string,
+    bundle: RewardBundle, additionalWrites: nkruntime.StorageWriteRequest[] = []): JsonObject {
   if (!/^[a-zA-Z0-9_-]{8,80}$/.test(operationId) || !/^[a-zA-Z0-9_:.-]{1,120}$/.test(sourceId)) {
     return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid operation or source ID");
   }
@@ -193,16 +237,17 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
       return fail(nkruntime.Codes.ALREADY_EXISTS, "Reward source already claimed");
     }
     const loaded = loadCharacter(nk, userId);
-    const next = addReward(loaded.state, bundle, nk);
+    const applied = addReward(loaded.state, bundle, nk);
+    const next = applied.state;
     const granted: RewardBundle = { spiritStones: bundle.spiritStones, items: bundle.items,
-      cultivationXp: next.cultivationXp - loaded.state.cultivationXp };
+      cultivationXp: applied.cultivationXp };
     const receipt: AssetReceipt = { operationId: operationId, sourceId: sourceId, fingerprint: fingerprint,
       revision: next.revision, granted: granted, committedAt: Date.now() };
     try {
       // Nakama storageWrite batch is transactional: all CAS checks and all three
       // writes commit together, including the create-only source uniqueness gate.
-      nk.storageWrite([characterWrite(userId, next, loaded.version),
-        receiptWrite(userId, opKey, receipt), receiptWrite(userId, sourceKey, receipt)]);
+      nk.storageWrite(additionalWrites.concat([characterWrite(userId, next, loaded.version),
+        receiptWrite(userId, opKey, receipt), receiptWrite(userId, sourceKey, receipt)]));
       return { receipt: receipt, replayed: false, profile: next };
     } catch (_error) { /* Includes lost acknowledgement after commit: re-read receipt. */ }
   }
@@ -228,7 +273,7 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
 const inventoryGetRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) {
   const userId = authenticated(ctx);
   return JSON.stringify({ profile: loadCharacter(nk, userId).state, capacity: BAG_SIZE,
-    catalogVersion: 1, catalog: ITEM_CATALOG,
+    catalogVersion: 2, catalog: ITEM_CATALOG, skills: SKILL_CATALOG,
     starterClaimed: nk.storageRead([receiptId(userId, "source:starter:v1")]).length > 0,
     pendingSettlement: getPvePendingSettlement(nk, userId) });
 };
@@ -412,6 +457,27 @@ const inventoryEquipRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, pay
     next.equipped[equipSlot] = next.equipped[equipSlot] === input.instanceId ? "" : input.instanceId as string;
   }));
 };
+const skillEquipRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payload) {
+  const userId = authenticated(ctx), input = objectPayload(payload);
+  if (Object.keys(input).some(function (key) { return key !== "operationId" && key !== "skillId"; }) ||
+      typeof input.operationId !== "string" || typeof input.skillId !== "string") {
+    return fail(nkruntime.Codes.INVALID_ARGUMENT, "Expected operationId and skillId only");
+  }
+  const skillId = input.skillId as string;
+  if (skillId) {
+    const definition = catalogSkill(skillId);
+    if (!definition || definition.equipSlot !== "active_1") {
+      return fail(nkruntime.Codes.FAILED_PRECONDITION, "Skill cannot be equipped in the active slot");
+    }
+  }
+  return JSON.stringify(commitAssetMutation(nk, userId, input.operationId as string, "skill_equip",
+    {skillId: skillId}, function (next) {
+      if (skillId && next.learnedSkills.indexOf(skillId) < 0) {
+        return fail(nkruntime.Codes.FAILED_PRECONDITION, "Learn this skill before equipping it");
+      }
+      next.equippedSkills.active_1 = skillId;
+    }));
+};
 const inventoryUseRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payload) {
   const userId = authenticated(ctx), input = objectPayload(payload);
   if (Object.keys(input).some(function (key) { return key !== "operationId" && key !== "itemId"; }) ||
@@ -446,6 +512,146 @@ const inventoryDiscardRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, p
     if (next.inventory[index].quantity === 0) next.inventory.splice(index, 1);
   }));
 };
+
+// Economy prices, recipes and crop timers are server-owned. Every action is
+// committed through the same profile revision + operation receipt as inventory.
+const SHOP_BUY: {[itemId: string]: number} = {
+  it_heal_pill: 8, it_seed_cam_lo: 3, it_seed_tinh_tam: 3, it_seed_ich_khi: 3, it_water: 1
+};
+const SHOP_SELL: {[itemId: string]: number} = {
+  it_bamboo: 1, it_boar_hide: 3, it_escape_talisman: 2, it_heal_pill: 2,
+  it_herb_cam_lo: 1, it_herb_ich_khi: 1, it_herb_tinh_tam: 1, it_iron: 1,
+  it_qi_pill: 2, it_seed_cam_lo: 1, it_seed_tinh_tam: 1, it_seed_ich_khi: 1,
+  it_spider_silk: 1, it_spirit_dust: 1, it_ward_talisman: 2
+};
+interface RecipeDefinition { ingredients: {[itemId: string]: number}; fee: number; output: string; }
+const RECIPES: {[recipeId: string]: RecipeDefinition} = {
+  rc_heal: {ingredients: {it_herb_cam_lo: 2, it_water: 1}, fee: 2, output: "it_heal_pill"},
+  rc_qi: {ingredients: {it_herb_ich_khi: 2, it_herb_tinh_tam: 1}, fee: 3, output: "it_qi_pill"},
+  rc_ward: {ingredients: {it_spider_silk: 2, it_spirit_dust: 1}, fee: 4, output: "it_ward_talisman"},
+  rc_sword: {ingredients: {it_iron: 6, it_bamboo: 2}, fee: 8, output: "it_iron_sword"},
+  rc_escape: {ingredients: {it_herb_tinh_tam: 2, it_bamboo: 1}, fee: 4, output: "it_escape_talisman"}
+};
+function requireServicePosition(nk: nkruntime.Nakama, userId: string, entityId: string): void {
+  const current = worldReadSession(nk, userId).session, map = WORLD_MAPS[current.mapId];
+  const point = worldFindPoint(map, entityId);
+  if (!point || worldDistance(current.x, current.y, point.x, point.y) > point.radius * WORLD_TILE ||
+      !worldPathWalkable(map, [current.x, current.y], [point.x, point.y])) {
+    return fail(nkruntime.Codes.FAILED_PRECONDITION, "Move to the matching village service before using it");
+  }
+}
+function economyAdd(state: CharacterState, itemId: string, quantity: number, nk: nkruntime.Nakama): void {
+  const definition = catalogItem(itemId);
+  if (!assetInteger(quantity, 1, BAG_SIZE * definition.stackMax)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid item quantity");
+  let remaining = quantity;
+  if (!definition.instance) for (let i = 0; i < state.inventory.length && remaining > 0; i++) {
+    const slot = state.inventory[i]; if (slot.itemId !== itemId) continue;
+    const count = Math.min(remaining, definition.stackMax - slot.quantity); slot.quantity += count; remaining -= count;
+  }
+  while (remaining > 0) {
+    if (state.inventory.length >= BAG_SIZE) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "Inventory full; no assets changed");
+    const count = Math.min(remaining, definition.stackMax), slot: InventorySlot = {itemId: itemId, quantity: count};
+    if (definition.instance) slot.instanceId = nk.uuidv4();
+    state.inventory.push(slot); remaining -= count;
+  }
+}
+function economyRemove(state: CharacterState, itemId: string, quantity: number): void {
+  const index = findInventorySlot(state, itemId);
+  if (index < 0 || state.inventory[index].quantity < quantity) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Not enough " + catalogItem(itemId).name);
+  if (catalogItem(itemId).bound) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Bound quest items cannot be traded or crafted");
+  state.inventory[index].quantity -= quantity;
+  if (state.inventory[index].quantity === 0) state.inventory.splice(index, 1);
+}
+const economyActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payload) {
+  const userId = authenticated(ctx), input = objectPayload(payload);
+  if (Object.keys(input).some(function (key) { return ["operationId", "action", "itemId", "quantity", "recipeId"].indexOf(key) < 0; }) ||
+      typeof input.operationId !== "string" || typeof input.action !== "string") return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid economy request");
+  const action = input.action, itemId = typeof input.itemId === "string" ? input.itemId : "", quantity = input.quantity;
+  if (!assetInteger(quantity, 1, 10)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Quantity must be 1–10");
+  const details: {[key: string]: unknown} = {itemId: itemId, quantity: quantity};
+  if (action === "buy" || action === "sell") {
+    requireServicePosition(nk, userId, "ak.market.village");
+    const prices = action === "buy" ? SHOP_BUY : SHOP_SELL, price = prices[itemId];
+    if (price === undefined || (action === "buy" && catalogItem(itemId).instance) || catalogItem(itemId).bound) return fail(nkruntime.Codes.FAILED_PRECONDITION, "This item is not available at the shop");
+    details.price = price;
+    return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "shop_" + action, details, function (next) {
+      const total = price * (quantity as number);
+      if (action === "buy") {
+        if (next.spiritStones < total) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Not enough linh thạch");
+        next.spiritStones -= total; economyAdd(next, itemId, quantity as number, nk);
+      } else {
+        economyRemove(next, itemId, quantity as number);
+        if (next.spiritStones + total > ASSET_LIMIT) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "Linh thạch limit reached");
+        next.spiritStones += total;
+      }
+    }));
+  }
+  if (action === "craft") {
+    requireServicePosition(nk, userId, "ak.service.do_khe");
+    if (typeof input.recipeId !== "string" || !RECIPES[input.recipeId]) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Unknown recipe");
+    const recipe = RECIPES[input.recipeId]; details.recipeId = input.recipeId;
+    return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "craft", details, function (next) {
+      if (next.spiritStones < recipe.fee * (quantity as number)) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Not enough linh thạch for crafting");
+      for (const ingredient in recipe.ingredients) economyRemove(next, ingredient, recipe.ingredients[ingredient] * (quantity as number));
+      next.spiritStones -= recipe.fee * (quantity as number);
+      economyAdd(next, recipe.output, quantity as number, nk);
+    }));
+  }
+  return fail(nkruntime.Codes.INVALID_ARGUMENT, "Action must be buy, sell or craft");
+};
+const gardenActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payload) {
+  const userId = authenticated(ctx), input = objectPayload(payload);
+  if (Object.keys(input).some(function (key) { return ["operationId", "action", "plotId", "cropId"].indexOf(key) < 0; }) ||
+      typeof input.operationId !== "string" || typeof input.action !== "string" || !assetInteger(input.plotId, 0, 5)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid garden request");
+  const action = input.action, plotId = input.plotId as number, cropId = typeof input.cropId === "string" ? input.cropId : "";
+  requireServicePosition(nk, userId, "ak.garden.home");
+  if (action === "plant" && ["crop_cam_lo", "crop_tinh_tam", "crop_ich_khi"].indexOf(cropId) < 0) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Unknown crop");
+  const crops: {[key: string]: {seed: string; output: string; duration: number}} = {
+    crop_cam_lo: {seed: "it_seed_cam_lo", output: "it_herb_cam_lo", duration: 20 * 60 * 1000},
+    crop_tinh_tam: {seed: "it_seed_tinh_tam", output: "it_herb_tinh_tam", duration: 45 * 60 * 1000},
+    crop_ich_khi: {seed: "it_seed_ich_khi", output: "it_herb_ich_khi", duration: 60 * 60 * 1000}
+  };
+  return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "garden_" + action, {plotId: plotId, cropId: cropId}, function (next) {
+    const plots: {[key: string]: any}[] = Array.isArray(next.gardenPlots) ? next.gardenPlots : [];
+    if (!plots.length) for (let i = 0; i < 6; i++) plots.push({plotId: i, state: "empty", version: 0});
+    if (plots.length !== 6) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Garden state requires review");
+    for (let i = 0; i < plots.length; i++) {
+      if (!plots[i] || plots[i].plotId !== i || ["empty", "growing"].indexOf(plots[i].state) < 0 ||
+          !assetInteger(plots[i].version, 0, ASSET_LIMIT)) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Garden state requires review");
+    }
+    const plot = plots[plotId];
+    if (!plot || plot.plotId !== plotId) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Garden plot requires review");
+    if (action === "plant") {
+      if (plot.state !== "empty") return fail(nkruntime.Codes.FAILED_PRECONDITION, "This plot is occupied");
+      economyRemove(next, crops[cropId].seed, 1); economyRemove(next, "it_water", 1);
+      const now = Date.now(); plot.state = "growing"; plot.cropId = cropId; plot.plantedAt = now;
+      plot.readyAt = now + crops[cropId].duration; plot.plantingId = input.operationId;
+    } else if (action === "harvest") {
+      if (plot.state !== "growing" || !plot.cropId || Date.now() < plot.readyAt) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Crop is not ready to harvest");
+      const crop = crops[plot.cropId]; if (!crop) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Crop requires review");
+      economyAdd(next, crop.output, 4, nk); plot.state = "empty"; plot.cropId = "";
+      plot.plantedAt = 0; plot.readyAt = 0; plot.plantingId = "";
+    } else return fail(nkruntime.Codes.INVALID_ARGUMENT, "Action must be plant or harvest");
+    plot.version = (plot.version || 0) + 1; next.gardenPlots = plots;
+  }));
+};
+function gatherWorldResource(nk: nkruntime.Nakama, userId: string, entityId: string): JsonObject {
+  const sources: {[id: string]: {itemId: string; quantity: number}} = {
+    "ta.node.cam_lo": {itemId: "it_herb_cam_lo", quantity: 2},
+    "tc.node.iron_ore": {itemId: "it_iron", quantity: 2}
+  };
+  const source = sources[entityId];
+  if (!source) return fail(nkruntime.Codes.FAILED_PRECONDITION, "This resource node is not harvestable");
+  const now = Date.now(), window = Math.floor(now / 30000);
+  const operationId = "gather_" + entityId.replace(/[^a-zA-Z0-9_-]/g, "_") + "_" + window;
+  return commitAssetMutation(nk, userId, operationId, "gather", {entityId: entityId, window: window}, function (next) {
+    const cooldowns = next.resourceGatheredAt && typeof next.resourceGatheredAt === "object" ? next.resourceGatheredAt : {};
+    const last = cooldowns[entityId] || 0;
+    if (now - last < 60000) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "This resource node needs time to recover");
+    economyAdd(next, source.itemId, source.quantity, nk);
+    cooldowns[entityId] = now; next.resourceGatheredAt = cooldowns;
+  });
+}
 function saveCharacterHp(nk: nkruntime.Nakama, userId: string, hp: number): CharacterState {
   if (!assetInteger(hp, 0, 100)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid checkpoint health");
   for (let attempt = 0; attempt < 5; attempt++) {
