@@ -134,8 +134,40 @@ func _run() -> void:
 	await process_frame
 	var hud = main.hud
 	var bag: InventoryPanel = main.inventory_panel
+	var social: SocialPanel = main.social_panel
 	var map_body: Label = hud.get_node("FieldInfo/Body")
 	var location_title: Label = hud.get_node("Location/Title")
+	check(ProjectSettings.get_setting("display/window/size/mode") == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN,
+		"Desktop project starts in exclusive fullscreen")
+	check(hud.get_node("SocialButton").visible, "Friends and chat have a visible HUD entry point")
+	check(social != null and social.api == main.api, "Social panel shares the authenticated game API")
+	check(social.has_node("PageHost/FriendsPage") and social.has_node("PageHost/ChatPage") and
+		social.has_node("PageHost/GroupsPage/GroupDetails/GroupRequests"),
+		"Social panel exposes friends, chat, sect/guild and join-request screens")
+	hud.get_node("SocialButton").pressed.emit()
+	await process_frame
+	check(social.visible and social.get_node("PageHost/FriendsPage").visible, "HUD button opens the friends screen")
+	check(main._movement() == Vector2.ZERO, "Opening social UI pauses player movement")
+	social.get_node("ChatTab").pressed.emit()
+	await process_frame
+	check(social.get_node("PageHost/ChatPage").visible, "Social tabs open the chat screen")
+	social.get_node("GroupsTab").pressed.emit()
+	await process_frame
+	check(social.get_node("PageHost/GroupsPage").visible, "Social tabs open the sect/guild screen")
+	social.get_node("PageHost/FriendsPage/FindName").grab_focus()
+	var social_key := InputEventKey.new()
+	social_key.pressed = true
+	social_key.physical_keycode = KEY_G
+	check(not main.game_input.handle_event(social_key, false, social.has_text_input_focus()),
+		"Typing a username does not trigger the social shortcut")
+	social.get_node("PageHost/FriendsPage/FindName").release_focus()
+	check(main.game_input.handle_event(social_key, false, false), "G toggles the social screen when a text field is not focused")
+	check(not social.visible, "G closes the social screen")
+	main.character_panel.set_touch_layout_enabled(true, false)
+	await process_frame
+	check(social.get_rect().size.x == 560.0 and social.get_rect().size.y == 320.0,
+		"Social panel stays inside the shared PC/mobile game viewport")
+	main.character_panel.set_touch_layout_enabled(false, false)
 	check(map_body.theme_type_variation == &"UISmall", "Map body uses the centralized readable UI font")
 	check(location_title.theme_type_variation == &"UIHeading", "Map title uses the centralized heading style")
 	check_map_assets(main.map_world)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 [ext_resource type="Theme" path="res://themes/tutien_theme.tres" id="theme"]
 [ext_resource type="Texture2D" path="res://assets/pixel/hero_idle.tres" id="hero"]
 [ext_resource type="Texture2D" path="res://assets/pixel/an_khe_world_v1.png" id="map"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/touch_controls.tscn" id="touch_controls"]
 [ext_resource type="PackedScene" path="res://scenes/ui/character.tscn" id="character"]
 [ext_resource type="PackedScene" path="res://scenes/ui/current_map_panel.tscn" id="current_map"]
+[ext_resource type="PackedScene" path="res://scenes/ui/social_panel.tscn" id="social"]
 
 [node name="HUD" type="Control"]
 anchors_preset = 15
@@ -331,6 +332,21 @@ offset_right = -167.0
 offset_bottom = 193.0
 theme_type_variation = &"UIButtonSmall"
 text = "Nhân vật [C]"
+
+[node name="SocialButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -326.0
+offset_top = 170.0
+offset_right = -250.0
+offset_bottom = 193.0
+theme_type_variation = &"UIButtonSmall"
+text = "Cộng đồng [G]"
+tooltip_text = "Bạn bè, trò chuyện và nhóm người chơi • G"
 
 [node name="SparringButton" type="Button" parent="."]
 layout_mode = 1
@@ -777,4 +793,7 @@ text = "Đi thử map này"
 [node name="TouchControls" parent="." instance=ExtResource("touch_controls")]
 
 [node name="LocalMap" parent="." instance=ExtResource("current_map")]
+visible = false
+
+[node name="SocialPanel" parent="." instance=ExtResource("social")]
 visible = false

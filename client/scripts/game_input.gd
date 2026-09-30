@@ -15,13 +15,14 @@ const KEY_BINDINGS := {
 	"dodge": [KEY_SPACE],
 	"inventory": [KEY_I],
 	"character": [KEY_C],
+	"social": [KEY_G],
 	"map": [KEY_M],
 	"locked": [KEY_1, KEY_2],
 	"skill_1": [KEY_R],
 	"close": [KEY_ESCAPE],
 	"touch_preview": [KEY_F9],
 }
-const COMMANDS := ["inventory", "character", "map", "interact", "attack", "dodge", "locked", "skill_1"]
+const COMMANDS := ["inventory", "character", "social", "map", "interact", "attack", "dodge", "locked", "skill_1"]
 
 var last_touch_aim := Vector2.RIGHT
 

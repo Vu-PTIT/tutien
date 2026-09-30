@@ -66,6 +66,16 @@ assert.equal((read('scenes/ui/inventory.tscn').match(/name="Slot\d+" type="Butto
 assert.equal((hud.match(/name="Slot\d+" type="Button"/g)||[]).length,6);
 assert.ok(hud.includes('name="MapButton" type="Button"'), 'Map route button is present');
 assert.ok(hud.includes('name="WorldMap" type="Control"'), 'World map overlay is present');
+const socialScene=read('scenes/ui/social_panel.tscn'), socialScript=read('scripts/ui/social_panel.gd');
+assert.ok(hud.includes('name="SocialButton" type="Button"') && hud.includes('res://scenes/ui/social_panel.tscn'),
+  'HUD has a visible entry point for player social features');
+assert.ok(['FriendsPage','ChatPage','GroupsPage','GroupMembers','GroupRequests'].every(name=>socialScene.includes('name="'+name+'"')),
+  'Social panel includes friends, chat, sect/guild, member and join-request views');
+assert.ok(['social_find_player','list_friends','api.send_chat','api.chat_history','social_groups','social_group_create','social_group_action','social_group_members']
+  .every(api=>socialScript.includes(api)), 'Social UI uses the existing authenticated social API');
+assert.ok(main.includes('social_panel.set_api(api)') && main.includes('social_panel.on_backend_ready()'),
+  'Social UI shares the game account and refreshes after connection');
+assert.ok(read('scripts/game_input.gd').includes('"social": [KEY_G]'), 'Social panel can open with G');
 const mapCatalog=JSON.parse(fs.readFileSync(path.join(root,'data/map_catalog.json'),'utf8'));
 const lucVi=mapCatalog.maps.flatMap(m=>m.interactables||[]).find(x=>x.entity_id==='ak.npc.luc_vi');
 assert.ok(lucVi && lucVi.npc_texture==='res://assets/pixel/npcs/luc_vi.png','Lục Vi is configured with the generated pixel sprite');

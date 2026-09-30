@@ -22,6 +22,7 @@ var language_manager: Variant
 @onready var touch_controls: TouchControls = $TouchControls
 @onready var character_panel: CharacterPanel = $CharacterPanel
 @onready var local_map_panel: CurrentMapPanel = $LocalMap
+@onready var social_panel: SocialPanel = $SocialPanel
 
 func _ready() -> void:
 	language_manager = get_node_or_null("/root/LanguageManager")
@@ -34,11 +35,12 @@ func _ready() -> void:
 	$Minimap.tooltip_text = tr("Bấm hoặc chạm để xem bản đồ khu vực hiện tại")
 	$Minimap.gui_input.connect(_on_minimap_gui_input)
 	$CharacterButton.pressed.connect(func() -> void: action_requested.emit("character"))
+	$SocialButton.pressed.connect(func() -> void: action_requested.emit("social"))
 	$SparringButton.text = "Farm"
 	$SparringButton.tooltip_text = "Farm trên map • xem trạng thái máy chủ và đấu tập online"
 	$SparringButton.pressed.connect(func() -> void: action_requested.emit("dock"))
 	$HelpButton.pressed.connect(func() -> void:
-		notify("Kéo cần trái để đi • chạm Đánh / Kỹ năng khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh • R: kỹ năng • M: map • C: hồ sơ • I: túi • E: tương tác"))
+		notify("Kéo cần trái để đi • chạm Đánh / Kỹ năng khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh • R: kỹ năng • M: map • C: hồ sơ • G: cộng đồng • I: túi • E: tương tác"))
 	phi_ren_icon = _make_phi_ren_icon()
 	$Hotbar/Slot4.icon = null
 	$Hotbar/Slot4.text = "—"
@@ -77,14 +79,15 @@ func _make_phi_ren_icon() -> Texture2D:
 	return ImageTexture.create_from_image(image)
 
 func _process(delta: float) -> void:
-	$ModalShade.visible = $Inventory.visible or $Dock.visible or character_panel.visible
-	touch_controls.set_controls_visible(touch_layout and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible and not local_map_panel.visible)
+	$ModalShade.visible = $Inventory.visible or $Dock.visible or character_panel.visible or social_panel.visible
+	touch_controls.set_controls_visible(touch_layout and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible and not local_map_panel.visible and not social_panel.visible)
 	if toast_time > 0:
 		toast_time -= delta
 		$Toast.visible = toast_time > 0
 
 func set_touch_layout(enabled: bool) -> void:
 	touch_layout = enabled
+	social_panel.set_touch_layout(enabled)
 	$Hotbar.visible = not enabled
 	$Controls.visible = not enabled
 	if enabled:
@@ -100,7 +103,7 @@ func set_touch_layout(enabled: bool) -> void:
 		$HelpButton.offset_right = 154.0
 		$HelpButton.offset_bottom = -7.0
 	$HelpButton.text = "Hướng dẫn" if enabled else "Hướng dẫn / trạng thái"
-	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible and not local_map_panel.visible)
+	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible and not local_map_panel.visible and not social_panel.visible)
 
 func _on_minimap_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:

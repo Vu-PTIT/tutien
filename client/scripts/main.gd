@@ -20,6 +20,7 @@ const WALK_SPEED := 72.0
 @onready var room: LineEdit = $Presentation/HUD/Dock/Room
 @onready var world_map: WorldMapPanel = $Presentation/HUD/WorldMap
 @onready var local_map_panel: CurrentMapPanel = $Presentation/HUD/LocalMap
+@onready var social_panel: SocialPanel = $Presentation/HUD/SocialPanel
 @onready var touch_controls: TouchControls = $Presentation/HUD/TouchControls
 @onready var weather_fx = $Presentation/WeatherFX
 var map_world: GameMap
@@ -79,6 +80,7 @@ func _ready() -> void:
 	offline_position = player.position
 	api = Api.new()
 	add_child(api)
+	social_panel.set_api(api)
 	inventory_panel.api = api
 	character_panel.api = api
 	api.snapshot_received.connect(_snapshot)
@@ -300,6 +302,7 @@ func _action(action: String) -> void:
 		"close":
 			inventory_panel.hide()
 			character_panel.hide()
+			social_panel.hide()
 			dock.hide()
 			world_map.hide()
 			local_map_panel.close_panel()
@@ -317,6 +320,7 @@ func _action(action: String) -> void:
 			else:
 				local_map_panel.close_panel()
 				character_panel.hide()
+				social_panel.hide()
 				world_map.hide()
 				dock.hide()
 				inventory_panel.open_inventory()
@@ -328,9 +332,22 @@ func _action(action: String) -> void:
 			else:
 				local_map_panel.close_panel()
 				inventory_panel.hide()
+				social_panel.hide()
 				world_map.hide()
 				dock.hide()
 				character_panel.open_profile()
+		"social":
+			if social_panel.visible:
+				social_panel.hide()
+			else:
+				if service_menu != null:
+					service_menu.hide()
+				local_map_panel.close_panel()
+				inventory_panel.hide()
+				character_panel.hide()
+				world_map.hide()
+				dock.hide()
+				social_panel.open_panel("friends")
 		"map":
 			if busy:
 				return
@@ -344,6 +361,7 @@ func _action(action: String) -> void:
 			else:
 				character_panel.hide()
 				inventory_panel.hide()
+				social_panel.hide()
 				dock.hide()
 				world_map.open_map()
 		"current_map":
@@ -357,6 +375,7 @@ func _action(action: String) -> void:
 				world_map.hide()
 				inventory_panel.hide()
 				character_panel.hide()
+				social_panel.hide()
 				dock.hide()
 				local_map_panel.open_map(map_world, player.position)
 		"dock":
@@ -365,6 +384,7 @@ func _action(action: String) -> void:
 			local_map_panel.close_panel()
 			world_map.hide()
 			character_panel.hide()
+			social_panel.hide()
 			inventory_panel.hide()
 			dock.visible = not dock.visible
 		"connect":
@@ -379,7 +399,7 @@ func _action(action: String) -> void:
 		"leave":
 			_leave_match()
 		"attack", "dodge":
-			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
+			if inventory_panel.visible or character_panel.visible or social_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 				return
 			if api.snapshot.get("phase", "") == "active":
 				pending_action = "sk_basic" if action == "attack" else "sk_dodge"
@@ -396,7 +416,7 @@ func _action(action: String) -> void:
 				else:
 					_attack_field_mob()
 		"skill_1":
-			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
+			if inventory_panel.visible or character_panel.visible or social_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 				return
 			if not api.match_id.is_empty():
 				hud.notify("Phi Nhận hiện dùng được khi săn quái ngoài bản đồ.")
@@ -407,7 +427,7 @@ func _action(action: String) -> void:
 		"interact":
 			if not api.match_id.is_empty():
 				return
-			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
+			if inventory_panel.visible or character_panel.visible or social_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 				return
 			var target: MapInteractable = map_world.update_interaction_focus(player.position)
 			if target == null:
@@ -509,7 +529,7 @@ func _service_action(action_id: int) -> void:
 		hud.notify("Đã cập nhật túi đồ và linh thạch.")
 
 func _unhandled_input(event: InputEvent) -> void:
-	if game_input.handle_event(event, touch_layout_enabled, room.has_focus()):
+	if game_input.handle_event(event, touch_layout_enabled, room.has_focus() or social_panel.has_text_input_focus()):
 		get_viewport().set_input_as_handled()
 
 func _on_touch_layout_changed(enabled: bool) -> void:
@@ -533,7 +553,7 @@ func _open_equipment_bag() -> void:
 	inventory_panel.open_equipment()
 
 func _movement() -> Vector2:
-	if busy or inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
+	if busy or inventory_panel.visible or character_panel.visible or social_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 		return Vector2.ZERO
 	return game_input.movement(touch_controls.direction)
 
@@ -878,7 +898,9 @@ func _connect_backend() -> void:
 		result = await api.get_account()
 		if not result.has("error"):
 			user_id = str(result.user.id)
-			character_panel.set_display_name(str(result.user.get("username", "")))
+			var account_name := str(result.user.get("username", ""))
+			character_panel.set_display_name(account_name)
+			social_panel.set_identity(user_id, account_name)
 			result = await api.call_rpc("get_profile")
 			if not result.has("error"):
 				hud.apply_profile(result)
@@ -913,6 +935,7 @@ func _connect_backend() -> void:
 	else:
 		hud.get_node("Mode").text = "ONLINE • FARM TRÊN MAP"
 		_message("Đã kết nối. Vị trí, quái trên map, tương tác và túi đồ được máy chủ xác nhận.")
+		social_panel.on_backend_ready()
 	busy = false
 	backend_connection_attempted = true
 	_update_field_combat_controls()
