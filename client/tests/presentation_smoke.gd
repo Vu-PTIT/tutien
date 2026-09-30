@@ -188,11 +188,11 @@ func _run() -> void:
 	check(main.map_world.get_node("AmbientFX").get_child_count() == 3, "An Khê loads animated water highlights")
 	check(main.village_camera.enabled, "Camera follows the village player")
 	main.character_panel.set_touch_layout_enabled(false, false)
-	var pc_zoom := main.character_panel.pc_world_zoom_percent / 100.0
+	var pc_zoom: float = float(main.character_panel.pc_world_zoom_percent) / 100.0
 	check(is_equal_approx(main.village_camera.zoom.x, pc_zoom), "PC view setting is applied to the world camera")
 	check(main.village_camera.limit_right == 1536 and main.village_camera.limit_bottom == 1152, "Camera clamps to An Khê world bounds")
 	main.character_panel.set_touch_layout_enabled(true, false)
-	var mobile_zoom := main.character_panel.mobile_world_zoom_percent / 100.0
+	var mobile_zoom: float = float(main.character_panel.mobile_world_zoom_percent) / 100.0
 	var world_zoom_slider: HSlider = main.character_panel.get_node("PageHost/SettingsPage/SettingsCard/WorldZoom")
 	check(is_equal_approx(main.village_camera.zoom.x, mobile_zoom), "Mobile view applies its separate camera profile")
 	check(is_equal_approx(world_zoom_slider.value, mobile_zoom * 100.0), "View setting shows the active mobile zoom")
