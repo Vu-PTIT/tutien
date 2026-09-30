@@ -40,7 +40,7 @@ func set_controls_visible(enabled: bool) -> void:
 	queue_redraw()
 
 func set_combat_mode(enabled: bool) -> void:
-	if _combat_mode == enabled and $Interact.visible == not enabled:
+	if _combat_mode == enabled and $Interact.visible != enabled:
 		return
 	_combat_mode = enabled
 	_field_combat_mode = false
