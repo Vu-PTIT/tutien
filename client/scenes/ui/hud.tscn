@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=17 format=3]
 [ext_resource type="Theme" path="res://themes/tutien_theme.tres" id="theme"]
 [ext_resource type="Texture2D" path="res://assets/pixel/hero_idle.tres" id="hero"]
 [ext_resource type="Texture2D" path="res://assets/pixel/an_khe_world_v1.png" id="map"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" path="res://assets/pixel/maps/world_route_overview.png" id="route_overview"]
 [ext_resource type="PackedScene" path="res://scenes/ui/touch_controls.tscn" id="touch_controls"]
 [ext_resource type="PackedScene" path="res://scenes/ui/character.tscn" id="character"]
+[ext_resource type="PackedScene" path="res://scenes/ui/current_map_panel.tscn" id="current_map"]
 
 [node name="HUD" type="Control"]
 anchors_preset = 15
@@ -774,3 +775,6 @@ offset_bottom = 330.0
 text = "Đi thử map này"
 
 [node name="TouchControls" parent="." instance=ExtResource("touch_controls")]
+
+[node name="LocalMap" parent="." instance=ExtResource("current_map")]
+visible = false

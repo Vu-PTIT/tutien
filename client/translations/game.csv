@@ -698,3 +698,26 @@ Bring the Meridian Compass; this is a local prototype quest."
 "Tầm nhìn bản đồ • Cảm ứng","Tầm nhìn bản đồ • Cảm ứng","World view • Touch"
 "Giảm phần trăm để thấy rộng hơn; HUD và chữ giao diện giữ nguyên kích thước.","Giảm phần trăm để thấy rộng hơn; HUD và chữ giao diện giữ nguyên kích thước.","Lower the percentage to see more of the world; HUD and interface text keep their size."
 "Giảm % để thấy rộng hơn; HUD và chữ giữ nguyên. F9 đổi bố cục cảm ứng.","Giảm % để thấy rộng hơn; HUD và chữ giữ nguyên. F9 đổi bố cục cảm ứng.","Lower % to see more. HUD and text keep their size. Press F9 to toggle touch controls."
+BẢN ĐỒ KHU VỰC,BẢN ĐỒ KHU VỰC,AREA MAP
+BẢN ĐỒ KHU VỰC • %s,BẢN ĐỒ KHU VỰC • %s,AREA MAP • %s
+Đóng bản đồ,Đóng bản đồ,Close map
+Khu vực: %s,Khu vực: %s,Area: %s
+Khu vực hiện tại,Khu vực hiện tại,Current area
+"Vị trí: (%d, %d)","Vị trí: (%d, %d)","Position: (%d, %d)"
+Điểm trên bản đồ,Điểm trên bản đồ,Map point
+Chọn điểm quan tâm để xem thông tin.,Chọn điểm quan tâm để xem thông tin.,Select a point of interest to view details.
+Khu vực chưa có điểm quan tâm.,Khu vực chưa có điểm quan tâm.,No points of interest in this area.
+Điểm quan tâm,Điểm quan tâm,Point of interest
+"Điểm: (%d, %d)","Điểm: (%d, %d)","Point: (%d, %d)"
+"Ô bản đồ: (%d, %d)","Ô bản đồ: (%d, %d)","Map tile: (%d, %d)"
+Đang dựng bản đồ…,Đang dựng bản đồ…,Building map…
+Vàng: cổng • Xanh: thu thập • Cam: điểm quan tâm • Sáng: bạn,Vàng: cổng • Xanh: thu thập • Cam: điểm quan tâm • Sáng: bạn,Gold: gates • Green: gather points • Orange: points of interest • Light: you
+Chọn điểm để xem chi tiết • kéo để di chuyển khi phóng lớn,Chọn điểm để xem chi tiết • kéo để di chuyển khi phóng lớn,Select a point for details • drag to pan when zoomed in
+Thu nhỏ,Thu nhỏ,Zoom out
+Phóng lớn,Phóng lớn,Zoom in
+Hiện toàn bộ bản đồ,Hiện toàn bộ bản đồ,Show full map
+Vừa khung,Vừa khung,Fit
+Mở sơ đồ tuyến bốn map,Mở sơ đồ tuyến bốn map,Open four-map route
+Tuyến [M],Tuyến [M],Routes [M]
+Bấm hoặc chạm để xem bản đồ khu vực hiện tại,Bấm hoặc chạm để xem bản đồ khu vực hiện tại,Tap or click to view the current area map
+"Vị trí: (0, 0)","Vị trí: (0, 0)","Position: (0, 0)"

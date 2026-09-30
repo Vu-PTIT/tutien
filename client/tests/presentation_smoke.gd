@@ -325,6 +325,43 @@ func _run() -> void:
 	check(minimap_image.get_pixel(44, 18).b > minimap_image.get_pixel(44, 18).r, "Stream is blue on the true minimap")
 	check(minimap_image.get_pixel(35, 18).r > minimap_image.get_pixel(35, 18).b,
 		"Minimap uses the connected dirt path to the east market")
+	var local_map: CurrentMapPanel = main.local_map_panel
+	var camera_zoom_before_map: Vector2 = main.village_camera.zoom
+	check(not local_map.visible, "Detailed current-map panel starts closed")
+	check(hud.get_node("Minimap").get_signal_connection_list("gui_input").size() > 0,
+		"Minimap accepts a click or touch to open the local map")
+	main._action("current_map")
+	await process_frame
+	await process_frame
+	check(local_map.visible, "Minimap action opens the current-map overlay")
+	check(local_map._overview_world != null, "Current-map overlay builds an isolated visual snapshot")
+	check(local_map.overview_viewport.size == Vector2i(main.map_world.map_size_px),
+		"Overview render uses the actual current-map dimensions")
+	check(local_map._overview_world.get_node("WorldLayers/GroundLayer").get_used_cells().size() == 48 * 36,
+		"Overview renders the authored terrain layers")
+	check(local_map._overview_world.get_node("Actors/ak_prop_blacksmith").visible,
+		"Overview keeps static map props visible")
+	check(not local_map._overview_world.get_node("Actors/Player").visible,
+		"Overview snapshot hides its duplicate gameplay actor")
+	check(local_map.poi_list.get_child_count() == main.map_world.interactables_size(),
+		"Current-map details list uses the map's authored points of interest")
+	var first_poi: Dictionary = main.map_world.map_data["interactables"][0]
+	local_map.map_view.select_point(0)
+	check(local_map.details_title.text == str(TranslationServer.translate(str(first_poi.get("display_name", "")))),
+		"Selecting a point of interest displays its authored details")
+	check(local_map.coordinates_label.text.contains("(7, 12)"),
+		"Selecting a point of interest shows its map coordinates")
+	check(main._movement() == Vector2.ZERO, "Opening the local map releases gameplay movement")
+	check(main.village_camera.zoom == camera_zoom_before_map,
+		"Local-map overlay leaves the gameplay camera profile unchanged")
+	local_map.route_requested.emit()
+	await process_frame
+	check(not local_map.visible and main.world_map.visible,
+		"The current-map panel can hand off to the existing route map")
+	main._action("close")
+	await process_frame
+	check(not main.world_map.visible and local_map._overview_world == null,
+		"Closing map panels releases the current-map snapshot")
 	await _capture("an-khe-runtime.png")
 	var village_spawn: Vector2 = main.player.position
 	main.player.position = blacksmith.position + Vector2(0, 32)

@@ -21,6 +21,7 @@ var language_manager: Variant
 
 @onready var touch_controls: TouchControls = $TouchControls
 @onready var character_panel: CharacterPanel = $CharacterPanel
+@onready var local_map_panel: CurrentMapPanel = $LocalMap
 
 func _ready() -> void:
 	language_manager = get_node_or_null("/root/LanguageManager")
@@ -29,6 +30,9 @@ func _ready() -> void:
 	$WeatherInfo/EffectsToggle.toggled.connect(func(enabled: bool) -> void: weather_flash_reduced_changed.emit(enabled))
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
 	$MapButton.pressed.connect(func() -> void: action_requested.emit("map"))
+	$Minimap.mouse_filter = Control.MOUSE_FILTER_STOP
+	$Minimap.tooltip_text = tr("Bấm hoặc chạm để xem bản đồ khu vực hiện tại")
+	$Minimap.gui_input.connect(_on_minimap_gui_input)
 	$CharacterButton.pressed.connect(func() -> void: action_requested.emit("character"))
 	$SparringButton.text = "Farm"
 	$SparringButton.tooltip_text = "Farm trên map • xem trạng thái máy chủ và đấu tập online"
@@ -74,7 +78,7 @@ func _make_phi_ren_icon() -> Texture2D:
 
 func _process(delta: float) -> void:
 	$ModalShade.visible = $Inventory.visible or $Dock.visible or character_panel.visible
-	touch_controls.set_controls_visible(touch_layout and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible)
+	touch_controls.set_controls_visible(touch_layout and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible and not local_map_panel.visible)
 	if toast_time > 0:
 		toast_time -= delta
 		$Toast.visible = toast_time > 0
@@ -96,7 +100,19 @@ func set_touch_layout(enabled: bool) -> void:
 		$HelpButton.offset_right = 154.0
 		$HelpButton.offset_bottom = -7.0
 	$HelpButton.text = "Hướng dẫn" if enabled else "Hướng dẫn / trạng thái"
-	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible)
+	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible and not local_map_panel.visible)
+
+func _on_minimap_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_event := event as InputEventMouseButton
+		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
+			action_requested.emit("current_map")
+			$Minimap.accept_event()
+	elif event is InputEventScreenTouch:
+		var touch_event := event as InputEventScreenTouch
+		if touch_event.pressed:
+			action_requested.emit("current_map")
+			$Minimap.accept_event()
 
 func notify(message: String) -> void:
 	_last_notification = message

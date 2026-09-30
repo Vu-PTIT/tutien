@@ -19,6 +19,7 @@ const WALK_SPEED := 72.0
 @onready var dock: Panel = $Presentation/HUD/Dock
 @onready var room: LineEdit = $Presentation/HUD/Dock/Room
 @onready var world_map: WorldMapPanel = $Presentation/HUD/WorldMap
+@onready var local_map_panel: CurrentMapPanel = $Presentation/HUD/LocalMap
 @onready var touch_controls: TouchControls = $Presentation/HUD/TouchControls
 @onready var weather_fx = $Presentation/WeatherFX
 var map_world: GameMap
@@ -88,6 +89,10 @@ func _ready() -> void:
 	character_panel.world_zoom_changed.connect(_on_world_zoom_changed)
 	character_panel.profile_updated.connect(hud.apply_profile)
 	touch_controls.action_requested.connect(game_input.request_action)
+	local_map_panel.route_requested.connect(func() -> void:
+		local_map_panel.close_panel()
+		_action("map")
+	)
 	touch_layout_enabled = OS.has_feature("mobile") or character_panel.touch_layout_enabled or OS.get_cmdline_user_args().has("--touch-preview")
 	character_panel.set_touch_layout_enabled(touch_layout_enabled, false)
 	world_map.map_requested.connect(_travel_to_map)
@@ -172,6 +177,7 @@ func _sync_weather_fx_for_map(state: Dictionary = {}) -> void:
 func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	if world_map == null or not world_map.maps_by_id.has(map_id):
 		return false
+	local_map_panel.close_panel()
 	if map_world != null:
 		local_resource_states.merge(map_world.get_resource_tree_states(), true)
 	var data: Dictionary = world_map.maps_by_id[map_id].duplicate(true)
@@ -296,6 +302,7 @@ func _action(action: String) -> void:
 			character_panel.hide()
 			dock.hide()
 			world_map.hide()
+			local_map_panel.close_panel()
 			if service_menu != null:
 				service_menu.hide()
 		"touch_preview":
@@ -308,6 +315,7 @@ func _action(action: String) -> void:
 			elif inventory_panel.visible:
 				inventory_panel.hide()
 			else:
+				local_map_panel.close_panel()
 				character_panel.hide()
 				world_map.hide()
 				dock.hide()
@@ -318,6 +326,7 @@ func _action(action: String) -> void:
 			if character_panel.visible:
 				character_panel.hide()
 			else:
+				local_map_panel.close_panel()
 				inventory_panel.hide()
 				world_map.hide()
 				dock.hide()
@@ -327,6 +336,7 @@ func _action(action: String) -> void:
 				return
 			if service_menu != null:
 				service_menu.hide()
+			local_map_panel.close_panel()
 			if not api.match_id.is_empty():
 				hud.notify("Bản đồ tuyến đóng trong trận online.")
 			elif world_map.visible:
@@ -336,9 +346,23 @@ func _action(action: String) -> void:
 				inventory_panel.hide()
 				dock.hide()
 				world_map.open_map()
+		"current_map":
+			if busy or not api.match_id.is_empty() or map_world == null:
+				return
+			if service_menu != null:
+				service_menu.hide()
+			if local_map_panel.visible:
+				local_map_panel.close_panel()
+			else:
+				world_map.hide()
+				inventory_panel.hide()
+				character_panel.hide()
+				dock.hide()
+				local_map_panel.open_map(map_world, player.position)
 		"dock":
 			if service_menu != null:
 				service_menu.hide()
+			local_map_panel.close_panel()
 			world_map.hide()
 			character_panel.hide()
 			inventory_panel.hide()
@@ -355,7 +379,7 @@ func _action(action: String) -> void:
 		"leave":
 			_leave_match()
 		"attack", "dodge":
-			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible:
+			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 				return
 			if api.snapshot.get("phase", "") == "active":
 				pending_action = "sk_basic" if action == "attack" else "sk_dodge"
@@ -372,7 +396,7 @@ func _action(action: String) -> void:
 				else:
 					_attack_field_mob()
 		"skill_1":
-			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible:
+			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 				return
 			if not api.match_id.is_empty():
 				hud.notify("Phi Nhận hiện dùng được khi săn quái ngoài bản đồ.")
@@ -383,7 +407,7 @@ func _action(action: String) -> void:
 		"interact":
 			if not api.match_id.is_empty():
 				return
-			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible:
+			if inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 				return
 			var target: MapInteractable = map_world.update_interaction_focus(player.position)
 			if target == null:
@@ -500,6 +524,7 @@ func _on_world_zoom_changed(zoom_factor: float) -> void:
 
 func _open_equipment_bag() -> void:
 	character_panel.hide()
+	local_map_panel.close_panel()
 	if not api.match_id.is_empty():
 		hud.notify("Túi đồ bị khóa trong trận online.")
 		return
@@ -508,7 +533,7 @@ func _open_equipment_bag() -> void:
 	inventory_panel.open_equipment()
 
 func _movement() -> Vector2:
-	if busy or inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible:
+	if busy or inventory_panel.visible or character_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 		return Vector2.ZERO
 	return game_input.movement(touch_controls.direction)
 
@@ -532,6 +557,8 @@ func _physics_process(delta: float) -> void:
 	var action_prompt := "J / Chạm • Chặt cây" if nearby_tree else ("J / Chạm • Đánh quái gần nhất" if not nearby_mob.is_empty() else "")
 	hud.set_interaction_prompt(focused.prompt_text() if focused != null else action_prompt)
 	hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, area_name)
+	if local_map_panel.visible:
+		local_map_panel.update_position(player.position, area_name)
 	hud.get_node("Location/State").text = (tr("An toàn • %s") % tr(area_name)) if current_map_id == "m_an_khe" else tr(area_name)
 	if not api.token.is_empty() and not busy:
 		world_sync_clock += delta
@@ -777,6 +804,7 @@ func _connection_lost() -> void:
 
 func _snapshot(value: Dictionary) -> void:
 	snapshot_age = 0.0
+	local_map_panel.close_panel()
 	var phase := str(value.phase)
 	var is_pve := api.match_kind == "pve_son_tru"
 	weather_fx.set_atmosphere_active(false)
