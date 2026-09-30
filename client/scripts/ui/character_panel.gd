@@ -5,6 +5,7 @@ signal inventory_requested
 signal touch_layout_changed(enabled: bool)
 signal world_zoom_changed(zoom_factor: float)
 signal profile_updated(profile: Dictionary)
+signal account_requested
 
 const Visuals = preload("res://scripts/ui/item_visuals.gd")
 const SETTINGS_PATH := "user://game_settings.cfg"
@@ -34,7 +35,7 @@ var selected_skill_id: String = ""
 var preview_mode: bool = true
 var loading: bool = false
 var touch_layout_enabled: bool = false
-var fullscreen_enabled: bool = true
+var fullscreen_enabled: bool = false
 var master_volume: float = 0.8
 var pc_world_zoom_percent: float = PC_WORLD_ZOOM_DEFAULT * 100.0
 var mobile_world_zoom_percent: float = MOBILE_WORLD_ZOOM_DEFAULT * 100.0
@@ -62,6 +63,7 @@ func _ready() -> void:
 	language_selector.add_item("English")
 	language_selector.set_item_metadata(1, "en")
 	language_selector.item_selected.connect(_on_language_selected)
+	$PageHost/SettingsPage/SettingsCard/AccountButton.pressed.connect(func() -> void: account_requested.emit())
 	if language_manager != null:
 		language_manager.locale_changed.connect(_on_language_changed)
 	_load_settings()
@@ -343,7 +345,7 @@ func _load_settings() -> void:
 		touch_layout_enabled = OS.has_feature("mobile")
 		pc_world_zoom_percent = PC_WORLD_ZOOM_DEFAULT * 100.0
 		mobile_world_zoom_percent = MOBILE_WORLD_ZOOM_DEFAULT * 100.0
-	fullscreen_enabled = true
+	fullscreen_enabled = false
 	$PageHost/SettingsPage/SettingsCard/Language.select(0 if language_manager.get_locale() == "vi" else 1)
 	$PageHost/SettingsPage/SettingsCard/Volume.set_value(master_volume)
 	$PageHost/SettingsPage/SettingsCard/VolumeValue.text = "%d%%" % roundi(master_volume * 100.0)

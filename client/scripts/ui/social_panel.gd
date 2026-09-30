@@ -36,8 +36,8 @@ func _ready() -> void:
 	$FriendsTab.pressed.connect(func() -> void: show_page("friends"))
 	$ChatTab.pressed.connect(func() -> void:
 		show_page("chat")
-		if chat_type.is_empty():
-			_open_world_chat()
+		if active_channel_id.is_empty():
+			_set_conversation(chat_type, chat_target_id, chat_target_name)
 	)
 	$GroupsTab.pressed.connect(func() -> void: show_page("groups"))
 	$Refresh.pressed.connect(_refresh_active_page)

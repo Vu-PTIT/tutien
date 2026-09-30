@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="hud"]
 [ext_resource type="Script" path="res://scripts/world_weather_fx.gd" id="weather_fx_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/account_auth_panel.tscn" id="account_auth"]
 
 [node name="Main" type="Node2D"]
 texture_filter = 1
@@ -26,3 +27,5 @@ mouse_filter = 2
 script = ExtResource("weather_fx_script")
 
 [node name="HUD" parent="Presentation" instance=ExtResource("hud")]
+
+[node name="AccountAuthPanel" parent="Presentation" instance=ExtResource("account_auth")]

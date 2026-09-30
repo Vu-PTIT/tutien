@@ -469,6 +469,14 @@ offset_bottom = 101.0
 text = "Toàn màn hình"
 theme_type_variation = &"UIButtonSmall"
 
+[node name="AccountButton" type="Button" parent="PageHost/SettingsPage/SettingsCard"]
+offset_left = 260.0
+offset_top = 75.0
+offset_right = 495.0
+offset_bottom = 101.0
+text = "Tài khoản"
+theme_type_variation = &"UIButtonSmall"
+
 [node name="TouchLayout" type="CheckButton" parent="PageHost/SettingsPage/SettingsCard"]
 offset_left = 12.0
 offset_top = 111.0

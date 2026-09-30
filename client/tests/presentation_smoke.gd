@@ -137,8 +137,12 @@ func _run() -> void:
 	var social: SocialPanel = main.social_panel
 	var map_body: Label = hud.get_node("FieldInfo/Body")
 	var location_title: Label = hud.get_node("Location/Title")
-	check(ProjectSettings.get_setting("display/window/size/mode") == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN,
-		"Desktop project starts in exclusive fullscreen")
+	check(ProjectSettings.get_setting("display/window/size/mode") == DisplayServer.WINDOW_MODE_WINDOWED,
+		"Desktop project starts in a window")
+	check(ProjectSettings.get_setting("display/window/size/window_width_override") == 1280 and
+		ProjectSettings.get_setting("display/window/size/window_height_override") == 720 and
+		not main.character_panel.fullscreen_enabled,
+		"The character settings do not switch the startup window to fullscreen")
 	check(hud.get_node("SocialButton").visible, "Friends and chat have a visible HUD entry point")
 	check(social != null and social.api == main.api, "Social panel shares the authenticated game API")
 	check(social.has_node("PageHost/FriendsPage") and social.has_node("PageHost/ChatPage") and
@@ -148,9 +152,12 @@ func _run() -> void:
 	await process_frame
 	check(social.visible and social.get_node("PageHost/FriendsPage").visible, "HUD button opens the friends screen")
 	check(main._movement() == Vector2.ZERO, "Opening social UI pauses player movement")
+	var chat_generation_before: int = social._conversation_generation
 	social.get_node("ChatTab").pressed.emit()
 	await process_frame
 	check(social.get_node("PageHost/ChatPage").visible, "Social tabs open the chat screen")
+	check(social._conversation_generation > chat_generation_before,
+		"Opening chat starts the default world conversation when no channel is active")
 	social.get_node("GroupsTab").pressed.emit()
 	await process_frame
 	check(social.get_node("PageHost/GroupsPage").visible, "Social tabs open the sect/guild screen")

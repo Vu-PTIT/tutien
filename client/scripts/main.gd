@@ -21,6 +21,7 @@ const WALK_SPEED := 72.0
 @onready var world_map: WorldMapPanel = $Presentation/HUD/WorldMap
 @onready var local_map_panel: CurrentMapPanel = $Presentation/HUD/LocalMap
 @onready var social_panel: SocialPanel = $Presentation/HUD/SocialPanel
+@onready var account_panel: AccountAuthPanel = $Presentation/AccountAuthPanel
 @onready var touch_controls: TouchControls = $Presentation/HUD/TouchControls
 @onready var weather_fx = $Presentation/WeatherFX
 var map_world: GameMap
@@ -33,6 +34,8 @@ var current_map_id: String = "m_an_khe"
 var api: CombatApi
 var user_id: String = ""
 var device_id: String = ""
+var identity_path: String = "user://identity.cfg"
+var current_account_data: Dictionary = {}
 var busy: bool = false
 var backend_connection_attempted: bool = false
 var send_clock: float = 0.0
@@ -81,6 +84,8 @@ func _ready() -> void:
 	api = Api.new()
 	add_child(api)
 	social_panel.set_api(api)
+	account_panel.auth_completed.connect(_on_account_auth_completed)
+	account_panel.continue_offline.connect(_continue_offline)
 	inventory_panel.api = api
 	character_panel.api = api
 	api.snapshot_received.connect(_snapshot)
@@ -90,6 +95,7 @@ func _ready() -> void:
 	character_panel.touch_layout_changed.connect(_on_touch_layout_changed)
 	character_panel.world_zoom_changed.connect(_on_world_zoom_changed)
 	character_panel.profile_updated.connect(hud.apply_profile)
+	character_panel.account_requested.connect(_open_account_panel)
 	touch_controls.action_requested.connect(game_input.request_action)
 	local_map_panel.route_requested.connect(func() -> void:
 		local_map_panel.close_panel()
@@ -120,20 +126,23 @@ func _ready() -> void:
 	boar_sprite.visible = false
 	$Arena.add_child(boar_sprite)
 	$Arena.hide()
-	var identity_path := "user://identity.cfg"
+	identity_path = "user://identity.cfg"
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--guest="):
 			identity_path = "user://identity_" + argument.sha256_text().left(12) + ".cfg"
 	var config := ConfigFile.new()
 	config.load(identity_path)
 	device_id = str(config.get_value("auth", "device_id", ""))
-	if device_id.is_empty():
-		device_id = Crypto.new().generate_random_bytes(24).hex_encode()
-		config.set_value("auth", "device_id", device_id)
-		config.save(identity_path)
+	if not device_id.is_empty():
+		account_panel.configure(api, device_id, touch_layout_enabled)
 	_update_buttons()
-	if not OS.get_cmdline_user_args().has("--no-auto-connect"):
-		_connect_backend.call_deferred()
+	if not OS.get_cmdline_user_args().has("--no-auto-connect") and DisplayServer.get_name() != "headless":
+		if device_id.is_empty():
+			account_panel.open_entry(api, device_id, touch_layout_enabled)
+		else:
+			_connect_backend.call_deferred()
+	else:
+		account_panel.hide()
 
 func _on_language_changed(_locale: String) -> void:
 	if map_world == null or map_world.map_data.is_empty():
@@ -298,6 +307,8 @@ func _travel_to_map(map_id: String, arrival_tiles: Array = []) -> void:
 	_update_buttons()
 
 func _action(action: String) -> void:
+	if account_panel.visible:
+		return
 	match action:
 		"close":
 			inventory_panel.hide()
@@ -529,7 +540,10 @@ func _service_action(action_id: int) -> void:
 		hud.notify("Đã cập nhật túi đồ và linh thạch.")
 
 func _unhandled_input(event: InputEvent) -> void:
-	if game_input.handle_event(event, touch_layout_enabled, room.has_focus() or social_panel.has_text_input_focus()):
+	if account_panel.visible:
+		get_viewport().set_input_as_handled()
+		return
+	if game_input.handle_event(event, touch_layout_enabled, room.has_focus() or social_panel.has_text_input_focus() or account_panel.has_text_input_focus()):
 		get_viewport().set_input_as_handled()
 
 func _on_touch_layout_changed(enabled: bool) -> void:
@@ -553,7 +567,7 @@ func _open_equipment_bag() -> void:
 	inventory_panel.open_equipment()
 
 func _movement() -> Vector2:
-	if busy or inventory_panel.visible or character_panel.visible or social_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
+	if busy or account_panel.visible or inventory_panel.visible or character_panel.visible or social_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 		return Vector2.ZERO
 	return game_input.movement(touch_controls.direction)
 
@@ -886,17 +900,23 @@ func _snapshot(value: Dictionary) -> void:
 				_message_format("Đã nhận %d tu vi và %s.", [int(settlement.get("cultivationXp", 0)), "Da Sơn Trư ×1" if not items.is_empty() else "không có loot thêm"])
 	_update_buttons()
 
-func _connect_backend() -> void:
+func _connect_backend(authenticate_device: bool = true) -> void:
 	if busy:
 		return
 	busy = true
 	backend_connection_attempted = false
 	_update_buttons()
 	_message("Đang kết nối backend…")
-	var result: Dictionary = await api.login_device(device_id)
+	var result: Dictionary = {"ok": true}
+	if authenticate_device:
+		if device_id.is_empty():
+			device_id = _new_device_id()
+			_save_device_id()
+		result = await api.login_device(device_id)
 	if not result.has("error"):
 		result = await api.get_account()
 		if not result.has("error"):
+			current_account_data = result.duplicate(true)
 			user_id = str(result.user.id)
 			var account_name := str(result.user.get("username", ""))
 			character_panel.set_display_name(account_name)
@@ -940,6 +960,39 @@ func _connect_backend() -> void:
 	backend_connection_attempted = true
 	_update_field_combat_controls()
 	_update_buttons()
+
+func _new_device_id() -> String:
+	return Crypto.new().generate_random_bytes(24).hex_encode()
+
+func _save_device_id() -> void:
+	if device_id.is_empty():
+		return
+	var config := ConfigFile.new()
+	config.load(identity_path)
+	config.set_value("auth", "device_id", device_id)
+	config.save(identity_path)
+
+func _on_account_auth_completed(new_device_id: String, account_data: Dictionary) -> void:
+	device_id = new_device_id
+	_save_device_id()
+	current_account_data = account_data.duplicate(true)
+	_connect_backend.call_deferred(false)
+
+func _continue_offline() -> void:
+	account_panel.hide()
+	hud.get_node("Mode").text = "OFFLINE • BẢN XEM THỬ"
+	_message("Đang chơi ngoại tuyến. Tiến trình chưa được đồng bộ với máy chủ.")
+
+func _open_account_panel() -> void:
+	if busy:
+		return
+	if not api.token.is_empty():
+		var result: Dictionary = await api.get_account()
+		if not result.has("error") and result.has("user"):
+			current_account_data = result.duplicate(true)
+		account_panel.open_account(api, device_id, current_account_data, touch_layout_enabled)
+	else:
+		account_panel.open_entry(api, device_id, touch_layout_enabled)
 
 func _create_match() -> void:
 	if busy:

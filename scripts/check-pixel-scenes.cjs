@@ -260,9 +260,14 @@ for(const map of mapCatalog.maps) for(const poi of map.interactables) {
 }
 const projectSettings=read('project.godot');
 assert.ok(projectSettings.includes('window/stretch/scale_mode="fractional"'),
-  'PC fullscreen must use the full display area at non-integer resolutions');
-assert.ok(projectSettings.includes('window/size/mode=4'),
-  'PC game must start in exclusive fullscreen');
+  'Windowed game must stretch cleanly at non-integer resolutions');
+assert.ok(projectSettings.includes('window/size/mode=0') &&
+  projectSettings.includes('window/size/window_width_override=1280') &&
+  projectSettings.includes('window/size/window_height_override=720'),
+  'PC game must start in a 1280x720 window');
+assert.ok(read('scripts/ui/character_panel.gd').includes('var fullscreen_enabled: bool = false') &&
+  read('scripts/ui/character_panel.gd').includes('\tfullscreen_enabled = false'),
+  'Character settings must not force fullscreen on startup');
 assert.ok(read('project.godot').includes('window/size/viewport_width=640'));
 assert.ok(read('scripts/inventory_panel.gd').includes('"operationId": "starter_claim_v1"'));
 assert.ok(read('scripts/inventory_panel.gd').includes('inventory.clear()'));
