@@ -261,8 +261,8 @@ func _set_state(next_state: String, clear_notice: bool = true) -> void:
 				_body.add_child(_make_label(tr("Email: %s") % email, &"UIBody"))
 			_add_action("Đổi tài khoản", _begin_account_switch)
 			_add_action("Đóng", hide)
-		_update_geometry()
-		return
+			_update_geometry()
+			return
 		_:
 			_state = "home"
 			_set_state("home")
