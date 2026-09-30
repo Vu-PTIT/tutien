@@ -36,8 +36,6 @@ jobs:
         run: timeout 90 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/combat_smoke.gd
       - name: Test Sơn Trư PvE encounter against Nakama
         run: timeout 90 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/pve_son_tru_smoke.gd
-      - name: Test online map travel, field gates and farming
-        run: timeout 120 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/world_field_smoke.gd
       - if: failure()
         run: docker compose logs
       - if: always()
@@ -79,10 +77,6 @@ jobs:
         run: |
           timeout 90 /tmp/godot/engine --headless --path client --script res://tests/localization_smoke.gd -- --no-auto-connect 2>&1 | tee /tmp/localization.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/localization.log
-      - name: Offline world weather smoke
-        run: |
-          timeout 90 /tmp/godot/engine --headless --path client --script res://tests/world_weather_smoke.gd -- --no-auto-connect 2>&1 | tee /tmp/weather.log
-          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load' /tmp/weather.log
       - name: Capture actual Godot layout on desktop and touch
         run: |
           mkdir -p /tmp/tutien-previews

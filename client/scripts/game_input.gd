@@ -1,7 +1,6 @@
 class_name GameInput
 extends Node
-## Translate keyboard, mouse and touch into the same gameplay commands.
-## Bindings live in InputMap so later platform profiles can remap them.
+## Translate keyboard and pointer input into shared client actions.
 
 signal action_requested(action: String)
 
@@ -10,21 +9,18 @@ const KEY_BINDINGS := {
 	"move_right": [KEY_D, KEY_RIGHT],
 	"move_up": [KEY_W, KEY_UP],
 	"move_down": [KEY_S, KEY_DOWN],
-	"interact": [KEY_E],
 	"attack": [KEY_J, KEY_Q],
 	"dodge": [KEY_SPACE],
 	"inventory": [KEY_I],
 	"character": [KEY_C],
 	"social": [KEY_G],
-	"map": [KEY_M],
-	"locked": [KEY_1, KEY_2],
-	"skill_1": [KEY_R],
 	"close": [KEY_ESCAPE],
 	"touch_preview": [KEY_F9],
 }
-const COMMANDS := ["inventory", "character", "social", "map", "interact", "attack", "dodge", "locked", "skill_1"]
+const COMMANDS := ["inventory", "character", "social", "attack", "dodge"]
 
-var last_touch_aim := Vector2.RIGHT
+func movement() -> Vector2:
+	return Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
 func _ready() -> void:
 	var needs_mouse_attack := not InputMap.has_action("attack")
@@ -41,14 +37,9 @@ func _ready() -> void:
 		mouse_attack.button_index = MOUSE_BUTTON_LEFT
 		InputMap.action_add_event("attack", mouse_attack)
 
-func movement(touch_direction: Vector2) -> Vector2:
-	return (Input.get_vector("move_left", "move_right", "move_up", "move_down") + touch_direction).limit_length()
-
-func aim(movement_direction: Vector2, touch_enabled: bool, pointer: Vector2, origin: Vector2) -> Vector2:
-	if movement_direction.length_squared() > 0.01:
-		last_touch_aim = movement_direction.normalized()
+func aim(touch_enabled: bool, pointer: Vector2, origin: Vector2) -> Vector2:
 	if touch_enabled:
-		return last_touch_aim
+		return Vector2.RIGHT
 	var pointer_direction := pointer - origin
 	return pointer_direction.normalized() if pointer_direction.length_squared() > 0.01 else Vector2.RIGHT
 

@@ -21,7 +21,7 @@ Android dự kiến joystick trái + nút hành động; chưa là bản client 
 
 `idle / moving / windup / active / recovery / dodging / incapacitated / dead`.
 Cho hủy windup trước active; kỹ năng tiêu linh lực khi server chấp nhận active.
-Không chồng hai active để nhân sát thương; không đổi map/loadout khi đang có tác động combat.
+Không chồng hai active để nhân sát thương; không đổi loadout khi đang có tác động combat.
 Client có thể dự đoán animation nhưng không tự quyết định HP, hit, loot hoặc chết.
 
 ## 3. Sáu hành động MVP
@@ -108,7 +108,7 @@ Luyện Khí có bảng thưởng chuẩn. Tutorial flag và quyền thưởng d
 không chấp nhận `tutorial=true` hoặc `reward=true` từ client.
 
 Cụm quái có mã spawn, generation và encounter duy nhất. Reset HP/thua không thưởng.
-Hồi sinh theo [04](04-world-and-maps.md); rời/vào lại không làm mới quyền thưởng.
+Rời/vào lại không làm mới quyền thưởng.
 Không để boss sinh thêm quái vô hạn để farm XP phụ.
 
 ## 7. Boss chương đầu

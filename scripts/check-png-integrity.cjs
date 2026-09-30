@@ -1,4 +1,4 @@
-// Decode every PNG stream, including assets that a headless map test may not visit.
+// Decode every PNG stream, including assets the minimal client scene does not load.
 const fs = require('node:fs');
 const path = require('node:path');
 const zlib = require('node:zlib');

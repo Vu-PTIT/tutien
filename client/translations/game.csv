@@ -10,8 +10,6 @@ Equipped"
  • %s %d/%d lượt tới mốc bảo đảm, • %s %d/%d lượt tới mốc bảo đảm, • %s %d/%d kills until guaranteed drop
  • +%d XP, • +%d XP, • +%d XP
  • Chưa mở, • Chưa mở, • Locked
- • Rời trận để quay lại map hiện tại., • Rời trận để quay lại map hiện tại., • Leave the match to return to the current map.
- • dùng khi săn quái trên bản đồ., • dùng khi săn quái trên bản đồ., • use while hunting in the field.
  • đang ở, • đang ở, • Current location
 %d tu vi • %d HP • %d đá • %d/24 ô,%d tu vi • %d HP • %d đá • %d/24 ô,%d Qi • %d HP • %d Spirit Stones • %d/24 slots
 "%s
@@ -34,7 +32,6 @@ Connections: %s"
 %s +%d,%s +%d,%s +%d
 %s đang mặc,%s đang mặc,%s equipped
 %s • %s,%s • %s,%s • %s
-%s • %s. Ngày trong game kéo dài 24 phút; thời tiết vẫn tiếp diễn cả ban đêm.,%s • %s. Ngày trong game kéo dài 24 phút; thời tiết vẫn tiếp diễn cả ban đêm.,"%s • %s. One in-game day lasts 24 minutes, and weather continues through the night."
 %s • Chưa trang bị,%s • Chưa trang bị,%s • Not equipped
 %s → %s,%s → %s,%s → %s
 %sĐã gây %d sát thương lên %s.,%sĐã gây %d sát thương lên %s.,%sDealt %d damage to %s.
@@ -47,31 +44,19 @@ Connections: %s"
 80%,80%,80%
 A blocker is between you and this object,Có vật cản giữa bạn và đối tượng này.,An obstacle is between you and this object.
 A previous reward is waiting,Có một phần thưởng đang chờ nhận.,A previous reward is waiting to be claimed.
-AN KHÊ,AN KHÊ,AN KHÊ
-AN KHÊ • KHU AN TOÀN,AN KHÊ • KHU AN TOÀN,AN KHÊ • SAFE VILLAGE
-An Khê,An Khê,An Khê
-"An Khê
-Hub","An Khê
-Hub","An Khê
-Safe hub"
-"An Khê  (10, 7)","An Khê  (10, 7)","An Khê  (10, 7)"
-"An Khê 48×36 tile, có dịch vụ làng, điểm tương tác và cổng sang Trúc Âm. Gameplay dùng TileMapLayer 32 px và prop 128 px.","An Khê 48×36 tile, có dịch vụ làng, điểm tương tác và cổng sang Trúc Âm. Gameplay dùng TileMapLayer 32 px và prop 128 px.","An Khê is a 48×36-tile village with services, interaction points, and a gate to Trúc Âm. Gameplay uses 32 px TileMapLayers and 128 px props."
 An toàn • %s,An toàn • %s,Safe • %s
 Asset storage busy or unavailable; retry with the same operation ID,Kho vật phẩm đang bận hoặc không khả dụng; hãy thử lại với cùng mã thao tác.,Asset storage is busy or unavailable; retry with the same operation ID.
 Attack is recovering,Đòn đánh đang hồi chiêu.,Attack is recovering.
 BAN NGÀY,BAN NGÀY,DAYTIME
 BAN ĐÊM,BAN ĐÊM,NIGHT
-"Ba khu: Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư. Sơn Trư và Độc Chu xuất hiện trực tiếp trên đường rừng; chiến đấu ngay trong map.","Ba khu: Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư. Sơn Trư và Độc Chu xuất hiện trực tiếp trên đường rừng; chiến đấu ngay trong map.","Three areas: Riverside, Deep Bamboo Grove, and Boar Grounds. Boars and venom spiders roam the forest paths and can be fought on the map."
 Backend chưa phản hồi. Bật Docker rồi chạy: docker compose up --build -d,Backend chưa phản hồi. Bật Docker rồi chạy: docker compose up --build -d,"The backend did not respond. Start Docker, then run: docker compose up --build -d"
 Bound items cannot be discarded,Không thể bỏ vật phẩm nhiệm vụ.,Bound items cannot be discarded.
 Bound quest items cannot be traded or crafted,Không thể giao dịch hoặc chế tạo bằng vật phẩm nhiệm vụ.,Bound quest items cannot be traded or crafted.
 Buồng Cân Mạch,Buồng Cân Mạch,Meridian Balance Chamber
 BÃI SƠN TRƯ,BÃI SƠN TRƯ,BOAR GROUNDS
 BÌNH MINH,BÌNH MINH,DAWN
-Bà Sâm: Dòng nước ở Ven Suối yếu dần. Mang Mạch Bàn theo và quan sát trước khi tiến sâu.,Bà Sâm: Dòng nước ở Ven Suối yếu dần. Mang Mạch Bàn theo và quan sát trước khi tiến sâu.,Ba Sam: The stream in Riverside is weakening. Bring the Meridian Compass and investigate before going deeper.
 Bài luyện phàm nhân hoàn tất • không có XP hoặc loot lặp.,Bài luyện phàm nhân hoàn tất • không có XP hoặc loot lặp.,Mortal training complete • no repeat XP or loot.
 Bàn Tĩnh Tâm,Bàn Tĩnh Tâm,Stillness Shrine
-Bàn cân mạch,Bàn cân mạch,Meridian Balance Table
 Bán da Sơn Trư — 3 linh thạch,Bán da Sơn Trư — 3 linh thạch,Sell Boar Hide — 3 Spirit Stones
 Bãi Sơn Trư,Bãi Sơn Trư,Boar Grounds
 Bãi săn • Sơn Trư và Độc Chu,Bãi săn • Sơn Trư và Độc Chu,Hunting grounds • Boars and venom spiders
@@ -84,10 +69,6 @@ Bạn đang ở khu vực này.,Bạn đang ở khu vực này.,You are already 
 Bạn đã gục ngã. Sơn Trư sẽ trở lại sau một lát.,Bạn đã gục ngã. Sơn Trư sẽ trở lại sau một lát.,You have fallen. The boar will return shortly.
 BẢN XEM THỬ • OFFLINE,BẢN XEM THỬ • OFFLINE,PREVIEW • OFFLINE
 BẢN XEM THỬ • OFFLINE • KHÔNG PHẢI DỮ LIỆU TÀI KHOẢN,BẢN XEM THỬ • OFFLINE • KHÔNG PHẢI DỮ LIỆU TÀI KHOẢN,PREVIEW • OFFLINE • NOT ACCOUNT DATA
-BẢN ĐỒ TUYẾN  •  AN KHÊ → TRÚC ÂM → THẠCH CẠN → CỔ TỈNH,BẢN ĐỒ TUYẾN  •  AN KHÊ → TRÚC ÂM → THẠCH CẠN → CỔ TỈNH,WORLD ROUTE  •  AN KHÊ → TRÚC ÂM → THẠCH CẠN → CỔ TỈNH
-Bản đồ tuyến đóng trong trận online.,Bản đồ tuyến đóng trong trận online.,The world map is unavailable during online matches.
-Bảng tin An Khê,Bảng tin An Khê,An Khê Notice Board
-Bảng tin: chuẩn bị thuốc trước khi qua cổng Bắc tới đường săn Trúc Âm.,Bảng tin: chuẩn bị thuốc trước khi qua cổng Bắc tới đường săn Trúc Âm.,Notice: Prepare medicine before taking the north gate to the Trúc Âm hunting grounds.
 Bảng trận Nhà Trận,Bảng trận Nhà Trận,Formation Board
 Bỏ %d,Bỏ %d,Discard %d
 Bỏ %s ×%d? Hành động này không thể hoàn tác.,Bỏ %s ×%d? Hành động này không thể hoàn tác.,Discard %s ×%d? This action cannot be undone.
@@ -96,17 +77,9 @@ Bụi linh lực kết tinh.,Bụi linh lực kết tinh.,Crystallized spiritual
 CHƯA MỞ KHÓA,CHƯA MỞ KHÓA,LOCKED
 CHƯA TẢI ĐƯỢC • %s,CHƯA TẢI ĐƯỢC • %s,COULD NOT LOAD • %s
 Cam Lộ,Cam Lộ,Sweetdew Herb
-Cam Lộ mọc gần dòng nước. Điểm thu thập đang ở chế độ xem thử; chưa cấp vật phẩm.,Cam Lộ mọc gần dòng nước. Điểm thu thập đang ở chế độ xem thử; chưa cấp vật phẩm.,Sweetdew Herbs grow near the stream. This gathering point is a preview and does not grant items yet.
 Character data requires review; no assets were changed,Dữ liệu nhân vật cần được kiểm tra; không có vật phẩm nào bị thay đổi.,Character data needs review; no items were changed.
 Character storage busy or unavailable; retry,Bộ lưu nhân vật đang bận hoặc không khả dụng; hãy thử lại.,Character storage is busy or unavailable; try again.
-Chuyển map chưa được máy chủ xác nhận: %s,Chuyển map chưa được máy chủ xác nhận: %s,The server did not confirm the map change: %s
 Chuẩn bị đấu tập…,Chuẩn bị đấu tập…,Preparing sparring…
-"Chuẩn bị đồ, hồi phục.
-Cổng Bắc → Trúc Âm.","Chuẩn bị đồ, hồi phục.
-Cổng Bắc → Trúc Âm.","Prepare your gear and recover.
-North Gate → Trúc Âm."
-Chào mừng đến An Khê. Nhấn I để xem túi đồ.,Chào mừng đến An Khê. Nhấn I để xem túi đồ.,Welcome to An Khê. Press I to open your inventory.
-Chìa khóa Cổ Tỉnh,Chìa khóa Cổ Tỉnh,Ancient Well Key
 Chưa có kỹ năng,Chưa có kỹ năng,No skill available
 Chưa có mô tả.,Chưa có mô tả.,No description available.
 Chưa có quái trong tầm đánh. Hãy lại gần một Sơn Trư hoặc Độc Chu.,Chưa có quái trong tầm đánh. Hãy lại gần một Sơn Trư hoặc Độc Chu.,No enemies are in range. Move closer to a boar or venom spider.
@@ -116,9 +89,7 @@ Chưa mở khóa,Chưa mở khóa,Locked
 Chưa rõ,Chưa rõ,Unknown
 Chưa trang bị được • %s,Chưa trang bị được • %s,Could not equip • %s
 Chưa xác nhận. Hãy tải lại túi trước khi thử lại.,Chưa xác nhận. Hãy tải lại túi trước khi thử lại.,Not confirmed. Refresh your inventory before trying again.
-Chưa đồng bộ được vị trí trước khi chuyển map.,Chưa đồng bộ được vị trí trước khi chuyển map.,Could not sync your position before changing maps.
 Chưa đồng bộ được vị trí với máy chủ.,Chưa đồng bộ được vị trí với máy chủ.,Could not sync your position with the server.
-Chưa đồng bộ được vị trí để tương tác.,Chưa đồng bộ được vị trí để tương tác.,Could not sync your position to interact.
 "Chặt
 Đánh","Chặt
 Đánh","Chop
@@ -135,21 +106,12 @@ Crop is not ready to harvest,Cây trồng chưa đến lúc thu hoạch.,This cr
 Cài đặt,Cài đặt,Settings
 Cài đặt lưu trên thiết bị này. Bố cục cảm ứng cũng có thể đổi bằng F9.,Cài đặt lưu trên thiết bị này. Bố cục cảm ứng cũng có thể đổi bằng F9.,Settings are saved on this device. You can also toggle touch controls with F9.
 Các vết nứt tập trung quanh chân trụ. Cơ chế đổi dòng linh mạch chưa được nối.,Các vết nứt tập trung quanh chân trụ. Cơ chế đổi dòng linh mạch chưa được nối.,Cracks gather around the pillar's base. The meridian flow switch is not implemented yet.
-Các vết sáng cho biết hướng phòng thủ của Thạch Vệ. Encounter chưa được kết nối.,Các vết sáng cho biết hướng phòng thủ của Thạch Vệ. Encounter chưa được kết nối.,The glowing marks show the Stone Warden's guard direction. Its encounter is not connected yet.
 "Cây đổ xuống, chỉ còn lại gốc.","Cây đổ xuống, chỉ còn lại gốc.","The tree falls, leaving only its stump."
 Công kích,Công kích,Attack
 Công kích • %d,Công kích • %d,Attack • %d
 Công kích • 16,Công kích • 16,Attack • 16
 Cảnh giới • %s,Cảnh giới • %s,Realm • %s
 Cảnh giới • Phàm nhân,Cảnh giới • Phàm nhân,Realm • Mortal
-CỔ TỈNH • SẮP MỞ,CỔ TỈNH • SẮP MỞ,ANCIENT WELL • COMING SOON
-Cổ Tỉnh,Cổ Tỉnh,Ancient Well
-"Cổ Tỉnh
-5 phòng","Cổ Tỉnh
-5 phòng","Ancient Well
-5 chambers"
-Cổng đường Trúc Âm,Cổng đường Trúc Âm,Trúc Âm Road Gate
-Cửa Cổ Tỉnh,Cửa Cổ Tỉnh,Ancient Well Entrance
 Cửa Giếng,Cửa Giếng,Well Entrance
 Da Sơn Trư,Da Sơn Trư,Boar Hide
 Da Sơn Trư ×1,Da Sơn Trư ×1,Boar Hide ×1
@@ -157,19 +119,14 @@ Da thú dùng chế tác.,Da thú dùng chế tác.,Animal hide used for craftin
 Discard must identify one inventory slot,Hãy chọn một ô túi đồ để bỏ vật phẩm.,Select one inventory slot to discard.
 Dán mã phòng tại đây,Dán mã phòng tại đây,Enter a room code here
 Dò Bàn Cân Mạch,Dò Bàn Cân Mạch,Scan the Meridian Balance Table
-Dò Mạch Bàn,Dò Mạch Bàn,Use the Meridian Compass
 Dò dấu linh mạch và ghi nhận dấu nước trong nhiệm vụ.,Dò dấu linh mạch và ghi nhận dấu nước trong nhiệm vụ.,Trace meridian paths and record water signs during quests.
-Dò dấu nước,Dò dấu nước,Scan water traces
 Dùng / trang bị,Dùng / trang bị,Use / Equip
 Dùng trong Túi đồ để hồi tối đa 40 HP.,Dùng trong Túi đồ để hồi tối đa 40 HP.,Use from your inventory to restore up to 40 HP.
 Dùng • +40 HP,Dùng • +40 HP,Use • +40 HP
 Dược liệu Cam Lộ,Dược liệu Cam Lộ,Sweetdew Herb
 Dược liệu bồi bổ linh khí.,Dược liệu bồi bổ linh khí.,Herb that restores spiritual energy.
 Dược liệu thanh tâm.,Dược liệu thanh tâm.,A calming herb.
-DẤU NƯỚC LẠ,DẤU NƯỚC LẠ,STRANGE WATER TRACES
 Dấu móng còn mới. Sơn Trư đang đi lại đâu đó trong Bãi Sơn Trư.,Dấu móng còn mới. Sơn Trư đang đi lại đâu đó trong Bãi Sơn Trư.,The hoofprints are fresh. A boar is roaming somewhere in Boar Grounds.
-Dấu nước phía tây,Dấu nước phía tây,Western Water Trace
-Dấu nước phía đông,Dấu nước phía đông,Eastern Water Trace
 Dấu vết Sơn Trư,Dấu vết Sơn Trư,Boar Tracks
 Dấu vết này khớp với mẫu phía tây.,Dấu vết này khớp với mẫu phía tây.,This trace matches the western sample.
 Dẫn khí,Dẫn khí,Qi Channeling
@@ -179,8 +136,6 @@ Dụng cụ dò linh mạch.,Dụng cụ dò linh mạch.,A tool for tracing spi
 DỮ LIỆU NHÂN VẬT • ĐÃ ĐỒNG BỘ TỪ MÁY CHỦ,DỮ LIỆU NHÂN VẬT • ĐÃ ĐỒNG BỘ TỪ MÁY CHỦ,CHARACTER DATA • SYNCED FROM SERVER
 E,E,E
 E / Chạm  •  %s,E / Chạm  •  %s,E / Tap  •  %s
-E / chạm: tương tác với điểm gần nhất,E / chạm: tương tác với điểm gần nhất,E / Tap: interact with the nearest point
-Encounter kết thúc • rời bãi để quay lại map.,Encounter kết thúc • rời bãi để quay lại map.,Encounter ended • leave the grounds to return to the map.
 Equip and learn this skill before using it,Hãy học và trang bị kỹ năng này trước khi sử dụng.,Equip and learn this skill before using it.
 Equipment instance is not in inventory,Trang bị này không có trong túi đồ.,This equipment is not in your inventory.
 Expected operationId and instanceId only,Thiếu mã thao tác hoặc mã vật phẩm trang bị.,Expected an operation ID and item instance.
@@ -190,11 +145,8 @@ Expected targetId and optional skillId only,Thiếu mã mục tiêu hoặc mã k
 "Expected x, y and positive integer seq",Thiếu tọa độ hoặc số thứ tự vị trí hợp lệ.,"Expected x, y, and a positive sequence number."
 FX,FX,FX
 Farm,Săn quái,Hunt
-Farm trên map • xem trạng thái máy chủ và đấu tập online,Farm trên map • xem trạng thái máy chủ và đấu tập online,Field hunt • check server status or spar online
-Gate destination requires review,Điểm đến của cổng cần được kiểm tra.,Gate destination needs review.
 Ghi chép của người trong làng.,Ghi chép của người trong làng.,A villager's notes.
 Gieo Hạt Cam Lộ ở ô 1,Gieo Hạt Cam Lộ ở ô 1,Plant a Sweetdew Seed in plot 1
-Giảm nháy sáng và âm thanh sấm sét,Giảm nháy sáng và âm thanh sấm sét,Reduce lightning flashes and thunder sounds
 "Gầm 0,75 giây • khóa hướng
 Né ngang rồi phản công
 Luyện Khí nhận XP + da","Gầm 0,75 giây • khóa hướng
@@ -202,18 +154,14 @@ Né ngang rồi phản công
 Luyện Khí nhận XP + da","Roar windup: 0.75 sec • locks direction
 Dodge sideways, then counterattack
 Qi Refining grants XP + hide"
-Gặp Bà Sâm tại hiệu thuốc An Khê.,Gặp Bà Sâm tại hiệu thuốc An Khê.,Meet Ba Sam at the An Khê apothecary.
 HOÀNG HÔN,HOÀNG HÔN,DUSK
-Hai dấu nước đã được đối chiếu. Trở về An Khê để dẫn khí.,Hai dấu nước đã được đối chiếu. Trở về An Khê để dẫn khí.,The two water traces match. Return to An Khê to channel your qi.
 "Hai khu: Ngoại Vi và Mỏ Cũ. Lối mỏ, vách đá và trụ chuyển dòng là blocker prototype; chưa có quái hoặc điều kiện quest phía server.","Hai khu: Ngoại Vi và Mỏ Cũ. Lối mỏ, vách đá và trụ chuyển dòng là blocker prototype; chưa có quái hoặc điều kiện quest phía server.","Two areas: Outskirts and Old Mine. Mine paths, cliffs, and the flow pillar are prototype blockers; server enemies and quest conditions are not implemented yet."
 Health is already full,Sinh lực đã đầy.,Health is already full.
 Hiện nút điều khiển cảm ứng,Hiện nút điều khiển cảm ứng,Show touch controls
-Hiệu thuốc Bà Sâm,Hiệu thuốc Bà Sâm,Ba Sam's Apothecary
 Hoàn thành nhiệm vụ để mở kỹ năng.,Hoàn thành nhiệm vụ để mở kỹ năng.,Complete a quest to unlock this skill.
 Hub an toàn • làng khởi đầu,Hub an toàn • làng khởi đầu,Safe hub • starting village
 HÀNH TRÌNH TU LUYỆN BẮT ĐẦU,HÀNH TRÌNH TU LUYỆN BẮT ĐẦU,THE CULTIVATION JOURNEY BEGINS
 Hành Lang Rễ,Hành Lang Rễ,Root Corridor
-Hãy gặp Lục Vi để nhận Mạch Bàn trước.,Hãy gặp Lục Vi để nhận Mạch Bàn trước.,Meet Luc Vi to get the Meridian Compass first.
 Hãy kết nối tài khoản để lưu bộ kỹ năng.,Hãy kết nối tài khoản để lưu bộ kỹ năng.,Connect an account to save your skill loadout.
 Hòa,Hòa,Draw
 HƠI THỞ ĐẦU TIÊN,HƠI THỞ ĐẦU TIÊN,FIRST BREATH
@@ -245,7 +193,6 @@ Khám phá • chưa mở,Khám phá • chưa mở,Exploration • locked
 Không có mục tiêu nhiệm vụ mới tại điểm này.,Không có mục tiêu nhiệm vụ mới tại điểm này.,No new quest objective here.
 Không lưu được cài đặt trên thiết bị này.,Không lưu được cài đặt trên thiết bị này.,Could not save settings on this device.
 Không thể bỏ vật phẩm: %s,Không thể bỏ vật phẩm: %s,Could not discard item: %s
-Không thể chuyển map trong đấu tập.,Không thể chuyển map trong đấu tập.,You cannot change maps during sparring.
 Không thể dùng vật phẩm: %s,Không thể dùng vật phẩm: %s,Could not use item: %s
 Không tải được túi: %s,Không tải được túi: %s,Could not load inventory: %s
 Khảo sát dược liệu,Khảo sát dược liệu,Survey herbs
@@ -269,7 +216,6 @@ KỸ NĂNG ĐANG TRANG BỊ,KỸ NĂNG ĐANG TRANG BỊ,EQUIPPED SKILL
 KỸ NĂNG ĐÃ BIẾT,KỸ NĂNG ĐÃ BIẾT,KNOWN SKILLS
 Kỹ năng,Kỹ năng,Skill
 Kỹ năng hỗ trợ,Kỹ năng hỗ trợ,Support skill
-"Kỹ năng hỗ trợ • tự dùng trong nhiệm vụ, không chiếm ô R.","Kỹ năng hỗ trợ • tự dùng trong nhiệm vụ, không chiếm ô R.",Support skill • used automatically in quests; does not occupy the R slot.
 Kỹ năng sẽ xuất hiện khi nhân vật học được.,Kỹ năng sẽ xuất hiện khi nhân vật học được.,Skills will appear here when learned.
 LUYỆN KHÍ • %d,LUYỆN KHÍ • %d,QI REFINING • %d
 Learn this skill before equipping it,Hãy học kỹ năng này trước khi trang bị.,Learn this skill before equipping it.
@@ -278,51 +224,23 @@ Linh thạch limit reached,Đã đạt giới hạn linh thạch.,Spirit Stone l
 Linh thạch • %d,Linh thạch • %d,Spirit Stones • %d
 Linh thạch • 0,Linh thạch • 0,Spirit Stones • 0
 Linh thảo dùng trong luyện đan.,Linh thảo dùng trong luyện đan.,Herb used in alchemy.
-Linh điền • chưa mở,Linh điền • chưa mở,Spirit field • locked
 Luyện Hồi Nguyên Hoàn — 2 Cam Lộ + 1 nước + 2 linh thạch,Luyện Hồi Nguyên Hoàn — 2 Cam Lộ + 1 nước + 2 linh thạch,Brew Rejuvenation Pill — 2 Sweetdew Herbs + 1 Water + 2 Spirit Stones
 Luyện Khí • tầng %d,Luyện Khí • tầng %d,Qi Refining • Stage %d
 Luyện đan • chưa mở,Luyện đan • chưa mở,Alchemy • locked
 Làm mới,Làm mới,Refresh
 Làng khởi đầu • an toàn,Làng khởi đầu • an toàn,Starting village • safe
 Lò rèn Đỗ Khê,Lò rèn Đỗ Khê,Do Khe Forge
-Lò rèn Đỗ Khê: quặng Thạch Cạn sẽ dùng cho vũ khí. Giao dịch và chế tạo chưa kết nối.,Lò rèn Đỗ Khê: quặng Thạch Cạn sẽ dùng cho vũ khí. Giao dịch và chế tạo chưa kết nối.,Do Khe Forge: Thạch Cạn ore will be used for weapons. Trading and crafting are not connected yet.
-Lối chuyển map chưa có điểm đến.,Lối chuyển map chưa có điểm đến.,This gate has no destination yet.
-Lối rút về Thạch Cạn,Lối rút về Thạch Cạn,Exit to Thạch Cạn
-Lối sang Thạch Cạn,Lối sang Thạch Cạn,Path to Thạch Cạn
-Lối sang Thạch Cạn chưa mở trong phần chơi hiện tại.,Lối sang Thạch Cạn chưa mở trong phần chơi hiện tại.,The path to Thạch Cạn is not open in this chapter.
-Lục Vi giao Mạch Bàn. Hãy dò hai dấu nước ở Ven Suối.,Lục Vi giao Mạch Bàn. Hãy dò hai dấu nước ở Ven Suối.,Luc Vi gave you the Meridian Compass. Scan the two water traces in Riverside.
-Lục Vi — người dẫn đường,Lục Vi — người dẫn đường,Luc Vi — Guide
-Lục Vi: Dòng nước ở Ven Suối có hai dấu bất thường. Cầm Mạch Bàn rồi dò cả hai.,Lục Vi: Dòng nước ở Ven Suối có hai dấu bất thường. Cầm Mạch Bàn rồi dò cả hai.,Luc Vi: The Riverside stream has two unusual traces. Take the Meridian Compass and scan both.
-"Mang Mạch Bàn tới Trúc Âm, dò hai dấu nước. (%d/2)","Mang Mạch Bàn tới Trúc Âm, dò hai dấu nước. (%d/2)",Take the Meridian Compass to Trúc Âm and scan both water traces. (%d/2)
-Map [M],Bản đồ [M],Map [M]
-Map is not reachable,Không thể đi tới bản đồ này.,This map is not reachable.
-"Map đã có tuyến khám phá.
-Quái, boss và loot farm sẽ được nối sau.","Map đã có tuyến khám phá.
-Quái, boss và loot farm sẽ được nối sau.","The exploration route is ready.
-Enemies, bosses, and farming loot will be added later."
-Map đích chưa sẵn sàng.,Map đích chưa sẵn sàng.,The destination map is not ready yet.
 Monster is down; wait for it to respawn,Quái vật đã bị hạ; hãy đợi nó xuất hiện lại.,This monster is down; wait for it to return.
-Move closer to interact,Hãy đến gần hơn để tương tác.,Move closer to interact.
 Move closer to the monster before attacking,Hãy đến gần quái vật hơn trước khi tấn công.,Move closer to the monster before attacking.
 Move to the matching village service before using it,Hãy đến đúng dịch vụ trong làng để sử dụng vật phẩm này.,Move to the correct village service to use this.
 Mua Hạt Cam Lộ — 3 linh thạch,Mua Hạt Cam Lộ — 3 linh thạch,Buy Sweetdew Seed — 3 Spirit Stones
 Mua Hồi Nguyên Hoàn — 8 linh thạch,Mua Hồi Nguyên Hoàn — 8 linh thạch,Buy Rejuvenation Pill — 8 Spirit Stones
 Mua nước — 1 linh thạch,Mua nước — 1 linh thạch,Buy Water — 1 Spirit Stone
-Máy chủ trả về trạng thái bản đồ không hợp lệ.,Máy chủ trả về trạng thái bản đồ không hợp lệ.,The server returned an invalid map state.
 Máy chủ trả về trạng thái chiến đấu không hợp lệ.,Máy chủ trả về trạng thái chiến đấu không hợp lệ.,The server returned an invalid combat state.
 Máy chủ trả về vị trí thế giới không hợp lệ.,Máy chủ trả về vị trí thế giới không hợp lệ.,The server returned an invalid world position.
 Máy chủ trả về điểm đến không hợp lệ.,Máy chủ trả về điểm đến không hợp lệ.,The server returned an invalid destination.
-Máy chủ đã xác nhận tương tác.,Máy chủ đã xác nhận tương tác.,The server confirmed the interaction.
 Máy chủ đã xử lý đòn đánh.,Máy chủ đã xử lý đòn đánh.,The server processed the attack.
-MƯA,MƯA,RAIN
-MƯA GIÔNG,MƯA GIÔNG,THUNDERSTORM
-Mạch Bàn,Mạch Bàn,Meridian Compass
-Mạch Bàn cho thấy hai nguồn có nhịp khác nhau. Lựa chọn cơ chế chưa được lưu.,Mạch Bàn cho thấy hai nguồn có nhịp khác nhau. Lựa chọn cơ chế chưa được lưu.,The Meridian Compass shows two sources with different rhythms. The mechanism choice is not saved yet.
-Mạch Bàn phát hiện một lối tắt men theo sườn rừng. Trạng thái mở lối chưa được lưu.,Mạch Bàn phát hiện một lối tắt men theo sườn rừng. Trạng thái mở lối chưa được lưu.,The Meridian Compass reveals a shortcut along the forest ridge. The shortcut state is not saved yet.
-Mạch Bàn tại lối rẽ,Mạch Bàn tại lối rẽ,Meridian Compass at the fork
-Mạch Bàn • Truy Dấu,Mạch Bàn • Truy Dấu,Meridian Compass • Trace
 Mạch quặng lam,Mạch quặng lam,Blue Ore Vein
-Mạch quặng lam có thể dùng ở lò rèn An Khê. Khai thác chưa cấp vật phẩm trong bản thử.,Mạch quặng lam có thể dùng ở lò rèn An Khê. Khai thác chưa cấp vật phẩm trong bản thử.,Blue ore can be used at the An Khê forge. Mining does not grant items in this preview.
 Mảnh trận,Mảnh trận,Formation Shard
 Mảnh vỡ trận pháp.,Mảnh vỡ trận pháp.,A fragment of a formation.
 MẤT KẾT NỐI,MẤT KẾT NỐI,DISCONNECTED
@@ -333,13 +251,10 @@ Mẫu nước,Mẫu nước,Water Sample
 Mẫu nước cần khảo sát.,Mẫu nước cần khảo sát.,Water sample to be surveyed.
 Mẫu • %d / 24 ô,Mẫu • %d / 24 ô,Preview • %d / 24 slots
 Mỏ Cũ,Mỏ Cũ,Old Mine
-Mộc Tâm Thủ Trận bảo vệ linh mạch. Kết cục hạ hoặc niêm phong sẽ được xử lý trong encounter của chương.,Mộc Tâm Thủ Trận bảo vệ linh mạch. Kết cục hạ hoặc niêm phong sẽ được xử lý trong encounter của chương.,The Woodheart Warden protects the meridian. Defeating or sealing it will be resolved in this chapter's encounter.
 Một nơi yên tĩnh để thực hành dẫn khí sau khi khảo sát xong.,Một nơi yên tĩnh để thực hành dẫn khí sau khi khảo sát xong.,A quiet place to practice qi channeling after the survey.
 Một vệt khoáng chất mỏng bám dưới mặt nước.,Một vệt khoáng chất mỏng bám dưới mặt nước.,A thin mineral trace clings beneath the water.
-Mở Nhân vật > Kỹ năng để trang bị Phi Nhận vào ô R.,Mở Nhân vật > Kỹ năng để trang bị Phi Nhận vào ô R.,Open Character > Skills to equip Flying Blade in the R slot.
 Mở Túi đồ để chọn %s,Mở Túi đồ để chọn %s,Open Inventory to choose %s
 Mở Túi đồ để trang bị,Mở Túi đồ để trang bị,Open Inventory to equip
-Mở qua nhiệm vụ khảo sát tại Trúc Âm.,Mở qua nhiệm vụ khảo sát tại Trúc Âm.,Unlocked through the survey quest in Trúc Âm.
 Mở sau nghi thức Hơi Thở Đầu Tiên.,Mở sau nghi thức Hơi Thở Đầu Tiên.,Unlocked after the First Breath ritual.
 NHÂN VẬT,NHÂN VẬT,CHARACTER
 Ngoại Vi,Ngoại Vi,Outskirts
@@ -356,22 +271,17 @@ Not enough linh thạch,Không đủ linh thạch.,Not enough Spirit Stones.
 Not enough linh thạch for crafting,Không đủ linh thạch để chế tạo.,Not enough Spirit Stones to craft this.
 Né,Né,Dodge
 Nói chuyện,Nói chuyện,Talk
-"Năm phòng cố định: Cửa Giếng, Hành Lang Rễ, Buồng Cân Mạch, Nhà Trận và Tâm Giếng. Mở chỉ để test bố cục; quyền vào thật cần server xác nhận.","Năm phòng cố định: Cửa Giếng, Hành Lang Rễ, Buồng Cân Mạch, Nhà Trận và Tâm Giếng. Mở chỉ để test bố cục; quyền vào thật cần server xác nhận.","Five fixed chambers: Well Entrance, Root Corridor, Meridian Balance Chamber, Formation Hall, and Well Heart. This map is open for layout testing only; the server must authorize entry."
 Nước,Nước,Water
 Nước tưới linh thảo.,Nước tưới linh thảo.,Water for irrigating spirit herbs.
 NẮNG,NẮNG,SUNNY
-ONLINE • FARM TRÊN MAP,ONLINE • FARM TRÊN MAP,ONLINE • FIELD HUNT
-ONLINE • FARM TRÊN MAP • server xác nhận,ONLINE • FARM TRÊN MAP • server xác nhận,ONLINE • FIELD HUNT • SERVER CONFIRMED
 ONLINE • SERVER XÁC NHẬN,ONLINE • SERVER XÁC NHẬN,ONLINE • SERVER CONFIRMED
 ONLINE • ĐẤU TẬP VÀ SĂN QUÁI,ONLINE • ĐẤU TẬP VÀ SĂN QUÁI,ONLINE • SPARRING AND HUNTING
 Online,Trực tuyến,Online
 Only entityId is accepted,Chỉ chấp nhận mã đối tượng.,Only an entity ID is accepted.
-Only preferredMapId is accepted,Chỉ chấp nhận mã bản đồ ưu tiên.,Only a preferred map ID is accepted.
 Operation ID already used for another reward,Mã thao tác này đã được dùng cho phần thưởng khác.,This operation ID was already used for another reward.
 PHÀM NHÂN,PHÀM NHÂN,MORTAL
 Pending settlement requires review,Phần thưởng đang chờ cần được kiểm tra.,Pending reward needs review.
 Phi Nhận,Phi Nhận,Flying Blade
-Phi Nhận hiện dùng được khi săn quái ngoài bản đồ.,Phi Nhận hiện dùng được khi săn quái ngoài bản đồ.,Flying Blade is available while hunting enemies in the field.
 Phàm nhân,Phàm nhân,Mortal
 Phòng ngự,Phòng ngự,Defense
 Phòng ngự • %d,Phòng ngự • %d,Defense • %d
@@ -379,10 +289,8 @@ Phòng ngự • 5,Phòng ngự • 5,Defense • 5
 "Phóng phi nhận vào mục tiêu gần, tăng 18 sát thương.","Phóng phi nhận vào mục tiêu gần, tăng 18 sát thương.","Launch a flying blade at a nearby target, dealing 18 bonus damage."
 Phù hộ thân. Chưa hỗ trợ sử dụng.,Phù hộ thân. Chưa hỗ trợ sử dụng.,Protective talisman. Use is not supported yet.
 Phù thoát thân. Chưa hỗ trợ sử dụng.,Phù thoát thân. Chưa hỗ trợ sử dụng.,Escape talisman. Use is not supported yet.
-Preferred starting map is not reachable,Không thể đi tới bản đồ khởi đầu đã chọn.,The preferred starting map is not reachable.
 PvE • server xác nhận,PvE • server xác nhận,PvE • server confirmed
 Q,Q,Q
-Q / J / chuột trái: đánh quái ở gần ngay trên map,Q / J / chuột trái: đánh quái ở gần ngay trên map,Q / J / Left mouse: attack nearby enemies on the map
 "Q / J: đánh • Space: né
 HP và vị trí từ server.","Q / J: đánh • Space: né
 HP và vị trí từ server.","Q / J: attack • Space: dodge
@@ -390,19 +298,11 @@ HP and position are server-synced."
 Quan sát Tâm Giếng,Quan sát Tâm Giếng,Inspect the Well Heart
 Quan sát hướng gầm • né ngang • phản công lúc Sơn Trư hồi thế.,Quan sát hướng gầm • né ngang • phản công lúc Sơn Trư hồi thế.,Watch the roar direction • dodge sideways • counter while the boar recovers.
 Quan sát trận pháp,Quan sát trận pháp,Inspect the formation
-Quái farm hiện chỉ xuất hiện ở Trúc Âm.,Quái farm hiện chỉ xuất hiện ở Trúc Âm.,Huntable enemies currently appear only in Trúc Âm.
 Quái vật,Quái vật,Monster
-Quặng • địa hình chiến đấu,Quặng • địa hình chiến đấu,Ore • combat terrain
 R,R,R
-R: %s • dùng khi săn quái trên bản đồ.,R: %s • dùng khi săn quái trên bản đồ.,R: %s • use while hunting in the field.
-R: mở Nhân vật > Kỹ năng để trang bị Phi Nhận.,R: mở Nhân vật > Kỹ năng để trang bị Phi Nhận.,R: open Character > Skills to equip Flying Blade.
-R: trang bị Phi Nhận trong Nhân vật > Kỹ năng.,R: trang bị Phi Nhận trong Nhân vật > Kỹ năng.,R: equip Flying Blade from Character > Skills.
 Reward source already claimed,Phần thưởng này đã được nhận.,This reward has already been claimed.
 Rèn Thanh Thiết Kiếm — 6 quặng + 2 trúc + 8 linh thạch,Rèn Thanh Thiết Kiếm — 6 quặng + 2 trúc + 8 linh thạch,Forge Iron Sword — 6 Iron Ore + 2 Bamboo + 8 Spirit Stones
 Rìu trúng thân cây. Còn %d nhát.,Rìu trúng thân cây. Còn %d nhát.,The axe strikes the tree. %d hit(s) remaining.
-Rút về An Khê,Rút về An Khê,Return to An Khê
-Rút về Thạch Cạn,Rút về Thạch Cạn,Return to Thạch Cạn
-Rút về Trúc Âm,Rút về Trúc Âm,Return to Trúc Âm
 Rời bãi,Rời bãi,Leave grounds
 Rời trận,Rời trận,Leave match
 Rừng Trúc Sâu,Rừng Trúc Sâu,Deep Bamboo Grove
@@ -412,13 +312,8 @@ Skill cannot be equipped in the active slot,Không thể trang bị kỹ năng n
 Skill cannot be used in the active slot,Không thể dùng kỹ năng này trong ô chủ động.,This skill cannot be used in the active slot.
 Space,Space,Space
 Space: né trong đấu tập online,Space: né trong đấu tập online,Space: dodge in online sparring
-Stale world movement sequence,Số thứ tự di chuyển đã cũ.,World movement sequence is outdated.
 Sân làng,Sân làng,Village Square
-SĂN QUÁI TỰ DO,SĂN QUÁI TỰ DO,FREE FIELD HUNT
 Sơn Trư,Sơn Trư,Boar
-"Sơn Trư Trúc Âm: 20% mỗi hạ, bảo đảm sau tối đa 8 lần. Trang bị: +5 công.","Sơn Trư Trúc Âm: 20% mỗi hạ, bảo đảm sau tối đa 8 lần. Trang bị: +5 công.","Trúc Âm Boar: 20% drop chance per defeat, guaranteed within 8. Equipment: +5 attack."
-Sơn Trư và Độc Chu xuất hiện trên bản đồ Trúc Âm.,Sơn Trư và Độc Chu xuất hiện trên bản đồ Trúc Âm.,Boars and venom spiders appear on the Trúc Âm map.
-Sơn Trư • Trúc Âm,Sơn Trư • Trúc Âm,Boar • Trúc Âm
 Sơn Trư • chưa mở,Sơn Trư • chưa mở,Boar • locked
 "Sơn Trư: da/kiếm
 Độc Chu: tơ/áo
@@ -427,22 +322,16 @@ J / Chạm: đánh.","Sơn Trư: da/kiếm
 J / Chạm: đánh.","Boar: hide/sword
 Venom spider: silk/robe
 J / Tap: attack."
-Sạp chợ An Khê,Sạp chợ An Khê,An Khê Market Stall
-Sạp chợ An Khê: nơi mua bán sẽ dùng bảng kinh tế chung. Cửa hàng chưa hoạt động.,Sạp chợ An Khê: nơi mua bán sẽ dùng bảng kinh tế chung. Cửa hàng chưa hoạt động.,An Khê Market Stall: trading will use the shared economy board. The shop is not open yet.
 Sẵn sàng,Sẵn sàng,Ready
 Sổ ghi chép,Sổ ghi chép,Ledger
 THÁM HIỂM,THÁM HIỂM,EXPLORATION
 THƯỞNG ĐANG CHỜ • Da Sơn Trư ×%d • %d tu vi • bỏ bớt vật tư rồi nhận,THƯỞNG ĐANG CHỜ • Da Sơn Trư ×%d • %d tu vi • bỏ bớt vật tư rồi nhận,REWARD PENDING • Boar Hide ×%d • %d Qi • free a slot to claim
 THƯỞNG ĐANG CHỜ • TÚI ĐẦY,THƯỞNG ĐANG CHỜ • TÚI ĐẦY,REWARD PENDING • INVENTORY FULL
-THẠCH CẠN • SẮP MỞ,THẠCH CẠN • SẮP MỞ,THẠCH CẠN • COMING SOON
 TRANG BỊ ĐANG MẶC,TRANG BỊ ĐANG MẶC,EQUIPPED GEAR
 TRỜI QUANG,TRỜI QUANG,CLEAR
 TU SĨ,TU SĨ,CULTIVATOR
 Thanh Thiết Kiếm,Thanh Thiết Kiếm,Iron Sword
-This gate is no longer on the current map,Cổng này không còn ở bản đồ hiện tại.,This gate is no longer on the current map.
 This item is not available at the shop,Cửa hàng không có vật phẩm này.,This item is not available in the shop.
-This monster is not on the current map,Quái vật này không ở bản đồ hiện tại.,This monster is not on the current map.
-This object is not interactable in the current map,Không thể tương tác với đối tượng này trên bản đồ hiện tại.,This object cannot be interacted with on this map.
 This plot is occupied,Ô đất này đang được sử dụng.,This garden plot is occupied.
 This resource node is not harvestable,Không thể thu thập tài nguyên này.,This resource node cannot be harvested.
 This resource node needs time to recover,Nút tài nguyên cần thời gian để hồi phục.,This resource node needs time to recover.
@@ -450,33 +339,17 @@ Thiết quặng,Thiết quặng,Iron Ore
 Thoát Thân Phù,Thoát Thân Phù,Escape Talisman
 Thu hoạch ô 1 nếu đã chín,Thu hoạch ô 1 nếu đã chín,Harvest plot 1 when ready
 Tháo trang bị,Tháo trang bị,Unequip
-Tháo ô R,Tháo ô R,Clear R slot
 Thân trúc dùng chế tác.,Thân trúc dùng chế tác.,Bamboo stalk used for crafting.
 Thông tin vật phẩm và nguồn thu thập.,Thông tin vật phẩm và nguồn thu thập.,Item details and source.
-Thạch Cạn,Thạch Cạn,Thạch Cạn
-"Thạch Cạn
-2 khu","Thạch Cạn
-2 khu","Thạch Cạn
-2 areas"
-Thạch Cạn • chưa mở,Thạch Cạn • chưa mở,Thạch Cạn • locked
-Thời tiết thay đổi theo chu kỳ thế giới.,Thời tiết thay đổi theo chu kỳ thế giới.,Weather changes with the world cycle.
 Tiêu hao,Tiêu hao,Consumables
 Tiếng Việt,Tiếng Việt,Vietnamese
 Toàn màn hình,Toàn màn hình,Fullscreen
 Trang bị,Trang bị,Equip
 Trang bị trong Túi đồ để tăng 15 điểm thủ.,Trang bị trong Túi đồ để tăng 15 điểm thủ.,Equip from Inventory to gain 15 defense.
-Trang bị vào ô R,Trang bị vào ô R,Equip to R slot
 Trúc,Trúc,Bamboo
-Trúc Âm,Trúc Âm,Trúc Âm
-"Trúc Âm
-3 khu","Trúc Âm
-3 khu","Trúc Âm
-3 areas"
-Trúc Âm • chưa mở,Trúc Âm • chưa mở,Trúc Âm • locked
 Trạm nghỉ Ngoại Vi,Trạm nghỉ Ngoại Vi,Outskirts Rest Stop
 Trạm nghỉ đã được khảo sát trong phiên thử. Checkpoint chưa được lưu trên máy chủ.,Trạm nghỉ đã được khảo sát trong phiên thử. Checkpoint chưa được lưu trên máy chủ.,The rest stop was surveyed in this preview. The checkpoint is not saved on the server.
 Trận đấu bắt đầu.,Trận đấu bắt đầu.,The match has started.
-"Trở về An Khê, đến Bàn Tĩnh Tâm và thực hành dẫn khí.","Trở về An Khê, đến Bàn Tĩnh Tâm và thực hành dẫn khí.","Return to An Khê, go to the Stillness Shrine, and practice qi channeling."
 Trụ chuyển dòng,Trụ chuyển dòng,Flow Pillar
 Tu Tien — Prototype,Tiên Đạo — Bản thử nghiệm,Tu Tien — Prototype
 Tu sĩ,Tu sĩ,Cultivator
@@ -486,40 +359,25 @@ Tu vi • đã đạt cảnh giới cao nhất,Tu vi • đã đạt cảnh gi�
 TÚI TÀI KHOẢN • dữ liệu được xác nhận bởi server,TÚI TÀI KHOẢN • dữ liệu được xác nhận bởi server,ACCOUNT INVENTORY • SERVER CONFIRMED
 TÚI ĐỒ,TÚI ĐỒ,INVENTORY
 Tâm Giếng,Tâm Giếng,Well Heart
-Tìm Lục Vi ở cổng làng để nhận Mạch Bàn.,Tìm Lục Vi ở cổng làng để nhận Mạch Bàn.,Find Luc Vi at the village gate to receive the Meridian Compass.
 Túi [I],Túi [I],Inventory [I]
 Túi còn đầy hoặc mạng chưa ổn. Thưởng vẫn được giữ; dọn một ô rồi thử lại.,Túi còn đầy hoặc mạng chưa ổn. Thưởng vẫn được giữ; dọn một ô rồi thử lại.,Inventory is full or the connection is unstable. Your reward is safe; free a slot and try again.
 Túi đầy. Phần thưởng vẫn được giữ để nhận sau khi dọn túi.,Túi đầy. Phần thưởng vẫn được giữ để nhận sau khi dọn túi.,Inventory is full. Your reward is safe until you make room.
 Túi đồ bị khóa trong trận online.,Túi đồ bị khóa trong trận online.,Inventory is locked during online matches.
 Tĩnh Tâm,Tĩnh Tâm,Stillness Herb
 Tơ nhện,Tơ nhện,Spider Silk
-Tương tác,Tương tác,Interact
 Tạo phòng,Tạo phòng,Create Room
 Tải lại,Tải lại,Reload
 Tất cả,Tất cả,All
 Unequip before discarding,Hãy tháo trang bị trước khi bỏ vật phẩm.,Unequip this item before discarding it.
 Unknown item: %s,Không tìm thấy vật phẩm: %s,Unknown item: %s
-VIỆC Ở AN KHÊ,VIỆC Ở AN KHÊ,TASKS IN AN KHÊ
-Ven Suối,Ven Suối,Riverside
 VÕ ĐÀI,VÕ ĐÀI,ARENA
 Vào,Vào,Join
 Vườn sáu ô,Vườn sáu ô,Six-Plot Garden
 Vườn sáu ô: khu trồng dược liệu cá nhân. Trồng và thu hoạch chưa kết nối.,Vườn sáu ô: khu trồng dược liệu cá nhân. Trồng và thu hoạch chưa kết nối.,Six-Plot Garden: your personal herb patch. Planting and harvesting are not connected yet.
 Vật liệu,Vật liệu,Materials
-Vật phẩm mở lối.,Vật phẩm mở lối.,A key item that opens a route.
 Vật tư khởi đầu,Vật tư khởi đầu,Starter supplies
 Vị trí đã đồng bộ lại với máy chủ.,Vị trí đã đồng bộ lại với máy chủ.,Position synced with the server.
-"WASD di chuyển • E tương tác
-C hồ sơ • I túi đồ","WASD di chuyển • E tương tác
-C hồ sơ • I túi đồ","WASD to move • E to interact
-C profile • I inventory"
-WASD: đi • Q / J: đánh • R: kỹ năng • M: map • C: hồ sơ • I: túi • E: tương tác,WASD: đi • Q / J: đánh • R: kỹ năng • M: map • C: hồ sơ • I: túi • E: tương tác,WASD: move • Q / J: attack • R: skill • M: map • C: profile • I: inventory • E: interact
 World combat is busy; retry,Trận chiến đang bận; hãy thử lại.,Combat is busy; try again.
-World field state is busy; retry,Trạng thái bản đồ đang bận; hãy thử lại.,World field state is busy; try again.
-World gate is busy; retry interaction,Cổng đang bận; hãy tương tác lại.,The gate is busy; try interacting again.
-World map transition is busy; retry,Đang chuyển bản đồ; hãy thử lại.,Map travel is busy; try again.
-World movement crosses a blocker,Đường đi bị chặn bởi vật cản.,Movement crosses an obstacle.
-World movement exceeds server speed limit,Tốc độ di chuyển vượt giới hạn máy chủ.,Movement exceeds the server speed limit.
 World position is busy; retry,Vị trí thế giới đang được cập nhật; hãy thử lại.,World position is busy; try again.
 World position requires review,Vị trí thế giới cần được kiểm tra.,World position needs review.
 World session is busy; retry,Phiên thế giới đang bận; hãy thử lại.,World session is busy; try again.
@@ -531,7 +389,6 @@ Xem tin làng,Xem tin làng,Read village notice
 Xem vườn,Xem vườn,View garden
 Xác nhận bỏ vật phẩm,Xác nhận bỏ vật phẩm,Confirm Item Discard
 Y Phục Tơ Độc,Y Phục Tơ Độc,Venom Silk Robe
-[R] %s,[R] %s,[R] %s
 chưa nối,chưa nối,not connected
 không có loot thêm,không có loot thêm,no extra loot
 lối nối,lối nối,connection
@@ -544,75 +401,41 @@ rơi %s và vật phẩm săn,rơi %s và vật phẩm săn,dropped %s and hunti
 Âm lượng tổng,Âm lượng tổng,Master volume
 Ích Khí,Ích Khí,Qi Boost
 Ích Khí Tán,Ích Khí Tán,Qi Tonic
-Ô R • %s,Ô R • %s,R Slot • %s
-Ô R • Chưa trang bị kỹ năng,Ô R • Chưa trang bị kỹ năng,R Slot • No skill equipped
-"Ô R • hồi chiêu 1,8 giây • dùng khi săn quái trên bản đồ.","Ô R • hồi chiêu 1,8 giây • dùng khi săn quái trên bản đồ.",R Slot • 1.8 sec cooldown • use while hunting in the field.
 Ô này chưa có vật phẩm.,Ô này chưa có vật phẩm.,This slot is empty.
 Ô trang bị vũ khí,Ô trang bị vũ khí,Weapon slot
-Ô trang bị áo,Ô trang bị áo,Armor slot
 Ô trống,Ô trống,Empty slot
 Ô vật phẩm thứ hai chưa được gán.,Ô vật phẩm thứ hai chưa được gán.,The second item slot is unassigned.
 ĐANG CHỜ SERVER • chưa xác nhận,ĐANG CHỜ SERVER • chưa xác nhận,WAITING FOR SERVER • not confirmed
 ĐANG LƯU VÀ GHI NHẬN THƯỞNG…,ĐANG LƯU VÀ GHI NHẬN THƯỞNG…,SAVING AND RECORDING REWARDS…
 ĐANG TẢI HỒ SƠ TỪ MÁY CHỦ…,ĐANG TẢI HỒ SƠ TỪ MÁY CHỦ…,LOADING CHARACTER DATA FROM SERVER…
 Đan dược linh lực. Chưa hỗ trợ sử dụng.,Đan dược linh lực. Chưa hỗ trợ sử dụng.,Qi elixir. Use is not supported yet.
-Đang giảm nháy sấm sét,Đang giảm nháy sấm sét,Lightning flashes reduced
 Đang kết nối backend…,Đang kết nối backend…,Connecting to backend…
 Đang lưu bộ kỹ năng lên máy chủ…,Đang lưu bộ kỹ năng lên máy chủ…,Saving skill loadout to server…
 Đang nhận thưởng…,Đang nhận thưởng…,Claiming reward…
 Đang tải túi từ server…,Đang tải túi từ server…,Loading inventory from server…
 Đang xác nhận vật tư…,Đang xác nhận vật tư…,Confirming supplies…
-Đang đăng nhập để lưu XP và vật phẩm farm…,Đang đăng nhập để lưu XP và vật phẩm farm…,Signing in to save XP and field loot…
 Đang ở đây,Đang ở đây,Current location
-Đi thử map này,Đi thử map này,Preview this map
-Đi tới Cổ Tỉnh,Đi tới Cổ Tỉnh,Travel to Ancient Well
-Đi tới Thạch Cạn,Đi tới Thạch Cạn,Travel to Thạch Cạn
-Đi tới Trúc Âm,Đi tới Trúc Âm,Travel to Trúc Âm
-Đi đến map này,Đi đến map này,Travel to this map
 Điểm chuẩn bị Cửa Giếng,Điểm chuẩn bị Cửa Giếng,Well Entrance Preparation Point
-Điểm chuẩn bị Cửa Giếng: rà soát vật tư và lối rút trước khi vào. Checkpoint chưa được lưu.,Điểm chuẩn bị Cửa Giếng: rà soát vật tư và lối rút trước khi vào. Checkpoint chưa được lưu.,Well Entrance preparation point: check your supplies and exit route before entering. The checkpoint is not saved.
-Điểm tương tác,Điểm tương tác,Interaction point
 ĐÃ HỌC,ĐÃ HỌC,LEARNED
 Đánh,Đánh,Attack
 Đánh quái sẽ tự kết nối để lưu XP và vật phẩm. Loot được gửi thẳng vào Túi đồ.,Đánh quái sẽ tự kết nối để lưu XP và vật phẩm. Loot được gửi thẳng vào Túi đồ.,Attacking enemies connects automatically to save XP and loot. Drops go straight to Inventory.
 Đã bỏ vật phẩm.,Đã bỏ vật phẩm.,Item discarded.
-Đã chuyển khu vực theo tuyến bản đồ.,Đã chuyển khu vực theo tuyến bản đồ.,Moved to the next area along the route.
-Đã chuyển map cục bộ để thử tuyến. Tiến độ chưa ghi lên server.,Đã chuyển map cục bộ để thử tuyến. Tiến độ chưa ghi lên server.,Moved locally to preview the route. Progress was not saved to the server.
 Đã cập nhật trang bị hoặc hồi phục trên server.,Đã cập nhật trang bị hoặc hồi phục trên server.,Equipment or healing updated on the server.
 Đã cập nhật túi đồ và linh thạch.,Đã cập nhật túi đồ và linh thạch.,Inventory and Spirit Stones updated.
-Đã ghi nhận một dấu nước bằng Mạch Bàn.,Đã ghi nhận một dấu nước bằng Mạch Bàn.,Water trace recorded with the Meridian Compass.
-"Đã kết nối. Vị trí, quái trên map, tương tác và túi đồ được máy chủ xác nhận.","Đã kết nối. Vị trí, quái trên map, tương tác và túi đồ được máy chủ xác nhận.","Connected. Position, map enemies, interactions, and inventory are confirmed by the server."
-Đã mở Luyện Khí 1 và Phi Nhận. Hành trình tiếp tục ở Trúc Âm.,Đã mở Luyện Khí 1 và Phi Nhận. Hành trình tiếp tục ở Trúc Âm.,Qi Refining 1 and Flying Blade unlocked. Continue your journey in Trúc Âm.
 Đã nhận %d tu vi và %s.,Đã nhận %d tu vi và %s.,Received %d Qi and %s.
 Đã nhận XP và vật phẩm đúng một lần.,Đã nhận XP và vật phẩm đúng một lần.,XP and items received once.
 Đã nhận vật tư,Đã nhận vật tư,Supplies received
-Đã rời trận. Trở lại map hiện tại.,Đã rời trận. Trở lại map hiện tại.,Left the match. Returning to the current map.
 Đã thu thập tài nguyên. Nút sẽ hồi lại sau một phút.,Đã thu thập tài nguyên. Nút sẽ hồi lại sau một phút.,Resource gathered. This node will recover in one minute.
-Đã trang bị vào ô R,Đã trang bị vào ô R,Equipped in the R slot
-Đã tương tác. Thay đổi chỉ có hiệu lực trong phiên thử cục bộ.,Đã tương tác. Thay đổi chỉ có hiệu lực trong phiên thử cục bộ.,Interaction complete. Changes apply only to this local preview session.
-Đã xong • rời bãi để về map,Đã xong • rời bãi để về map,Complete • leave the grounds to return to the map
-Đã đi qua cổng do máy chủ xác nhận.,Đã đi qua cổng do máy chủ xác nhận.,"Passed through the gate, confirmed by the server."
 Đã đồng bộ vị trí. Hãy tới gần Sơn Trư hoặc Độc Chu rồi đánh.,Đã đồng bộ vị trí. Hãy tới gần Sơn Trư hoặc Độc Chu rồi đánh.,Position synced. Move close to a boar or venom spider and attack.
-Đã đồng bộ vị trí. Quái farm hiện chỉ xuất hiện ở Trúc Âm.,Đã đồng bộ vị trí. Quái farm hiện chỉ xuất hiện ở Trúc Âm.,Position synced. Huntable enemies currently appear only in Trúc Âm.
 Đăng nhập được một phần nhưng máy chủ chưa hoàn tất kết nối. Nhấn Kết nối để thử lại.,Đăng nhập được một phần nhưng máy chủ chưa hoàn tất kết nối. Nhấn Kết nối để thử lại.,"Partially signed in, but the server connection is incomplete. Press Connect to try again."
-Đường liền trên sơ đồ • đi thử từng khu bằng cổng runtime,Đường liền trên sơ đồ • đi thử từng khu bằng cổng runtime,Solid route • preview each area through in-game gates
-Đường về An Khê,Đường về An Khê,Path back to An Khê
-Đường về Trúc Âm,Đường về Trúc Âm,Path back to Trúc Âm
 ĐẤU TẬP,ĐẤU TẬP,SPARRING
 Đấu tập • không mất đồ,Đấu tập • không mất đồ,Sparring • no item loss
 Đến gần Sơn Trư hoặc Độc Chu rồi nhấn J để đánh.,Đến gần Sơn Trư hoặc Độc Chu rồi nhấn J để đánh.,"Move close to a boar or venom spider, then press J to attack."
 Đến gần Sơn Trư hoặc Độc Chu rồi nhấn R hoặc chạm Kỹ năng.,Đến gần Sơn Trư hoặc Độc Chu rồi nhấn R hoặc chạm Kỹ năng.,"Move close to a boar or venom spider, then press R or tap Skill."
-Đến gần một điểm tương tác rồi nhấn E hoặc chạm nút tương tác.,Đến gần một điểm tương tác rồi nhấn E hoặc chạm nút tương tác.,"Move close to an interaction point, then press E or tap Interact."
 "Đến sát một cây, quay mặt về phía cây rồi nhấn J để chặt.","Đến sát một cây, quay mặt về phía cây rồi nhấn J để chặt.","Move next to a tree, face it, then press J to chop."
-"Địa hình đã có.
-Spawn quái và loot farm sẽ được nối sau.","Địa hình đã có.
-Spawn quái và loot farm sẽ được nối sau.","The terrain is ready.
-Enemy spawns and field loot will be added later."
 ĐỌC CÚ LAO,ĐỌC CÚ LAO,READ THE CHARGE
 Đọc trụ chuyển dòng,Đọc trụ chuyển dòng,Read the Flow Pillar
 Độc Chu,Độc Chu,Venom Spider
-"Độc Chu Trúc Âm: 10% mỗi hạ, bảo đảm sau tối đa 12 lần. Trang bị: +20 thủ.","Độc Chu Trúc Âm: 10% mỗi hạ, bảo đảm sau tối đa 12 lần. Trang bị: +20 thủ.","Trúc Âm Venom Spider: 10% drop chance per defeat, guaranteed within 12. Equipment: +20 defense."
-Độc Chu • Trúc Âm,Độc Chu • Trúc Âm,Venom Spider • Trúc Âm
 Độc Chu • chưa mở,Độc Chu • chưa mở,Venom Spider • locked
 Độc dịch,Độc dịch,Venom
 Đột phá đầu tiên • %d / 100 XP,Đột phá đầu tiên • %d / 100 XP,First breakthrough • %d / 100 XP
@@ -676,7 +499,6 @@ No reward fields are accepted,Không chấp nhận dữ liệu phần thưởng 
 Quest progress requires review,Tiến độ nhiệm vụ cần được kiểm tra.,Quest progress requires review.
 Opening quest requires a mortal character,Nhiệm vụ mở đầu chỉ dành cho nhân vật Phàm Nhân.,The opening quest requires a mortal character.
 Character revision limit reached,Đã đạt giới hạn phiên bản dữ liệu nhân vật.,The character revision limit has been reached.
-Quest progress is busy; retry the interaction,Tiến độ nhiệm vụ đang bận; hãy thử tương tác lại.,Quest progress is busy; retry the interaction.
 Sparring consent required,Cần xác nhận trước khi tạo trận đấu tập.,Consent is required before creating a sparring match.
 PvE consent required; no client reward fields are accepted,Cần xác nhận trước khi vào trận PvE; phần thưởng do máy chủ quyết định.,Consent is required before starting PvE; rewards are controlled by the server.
 Claim the pending reward before another hunt,Hãy nhận phần thưởng đang chờ trước khi đi săn tiếp.,Claim the pending reward before starting another hunt.
@@ -686,99 +508,81 @@ Another encounter is already active; retry,Một trận săn khác đang diễn 
 Encounter could not be started; retry,Không thể bắt đầu trận săn; hãy thử lại.,The encounter could not be started; retry.
 Encounter started; retry to resume it,Trận săn đã bắt đầu; hãy thử lại để tiếp tục.,The encounter has started; retry to resume it.
 Kết nối thất bại: %s,Kết nối thất bại: %s,Connection failed: %s
-Ven suối,Ven suối,Streambank
 Lối núi,Lối núi,Mountain pass
 Cửa mỏ,Cửa mỏ,Mine entrance
-Bà Sâm: Hãy quan sát dòng nước ở Ven Suối rồi quay về kể ta nghe.,Bà Sâm: Hãy quan sát dòng nước ở Ven Suối rồi quay về kể ta nghe.,"Ba Sam: Observe the water at the Streambank, then come back and tell me."
-"Khảo sát dòng nước ở Ven Suối.
-Mang Mạch Bàn theo; đây là bản thử cục bộ.","Khảo sát dòng nước ở Ven Suối.
-Mang Mạch Bàn theo; đây là bản thử cục bộ.","Investigate the water at the Streambank.
-Bring the Meridian Compass; this is a local prototype quest."
-"Tầm nhìn bản đồ • PC","Tầm nhìn bản đồ • PC","World view • PC"
-"Tầm nhìn bản đồ • Cảm ứng","Tầm nhìn bản đồ • Cảm ứng","World view • Touch"
-"Giảm phần trăm để thấy rộng hơn; HUD và chữ giao diện giữ nguyên kích thước.","Giảm phần trăm để thấy rộng hơn; HUD và chữ giao diện giữ nguyên kích thước.","Lower the percentage to see more of the world; HUD and interface text keep their size."
-"Giảm % để thấy rộng hơn; HUD và chữ giữ nguyên. F9 đổi bố cục cảm ứng.","Giảm % để thấy rộng hơn; HUD và chữ giữ nguyên. F9 đổi bố cục cảm ứng.","Lower % to see more. HUD and text keep their size. Press F9 to toggle touch controls."
-BẢN ĐỒ KHU VỰC,BẢN ĐỒ KHU VỰC,AREA MAP
-BẢN ĐỒ KHU VỰC • %s,BẢN ĐỒ KHU VỰC • %s,AREA MAP • %s
-Đóng bản đồ,Đóng bản đồ,Close map
+Giảm phần trăm để thấy rộng hơn; HUD và chữ giao diện giữ nguyên kích thước.,Giảm phần trăm để thấy rộng hơn; HUD và chữ giao diện giữ nguyên kích thước.,Lower the percentage to see more of the world; HUD and interface text keep their size.
+Giảm % để thấy rộng hơn; HUD và chữ giữ nguyên. F9 đổi bố cục cảm ứng.,Giảm % để thấy rộng hơn; HUD và chữ giữ nguyên. F9 đổi bố cục cảm ứng.,Lower % to see more. HUD and text keep their size. Press F9 to toggle touch controls.
 Khu vực: %s,Khu vực: %s,Area: %s
 Khu vực hiện tại,Khu vực hiện tại,Current area
 "Vị trí: (%d, %d)","Vị trí: (%d, %d)","Position: (%d, %d)"
-Điểm trên bản đồ,Điểm trên bản đồ,Map point
 Chọn điểm quan tâm để xem thông tin.,Chọn điểm quan tâm để xem thông tin.,Select a point of interest to view details.
 Khu vực chưa có điểm quan tâm.,Khu vực chưa có điểm quan tâm.,No points of interest in this area.
 Điểm quan tâm,Điểm quan tâm,Point of interest
 "Điểm: (%d, %d)","Điểm: (%d, %d)","Point: (%d, %d)"
-"Ô bản đồ: (%d, %d)","Ô bản đồ: (%d, %d)","Map tile: (%d, %d)"
-Đang dựng bản đồ…,Đang dựng bản đồ…,Building map…
 Vàng: cổng • Xanh: thu thập • Cam: điểm quan tâm • Sáng: bạn,Vàng: cổng • Xanh: thu thập • Cam: điểm quan tâm • Sáng: bạn,Gold: gates • Green: gather points • Orange: points of interest • Light: you
-Chọn điểm để xem chi tiết • kéo để di chuyển khi phóng lớn,Chọn điểm để xem chi tiết • kéo để di chuyển khi phóng lớn,Select a point for details • drag to pan when zoomed in
 Thu nhỏ,Thu nhỏ,Zoom out
 Phóng lớn,Phóng lớn,Zoom in
-Hiện toàn bộ bản đồ,Hiện toàn bộ bản đồ,Show full map
 Vừa khung,Vừa khung,Fit
-Mở sơ đồ tuyến bốn map,Mở sơ đồ tuyến bốn map,Open four-map route
 Tuyến [M],Tuyến [M],Routes [M]
-Bấm hoặc chạm để xem bản đồ khu vực hiện tại,Bấm hoặc chạm để xem bản đồ khu vực hiện tại,Tap or click to view the current area map
 "Vị trí: (0, 0)","Vị trí: (0, 0)","Position: (0, 0)"
 −,−,−
 ×1.0,×1.0,×1.0
-"+","+","+"
-"TU TIÊN","TU TIÊN","CULTIVATION"
-"Hành trình của bạn bắt đầu từ đây.","Hành trình của bạn bắt đầu từ đây.","Your journey starts here."
-"Đăng nhập để tiếp tục hành trình trên PC và mobile.","Đăng nhập để tiếp tục hành trình trên PC và mobile.","Sign in to continue your journey on PC and mobile."
-"Tài khoản chơi thử sẽ lưu tiến trình trên thiết bị này. Bạn có thể liên kết email sau.","Tài khoản chơi thử sẽ lưu tiến trình trên thiết bị này. Bạn có thể liên kết email sau.","A guest account saves progress on this device. You can link an email later."
-"Đăng nhập","Đăng nhập","Sign in"
-"Tạo tài khoản","Tạo tài khoản","Create account"
-"Chơi thử","Chơi thử","Play as guest"
-"ĐĂNG NHẬP","ĐĂNG NHẬP","SIGN IN"
-"Dùng email hoặc tên người chơi cùng mật khẩu.","Dùng email hoặc tên người chơi cùng mật khẩu.","Use your email or player name and password."
-"Email hoặc tên người chơi","Email hoặc tên người chơi","Email or player name"
-"Mật khẩu","Mật khẩu","Password"
-"Hiện mật khẩu","Hiện mật khẩu","Show password"
-"Quay lại","Quay lại","Back"
-"TẠO TÀI KHOẢN","TẠO TÀI KHOẢN","CREATE ACCOUNT"
-"Dùng cùng một tài khoản để chơi trên PC và mobile.","Dùng cùng một tài khoản để chơi trên PC và mobile.","Use one account to play on PC and mobile."
++,+,+
+TU TIÊN,TU TIÊN,CULTIVATION
+Hành trình của bạn bắt đầu từ đây.,Hành trình của bạn bắt đầu từ đây.,Your journey starts here.
+Đăng nhập để tiếp tục hành trình trên PC và mobile.,Đăng nhập để tiếp tục hành trình trên PC và mobile.,Sign in to continue your journey on PC and mobile.
+Tài khoản chơi thử sẽ lưu tiến trình trên thiết bị này. Bạn có thể liên kết email sau.,Tài khoản chơi thử sẽ lưu tiến trình trên thiết bị này. Bạn có thể liên kết email sau.,A guest account saves progress on this device. You can link an email later.
+Đăng nhập,Đăng nhập,Sign in
+Tạo tài khoản,Tạo tài khoản,Create account
+Chơi thử,Chơi thử,Play as guest
+ĐĂNG NHẬP,ĐĂNG NHẬP,SIGN IN
+Dùng email hoặc tên người chơi cùng mật khẩu.,Dùng email hoặc tên người chơi cùng mật khẩu.,Use your email or player name and password.
+Email hoặc tên người chơi,Email hoặc tên người chơi,Email or player name
+Mật khẩu,Mật khẩu,Password
+Hiện mật khẩu,Hiện mật khẩu,Show password
+Quay lại,Quay lại,Back
+TẠO TÀI KHOẢN,TẠO TÀI KHOẢN,CREATE ACCOUNT
+Dùng cùng một tài khoản để chơi trên PC và mobile.,Dùng cùng một tài khoản để chơi trên PC và mobile.,Use one account to play on PC and mobile.
 "Tên người chơi • 3–20 chữ, số hoặc _","Tên người chơi • 3–20 chữ, số hoặc _","Player name • 3–20 letters, numbers or _"
-"Email","Email","Email"
-"Mật khẩu • tối thiểu 10 ký tự","Mật khẩu • tối thiểu 10 ký tự","Password • at least 10 characters"
-"Nhập lại mật khẩu","Nhập lại mật khẩu","Confirm password"
-"Bản thử nghiệm chưa có xác minh email hoặc khôi phục mật khẩu.","Bản thử nghiệm chưa có xác minh email hoặc khôi phục mật khẩu.","Email verification and password recovery are not available in this prototype."
-"TÀI KHOẢN","TÀI KHOẢN","ACCOUNT"
-"Tên người chơi: %s","Tên người chơi: %s","Player name: %s"
-"Chưa đặt","Chưa đặt","Not set"
-"Đang chơi bằng tài khoản thiết bị.","Đang chơi bằng tài khoản thiết bị.","Playing with a device account."
-"Liên kết email và mật khẩu để có thể đăng nhập tài khoản này trên thiết bị khác.","Liên kết email và mật khẩu để có thể đăng nhập tài khoản này trên thiết bị khác.","Link an email and password to sign in to this account on another device."
-"Liên kết email","Liên kết email","Link email"
-"Tài khoản đã liên kết email.","Tài khoản đã liên kết email.","This account has a linked email."
-"Email: %s","Email: %s","Email: %s"
-"Đổi tài khoản","Đổi tài khoản","Switch account"
-"Thiết bị đã liên kết tài khoản. Hãy đăng nhập để đổi sang tài khoản khác.","Thiết bị đã liên kết tài khoản. Hãy đăng nhập để đổi sang tài khoản khác.","This device is linked to an account. Sign in to switch to another account."
-"Đóng","Đóng","Close"
-"Đây là tài khoản chơi thử. Hãy liên kết email trước khi đổi để tránh mất quyền truy cập.","Đây là tài khoản chơi thử. Hãy liên kết email trước khi đổi để tránh mất quyền truy cập.","This is a guest account. Link an email before switching to keep access to it."
-"Sau khi đăng nhập tài khoản khác, tiến trình hiện tại sẽ vẫn nằm trong tài khoản cũ.","Sau khi đăng nhập tài khoản khác, tiến trình hiện tại sẽ vẫn nằm trong tài khoản cũ.","Your current progress will stay on the old account after you switch."
-"Đang kết nối máy chủ…","Đang kết nối máy chủ…","Connecting to server…"
-"Đang đăng nhập…","Đang đăng nhập…","Signing in…"
-"Đang tạo tài khoản…","Đang tạo tài khoản…","Creating account…"
-"Nhập email hoặc tên người chơi và mật khẩu.","Nhập email hoặc tên người chơi và mật khẩu.","Enter your email or player name and password."
-"Tên người chơi cần có 3–20 ký tự: chữ cái tiếng Anh số hoặc _.","Tên người chơi cần có 3–20 ký tự: chữ cái tiếng Anh số hoặc _.","Player name must contain 3–20 English letters numbers or _."
-"Nhập email hợp lệ để đăng ký.","Nhập email hợp lệ để đăng ký.","Enter a valid email address."
-"Mật khẩu cần dài ít nhất 10 ký tự và tối đa 72 byte UTF-8.","Mật khẩu cần dài ít nhất 10 ký tự và tối đa 72 byte UTF-8.","Password must be at least 10 characters and no more than 72 UTF-8 bytes."
-"Hai mật khẩu chưa trùng nhau.","Hai mật khẩu chưa trùng nhau.","The passwords do not match."
-"Không thể tạo tài khoản chơi thử.","Không thể tạo tài khoản chơi thử.","Could not create a guest account."
-"Không thể đăng nhập.","Không thể đăng nhập.","Could not sign in."
-"Đăng nhập được nhưng chưa tải được hồ sơ tài khoản.","Đăng nhập được nhưng chưa tải được hồ sơ tài khoản.","Signed in but the account profile could not be loaded."
-"Không thể ghi nhớ tài khoản trên thiết bị này.","Không thể ghi nhớ tài khoản trên thiết bị này.","Could not remember this account on this device."
-"Tài khoản đã tạo; đăng nhập để thử ghi nhớ thiết bị.","Tài khoản đã tạo; đăng nhập để thử ghi nhớ thiết bị.","Account created. Sign in to try remembering this device."
-"Không thể tạo tài khoản.","Không thể tạo tài khoản.","Could not create the account."
-"Đăng nhập được nhưng chưa tải được tài khoản.","Đăng nhập được nhưng chưa tải được tài khoản.","Signed in but the account could not be loaded."
-"Không kết nối được máy chủ. Hãy thử lại sau.","Không kết nối được máy chủ. Hãy thử lại sau.","Could not connect to the server. Please try again."
-"Email hoặc tên người chơi hoặc mật khẩu chưa đúng.","Email hoặc tên người chơi hoặc mật khẩu chưa đúng.","The email player name or password is incorrect."
-"Email tên người chơi hoặc thiết bị đã được liên kết. Hãy đăng nhập hoặc chọn tên khác.","Email tên người chơi hoặc thiết bị đã được liên kết. Hãy đăng nhập hoặc chọn tên khác.","The email player name or device is already linked. Sign in or choose another name."
-"Tài khoản chưa đăng nhập","Tài khoản chưa đăng nhập","Account is not signed in"
-"Tài khoản","Tài khoản","Account"
-"Chơi ngoại tuyến","Chơi ngoại tuyến","Play offline"
-"Đang chơi ngoại tuyến. Tiến trình chưa được đồng bộ với máy chủ.","Đang chơi ngoại tuyến. Tiến trình chưa được đồng bộ với máy chủ.","Playing offline. Progress is not synced with the server."
+Email,Email,Email
+Mật khẩu • tối thiểu 10 ký tự,Mật khẩu • tối thiểu 10 ký tự,Password • at least 10 characters
+Nhập lại mật khẩu,Nhập lại mật khẩu,Confirm password
+Bản thử nghiệm chưa có xác minh email hoặc khôi phục mật khẩu.,Bản thử nghiệm chưa có xác minh email hoặc khôi phục mật khẩu.,Email verification and password recovery are not available in this prototype.
+TÀI KHOẢN,TÀI KHOẢN,ACCOUNT
+Tên người chơi: %s,Tên người chơi: %s,Player name: %s
+Chưa đặt,Chưa đặt,Not set
+Đang chơi bằng tài khoản thiết bị.,Đang chơi bằng tài khoản thiết bị.,Playing with a device account.
+Liên kết email và mật khẩu để có thể đăng nhập tài khoản này trên thiết bị khác.,Liên kết email và mật khẩu để có thể đăng nhập tài khoản này trên thiết bị khác.,Link an email and password to sign in to this account on another device.
+Liên kết email,Liên kết email,Link email
+Tài khoản đã liên kết email.,Tài khoản đã liên kết email.,This account has a linked email.
+Email: %s,Email: %s,Email: %s
+Đổi tài khoản,Đổi tài khoản,Switch account
+Thiết bị đã liên kết tài khoản. Hãy đăng nhập để đổi sang tài khoản khác.,Thiết bị đã liên kết tài khoản. Hãy đăng nhập để đổi sang tài khoản khác.,This device is linked to an account. Sign in to switch to another account.
+Đóng,Đóng,Close
+Đây là tài khoản chơi thử. Hãy liên kết email trước khi đổi để tránh mất quyền truy cập.,Đây là tài khoản chơi thử. Hãy liên kết email trước khi đổi để tránh mất quyền truy cập.,This is a guest account. Link an email before switching to keep access to it.
+"Sau khi đăng nhập tài khoản khác, tiến trình hiện tại sẽ vẫn nằm trong tài khoản cũ.","Sau khi đăng nhập tài khoản khác, tiến trình hiện tại sẽ vẫn nằm trong tài khoản cũ.",Your current progress will stay on the old account after you switch.
+Đang kết nối máy chủ…,Đang kết nối máy chủ…,Connecting to server…
+Đang đăng nhập…,Đang đăng nhập…,Signing in…
+Đang tạo tài khoản…,Đang tạo tài khoản…,Creating account…
+Nhập email hoặc tên người chơi và mật khẩu.,Nhập email hoặc tên người chơi và mật khẩu.,Enter your email or player name and password.
+Tên người chơi cần có 3–20 ký tự: chữ cái tiếng Anh số hoặc _.,Tên người chơi cần có 3–20 ký tự: chữ cái tiếng Anh số hoặc _.,Player name must contain 3–20 English letters numbers or _.
+Nhập email hợp lệ để đăng ký.,Nhập email hợp lệ để đăng ký.,Enter a valid email address.
+Mật khẩu cần dài ít nhất 10 ký tự và tối đa 72 byte UTF-8.,Mật khẩu cần dài ít nhất 10 ký tự và tối đa 72 byte UTF-8.,Password must be at least 10 characters and no more than 72 UTF-8 bytes.
+Hai mật khẩu chưa trùng nhau.,Hai mật khẩu chưa trùng nhau.,The passwords do not match.
+Không thể tạo tài khoản chơi thử.,Không thể tạo tài khoản chơi thử.,Could not create a guest account.
+Không thể đăng nhập.,Không thể đăng nhập.,Could not sign in.
+Đăng nhập được nhưng chưa tải được hồ sơ tài khoản.,Đăng nhập được nhưng chưa tải được hồ sơ tài khoản.,Signed in but the account profile could not be loaded.
+Không thể ghi nhớ tài khoản trên thiết bị này.,Không thể ghi nhớ tài khoản trên thiết bị này.,Could not remember this account on this device.
+Tài khoản đã tạo; đăng nhập để thử ghi nhớ thiết bị.,Tài khoản đã tạo; đăng nhập để thử ghi nhớ thiết bị.,Account created. Sign in to try remembering this device.
+Không thể tạo tài khoản.,Không thể tạo tài khoản.,Could not create the account.
+Đăng nhập được nhưng chưa tải được tài khoản.,Đăng nhập được nhưng chưa tải được tài khoản.,Signed in but the account could not be loaded.
+Không kết nối được máy chủ. Hãy thử lại sau.,Không kết nối được máy chủ. Hãy thử lại sau.,Could not connect to the server. Please try again.
+Email hoặc tên người chơi hoặc mật khẩu chưa đúng.,Email hoặc tên người chơi hoặc mật khẩu chưa đúng.,The email player name or password is incorrect.
+Email tên người chơi hoặc thiết bị đã được liên kết. Hãy đăng nhập hoặc chọn tên khác.,Email tên người chơi hoặc thiết bị đã được liên kết. Hãy đăng nhập hoặc chọn tên khác.,The email player name or device is already linked. Sign in or choose another name.
+Tài khoản chưa đăng nhập,Tài khoản chưa đăng nhập,Account is not signed in
+Tài khoản,Tài khoản,Account
+Chơi ngoại tuyến,Chơi ngoại tuyến,Play offline
+Đang chơi ngoại tuyến. Tiến trình chưa được đồng bộ với máy chủ.,Đang chơi ngoại tuyến. Tiến trình chưa được đồng bộ với máy chủ.,Playing offline. Progress is not synced with the server.
 Cộng đồng [G],Cộng đồng [G],Community [G]
 "Bạn bè, trò chuyện và nhóm người chơi • G","Bạn bè, trò chuyện và nhóm người chơi • G","Friends, chat, and player groups • G"
 CỘNG ĐỒNG,CỘNG ĐỒNG,COMMUNITY
@@ -807,3 +611,16 @@ Chat nhóm,Chat nhóm,Group chat
 Tên nhóm mới,Tên nhóm mới,New group name
 Giới thiệu ngắn,Giới thiệu ngắn,Short description
 Tạo nhóm,Tạo nhóm,Create group
+Bố cục cảm ứng,Bố cục cảm ứng,Touch layout
+F9 đổi bố cục cảm ứng.,F9 đổi bố cục cảm ứng.,Press F9 to switch touch layout.
+"C: hồ sơ • G: cộng đồng
+I: túi đồ • Q/J: đánh","C: hồ sơ • G: cộng đồng
+I: túi đồ • Q/J: đánh","C: profile • G: community
+I: inventory • Q/J: attack"
+Mở túi đồ bằng nút Túi.,Mở túi đồ bằng nút Túi.,Open inventory with the Bag button.
+Kỹ năng hỗ trợ • tự kích hoạt khi đủ điều kiện.,Kỹ năng hỗ trợ • tự kích hoạt khi đủ điều kiện.,Support skill • activates when its conditions are met.
+"Kỹ năng active • hồi chiêu 1,8 giây.","Kỹ năng active • hồi chiêu 1,8 giây.",Active skill • 1.8 second cooldown.
+Ô trang bị áo,Ô trang bị áo,Armor slot
+Chưa trang bị kỹ năng,Chưa trang bị kỹ năng,No skill equipped
+Tháo kỹ năng,Tháo kỹ năng,Remove skill
+Trang bị kỹ năng,Trang bị kỹ năng,Equip skill

@@ -48,8 +48,6 @@ func _run() -> void:
 	await process_frame
 	check(main.inventory_panel.summary.text == "Preview • 10 / 24 slots",
 		"English inventory summary uses translated format strings")
-	check(main.map_catalog.maps_by_id.has("m_an_khe"), "Map catalog loads independently of the presentation layer")
-	check(main.hud.get_node_or_null("WorldMap") == null, "Legacy route map UI is absent on the redesign branch")
 	main.hud.notify_format("Đã nhận %d tu vi và %s.", [18, "Da Sơn Trư ×1"])
 	check(main.hud.get_node("Toast/Message").text == "Received 18 Qi and Boar Hide ×1.",
 		"Formatted notices translate both the template and its item name")

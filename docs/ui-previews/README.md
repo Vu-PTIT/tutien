@@ -1,19 +1,11 @@
-# Xem trước bố cục — không phải screenshot Godot
+# Xem trước giao diện
 
-- `inventory-layout-preview.png`: túi mở với dữ liệu mẫu.
+Ảnh trong thư mục này là bản dựng tĩnh từ scene Godot và tài nguyên pixel. Renderer Node.js không chạy GDScript; cần kiểm tra nội dung runtime, trạng thái nút và animation trong engine.
 
-The village HUD preview was removed when the previous map UI was cleared for redesign.
-
-Ảnh dựng từ `.tscn` và PNG thật bằng `scripts/preview-pixel-ui.cjs`, ở
-640 × 360 rồi nhân đôi nearest. Renderer **không chạy GDScript/Godot**:
-font, layout, disabled state, nội dung runtime và animation cần kiểm lại
-trong engine. Nút nhận vật tư offline bị khóa trong script thực tế.
-
-Tạo lại với Node và package `sharp` có sẵn:
+Tạo lại ảnh xem trước túi đồ bằng Node.js và package `sharp`:
 
 ```sh
 node scripts/preview-pixel-ui.cjs docs/ui-previews
 ```
 
-Chụp viewport thật bằng `presentation_smoke.gd --capture-dir` theo
-`../ui-product-slice.md`, trên máy có Godot và rendering driver.
+Để chụp giao diện đang chạy trong Godot, dùng `client/tests/presentation_smoke.gd --capture-dir` trên máy có rendering driver.

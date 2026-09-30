@@ -99,23 +99,6 @@ for (const file of listFiles(path.join(root, 'client/scripts'), '.gd')) {
   }
 }
 
-const mapCatalogPath = path.join(root, 'client/data/map_catalog.json');
-const mapCatalog = JSON.parse(fs.readFileSync(mapCatalogPath, 'utf8'));
-const translatedMapFields = new Set([
-  'name', 'summary', 'details', 'route_label', 'region_title', 'region_body',
-  'label', 'display_name', 'action_label', 'message', 'repeat_message', 'quest_body_after'
-]);
-function checkMapCopy(value, field = '') {
-  if (Array.isArray(value)) {
-    value.forEach((item) => checkMapCopy(item, field));
-  } else if (value && typeof value === 'object') {
-    Object.entries(value).forEach(([key, child]) => checkMapCopy(child, key));
-  } else if (typeof value === 'string' && translatedMapFields.has(field) && value.trim() && !translations.has(value)) {
-    missing.push(`client/data/map_catalog.json [${field}]: ${JSON.stringify(value)}`);
-  }
-}
-checkMapCopy(mapCatalog);
-
 if (missing.length > 0) {
   throw new Error(`Missing localization entries:\n${missing.join('\n')}`);
 }

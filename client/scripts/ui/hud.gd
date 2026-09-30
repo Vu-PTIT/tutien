@@ -1,19 +1,15 @@
 class_name PixelHUD
 extends Control
 signal action_requested(action: String)
-signal weather_flash_reduced_changed(enabled: bool)
+
 var toast_time: float = 0.0
 var touch_layout: bool = false
-var equipped_skill_id: String = ""
-var phi_ren_icon: Texture2D
-var _last_weather_state: Dictionary = {}
 var _last_profile: Dictionary = {}
 var _last_notification := ""
 var _last_notification_key := ""
 var _last_notification_args: Array = []
 var language_manager: Variant
 
-@onready var touch_controls: TouchControls = $TouchControls
 @onready var character_panel: CharacterPanel = $CharacterPanel
 @onready var social_panel: SocialPanel = $SocialPanel
 
@@ -21,22 +17,19 @@ func _ready() -> void:
 	language_manager = get_node_or_null("/root/LanguageManager")
 	if language_manager != null:
 		language_manager.locale_changed.connect(_on_language_changed)
-	$WeatherInfo/EffectsToggle.toggled.connect(func(enabled: bool) -> void: weather_flash_reduced_changed.emit(enabled))
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
 	$CharacterButton.pressed.connect(func() -> void: action_requested.emit("character"))
 	$SocialButton.pressed.connect(func() -> void: action_requested.emit("social"))
-	$SparringButton.text = "Farm"
-	$SparringButton.tooltip_text = "Farm trên map • xem trạng thái máy chủ và đấu tập online"
+	$SparringButton.text = "Online"
+	$SparringButton.tooltip_text = "Tài khoản, kết nối và đấu tập trực tuyến"
 	$SparringButton.pressed.connect(func() -> void: action_requested.emit("dock"))
 	$HelpButton.pressed.connect(func() -> void:
-		notify("Kéo cần trái để đi • chạm Đánh / Kỹ năng khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh • R: kỹ năng • C: hồ sơ • G: cộng đồng • I: túi • E: tương tác"))
-	phi_ren_icon = _make_phi_ren_icon()
-	$Hotbar/Slot4.icon = null
-	$Hotbar/Slot4.text = "—"
-	for index in range(6):
-		var action_id: String = ["item_heal", "item_herb", "attack", "interact", "locked", "dodge"][index]
-		get_node("Hotbar/Slot%d" % index).pressed.connect(
-			func() -> void: action_requested.emit(action_id))
+		notify("Chạm nút Đánh hoặc Né khi đang đấu." if touch_layout else "Q / J: đánh • Space: né • C: hồ sơ • G: cộng đồng • I: túi đồ")
+	)
+	for index in range(4):
+		var action_id: String = ["item_heal", "item_herb", "attack", "dodge"][index]
+		var button: Button = get_node("Hotbar/Slot%d" % index)
+		button.pressed.connect(func() -> void: action_requested.emit(action_id))
 	$Dock/Close.pressed.connect(func() -> void: $Dock.hide())
 	for entry in ["Connect", "Create", "Join", "Ready", "Leave"]:
 		var action_id: String = entry.to_lower()
@@ -45,31 +38,14 @@ func _ready() -> void:
 	$Toast.hide()
 	for index in [0, 1]:
 		var button: Button = get_node("Hotbar/Slot%d" % index)
+		button.disabled = true
 		button.modulate = Color(0.6, 0.6, 0.6)
 		button.tooltip_text = "Chọn Hồi Nguyên Hoàn trong Túi đồ để hồi tối đa 40 HP." if index == 0 else "Ô vật phẩm thứ hai chưa được gán."
-	$Hotbar/Slot4.tooltip_text = "R: mở Nhân vật > Kỹ năng để trang bị Phi Nhận."
-	$Hotbar/Slot2.tooltip_text = "Q / J / chuột trái: đánh quái ở gần ngay trên map"
-	$Hotbar/Slot3.tooltip_text = "E / chạm: tương tác với điểm gần nhất"
-	$Hotbar/Slot5.tooltip_text = "Space: né trong đấu tập online"
-
-func _make_phi_ren_icon() -> Texture2D:
-	var image := Image.create(16, 16, false, Image.FORMAT_RGBA8)
-	image.fill(Color(0, 0, 0, 0))
-	for step in range(8):
-		var x := 4 + step
-		var y := 11 - step
-		image.set_pixel(x, y, Color("f2dc91"))
-		if x < 15 and y < 15:
-			image.set_pixel(x + 1, y + 1, Color("c8924f"))
-	image.set_pixel(2, 12, Color("7b5342"))
-	image.set_pixel(3, 11, Color("7b5342"))
-	image.set_pixel(4, 12, Color("7b5342"))
-	image.set_pixel(5, 13, Color("7b5342"))
-	return ImageTexture.create_from_image(image)
+	$Hotbar/Slot2.tooltip_text = "Q / J / chuột trái: đánh trong trận"
+	$Hotbar/Slot3.tooltip_text = "Space: né trong trận đấu online"
 
 func _process(delta: float) -> void:
 	$ModalShade.visible = $Inventory.visible or $Dock.visible or character_panel.visible or social_panel.visible
-	touch_controls.set_controls_visible(touch_layout and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not social_panel.visible)
 	if toast_time > 0:
 		toast_time -= delta
 		$Toast.visible = toast_time > 0
@@ -77,7 +53,7 @@ func _process(delta: float) -> void:
 func set_touch_layout(enabled: bool) -> void:
 	touch_layout = enabled
 	social_panel.set_touch_layout(enabled)
-	$Hotbar.visible = not enabled
+	$Hotbar.visible = true
 	$Controls.visible = not enabled
 	if enabled:
 		$HelpButton.set_anchors_preset(Control.PRESET_TOP_LEFT)
@@ -92,7 +68,6 @@ func set_touch_layout(enabled: bool) -> void:
 		$HelpButton.offset_right = 154.0
 		$HelpButton.offset_bottom = -7.0
 	$HelpButton.text = "Hướng dẫn" if enabled else "Hướng dẫn / trạng thái"
-	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not social_panel.visible)
 
 func notify(message: String) -> void:
 	_last_notification = message
@@ -118,26 +93,6 @@ func _render_notification() -> void:
 	else:
 		$Toast/Message.text = language_manager.translate_message(_last_notification)
 
-func set_weather(state: Dictionary) -> void:
-	_last_weather_state = state.duplicate(true)
-	$WeatherInfo/Time.text = tr("%s • %s") % [
-		str(state.get("time_text", "08:00")), tr(str(state.get("phase_label", "BAN NGÀY")))
-	]
-	$WeatherInfo/Condition.text = tr(str(state.get("condition_label", "TRỜI QUANG")))
-	var weather := str(state.get("weather", "clear"))
-	match weather:
-		"rain": $WeatherInfo/Condition.modulate = Color("c5e4f5")
-		"storm": $WeatherInfo/Condition.modulate = Color("b7cced")
-		_: $WeatherInfo/Condition.modulate = Color("ffe5a6") if not bool(state.get("is_night", false)) else Color("d3def8")
-	$WeatherInfo.tooltip_text = tr("%s • %s. Ngày trong game kéo dài 24 phút; thời tiết vẫn tiếp diễn cả ban đêm.") % [
-		tr(str(state.get("phase_label", "BAN NGÀY"))), tr(str(state.get("condition_label", "TRỜI QUANG")))
-	]
-
-func set_weather_flashes_reduced(enabled: bool) -> void:
-	var toggle: Button = $WeatherInfo/EffectsToggle
-	toggle.set_pressed_no_signal(enabled)
-	toggle.tooltip_text = "Đang giảm nháy sấm sét" if enabled else "Giảm nháy sáng và âm thanh sấm sét"
-
 func set_health(hp: int) -> void:
 	$Vitals/HP.value = clampi(hp, 0, 100)
 	$Vitals/HPText.text = "%d / 100" % hp
@@ -159,20 +114,10 @@ func apply_profile(profile: Dictionary) -> void:
 		$Vitals/Qi.max_value = 100
 		$Vitals/Qi.value = clampi(int(profile.get("cultivationXp", 0)), 0, 100)
 		$Vitals/QiText.text = tr("Đột phá đầu tiên • %d / 100 XP") % int(profile.get("cultivationXp", 0))
-	var equipped_skills: Dictionary = profile.get("equippedSkills", {"active_1": ""})
-	equipped_skill_id = str(equipped_skills.get("active_1", ""))
-	var skill_name := "Phi Nhận" if equipped_skill_id == "sk_phi_nhan" else "Kỹ năng"
-	$Hotbar/Slot4.modulate = Color.WHITE if not equipped_skill_id.is_empty() else Color(0.6, 0.6, 0.6)
-	$Hotbar/Slot4.tooltip_text = (tr("R: %s • dùng khi săn quái trên bản đồ.") % tr(skill_name)) if not equipped_skill_id.is_empty() else tr("R: trang bị Phi Nhận trong Nhân vật > Kỹ năng.")
-	$Hotbar/Slot4.icon = phi_ren_icon if equipped_skill_id == "sk_phi_nhan" else null
-	$Hotbar/Slot4.text = "" if equipped_skill_id == "sk_phi_nhan" else "—"
-	touch_controls.set_equipped_skill(equipped_skill_id, skill_name)
 
 func _on_language_changed(_locale: String) -> void:
 	if not is_node_ready():
 		return
-	if not _last_weather_state.is_empty():
-		set_weather(_last_weather_state)
 	if not _last_profile.is_empty():
 		apply_profile(_last_profile)
 	if not _last_notification.is_empty() or not _last_notification_key.is_empty():

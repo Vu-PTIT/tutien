@@ -103,7 +103,7 @@ Tổng hành trình mẫu:
 <!-- /generated:milestones -->
 
 Không ép giết đúng số quái trong mẫu; quest phụ/khám phá tạo lựa chọn thay thế.
-Lên tầng sớm không bỏ qua điều kiện truyện, cổng map hoặc quyền nhận quest.
+Lên tầng sớm không bỏ qua điều kiện truyện hoặc quyền nhận quest.
 
 ## 7. Giới hạn XP và xử lý dư
 

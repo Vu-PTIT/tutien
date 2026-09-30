@@ -1,15 +1,12 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=11 format=3]
 [ext_resource type="Theme" path="res://themes/tutien_theme.tres" id="theme"]
 [ext_resource type="Texture2D" path="res://assets/pixel/hero_idle.tres" id="hero"]
 [ext_resource type="Texture2D" path="res://assets/pixel/icon_0.tres" id="icon0"]
 [ext_resource type="Texture2D" path="res://assets/pixel/icon_1.tres" id="icon1"]
 [ext_resource type="Texture2D" path="res://assets/pixel/icon_15.tres" id="icon2"]
-[ext_resource type="Texture2D" path="res://assets/pixel/icon_3.tres" id="icon3"]
-[ext_resource type="Texture2D" path="res://assets/pixel/icon_11.tres" id="icon4"]
 [ext_resource type="Texture2D" path="res://assets/pixel/icon_4.tres" id="icon5"]
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory.tscn" id="bag"]
-[ext_resource type="PackedScene" path="res://scenes/ui/touch_controls.tscn" id="touch_controls"]
 [ext_resource type="PackedScene" path="res://scenes/ui/character.tscn" id="character"]
 [ext_resource type="PackedScene" path="res://scenes/ui/social_panel.tscn" id="social"]
 
@@ -90,65 +87,6 @@ offset_right = 177.0
 offset_bottom = 55.0
 mouse_filter = 2
 text = "Linh lực • chưa khai mở"
-
-[node name="WeatherInfo" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 0.0
-offset_left = -240.0
-offset_top = 8.0
-offset_right = -114.0
-offset_bottom = 39.0
-mouse_filter = 2
-tooltip_text = "Thời tiết thay đổi theo chu kỳ thế giới."
-
-[node name="Time" type="Label" parent="WeatherInfo"]
-theme_type_variation = &"UISmall"
-offset_left = 2.0
-offset_top = 1.0
-offset_right = 124.0
-offset_bottom = 16.0
-mouse_filter = 2
-horizontal_alignment = 1
-text = "08:00 • BAN NGÀY"
-
-[node name="Condition" type="Label" parent="WeatherInfo"]
-theme_type_variation = &"UISmall"
-offset_left = 2.0
-offset_top = 16.0
-offset_right = 94.0
-offset_bottom = 29.0
-mouse_filter = 2
-horizontal_alignment = 1
-text = "NẮNG"
-
-[node name="EffectsToggle" type="Button" parent="WeatherInfo"]
-theme_type_variation = &"UIButtonSmall"
-offset_left = 98.0
-offset_top = 16.0
-offset_right = 122.0
-offset_bottom = 29.0
-tooltip_text = "Giảm nháy sáng và âm thanh sấm sét"
-toggle_mode = true
-text = "FX"
-
-[node name="LeaveEncounter" type="Button" parent="."]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 0.0
-offset_left = -100.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = 34.0
-theme_type_variation = &"UIButtonSmall"
-visible = false
-text = "Rời bãi"
 
 [node name="Mode" type="Label" parent="."]
 theme_type_variation = &"UISmall"
@@ -295,7 +233,7 @@ offset_top = 4.0
 offset_right = 181.0
 offset_bottom = 35.0
 text = ""
-icon = ExtResource("icon3")
+icon = ExtResource("icon5")
 expand_icon = true
 
 [node name="Key3" type="Label" parent="Hotbar"]
@@ -303,46 +241,6 @@ theme_type_variation = &"UISmall"
 offset_left = 141.0
 offset_top = 33.0
 offset_right = 181.0
-offset_bottom = 44.0
-mouse_filter = 2
-horizontal_alignment = 1
-text = "E"
-
-[node name="Slot4" type="Button" parent="Hotbar"]
-theme_type_variation = &"UIButtonSmall"
-offset_left = 186.0
-offset_top = 4.0
-offset_right = 226.0
-offset_bottom = 35.0
-text = ""
-icon = ExtResource("icon4")
-expand_icon = true
-
-[node name="Key4" type="Label" parent="Hotbar"]
-theme_type_variation = &"UISmall"
-offset_left = 186.0
-offset_top = 33.0
-offset_right = 226.0
-offset_bottom = 44.0
-mouse_filter = 2
-horizontal_alignment = 1
-text = "R"
-
-[node name="Slot5" type="Button" parent="Hotbar"]
-theme_type_variation = &"UIButtonSmall"
-offset_left = 231.0
-offset_top = 4.0
-offset_right = 271.0
-offset_bottom = 35.0
-text = ""
-icon = ExtResource("icon5")
-expand_icon = true
-
-[node name="Key5" type="Label" parent="Hotbar"]
-theme_type_variation = &"UISmall"
-offset_left = 231.0
-offset_top = 33.0
-offset_right = 271.0
 offset_bottom = 44.0
 mouse_filter = 2
 horizontal_alignment = 1
@@ -375,7 +273,7 @@ offset_right = -8.0
 offset_bottom = -9.0
 theme_type_variation = &"UISmall"
 mouse_filter = 2
-text = "WASD di chuyển • E tương tác\nC hồ sơ • I túi đồ"
+text = "C: hồ sơ • G: cộng đồng\nI: túi đồ • Q/J: đánh"
 
 [node name="Toast" type="Panel" parent="."]
 layout_mode = 1
@@ -397,7 +295,7 @@ offset_top = 3.0
 offset_right = 331.0
 offset_bottom = 25.0
 mouse_filter = 2
-text = "Chào mừng đến An Khê. Nhấn I để xem túi đồ."
+text = "Mở túi đồ bằng nút Túi."
 
 [node name="ModalShade" type="ColorRect" parent="."]
 layout_mode = 1
@@ -517,8 +415,6 @@ visible = false
 
 [node name="CharacterPanel" parent="." instance=ExtResource("character")]
 visible = false
-
-[node name="TouchControls" parent="." instance=ExtResource("touch_controls")]
 
 [node name="SocialPanel" parent="." instance=ExtResource("social")]
 visible = false

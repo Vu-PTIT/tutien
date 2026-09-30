@@ -1,6 +1,6 @@
 # Đối chiếu nhánh kinh tế trước khi nhập dữ liệu — 26/09/2026
 
-Nguồn so sánh: `feat/inventory-rewards` tại `4ff2486` và `feat/economy-balance-v1` (merge base `e258028`). Nhánh kinh tế đi trước 19 commit riêng, thiếu 30 commit của nhánh tích hợp map/UI. Bảng ghi snapshot trước khi bắt đầu nhánh P2; P2 hiện tại vẫn không nhập toàn nhánh kinh tế vào runtime.
+Nguồn so sánh: `feat/inventory-rewards` tại `4ff2486` và `feat/economy-balance-v1` (merge base `e258028`). Nhánh kinh tế đi trước 19 commit riêng, thiếu 30 commit của nhánh tích hợp gameplay/UI. Bảng ghi snapshot trước khi bắt đầu nhánh P2; P2 hiện tại vẫn không nhập toàn nhánh kinh tế vào runtime.
 
 | Hợp đồng | Runtime hiện tại | Nhánh kinh tế | Quyết định |
 | --- | --- | --- | --- |

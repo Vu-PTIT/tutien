@@ -22,12 +22,12 @@ godot --path client -- --guest=player2
 3. Người thứ hai dán mã, bấm **Vào phòng**. Biết mã phòng là đủ để vào vị trí khách;
    đây chưa phải lời mời riêng có danh sách người được phép.
 4. Cả hai bấm **Sẵn sàng**. Trận bắt đầu sau ba giây.
-5. WASD/mũi tên di chuyển; chuột định hướng; **J hoặc chuột trái** đánh thường;
+5. WASD/mũi tên di chuyển; chuột định hướng; **J/Q hoặc chuột trái** đánh thường;
    **Space** né theo hướng chuột. Ô nhập mã đang có focus sẽ chặn điều khiển.
 6. HP về 0 thì kết thúc; hai người cùng về 0 được xử hòa. Bấm **Rời trận** rồi
    tạo phòng mới để chơi tiếp. Không thưởng tiền, không rơi đồ, không ghi HP vào hồ sơ.
 
-Vật cản ở giữa phòng chặn đi/né/đánh. Hình nhân vật và sân là đồ họa tạm.
+Vật cản ở giữa phòng chặn đi/né/đánh. Hình nhân vật và nền màu là đồ họa tạm.
 Client nội suy vị trí giữa snapshot, chưa có prediction/rollback hoặc đo ping.
 
 ## Luật server hiện tại

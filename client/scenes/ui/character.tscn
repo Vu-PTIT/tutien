@@ -333,7 +333,7 @@ offset_top = 20.0
 offset_right = 400.0
 offset_bottom = 39.0
 mouse_filter = 2
-text = "Ô R • Chưa trang bị kỹ năng"
+text = "Chưa trang bị kỹ năng"
 theme_type_variation = &"UISmall"
 
 [node name="RemoveSkill" type="Button" parent="PageHost/SkillsPage/SkillLoadoutCard"]
@@ -341,7 +341,7 @@ offset_left = 425.0
 offset_top = 7.0
 offset_right = 508.0
 offset_bottom = 37.0
-text = "Tháo ô R"
+text = "Tháo kỹ năng"
 theme_type_variation = &"UIButtonSmall"
 
 [node name="SkillRoster" type="Panel" parent="PageHost/SkillsPage"]
@@ -407,7 +407,7 @@ offset_left = 8.0
 offset_top = 102.0
 offset_right = 284.0
 offset_bottom = 130.0
-text = "Trang bị vào ô R"
+text = "Trang bị kỹ năng"
 theme_type_variation = &"UIButtonSmall"
 
 [node name="Status" type="Label" parent="PageHost/SkillsPage/SkillDetail"]
@@ -482,45 +482,16 @@ offset_left = 12.0
 offset_top = 111.0
 offset_right = 310.0
 offset_bottom = 137.0
-text = "Hiện nút điều khiển cảm ứng"
+text = "Bố cục cảm ứng"
 theme_type_variation = &"UIButtonSmall"
-
-[node name="WorldZoomLabel" type="Label" parent="PageHost/SettingsPage/SettingsCard"]
-offset_left = 12.0
-offset_top = 164.0
-offset_right = 495.0
-offset_bottom = 180.0
-mouse_filter = 2
-text = "Tầm nhìn bản đồ • PC"
-theme_type_variation = &"UISmall"
-
-[node name="WorldZoom" type="HSlider" parent="PageHost/SettingsPage/SettingsCard"]
-offset_left = 12.0
-offset_top = 181.0
-offset_right = 390.0
-offset_bottom = 201.0
-min_value = 75.0
-max_value = 100.0
-step = 5.0
-value = 80.0
-
-[node name="WorldZoomValue" type="Label" parent="PageHost/SettingsPage/SettingsCard"]
-offset_left = 407.0
-offset_top = 183.0
-offset_right = 495.0
-offset_bottom = 199.0
-mouse_filter = 2
-horizontal_alignment = 2
-text = "80%"
-theme_type_variation = &"UISmall"
 
 [node name="SettingsNote" type="Label" parent="PageHost/SettingsPage/SettingsCard"]
 offset_left = 12.0
-offset_top = 203.0
+offset_top = 169.0
 offset_right = 495.0
-offset_bottom = 220.0
+offset_bottom = 190.0
 mouse_filter = 2
-text = "Giảm % để thấy rộng hơn; HUD và chữ giữ nguyên. F9 đổi bố cục cảm ứng."
+text = "F9 đổi bố cục cảm ứng."
 autowrap_mode = 2
 theme_type_variation = &"UIMicro"
 

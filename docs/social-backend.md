@@ -1,7 +1,7 @@
 # Backend tương tác người chơi — v0.2
 
 Nền tảng hiện có: Godot 4.6.1 / GDScript, Nakama 3.37.0 / TypeScript,
-PostgreSQL 16.8. Các API này hoạt động độc lập với di chuyển, chiến đấu và bản đồ.
+PostgreSQL 16.8. Các API này hoạt động độc lập với giao diện chiến đấu.
 
 ## Chạy và kiểm tra
 
@@ -175,7 +175,7 @@ API trong tài liệu này khi nối SDK khác để tránh lỗi `403`.
 ## Dùng trong Godot
 
 `client/scripts/social_api.gd` là node tái sử dụng; thêm vào scene hoặc Autoload.
-Scene di chuyển cũ giữ nguyên. Ví dụ handler trong UI sau khi đã nhập tài khoản:
+Ví dụ handler trong UI sau khi đã nhập tài khoản:
 
 ```gdscript
 var api := SocialApi.new()

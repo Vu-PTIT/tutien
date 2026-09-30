@@ -1,30 +1,18 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="hud"]
-[ext_resource type="Script" path="res://scripts/world_weather_fx.gd" id="weather_fx_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/account_auth_panel.tscn" id="account_auth"]
 
 [node name="Main" type="Node2D"]
 texture_filter = 1
 script = ExtResource("1")
 
-[node name="MapHost" type="Node2D" parent="."]
-
 [node name="Arena" type="Node2D" parent="."]
 visible = false
 y_sort_enabled = true
 
 [node name="Presentation" type="CanvasLayer" parent="."]
-
-[node name="WeatherFX" type="Control" parent="Presentation"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("weather_fx_script")
 
 [node name="HUD" parent="Presentation" instance=ExtResource("hud")]
 

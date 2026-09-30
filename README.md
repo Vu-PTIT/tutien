@@ -1,76 +1,49 @@
 # Tu Tiên
 
-Base game 2D: Godot + GDScript, Nakama + TypeScript, PostgreSQL.
+Game 2D dùng Godot/GDScript, Nakama/TypeScript và PostgreSQL.
 
-**Backend tương tác người chơi:** đăng ký email, đăng nhập email/tên + mật khẩu,
-refresh/logout, kết bạn/chặn, chat thế giới/riêng/nhóm, tạo và quản lý tông môn/bang
-phái. Có phân quyền, giới hạn gửi và lưu dữ liệu PostgreSQL.
-Xem [hướng dẫn API và kết nối Godot](docs/social-backend.md).
+Client hiện tập trung vào đăng nhập, hồ sơ nhân vật, túi đồ, cộng đồng và đấu tập trực tuyến. Backend hỗ trợ đăng ký email, xác thực thiết bị, kết bạn/chặn, chat thế giới/riêng/nhóm và quản lý tông môn. Xem [hướng dẫn API](docs/social-backend.md).
 
-## Chạy nhanh trên Windows
+## Chạy nhanh
 
-1. Cài **Godot 4.6.1 Standard**, **Docker Desktop** (Linux containers). Node.js **22.14.0** chỉ cần khi sửa/test server ngoài Docker.
-2. Clone repo và khởi động backend:
+1. Cài Godot 4.6.1 Standard, Docker Desktop và Node.js 22.14.0.
+2. Khởi chạy dịch vụ:
 
-```sh
-git clone https://github.com/Vu-PTIT/tutien.git
-cd tutien
-docker compose up --build -d
-```
+   ```sh
+   docker compose up --build -d
+   ```
 
-3. Import `client/project.godot` trong Godot, nhấn **F6/F5** chạy scene/project. Chạy với `--touch-preview` hoặc nhấn **F9** trong bản PC để thử bố cục cảm ứng màn hình ngang; trên thiết bị mobile, bố cục này tự bật.
-4. Di chuyển bằng **WASD / phím mũi tên**, hoặc kéo cần trái ở chế độ cảm ứng. **C** mở hồ sơ nhân vật, **E** tương tác, **M** mở tuyến bản đồ. Quái xuất hiện trực tiếp trên map **Trúc Âm**; đến gần Sơn Trư hoặc Độc Chu rồi nhấn **Q/J/chuột trái** hoặc nút **Đánh**. Đòn đánh đầu tự đăng nhập thiết bị nếu backend đang chạy. XP, nguyên liệu và trang bị được máy chủ cộng thẳng vào **Túi đồ**. Nếu backend chưa chạy, mở **Farm → Kết nối** rồi chạy `docker compose up --build -d`; khi backend offline chỉ có thể khám phá map.
-   Đấu tập online vẫn mở từ **Farm**; xem [luật đấu tập](docs/combat-prototype.md).
-5. **Nhân vật [C]** mở hồ sơ, cảnh giới, chỉ số, trang bị, kỹ năng và cài đặt thiết bị. **Mở Túi đồ để trang bị** chọn/tháo Kiếm hoặc Áo; **Túi [I]** mở kho, **Esc** đóng cửa sổ. Chế độ offline chỉ hiển thị dữ liệu mẫu, không lưu hoặc nhận thưởng. Sau khi kết nối, tài sản được đồng bộ và vật tư khởi đầu chỉ nhận một lần. Xem [hợp đồng inventory/reward](docs/inventory-and-rewards.md).
-6. Kiểm tra backend: `docker compose ps`, `docker compose logs nakama`. Sau khi backend healthy: `node scripts/smoke.mjs`.
+3. Mở `client/project.godot` trong Godot và chạy project. Dùng `--no-auto-connect` để mở client offline khi kiểm tra giao diện.
+4. Trong client, **WASD / phím mũi tên** di chuyển trong trận; chuột định hướng, **Q/J** đánh và **Space** né. **C** mở hồ sơ, **I** mở túi đồ, **G** mở cộng đồng. Nút **Online** mở phần kết nối và đấu tập.
+
+Để kiểm tra server:
 
 ```sh
 cd server
 npm ci
 npm test
+node ../scripts/smoke.mjs
 ```
 
-Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong named volume, vẫn còn sau khi dừng. Không dùng `down -v` nếu muốn giữ dữ liệu.
+Dừng dịch vụ bằng `docker compose down`. PostgreSQL dùng named volume và giữ dữ liệu sau khi dừng. Không dùng `down -v` nếu muốn giữ dữ liệu.
 
 ## Cấu trúc
 
-- `client/`: scene làng/HUD/túi chỉnh được trong editor, atlas nhân vật/icon, đăng nhập, đấu tập và bãi Sơn Trư.
-- `client/scripts/combat_api.gd`: adapter sparring/PvE dùng chung kết nối với `SocialApi`.
-- `server/src/combat.ts`: mô phỏng authoritative 20 Hz, hai người, đánh thường/né và vòng đời trận.
-- `server/src/pve_son_tru.ts`: AI và va chạm Sơn Trư authoritative 20 Hz; encounter P1 không cấp XP/loot.
-- `server/`: runtime TypeScript ES5, hồ sơ và backend tài khoản/bạn bè/chat/nhóm, kiểm thử phân quyền và ghi đồng thời.
-- `client/scripts/social_api.gd`: lớp HTTP/WebSocket cho các màn hình tương tác sau này.
-- `docs/social-backend.md`: API, mô hình dữ liệu, quy tắc và giới hạn phiên bản.
-- `compose.yaml`: build runtime, migration, Nakama và PostgreSQL.
-- `scripts/smoke.mjs`: kiểm tra tích hợp tài khoản và lưu/đọc hồ sơ.
-- `scripts/social-smoke.mjs`: kiểm thử nhiều tài khoản, chat WebSocket và quyền nhóm trên backend thật.
-- `.github/workflows/ci.yml`: build, unit test và smoke test Docker.
+- `client/`: Godot client, đăng nhập, hồ sơ, túi đồ, cộng đồng và giao diện đấu tập.
+- `client/scripts/combat_api.gd`: adapter trận đấu dùng chung kết nối với `SocialApi`.
+- `server/`: runtime TypeScript, hồ sơ và backend tài khoản/bạn bè/chat/nhóm, cùng kiểm thử phân quyền và ghi đồng thời.
+- `server/src/combat.ts`: mô phỏng đấu tập authoritative 20 Hz.
+- `server/src/pve_son_tru.ts`: encounter Sơn Trư authoritative 20 Hz.
+- `docs/social-backend.md`: API, mô hình dữ liệu và giới hạn phiên bản.
+- `docs/combat-prototype.md`: luật trận đấu và cách kiểm thử.
+- `.github/workflows/ci.yml`: unit test, kiểm tra resource Godot và smoke test.
 
-## Phạm vi bản base
+## Giới hạn hiện tại
 
-Giao diện dùng atlas pixel, theme xanh đen/đồng, HUD và túi dạng scene Godot.
-Bốn map đang dựng từ atlas địa hình 32 px và vật thể 128 px riêng trong runtime;
-PNG world chỉ dùng làm ảnh ý tưởng ở panel tuyến, minimap đọc layout thật. An Khê có vật thể cao mờ đi khi che người chơi,
-sprite cây anh đào tách nền và va chạm gốc cây, vùng cản ngăn tương tác xuyên tường. Bàn phím/chuột và cảm ứng đi qua cùng lớp lệnh InputMap; bố cục cảm ứng là prototype cho màn hình ngang,
-chưa phải bản xuất Android đã nghiệm thu. Xem [thiết kế và kiểm chứng](docs/ui-product-slice.md)
-và [trạng thái triển khai](docs/implementation-status.md).
+Client có giao diện pixel, theme dùng chung, hồ sơ, túi đồ, đăng nhập, cộng đồng và phòng đấu tập. Dữ liệu offline chỉ là bản xem thử. Tiến trình và phần thưởng cần kết nối backend; bản mobile và đồ họa toàn game chưa được nghiệm thu.
 
-Đã có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**. P1 thêm encounter Sơn Trư một người chơi: báo hướng 0,75 giây, lao 4 tile, hồi 0,8 giây, né/phản công, chết/reset và reconnect ngắn. Encounter hiện chỉ thử combat; **chưa cấp XP, linh thạch hay vật phẩm**. Inventory 24 ô, catalog, migration và gói khởi đầu đã có; dùng/trang bị đồ, quest runtime, trồng trọt, giao dịch và PvP mở vẫn chưa làm. Mobile export và đồ họa toàn game chưa nghiệm thu.
+Compose chỉ dành cho localhost và dùng thông tin mẫu công khai. Chưa có triển khai Internet. Khi vận hành cần cấu hình bí mật riêng, TLS, sao lưu và kiểm thử phục hồi. Không commit token hoặc `.env`.
 
-Xem [tiến độ và thứ tự triển khai](docs/implementation-status.md), [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md). P2 đã qua CI trên PR #8; P3 đang được triển khai trên `feat/p3-world-quests`: server-authoritative world interaction và quest 001–003. Cần CI Godot/Nakama xác nhận trước khi merge.
-Xem [nhật ký phát triển và lịch sử Git](docs/project-history.md) để biết các mốc đã commit, trạng thái sản phẩm và thứ tự làm tiếp theo.
+Thiết bị thử nghiệm được nhận dạng bằng ID ngẫu nhiên trong `user://identity.cfg`; xóa file sẽ tạo danh tính mới. Đây là đăng nhập thử, chưa có khôi phục tài khoản.
 
-## Môi trường phát triển
-
-Cấu hình Compose chỉ dành cho localhost: khóa `local-dev-key` và mật khẩu `localdb` là giá trị mẫu công khai. Chưa có triển khai Internet. Khi vận hành cần cấu hình bí mật riêng, TLS, sao lưu và kiểm thử phục hồi. Không commit token hay `.env`.
-
-Thiết bị được nhận dạng bằng ID ngẫu nhiên lưu tại `user://identity.cfg`; xóa file sẽ tạo tài khoản mới. Đây là đăng nhập thử, chưa có khôi phục tài khoản. Phiên chỉ giữ trong RAM; bấm Connect để đăng nhập lại.
-
-Runtime dùng definitions chính thức `nakama-common` v1.44.2 (đúng bản Nakama 3.37.0),
-lưu trong `server/vendor` kèm giấy phép. Không dùng API Node.js trong runtime Nakama.
-
-## Tài liệu chính thức
-
-- https://docs.godotengine.org/en/4.6/
-- https://heroiclabs.com/docs/nakama/getting-started/install/docker/
-- https://heroiclabs.com/docs/nakama/server-framework/typescript-runtime/
+Runtime dùng definitions `nakama-common` v1.44.2, tương ứng Nakama 3.37.0, trong `server/vendor` kèm giấy phép. Runtime Nakama không dùng API Node.js.
