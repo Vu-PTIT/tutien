@@ -2,7 +2,7 @@ class_name GameMap
 extends Node2D
 ## Shared world runtime for the four maps.
 ## Gameplay uses reusable 32 px terrain and independent 128 px landmark regions.
-## Painted world PNG files are retained only for route concept previews.
+## Painted world PNG files are retained as visual references; runtime uses tile layers.
 
 const TILE_SIZE_DEFAULT := 32
 const TILE_SYMBOLS := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"
@@ -94,7 +94,6 @@ func _ready() -> void:
 	var tiled := _build_authored_tile_layers()
 	if not tiled:
 		push_error("Cannot build authored TileMap: " + map_id)
-	_build_location_labels()
 	_build_collision_shapes()
 	_build_interactables()
 	_build_water_ripples()
@@ -110,7 +109,6 @@ func _ready() -> void:
 	camera.limit_bottom = int(map_size_px.y)
 	_update_area_and_camera($Actors/Player.position)
 	_update_prop_occlusion($Actors/Player.position)
-	_update_location_labels($Actors/Player.position)
 	update_interaction_focus($Actors/Player.position)
 
 func set_camera_zoom(zoom_factor: float) -> void:
@@ -896,7 +894,6 @@ func _is_terrain_walkable_exception(tile_point: Vector2i) -> bool:
 func update_player_context(point: Vector2) -> String:
 	_update_area_and_camera(point)
 	_update_prop_occlusion(point)
-	_update_location_labels(point)
 	return active_area_name
 
 func get_weather_exposure() -> String:
@@ -1002,40 +999,6 @@ func _has_clear_interaction_path(from: Vector2, to: Vector2) -> bool:
 		if not is_walkable(from.lerp(to, float(step) / samples)):
 			return false
 	return true
-
-func _build_location_labels() -> void:
-	var root: Node2D = $LocationLabels
-	for landmark_value: Variant in map_data.get("landmarks", []):
-		if not landmark_value is Dictionary:
-			continue
-		var landmark: Dictionary = landmark_value
-		var tile_position: Array = landmark.get("position_tiles", [0, 0])
-		if tile_position.size() < 2:
-			continue
-		var label := Label.new()
-		label.name = "Landmark_" + str(root.get_child_count())
-		label.text = str(landmark.get("name", ""))
-		var world_point := Vector2(float(tile_position[0]), float(tile_position[1])) * tile_size_px
-		label.position = world_point
-		label.set_meta("world_point", world_point)
-		label.visible = false
-		label.offset_left -= 55.0
-		label.offset_right += 55.0
-		label.offset_top -= 10.0
-		label.offset_bottom += 10.0
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.theme_type_variation = &"UISmall"
-		label.theme = load("res://themes/tutien_theme.tres") as Theme
-		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		label.z_index = 20
-		root.add_child(label)
-
-func _update_location_labels(point: Vector2) -> void:
-	for node: Node in $LocationLabels.get_children():
-		var label := node as Label
-		if label != null:
-			var anchor: Vector2 = label.get_meta("world_point", Vector2.ZERO)
-			label.visible = point.distance_to(anchor) <= tile_size_px * 5.0
 
 func _update_area_and_camera(point: Vector2) -> void:
 	var tile_point := Vector2i(floori(point.x / tile_size_px), floori(point.y / tile_size_px))

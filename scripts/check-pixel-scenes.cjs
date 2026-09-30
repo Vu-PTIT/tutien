@@ -47,12 +47,13 @@ for(const token of ['UIHeading','UIBody','UISmall','UIMicro','UIButtonSmall','UI
   assert.ok(theme.includes(token+'/base_type'), 'Shared theme defines typography token '+token);
 }
 assert.ok(hud.includes('theme_type_variation = &"UISmall"') &&
-  hud.includes('theme_type_variation = &"UIHeading"'),
-  'HUD labels must use centralized typography tokens');
+  hud.includes('theme_type_variation = &"UIButtonSmall"') &&
+  read('scenes/ui/character.tscn').includes('theme_type_variation = &"UIHeading"'),
+  'Remaining HUD and character labels must use centralized typography tokens');
 const typographyFiles=[
   'scenes/ui/character.tscn','scenes/ui/inventory.tscn','scenes/ui/touch_controls.tscn',
   'scenes/an_khe.tscn','scenes/map_interactable.tscn','scenes/ui/hud.tscn',
-  'scripts/ui/character_panel.gd','scripts/ui/hud.gd','scripts/ui/world_map_panel.gd','scripts/game_map.gd'
+  'scripts/ui/character_panel.gd','scripts/ui/hud.gd','scripts/game_map.gd'
 ];
 for(const file of typographyFiles) {
   const source=read(file);
@@ -64,8 +65,12 @@ assert.ok(!/^@tool/m.test(main), 'Runtime must not run in editor');
 assert.ok(!main.includes('_draw_editor_ui_preview'), 'No alternate/fake editor HUD');
 assert.equal((read('scenes/ui/inventory.tscn').match(/name="Slot\d+" type="Button"/g)||[]).length,24);
 assert.equal((hud.match(/name="Slot\d+" type="Button"/g)||[]).length,6);
-assert.ok(hud.includes('name="MapButton" type="Button"'), 'Map route button is present');
-assert.ok(hud.includes('name="WorldMap" type="Control"'), 'World map overlay is present');
+for(const node of ['MapButton','WorldMap','LocalMap','Minimap','Location','FieldInfo','InteractionHint']) {
+  assert.ok(!hud.includes(`name="${node}"`), 'Legacy map UI node was removed: '+node);
+}
+assert.ok(!read('scripts/ui/hud.gd').includes('configure_map') && !read('scripts/ui/hud.gd').includes('set_interaction_prompt'),
+  'Legacy map rendering and guidance were removed from the HUD code');
+assert.ok(read('scripts/map_catalog.gd').includes('maps_by_id'), 'Map runtime data loads independently of presentation');
 const socialScene=read('scenes/ui/social_panel.tscn'), socialScript=read('scripts/ui/social_panel.gd');
 assert.ok(hud.includes('name="SocialButton" type="Button"') && hud.includes('res://scenes/ui/social_panel.tscn'),
   'HUD has a visible entry point for player social features');
@@ -157,13 +162,6 @@ assert.equal(boarSign.action_kind,'inspect','Sơn Trư tracks are map scenery, n
 assert.deepEqual(boarSign.position_tiles,[33,17],'The trail sign stays clear of the field spawn points');
 for(const map of mapCatalog.maps) {
   const layout=layoutByMapId.get(map.id);
-  assert.ok(map.preview, 'Every route needs a map preview: '+map.id);
-  const previewPath=path.join(root,map.preview.replace(/^res:\/\//,''));
-  assert.ok(fs.existsSync(previewPath), 'Missing map preview asset: '+map.preview);
-  const png=fs.readFileSync(previewPath);
-  assert.equal(png.subarray(1,4).toString(),'PNG');
-  assert.equal(png.readUInt32BE(16),1536);
-  assert.equal(png.readUInt32BE(20),1152);
   const [spawnX,spawnY]=map.spawn_tiles;
   assert.equal(layout.ground_rows.length,map.size_tiles[1],'Terrain height matches map catalog: '+map.id);
   assert.ok(layout.ground_rows.every(row=>row.length===map.size_tiles[0]&&[...row].every(symbol=>tileSymbols.indexOf(symbol)>=0)),
@@ -271,14 +269,14 @@ assert.ok(read('scripts/ui/character_panel.gd').includes('var fullscreen_enabled
 assert.ok(read('project.godot').includes('window/size/viewport_width=640'));
 assert.ok(read('scripts/inventory_panel.gd').includes('"operationId": "starter_claim_v1"'));
 assert.ok(read('scripts/inventory_panel.gd').includes('inventory.clear()'));
-for(const name of ['an_khe','an_khe_world_v1','cultivator','icons']) {
+for(const name of ['an_khe','cultivator','icons']) {
   const png=fs.readFileSync(path.join(root,'assets/pixel/'+name+'.png'));
   assert.equal(png.subarray(1,4).toString(),'PNG');
   assert.ok(png.readUInt32BE(16)>0 && png.readUInt32BE(20)>0);
   if(['cultivator','icons'].includes(name)) assert.ok([3,6].includes(png[25]),'Expected transparent PNG atlas: '+name);
 }
 const mapWorldScene=read('scenes/map_world.tscn'), gameMap=read('scripts/game_map.gd');
-assert.ok(mapWorldScene.includes('name="Background" type="Sprite2D"'), 'Background placeholder stays hidden; painted art is route preview only');
+assert.ok(mapWorldScene.includes('name="Background" type="Sprite2D"'), 'Map scene retains its hidden background placeholder');
 assert.ok(mapWorldScene.includes('name="GroundLayer" type="TileMapLayer"'), 'Maps have an editable ground TileMapLayer');
 assert.ok(mapWorldScene.includes('name="DetailLayer" type="TileMapLayer"'), 'Maps have a detail TileMapLayer');
 assert.ok(mapWorldScene.includes('name="ForegroundLayer" type="TileMapLayer"'), 'Maps have a foreground TileMapLayer');
@@ -532,8 +530,8 @@ assert.ok(gameMap.includes('\t\t\tvar tile_pool: Array = edge_tiles if nearest_d
   'Each path cell chooses its dirt tile inside the per-cell loop');
 assert.ok(gameMap.includes('var enclosed_path_gaps: Array[Vector2i] = []')&&gameMap.includes('if path_neighbor_count >= 3:'),
   'Path junctions fill one-cell grass gaps so the dirt network stays continuous');
-assert.ok(gameMap.includes('_encode_ground_rows(tile_rows)')&&main.includes('hud.configure_map(map_world.map_data)')&&hudScript.includes('runtime_ground_rows'),
-  'Runtime river and path autoterrain also appears on the minimap');
+assert.ok(!hudScript.includes('configure_map')&&!hudScript.includes('runtime_ground_rows'),
+  'The old minimap renderer is absent from the HUD script');
 assert.ok(gameMap.includes('_ensure_ground_surface_atlas_source')&&gameMap.includes('surface_terrain_ids.has(terrain_index)'),'Base ground samples a unique map-wide surface tile while paths and props keep their own atlas art');
 assert.ok(gameMap.includes('_build_resource_objects(layout)')&&gameMap.includes('try_chop_tree'),'Map loads interactive resource objects from data');
 assert.ok(resourceTree.includes('func chop()')&&resourceTree.includes('_finish_felling')&&resourceTree.includes('collision_layer = 0'),
@@ -541,7 +539,7 @@ assert.ok(resourceTree.includes('func chop()')&&resourceTree.includes('_finish_f
 assert.ok(flowerScript.includes('body_entered.connect')&&flowerScript.includes('func stomp()')&&flowerScript.includes('Tween.TRANS_BACK'),
   'Flower reacts to the player collider with a spring-back animation');
 assert.ok(main.includes('try_chop_tree')&&main.includes('facing_direction()'),'World attack action can chop a tree in front of the player');
-assert.ok(main.includes('local_resource_states')&&main.includes('next_map.configure(data, int(world_map.catalog.get("tile_size_px", 32)), local_resource_states)'),
+assert.ok(main.includes('local_resource_states')&&main.includes('next_map.configure(data, int(map_catalog.catalog.get("tile_size_px", 32)), local_resource_states)'),
   'Tree progress persists while changing maps during the current session');
 assert.ok(resourceTree.includes('saved_state.get("hit_count", 0)')&&resourceTree.includes('if hit_count >= hits_to_fell'),
   'Resource tree restores a damaged or felled state when its map loads');
@@ -586,13 +584,8 @@ const pveSprite=fs.readFileSync(path.join(root,'assets/pixel/enemies/son_tru/cle
 assert.equal(pveSprite.readUInt32BE(16),64,'Runtime boar sprite is a single 64 px frame');
 assert.equal(pveSprite.readUInt32BE(20),64,'Runtime boar sprite is a single 64 px frame');
 assert.equal(pveSprite[25],6,'Runtime boar sprite has transparent RGBA pixels');
-const routeOverview=fs.readFileSync(path.join(root,'assets/pixel/maps/world_route_overview.png'));
-assert.equal(routeOverview.readUInt32BE(16),768,'Route overview uses the expected compact width');
-assert.equal(routeOverview.readUInt32BE(20),256,'Route overview uses the expected compact height');
 const combatApi=read('scripts/combat_api.gd');
 assert.ok(!hud.includes('name="Hunt" type="Button"') && !main.includes('func _create_son_tru()'), 'The client no longer opens a separate solo hunt');
-assert.ok(hud.includes('name="FieldInfo" type="Panel"')&&!hud.includes('name="Quest" type="Panel"'), 'The HUD presents field information instead of quest tracking');
-assert.ok(mapCatalog.maps.every(map=>typeof map.region_title==='string'&&typeof map.region_body==='string'), 'Every map supplies field or region guidance');
 assert.ok(main.includes('api.call_rpc("world_attack"') && main.includes('map_world.update_field_mobs'), 'The client attacks and renders monsters inside the active map');
 const worldServer=fs.readFileSync(path.join(__dirname,'../server/src/world.ts'),'utf8');
 for(const mob of trucAm.field_spawns) assert.ok(worldServer.includes('id:"'+mob.spawn_id+'"'),'Server owns field spawn '+mob.spawn_id);
@@ -606,10 +599,8 @@ assert.ok(read('scripts/main.gd').includes('game_input.handle_event(') && !read(
 assert.ok(gameMap.includes('_build_interactables()') && gameMap.includes('_build_water_ripples()'), 'Map POIs and water motion are data-driven');
 assert.ok(main.includes('func _travel_to_map(map_id: String, arrival_tiles: Array = [])') && main.includes('target_arrival_tiles'), 'Map gates load their configured arrival point');
 assert.ok(gameMap.includes('room_lock'), 'Cổ Tỉnh camera locks by room');
-const routePanel=read('scripts/ui/world_map_panel.gd');
-assert.ok(routePanel.includes('signal map_requested'), 'Route panel emits travel requests');
-assert.ok(routePanel.includes('route_connections')&&routePanel.includes('_route_summary(')&&routePanel.includes('connection.get("label"'),
-  'World map route cards render names from the connected gate graph');
-assert.ok(main.includes('world_map.map_requested.connect(_travel_to_map)'), 'Main connects map travel');
-console.log('PASS static map and scene audit: '+scenes+' scenes, '+references+' resource references, connected reciprocal routes, walkable POIs, transparent Thạch Cạn props, aligned ripples, valid PNG assets, valid centralized Be Vietnam Pro UI typography.');
+assert.ok(main.includes('MapCatalogScript.new()')&&main.includes('map_catalog.maps_by_id'),
+  'Map loading and travel remain independent of removed presentation panels');
+assert.ok(!gameMap.includes('LocationLabels')&&!gameMap.includes('_build_location_labels'), 'Old floating map labels were removed');
+console.log('PASS static map and scene audit: '+scenes+' scenes, '+references+' resource references, cleared map UI baseline, connected reciprocal routes, walkable POIs, transparent Thạch Cạn props, aligned ripples, valid PNG assets, valid centralized Be Vietnam Pro UI typography.');
 console.log('Not a GDScript parser or Godot runtime test. Run presentation_smoke.gd in Godot.');

@@ -58,7 +58,7 @@ const txt=s=>{try{return JSON.parse(s)}catch{return s||''}};
   const tree=scene('res://scenes/main.tscn');
   const demoIcons=[4,5,0,1,2,7,6,8,11,9].map(i=>texture('res://assets/pixel/icon_'+i+'.tres'));
   fs.mkdirSync(output,{recursive:true});
-  for(const mode of ['village','inventory']){
+  for(const mode of ['inventory']){
     const svg=['<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360"><rect width="640" height="360" fill="#121b22"/>'];
     const r=(x,y,w,h,fill)=>svg.push('<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+fill+'"/>');
     const text=(content,x,y,size=10,center=false)=>svg.push('<text x="'+x+'" y="'+y+'" font-family="DejaVu Sans" font-size="'+size+'" fill="#e8dec4"'+(center?' text-anchor="middle"':'')+'>'+esc(content)+'</text>');
@@ -116,5 +116,5 @@ const txt=s=>{try{return JSON.parse(s)}catch{return s||''}};
     const native = await sharp(Buffer.from(svg.join(''))).png().toBuffer();
     await sharp(native).resize(1280,720,{kernel:'nearest'}).png().toFile(path.join(output,mode+'-layout-preview.png'));
   }
-  console.log('Static .tscn layout previews (NOT Godot runtime): '+output);
+  console.log('Static inventory layout preview (NOT Godot runtime): '+output);
 })().catch(e=>{console.error(e);process.exit(1)});

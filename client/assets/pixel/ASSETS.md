@@ -15,7 +15,6 @@ không phải tileset vẽ/tách thủ công.
 | `cultivator.png` | 256 × 256 RGBA, 18 màu | Atlas 4 × 4, frame native 64 × 64; 4 hướng × 4 bước đi |
 | `icons.png` | 1254 × 1254 transparent PNG | 16 icon, nền trong suốt |
 | `maps/bai_son_tru.png` | 1586 × 992 RGB | Nền bãi săn cố định; chỉ là phông chiến đấu, bounds do server điều khiển |
-| `maps/world_route_overview.png` | 768 × 256 RGB | Sơ đồ tổng quan UI: một đường liên tục An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh; không dùng làm map runtime |
 | `enemies/son_tru.png` | 192 × 128 RGBA, 13 màu + alpha trong suốt | Sơn Trư combat atlas 3 × 2, ô 64 × 64; dùng chung cho encounter và overworld |
 | `enemies/son_tru/clean.png` | 64 × 64 RGBA | Frame Sơn Trư idle để dùng độc lập |
 | `enemies/doc_chu/processed/sheet-transparent.png` | 128 × 128 RGBA | Độc Chu atlas 2 × 2, bốn frame 64 × 64; dùng trong mob overworld |
@@ -57,9 +56,7 @@ Be Vietnam Pro được lấy từ [Google Fonts](https://github.com/google/font
 9. **Sơn Trư:** `enemies/son_tru.prompt.txt`; atlas 3 × 2 gồm idle, báo động,
    lấy đà, giậm chân, lao ngắn và hồi sức; giữ màu nâu hạt dẻ, mõm ấm, ngà
    ngắn và bờm đỏ nâu. Frame 64 × 64, nền magenta đã được tách.
-10. **Sơ đồ tuyến:** `maps/world_route_overview.prompt.txt`; panorama pixel RPG
-    liền mạch bốn vùng. Đây là nền UI; tên và điểm chọn được vẽ riêng trong Godot.
-11. **Độc Chu:** `enemies/doc_chu/prompt-used.txt`; sheet 2 × 2 gồm idle, dịch
+10. **Độc Chu:** `enemies/doc_chu/prompt-used.txt`; sheet 2 × 2 gồm idle, dịch
     chân, báo trước đòn và co người khi trúng đòn; giữ tám chân, túi độc tím,
     mắt hổ phách và palette xanh ngọc/than. PNG RGBA và GIF preview.
 

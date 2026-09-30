@@ -7,13 +7,7 @@ var touch_layout: bool = false
 var equipped_skill_id: String = ""
 var phi_ren_icon: Texture2D
 var _last_weather_state: Dictionary = {}
-var _last_map_data: Dictionary = {}
 var _last_profile: Dictionary = {}
-var _last_prompt := ""
-var _last_position := Vector2.ZERO
-var _last_map_size := Vector2(640, 360)
-var _last_tile_size := 32
-var _last_area_name := ""
 var _last_notification := ""
 var _last_notification_key := ""
 var _last_notification_args: Array = []
@@ -21,7 +15,6 @@ var language_manager: Variant
 
 @onready var touch_controls: TouchControls = $TouchControls
 @onready var character_panel: CharacterPanel = $CharacterPanel
-@onready var local_map_panel: CurrentMapPanel = $LocalMap
 @onready var social_panel: SocialPanel = $SocialPanel
 
 func _ready() -> void:
@@ -30,17 +23,13 @@ func _ready() -> void:
 		language_manager.locale_changed.connect(_on_language_changed)
 	$WeatherInfo/EffectsToggle.toggled.connect(func(enabled: bool) -> void: weather_flash_reduced_changed.emit(enabled))
 	$BagButton.pressed.connect(func() -> void: action_requested.emit("inventory"))
-	$MapButton.pressed.connect(func() -> void: action_requested.emit("map"))
-	$Minimap.mouse_filter = Control.MOUSE_FILTER_STOP
-	$Minimap.tooltip_text = tr("Bấm hoặc chạm để xem bản đồ khu vực hiện tại")
-	$Minimap.gui_input.connect(_on_minimap_gui_input)
 	$CharacterButton.pressed.connect(func() -> void: action_requested.emit("character"))
 	$SocialButton.pressed.connect(func() -> void: action_requested.emit("social"))
 	$SparringButton.text = "Farm"
 	$SparringButton.tooltip_text = "Farm trên map • xem trạng thái máy chủ và đấu tập online"
 	$SparringButton.pressed.connect(func() -> void: action_requested.emit("dock"))
 	$HelpButton.pressed.connect(func() -> void:
-		notify("Kéo cần trái để đi • chạm Đánh / Kỹ năng khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh • R: kỹ năng • M: map • C: hồ sơ • G: cộng đồng • I: túi • E: tương tác"))
+		notify("Kéo cần trái để đi • chạm Đánh / Kỹ năng khi gần quái" if touch_layout else "WASD: đi • Q / J: đánh • R: kỹ năng • C: hồ sơ • G: cộng đồng • I: túi • E: tương tác"))
 	phi_ren_icon = _make_phi_ren_icon()
 	$Hotbar/Slot4.icon = null
 	$Hotbar/Slot4.text = "—"
@@ -80,7 +69,7 @@ func _make_phi_ren_icon() -> Texture2D:
 
 func _process(delta: float) -> void:
 	$ModalShade.visible = $Inventory.visible or $Dock.visible or character_panel.visible or social_panel.visible
-	touch_controls.set_controls_visible(touch_layout and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible and not local_map_panel.visible and not social_panel.visible)
+	touch_controls.set_controls_visible(touch_layout and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not social_panel.visible)
 	if toast_time > 0:
 		toast_time -= delta
 		$Toast.visible = toast_time > 0
@@ -103,19 +92,7 @@ func set_touch_layout(enabled: bool) -> void:
 		$HelpButton.offset_right = 154.0
 		$HelpButton.offset_bottom = -7.0
 	$HelpButton.text = "Hướng dẫn" if enabled else "Hướng dẫn / trạng thái"
-	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not $WorldMap.visible and not local_map_panel.visible and not social_panel.visible)
-
-func _on_minimap_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		var mouse_event := event as InputEventMouseButton
-		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
-			action_requested.emit("current_map")
-			$Minimap.accept_event()
-	elif event is InputEventScreenTouch:
-		var touch_event := event as InputEventScreenTouch
-		if touch_event.pressed:
-			action_requested.emit("current_map")
-			$Minimap.accept_event()
+	touch_controls.set_controls_visible(enabled and not $Inventory.visible and not $Dock.visible and not character_panel.visible and not social_panel.visible)
 
 func notify(message: String) -> void:
 	_last_notification = message
@@ -161,97 +138,6 @@ func set_weather_flashes_reduced(enabled: bool) -> void:
 	toggle.set_pressed_no_signal(enabled)
 	toggle.tooltip_text = "Đang giảm nháy sấm sét" if enabled else "Giảm nháy sáng và âm thanh sấm sét"
 
-func configure_map(map_data: Dictionary) -> void:
-	_last_map_data = map_data.duplicate(true)
-	var preview_path := str(map_data.get("preview", ""))
-	var texture: Texture2D = load(preview_path) if not preview_path.is_empty() else null
-	var authored_map := _build_authored_minimap(map_data)
-	$Minimap/Map.texture = authored_map if authored_map != null else texture
-	$Minimap/Map.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	$Location/Title.text = tr(str(map_data.get("name", "Map"))).to_upper()
-	$Location/State.text = tr(str(map_data.get("summary", "")))
-	$Minimap/Coordinates.tooltip_text = tr(str(map_data.get("name", "Map")))
-
-func _build_authored_minimap(data: Dictionary) -> ImageTexture:
-	var layout_path := str(GameMap.MAP_LAYOUTS.get(str(data.get("id", "")), ""))
-	if layout_path.is_empty() or not FileAccess.file_exists(layout_path):
-		return null
-	var file := FileAccess.open(layout_path, FileAccess.READ)
-	if file == null:
-		return null
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if not parsed is Dictionary:
-		return null
-	var layout: Dictionary = parsed
-	var dimensions: Array = data.get("size_tiles", [])
-	if dimensions.size() < 2:
-		return null
-	var width := int(dimensions[0])
-	var height := int(dimensions[1])
-	var rows: Array = data.get("runtime_ground_rows", layout.get("ground_rows", []))
-	if width <= 0 or height <= 0 or rows.size() != height:
-		return null
-	var image := Image.create(width, height, false, Image.FORMAT_RGBA8)
-	for y in range(height):
-		var row := str(rows[y])
-		if row.length() != width:
-			return null
-		for x in range(width):
-			var tile := GameMap.TILE_SYMBOLS.find(row.substr(x, 1))
-			var color := Color("52794c") # grass
-			if tile >= 16 and tile < 24:
-				color = Color("af865b") # soil paths
-			elif tile >= 24 and tile < 32:
-				color = Color("aba99a") # stone plaza
-			elif tile >= 32 and tile < 40:
-				color = Color("34869b") # water
-			elif tile >= 40 and tile < 48:
-				color = Color("816443") # bridge/fence
-			image.set_pixel(x, y, color)
-	for values: Array in data.get("solid_rects_tiles", []):
-		if values.size() < 4:
-			continue
-		for y in range(maxi(int(values[1]), 0), mini(int(values[1]) + int(values[3]), height)):
-			for x in range(maxi(int(values[0]), 0), mini(int(values[0]) + int(values[2]), width)):
-				if image.get_pixel(x, y).b <= image.get_pixel(x, y).r: # preserve the visible stream
-					image.set_pixel(x, y, Color("314240"))
-	for point: Dictionary in data.get("interactables", []):
-		var tile_position: Array = point.get("position_tiles", [])
-		if tile_position.size() >= 2:
-			var x := int(tile_position[0])
-			var y := int(tile_position[1])
-			if x >= 0 and x < width and y >= 0 and y < height:
-				image.set_pixel(x, y, Color("e7ca7b") if str(point.get("action_kind", "")) == "gate" else Color("e3a98b"))
-	return ImageTexture.create_from_image(image)
-
-func set_interaction_prompt(message: String) -> void:
-	_last_prompt = message
-	$InteractionHint/Message.text = message
-	$InteractionHint.visible = not message.is_empty()
-
-func update_position(
-		point: Vector2,
-		map_size_px: Vector2 = Vector2(640, 360),
-		tile_size_px: int = 32,
-		area_name: String = "") -> void:
-	_last_position = point
-	_last_map_size = map_size_px
-	_last_tile_size = tile_size_px
-	_last_area_name = area_name
-	var map_view: TextureRect = $Minimap/Map
-	var marker: ColorRect = $Minimap/Marker
-	var travel := (map_view.size - marker.size).max(Vector2.ZERO)
-	var normalized := Vector2(
-		clampf(point.x / maxf(map_size_px.x, 1.0), 0.0, 1.0),
-		clampf(point.y / maxf(map_size_px.y, 1.0), 0.0, 1.0)
-	)
-	marker.position = map_view.position + normalized * travel
-	var coordinates := "(%d, %d)" % [
-		int(point.x / maxi(tile_size_px, 1)), int(point.y / maxi(tile_size_px, 1))
-	]
-	$Minimap/Coordinates.text = coordinates
-	$Minimap/Coordinates.tooltip_text = (tr("%s • %s") % [tr(area_name), coordinates]) if not area_name.is_empty() else coordinates
-
 func set_health(hp: int) -> void:
 	$Vitals/HP.value = clampi(hp, 0, 100)
 	$Vitals/HPText.text = "%d / 100" % hp
@@ -287,12 +173,7 @@ func _on_language_changed(_locale: String) -> void:
 		return
 	if not _last_weather_state.is_empty():
 		set_weather(_last_weather_state)
-	if not _last_map_data.is_empty():
-		configure_map(_last_map_data)
 	if not _last_profile.is_empty():
 		apply_profile(_last_profile)
-	if not _last_prompt.is_empty():
-		set_interaction_prompt(_last_prompt)
-	update_position(_last_position, _last_map_size, _last_tile_size, _last_area_name)
 	if not _last_notification.is_empty() or not _last_notification_key.is_empty():
 		_render_notification()

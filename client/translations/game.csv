@@ -55,7 +55,7 @@ Hub","An Khê
 Hub","An Khê
 Safe hub"
 "An Khê  (10, 7)","An Khê  (10, 7)","An Khê  (10, 7)"
-"An Khê 48×36 tile, có dịch vụ làng, điểm tương tác và cổng sang Trúc Âm. Gameplay dùng TileMapLayer 32 px và prop 128 px; ảnh world cũ chỉ là ý tưởng tuyến. Minimap đọc layout thật.","An Khê 48×36 tile, có dịch vụ làng, điểm tương tác và cổng sang Trúc Âm. Gameplay dùng TileMapLayer 32 px và prop 128 px; ảnh world cũ chỉ là ý tưởng tuyến. Minimap đọc layout thật.","An Khê is a 48×36-tile village with services, interaction points, and a gate to Trúc Âm. Gameplay uses 32 px TileMapLayers and 128 px props; the old world image is only a route concept. The minimap uses the actual layout."
+"An Khê 48×36 tile, có dịch vụ làng, điểm tương tác và cổng sang Trúc Âm. Gameplay dùng TileMapLayer 32 px và prop 128 px.","An Khê 48×36 tile, có dịch vụ làng, điểm tương tác và cổng sang Trúc Âm. Gameplay dùng TileMapLayer 32 px và prop 128 px.","An Khê is a 48×36-tile village with services, interaction points, and a gate to Trúc Âm. Gameplay uses 32 px TileMapLayers and 128 px props."
 An toàn • %s,An toàn • %s,Safe • %s
 Asset storage busy or unavailable; retry with the same operation ID,Kho vật phẩm đang bận hoặc không khả dụng; hãy thử lại với cùng mã thao tác.,Asset storage is busy or unavailable; retry with the same operation ID.
 Attack is recovering,Đòn đánh đang hồi chiêu.,Attack is recovering.

@@ -1,96 +1,30 @@
-# Thiết kế lại giao diện pixel — 21/09/2026
+# Nền để thiết kế lại giao diện bản đồ — 30/09/2026
 
-**Cập nhật runtime:** 26/09/2026
+Nhánh `feat/map-ui-rebuild` bắt đầu từ `feat/p4-map-pixel-art` và đã gỡ phần trình bày bản đồ cũ để chuẩn bị dựng giao diện mới.
 
-Thay bản procedural sơ sài bằng tài nguyên hình ảnh và scene Godot có thể
-chỉnh trực tiếp. Định hướng từ **Tu Tiên Pixel RPG Concept Sheet**: làng An Khê,
-nhà gỗ mái ngói, tre và sông; nhân vật áo xanh trắng; bảng xanh đen viền đồng,
-minimap, thanh phím tắt và túi đồ dạng lưới.
+## Đã gỡ
 
-## Cấu trúc hiện tại
+- Minimap, sơ đồ tuyến, bảng xem chi tiết bản đồ và nút mở các bảng đó.
+- Thẻ tên khu vực, hướng dẫn vùng và lời nhắc điểm tương tác trong HUD.
+- Nhãn địa danh nổi trên thế giới, ảnh preview tuyến và ảnh thu nhỏ từng map.
+- Các script và scene chỉ phục vụ những giao diện bản đồ cũ.
 
-- `client/scenes/main.tscn`: ghép làng, đấu trường và HUD. Không còn `@tool`
-  vẽ một giao diện giả khác với lúc chạy game.
-- `client/scenes/map_world.tscn`, `client/scripts/game_map.gd`: scene dùng chung;
-  nạp Ground/Detail từ atlas + layout JSON; spawn, zone/phòng, blocker và camera
-  đọc từ catalog. Prop đứng riêng trong Actors có Y-sort.
-- `client/scenes/player.tscn`, `client/scripts/pixel_actor.gd`: atlas nhân vật
-  RGBA bốn hướng, bốn frame/hướng; bóng riêng.
-- `client/scenes/ui/hud.tscn`: HP, linh lực, địa danh, minimap, lời nhắn,
-  sáu ô phím tắt PC, nút cảm ứng landscape, bảng kết nối, túi đồ và sơ đồ tuyến.
-- `client/scripts/game_input.gd`: InputMap chuyển bàn phím/chuột/cần ảo thành
-  lệnh di chuyển, đánh, né và tương tác chung cho cùng scene.
-- `client/data/map_catalog.json`, `client/scripts/ui/world_map_panel.gd`:
-  overlay panorama nối An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh, điểm bấm đặt
-  trên từng vùng và preview riêng khi chọn; **Đi thử map này** tải scene cục bộ,
-  chưa kiểm tra quyền vào phía server.
-- `client/scenes/ui/inventory.tscn`: 24 ô, bốn bộ lọc và chi tiết vật phẩm.
-  Test dùng chính PackedScene này; không còn ItemList ẩn để giả tương thích.
-- `client/themes/tutien_theme.tres`: màu sắc, khung vuông, focus, nút và font
-  chung. Font hỗ trợ tiếng Việt, không phải bộ bitmap font thiết kế riêng.
-- `client/assets/pixel/`: nền, nhân vật, icon và AtlasTexture; xem `ASSETS.md`.
+## Còn dùng trong runtime
 
-Khung hình gốc 640 × 360; cửa sổ mặc định 1280 × 720, nearest filtering,
-integer viewport scaling và snap transform. Giữ tỷ lệ, không kéo giãn hai
-chiều độc lập. Cơ sở cấu hình:
-[Godot ProjectSettings 4.6](https://docs.godotengine.org/en/4.6/classes/class_projectsettings.html).
+- `client/scripts/map_catalog.gd` đọc catalog dữ liệu mà không phụ thuộc vào giao diện.
+- `client/scenes/map_world.tscn` và `client/scripts/game_map.gd` dựng TileMapLayer, va chạm, props, hiệu ứng thời tiết, NPC, điểm tương tác và quái.
+- Dữ liệu map, cổng qua lại, điểm đến, camera theo phòng và logic di chuyển vẫn được giữ.
+- Các giao diện túi đồ, nhân vật, bạn bè/chat/bang hội, thời tiết và điều khiển vẫn hoạt động.
 
-## Cách xem và thao tác
+Phím **M** tạm hiện thông báo giao diện đang được làm lại. Người chơi vẫn có thể đi giữa các vùng qua cổng trong thế giới. Nhánh này chưa chứa thiết kế map/UI mới vì ý tưởng mới chưa được triển khai.
 
-1. Import `client/project.godot`; mở `scenes/main.tscn` để chỉnh scene.
-2. **F5** chạy; WASD/mũi tên di chuyển ở map hiện tại. Bấm **M** xem tuyến
-   An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh; chọn thẻ, rồi bấm **Đi thử map này**
-   để chuyển map cục bộ. **Esc** đóng. Ba canvas sau An Khê tạm là 48×36 tile,
-   chưa phải kích thước thiết kế đã chốt.
-3. **I** mở túi, chọn ô/bộ lọc; **Esc** đóng. Khi offline, túi ghi rõ là mẫu,
-   không lưu vào tài khoản, không được nhận vật tư.
-4. Đến cửa hiệu thuốc bên trái, **E** xem lời nhắn mẫu. NPC và quest lưu server
-   chưa có runtime.
-5. **Đấu tập → Kết nối** với backend. **Săn Sơn Trư** mở trận solo; Luyện Khí
-   nhận XP/da khi thắng, Phàm Nhân chỉ có bài luyện. **Q/J/chuột trái** đánh,
-   **Space** né. Trang bị/thuốc thao tác trong Túi đồ sau khi rời trận.
-
-Lỗi Antigravity `.lnk` trong log là lỗi cấu hình trình soạn thảo ngoài, không
-chứng minh lỗi render. Trong Editor Settings, tìm `text_editor/external`:
-tắt Use External Editor hoặc chọn executable thật thay vì shortcut `.lnk`.
-Đây là thiết lập máy người dùng, không phải sửa bằng commit project.
-
-## Giới hạn
-
-- Đây là thiết kế lại phần trình bày, chưa phải game hoàn chỉnh.
-- Bốn map đã dùng TileMapLayer và atlas địa hình 32 px; Detail còn thưa và
-  Foreground TileMapLayer chưa có art đầy đủ. An Khê đã nắn blocker công trình,
-  nước, sạp và gốc cây anh đào; prop cao Y-sort/fade khi che nhân vật. Ba map
-  còn lại vẫn cần rà va chạm từng vật thể. PNG world chỉ làm preview tuyến.
-- Atlas tạo bằng AI cần nghiệm thu từng frame và chuẩn hóa lưới pixel trước
-  phát hành. Nearest không thay thế việc chỉnh pixel thủ công.
-- Đấu trường còn nền lưới đơn giản, chưa có đồ họa hoàn thiện.
-- Route map có bốn preview và chuyển scene cục bộ; HUD/minimap theo map, tọa độ tile và tên zone/phòng. Cổ Tỉnh đổi giới hạn camera khi vào phòng khác.
-- Quy chuẩn chi tiết và phần chưa triển khai ở [04-world-and-maps.md](game-design/04-world-and-maps.md). Server unlock/quest, NPC progression, fog-of-war, mobile safe-area/export và playtest thiết bị thật chưa được nối.
-- P2 có một encounter PvE, trang bị, hồi phục và dọn túi. P3+ vẫn cần quest progression, trồng trọt, craft và economy runtime.
-- Không tự gán linh lực đầy/Luyện Khí khi thiếu dữ liệu. Túi thật xóa dữ liệu
-  mẫu trước khi tải tài sản từ server.
-
-## Kiểm chứng lịch sử và hiện tại
-
-- `node scripts/check-pixel-scenes.cjs`: đạt; kiểm resource, node parent,
-  catalog/preview bốn map, spawn không nằm trong blocker, 24 ô, hotbar,
-  cấu hình pixel và atlas. Đây không phải parser GDScript.
-- `npm test --prefix server`: 80/80 ở nhánh P2; 64/64 là kết quả lịch sử ở mốc này. Unit test không thay thế test client.
-- Mốc 21/09 chưa chạy được Godot tại chỗ. Trên nhánh tích hợp hiện tại, CI
-  Godot 4.6.1 import, chạy smoke bốn map và chụp screenshot viewport thật.
-- `presentation_smoke.gd` bao phủ chuyển bốn map, số zone/phòng, spawn,
-  minimap, blocker và camera khóa phòng; CI chạy bằng Godot 4.6.1.
-
-Chạy trên máy có Godot:
+## Kiểm tra
 
 ```sh
+node scripts/check-pixel-scenes.cjs
 godot --headless --path client --editor --quit
 godot --headless --path client --script res://tests/presentation_smoke.gd
-# Có rendering driver: chụp viewport thật, không dùng --headless.
-godot --path client --script res://tests/presentation_smoke.gd -- --capture-dir=/absolute/path/captures
+godot --headless --path client --script res://tests/localization_smoke.gd
 ```
 
-Ảnh trong `docs/ui-previews/` dựng bố cục tĩnh từ `.tscn` bằng Sharp,
-**không phải screenshot engine**. Không chạy script; font/layout/trạng thái
-nút có thể khác Godot. Không dùng các ảnh đó để khẳng định runtime đã đạt.
+Static audit kiểm tra đường dẫn tài nguyên, scene và các điều kiện cơ bản; hai lệnh Godot kiểm tra runtime. Godot chưa có trong môi trường thao tác này, nên smoke test Godot cần được chạy trong Godot 4.6.1.

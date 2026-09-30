@@ -1,7 +1,8 @@
 # Xem trước bố cục — không phải screenshot Godot
 
-- `village-layout-preview.png`: nền, nhân vật, HUD và hotbar.
 - `inventory-layout-preview.png`: túi mở với dữ liệu mẫu.
+
+The village HUD preview was removed when the previous map UI was cleared for redesign.
 
 Ảnh dựng từ `.tscn` và PNG thật bằng `scripts/preview-pixel-ui.cjs`, ở
 640 × 360 rồi nhân đôi nearest. Renderer **không chạy GDScript/Godot**:

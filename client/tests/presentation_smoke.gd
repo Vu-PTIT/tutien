@@ -76,7 +76,7 @@ func _capture_son_tru_preview(main) -> void:
 	check(main.get_node("Arena/SonTruBackground").texture != null, "Sơn Trư arena uses its generated map art")
 	check(main.boar_sprite.visible and main.boar_sprite.texture.get_size() == Vector2(64, 64), "PVE encounter presents the transparent boar sprite")
 	check(main.boar_sprite.position.distance_to(Vector2(446, 234)) < 0.01, "Server boar position maps into the arena viewport")
-	check(main.hud.get_node("Location/Title").text == "BÃI SƠN TRƯ", "PvE HUD identifies the hunting area")
+	check(main.hud.get_node_or_null("Location") == null, "PvE uses the cleared HUD while the map UI is rebuilt")
 	await _capture("son-tru-runtime.png")
 	await _capture_touch_layout(main, "son-tru-touch-runtime.png")
 	for actor: Node2D in main.fighters.values():
@@ -91,13 +91,7 @@ func _capture_son_tru_preview(main) -> void:
 	main.map_world.show()
 	main.village_camera.enabled = true
 	main.touch_controls.set_combat_mode(false)
-	main.hud.get_node("Minimap").show()
-	main.hud.configure_map(main.map_world.map_data)
 	main._update_buttons()
-
-func check_field_info_visible(hud: PixelHUD) -> void:
-	var body: Label = hud.get_node("FieldInfo/Body")
-	check(body.get_visible_line_count() == body.get_line_count(), "Field guidance must fit the HUD on " + hud.get_node("Location/Title").text)
 
 func check_map_assets(world: GameMap) -> void:
 	var ground: TileMapLayer = world.get_node("WorldLayers/GroundLayer")
@@ -135,8 +129,9 @@ func _run() -> void:
 	var hud = main.hud
 	var bag: InventoryPanel = main.inventory_panel
 	var social: SocialPanel = main.social_panel
-	var map_body: Label = hud.get_node("FieldInfo/Body")
-	var location_title: Label = hud.get_node("Location/Title")
+	check(main.map_catalog.maps_by_id.size() == 4, "World catalog remains available to runtime map loading")
+	for removed_node in ["Location", "Minimap", "FieldInfo", "InteractionHint", "MapButton", "WorldMap", "LocalMap"]:
+		check(hud.get_node_or_null(removed_node) == null, "Old map UI node was removed: " + removed_node)
 	check(ProjectSettings.get_setting("display/window/size/mode") == DisplayServer.WINDOW_MODE_WINDOWED,
 		"Desktop project starts in a window")
 	check(ProjectSettings.get_setting("display/window/size/window_width_override") == 1280 and
@@ -175,10 +170,8 @@ func _run() -> void:
 	check(social.get_rect().size.x == 560.0 and social.get_rect().size.y == 320.0,
 		"Social panel stays inside the shared PC/mobile game viewport")
 	main.character_panel.set_touch_layout_enabled(false, false)
-	check(map_body.theme_type_variation == &"UISmall", "Map body uses the centralized readable UI font")
-	check(location_title.theme_type_variation == &"UIHeading", "Map title uses the centralized heading style")
 	check_map_assets(main.map_world)
-	await _capture("font-map-hud.png")
+	await _capture("map-runtime-no-legacy-ui.png")
 	check(main.map_world.resource_trees_size() == 1, "An Khê loads one stateful harvestable tree")
 	check(main.map_world.flowers_size() == 4, "An Khê loads four foot-reactive flower clumps")
 	var blacksmith: MapProp = main.map_world.get_node("Actors/ak_prop_blacksmith") as MapProp
@@ -209,13 +202,7 @@ func _run() -> void:
 	check(main.map_world.interactables_size() == 8, "An Khê loads eight data-driven interactive points")
 	var luc_vi: MapInteractable = main.map_world.get_interactable("ak.npc.luc_vi")
 	check(luc_vi.get_node_or_null("NpcSprite") is Sprite2D, "Lục Vi uses the generated transparent NPC sprite")
-	check(not main.map_world.get_node("LocationLabels/Landmark_1").visible, "Far landmark labels do not clutter the An Khê HUD")
-	main.map_world.update_player_context(Vector2(30 * 32, 13 * 32))
-	check(main.map_world.get_node("LocationLabels/Landmark_1").visible, "Landmark label appears when the player approaches")
-	main.map_world.update_player_context(main.player.position)
-	check(hud.get_node("FieldInfo/Body").text.contains("Cổng Bắc"), "An Khê HUD points toward the farm route")
-	check(hud.get_node("FieldInfo/Body").autowrap_mode == TextServer.AUTOWRAP_WORD, "Long zone guidance wraps inside the HUD panel")
-	check_field_info_visible(hud)
+	check(main.map_world.active_area_name == "Sân làng", "Map runtime keeps active-area state without old floating labels")
 	check(not main.map_world._has_clear_interaction_path(Vector2(8 * 32, 5 * 32), Vector2(8 * 32, 13 * 32)), "Building collision also blocks interactions through its walls")
 	var sakura: MapProp = main.map_world.get_node("Actors/ak_prop_sakura") as MapProp
 	check(not sakura.get_node("Sprite").texture is AtlasTexture, "Sakura uses an independent transparent cutout")
@@ -347,60 +334,9 @@ func _run() -> void:
 	touch.set_combat_mode(false)
 	await _capture("an-khe-touch-runtime.png")
 	main.character_panel.set_touch_layout_enabled(false, false)
-	var map_panel: WorldMapPanel = hud.get_node("WorldMap")
-	check(not map_panel.visible, "World map starts closed")
-	check(map_panel.map_entries.size() == 4, "World map reads the four-map MVP catalog")
-	check(map_panel.route_buttons.size() == 4, "World map route has four selectable maps")
-	check(map_panel.route_overview.texture != null, "World map displays one continuous route overview")
-	check(map_panel.route_buttons["m_an_khe"].position.x < map_panel.route_buttons["m_truc_am"].position.x and
-		map_panel.route_buttons["m_truc_am"].position.x < map_panel.route_buttons["m_thach_can"].position.x and
-		map_panel.route_buttons["m_thach_can"].position.x < map_panel.route_buttons["m_co_tinh"].position.x,
-		"Route map selection points follow the connected journey order")
-	check(map_panel.travel_button != null, "World map has a local travel action")
 	check(hud.get_node("Vitals/Qi").value == 0, "Do not invent a Qi value")
-	var minimap_image: Image = hud.get_node("Minimap/Map").texture.get_image()
-	check(minimap_image.get_size() == Vector2i(48, 36), "HUD minimap follows the authored map grid")
-	check(minimap_image.get_pixel(24, 18).r > 0.6, "Stone plaza is visible on the true minimap")
-	check(minimap_image.get_pixel(44, 18).b > minimap_image.get_pixel(44, 18).r, "Stream is blue on the true minimap")
-	check(minimap_image.get_pixel(35, 18).r > minimap_image.get_pixel(35, 18).b,
-		"Minimap uses the connected dirt path to the east market")
-	var local_map: CurrentMapPanel = main.local_map_panel
-	var camera_zoom_before_map: Vector2 = main.village_camera.zoom
-	check(not local_map.visible, "Detailed current-map panel starts closed")
-	check(hud.get_node("Minimap").get_signal_connection_list("gui_input").size() > 0,
-		"Minimap accepts a click or touch to open the local map")
-	main._action("current_map")
-	await process_frame
-	await process_frame
-	check(local_map.visible, "Minimap action opens the current-map overlay")
-	check(local_map._overview_world != null, "Current-map overlay builds an isolated visual snapshot")
-	check(local_map.overview_viewport.size == Vector2i(main.map_world.map_size_px),
-		"Overview render uses the actual current-map dimensions")
-	check(local_map._overview_world.get_node("WorldLayers/GroundLayer").get_used_cells().size() == 48 * 36,
-		"Overview renders the authored terrain layers")
-	check(local_map._overview_world.get_node("Actors/ak_prop_blacksmith").visible,
-		"Overview keeps static map props visible")
-	check(not local_map._overview_world.get_node("Actors/Player").visible,
-		"Overview snapshot hides its duplicate gameplay actor")
-	check(local_map.poi_list.get_child_count() == main.map_world.interactables_size(),
-		"Current-map details list uses the map's authored points of interest")
-	var first_poi: Dictionary = main.map_world.map_data["interactables"][0]
-	local_map.map_view.select_point(0)
-	check(local_map.details_title.text == str(TranslationServer.translate(str(first_poi.get("display_name", "")))),
-		"Selecting a point of interest displays its authored details")
-	check(local_map.coordinates_label.text.contains("(7, 12)"),
-		"Selecting a point of interest shows its map coordinates")
-	check(main._movement() == Vector2.ZERO, "Opening the local map releases gameplay movement")
-	check(main.village_camera.zoom == camera_zoom_before_map,
-		"Local-map overlay leaves the gameplay camera profile unchanged")
-	local_map.route_requested.emit()
-	await process_frame
-	check(not local_map.visible and main.world_map.visible,
-		"The current-map panel can hand off to the existing route map")
-	main._action("close")
-	await process_frame
-	check(not main.world_map.visible and local_map._overview_world == null,
-		"Closing map panels releases the current-map snapshot")
+	check(main.map_catalog.maps_by_id.has("m_an_khe") and main.map_catalog.maps_by_id.has("m_co_tinh"),
+		"Map data remains available after removing map presentation panels")
 	await _capture("an-khe-runtime.png")
 	var village_spawn: Vector2 = main.player.position
 	main.player.position = blacksmith.position + Vector2(0, 32)
@@ -425,11 +361,8 @@ func _run() -> void:
 	check(herbalist != null, "Herbalist has a stable map entity id")
 	main.player.position = herbalist.position
 	check(main.map_world.update_interaction_focus(herbalist.position) == herbalist, "Nearest POI becomes the interaction target")
-	hud.set_interaction_prompt(herbalist.prompt_text())
-	check(hud.get_node("InteractionHint").visible, "Focused POI appears in the HUD")
 	main._action("interact")
 	check(main.local_map_flags.has("ak.ba_sam_intro"), "Herbalist interaction advances the local preview flag")
-	check(hud.get_node("FieldInfo/Body").text.contains("Cổng Bắc"), "Dialogue does not replace the farm guidance panel")
 	var village_gate: MapInteractable = main.map_world.get_interactable("ak.gate.truc_am")
 	main.player.position = village_gate.position
 	main._action("interact")
@@ -439,8 +372,6 @@ func _run() -> void:
 	check_map_assets(main.map_world)
 	var entry_bridge: MapProp = main.map_world.get_node("Actors/ta_prop_entry_bridge") as MapProp
 	check(entry_bridge.z_index < main.player.z_index, "Entry bridge renders below the player at Trúc Âm spawn")
-	check_field_info_visible(hud)
-	check(hud.get_node("FieldInfo/Title").text == "SĂN QUÁI TỰ DO", "Trúc Âm foregrounds map farming")
 	check(not main.map_world.nearest_field_mob(Vector2(464, 560), 8.0).is_empty(), "Field monsters are present inside the map runtime")
 	await _capture("truc-am-runtime.png")
 	await _capture_touch_layout(main, "truc-am-touch-runtime.png")
@@ -456,27 +387,12 @@ func _run() -> void:
 	await process_frame
 	check(main.current_map_id == "m_an_khe", "Trúc Âm return gate leads back to An Khê")
 	check(main.player.position == Vector2(22 * 32, 4 * 32), "Trúc Âm return arrives beside the paired An Khê gate")
-	main._action("map")
-	await process_frame
-	check(map_panel.visible, "Map action opens route panel")
-	await _capture("world-route-overview.png")
-	map_panel.route_buttons["m_truc_am"].emit_signal("pressed")
-	check(map_panel.selected_id == "m_truc_am", "Route selection updates selected map")
-	check(map_panel.info.text.contains("Sơn Trư"), "Map selection shows field monster information")
-	var initial_position: Vector2 = main.player.position
-	check(map_panel.route_connections.size() == 3, "Route panel loads all three linked map passages")
-	check(map_panel._route_summary("m_truc_am").contains("Lối núi → Thạch Cạn"), "Route card shows the named link to Thạch Cạn")
-	check(main.player.position == initial_position, "Selecting a route card does not teleport the player")
-	await _capture("connected-route-panel.png")
-	map_panel.travel_button.emit_signal("pressed")
-	await process_frame
-	await process_frame
-	check(main.current_map_id == "m_truc_am", "Travel action loads Trúc Âm")
+	await main._travel_to_map("m_truc_am")
+	check(main.current_map_id == "m_truc_am", "Runtime catalog travel loads Trúc Âm without the old map UI")
 	check(main.local_map_travel_pending, "Offline map selection is retained for the next backend connection")
 	check(main.map_world.areas_size() == 3, "Trúc Âm has three named areas")
 	check(main.map_world.active_area_name == "Ven Suối", "Trúc Âm spawn is in Ven Suối")
-	check(main.hud.get_node("Minimap/Map").texture.get_image().get_size() == Vector2i(48, 36), "Travel rebuilds the minimap from Trúc Âm's authored cells")
-	check(main.hud.get_node("Location/Title").text == "TRÚC ÂM", "Travel updates the HUD map name")
+	check(main.map_world.map_id == "m_truc_am", "Travel updates the active world scene")
 	var mach_ban: MapInteractable = main.map_world.get_interactable("ta.mach_ban.scan")
 	check(mach_ban != null and main.can_walk(mach_ban.position), "Trúc Âm Mạch Bàn is reachable on the walkable path")
 	main.player.position = mach_ban.position
@@ -503,7 +419,6 @@ func _run() -> void:
 			check(not cutout.get_node("Sprite").texture is AtlasTexture, prop_id + " uses a separate cutout")
 			check(cutout.get_node("Sprite").texture.get_image().detect_alpha() != Image.ALPHA_NONE, prop_id + " has no opaque square background")
 	check(main.can_walk(flow_pillar.position), "Thạch Cạn flow pillar is reachable on dry ground")
-	check_field_info_visible(hud)
 	await _capture("thach-can-runtime.png")
 	await _capture_touch_layout(main, "thach-can-touch-runtime.png")
 	main.player.position = flow_pillar.position + Vector2(0, 32)
@@ -524,7 +439,6 @@ func _run() -> void:
 	await process_frame
 	check(main.current_map_id == "m_co_tinh", "Travel action loads Cổ Tỉnh")
 	check_map_assets(main.map_world)
-	check_field_info_visible(hud)
 	await _capture("co-tinh-runtime.png")
 	await _capture_touch_layout(main, "co-tinh-touch-runtime.png")
 	check(main.player.position == Vector2(11 * 32, 25 * 32), "Thạch Cạn gate arrives beside its paired Cổ Tỉnh exit")
@@ -560,23 +474,13 @@ func _run() -> void:
 	await process_frame
 	check(main.current_map_id == "m_thach_can", "Trúc Âm passage returns to Thạch Cạn")
 	check(main.player.position == Vector2(4 * 32, 17 * 32), "Return passage lands beside the same linked exit")
-	map_panel.open_map()
-	map_panel.route_buttons["m_an_khe"].emit_signal("pressed")
-	map_panel.travel_button.emit_signal("pressed")
-	await process_frame
-	await process_frame
+	await main._travel_to_map("m_an_khe")
 	check(main.current_map_id == "m_an_khe", "Route returns to An Khê")
-	map_panel.open_map()
-	map_panel.close_button.emit_signal("pressed")
-	await process_frame
-	check(not map_panel.visible, "Map close button closes route panel")
 	var map_key := InputEventKey.new()
 	map_key.physical_keycode = KEY_M
 	map_key.pressed = true
 	main._unhandled_input(map_key)
-	check(map_panel.visible, "M opens the map route")
-	main._unhandled_input(escape_event())
-	check(not map_panel.visible, "Escape closes the map route")
+	check(hud.get_node("Toast/Message").text.contains("đang được làm lại"), "M gives a temporary map redesign status")
 	main._action("inventory")
 	await process_frame
 	check(bag.visible and bag.preview_mode, "Offline inventory must be explicitly demo")

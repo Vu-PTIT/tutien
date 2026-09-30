@@ -32,8 +32,6 @@ z_index = 3
 
 [node name="CollisionRoot" type="Node2D" parent="."]
 
-[node name="LocationLabels" type="Node2D" parent="."]
-
 [node name="AmbientFX" type="Node2D" parent="."]
 z_index = 1
 

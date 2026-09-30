@@ -12,14 +12,8 @@ func _check(ok: bool, label: String) -> void:
 		failures += 1
 		push_error(label)
 
-func _travel_from_map_panel(main, map_id: String) -> bool:
-	main.world_map.open_map()
-	main.world_map._select_map(map_id)
-	main.world_map.travel_button.emit_signal("pressed")
-	var deadline := Time.get_ticks_msec() + 20000
-	while main.busy and Time.get_ticks_msec() < deadline:
-		await process_frame
-	await process_frame
+func _travel_from_catalog(main, map_id: String) -> bool:
+	await main._travel_to_map(map_id)
 	return not main.busy and main.current_map_id == map_id
 
 func _move_authoritatively(main, point: Vector2) -> bool:
@@ -46,8 +40,8 @@ func _run() -> void:
 	var connected := api != null and not api.token.is_empty()
 	_check(connected, "Client did not connect to the local Nakama server on startup")
 	if connected:
-		var entered_farm := await _travel_from_map_panel(main, "m_truc_am")
-		_check(entered_farm, "Map panel did not transfer online travel to Trúc Âm")
+		var entered_farm := await _travel_from_catalog(main, "m_truc_am")
+		_check(entered_farm, "Runtime catalog travel did not transfer online travel to Trúc Âm")
 		var drop_state: Dictionary = await api.call_rpc("world_get")
 		var boar_drop_count := 0
 		var spider_drop_count := 0
@@ -75,8 +69,8 @@ func _run() -> void:
 			_check(main.current_map_id == "m_an_khe", "Server-confirmed gate did not return to An Khê")
 			_check(main.player.position == Vector2(704.0, 128.0), "Gate arrival did not use its paired An Khê coordinates")
 
-		var returned_to_farm := await _travel_from_map_panel(main, "m_truc_am")
-		_check(returned_to_farm, "Map panel travel back to Trúc Âm failed")
+		var returned_to_farm := await _travel_from_catalog(main, "m_truc_am")
+		_check(returned_to_farm, "Runtime catalog travel back to Trúc Âm failed")
 		var map_instance: int = main.map_world.get_instance_id()
 		var approach_ok := await _move_authoritatively(main, Vector2(300.0, 740.0))
 		_check(approach_ok, "Could not move to the first field-combat waypoint")
@@ -98,10 +92,10 @@ func _run() -> void:
 					got_silk = true
 			_check(got_silk, "Field combat did not grant the spider drop")
 
-		var reached_co_tinh := await _travel_from_map_panel(main, "m_co_tinh")
-		_check(reached_co_tinh, "Online map panel travel did not load Cổ Tỉnh")
-		var returned_to_village := await _travel_from_map_panel(main, "m_an_khe")
-		_check(returned_to_village, "Online map panel travel could not return to An Khê")
+		var reached_co_tinh := await _travel_from_catalog(main, "m_co_tinh")
+		_check(reached_co_tinh, "Runtime catalog travel did not load Cổ Tỉnh")
+		var returned_to_village := await _travel_from_catalog(main, "m_an_khe")
+		_check(returned_to_village, "Runtime catalog travel could not return to An Khê")
 
 	if api != null:
 		api.disconnect_chat()
