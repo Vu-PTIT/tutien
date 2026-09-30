@@ -34,7 +34,9 @@ var _poi_buttons: Array[Button] = []
 
 func _ready() -> void:
 	visible = false
-	overview_viewport.own_world_2d = true
+	# Viewport exposes world_2d (not own_world_2d); assigning a fresh World2D
+	# keeps the map snapshot's Camera2D isolated from the gameplay viewport.
+	overview_viewport.world_2d = World2D.new()
 	overview_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	map_view.point_selected.connect(_on_point_selected)
 	map_view.tile_selected.connect(_on_tile_selected)
