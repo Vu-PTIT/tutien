@@ -136,13 +136,15 @@ func _ready() -> void:
 	if not device_id.is_empty():
 		account_panel.configure(api, device_id, touch_layout_enabled)
 	_update_buttons()
-	if not OS.get_cmdline_user_args().has("--no-auto-connect") and DisplayServer.get_name() != "headless":
-		if device_id.is_empty():
-			account_panel.open_entry(api, device_id, touch_layout_enabled)
-		else:
-			_connect_backend.call_deferred()
-	else:
+	if OS.get_cmdline_user_args().has("--no-auto-connect"):
 		account_panel.hide()
+	elif DisplayServer.get_name() == "headless":
+		account_panel.hide()
+		_connect_backend.call_deferred()
+	elif device_id.is_empty():
+		account_panel.open_entry(api, device_id, touch_layout_enabled)
+	else:
+		_connect_backend.call_deferred()
 
 func _on_language_changed(_locale: String) -> void:
 	if map_world == null or map_world.map_data.is_empty():
