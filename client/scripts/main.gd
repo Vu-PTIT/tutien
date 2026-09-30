@@ -85,10 +85,11 @@ func _ready() -> void:
 	hud.action_requested.connect(_action)
 	character_panel.inventory_requested.connect(_open_equipment_bag)
 	character_panel.touch_layout_changed.connect(_on_touch_layout_changed)
+	character_panel.world_zoom_changed.connect(_on_world_zoom_changed)
 	character_panel.profile_updated.connect(hud.apply_profile)
 	touch_controls.action_requested.connect(game_input.request_action)
 	touch_layout_enabled = OS.has_feature("mobile") or character_panel.touch_layout_enabled or OS.get_cmdline_user_args().has("--touch-preview")
-	hud.set_touch_layout(touch_layout_enabled)
+	character_panel.set_touch_layout_enabled(touch_layout_enabled, false)
 	world_map.map_requested.connect(_travel_to_map)
 	service_menu = PopupMenu.new()
 	service_menu.name = "VillageServiceMenu"
@@ -186,6 +187,7 @@ func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	_on_weather_state_changed(world_weather.get_current_state())
 	player = map_world.get_node("Actors/Player") as PixelActor
 	village_camera = map_world.get_node("Actors/Player/Camera2D") as Camera2D
+	map_world.set_camera_zoom(character_panel.get_world_camera_zoom())
 	current_map_id = map_id
 	var preview_mobs: Array = []
 	for spawn_value: Variant in data.get("field_spawns", []):
@@ -489,6 +491,12 @@ func _unhandled_input(event: InputEvent) -> void:
 func _on_touch_layout_changed(enabled: bool) -> void:
 	touch_layout_enabled = enabled
 	hud.set_touch_layout(enabled)
+	if map_world != null:
+		map_world.set_camera_zoom(character_panel.get_world_camera_zoom())
+
+func _on_world_zoom_changed(zoom_factor: float) -> void:
+	if map_world != null:
+		map_world.set_camera_zoom(zoom_factor)
 
 func _open_equipment_bag() -> void:
 	character_panel.hide()

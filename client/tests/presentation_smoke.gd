@@ -54,12 +54,10 @@ func _capture(filename: String) -> void:
 	check(img.save_png(capture_dir.path_join(filename)) == OK, "Capture failed")
 
 func _capture_touch_layout(main, filename: String) -> void:
-	main.touch_layout_enabled = true
-	main.hud.set_touch_layout(true)
+	main.character_panel.set_touch_layout_enabled(true, false)
 	await process_frame
 	await _capture(filename)
-	main.touch_layout_enabled = false
-	main.hud.set_touch_layout(false)
+	main.character_panel.set_touch_layout_enabled(false, false)
 
 func _capture_son_tru_preview(main) -> void:
 	main.inventory_panel.hide()
@@ -189,7 +187,16 @@ func _run() -> void:
 	check(sakura.get_node("Sprite").modulate.a == 1.0, "Tall prop returns to full opacity in front of player")
 	check(main.map_world.get_node("AmbientFX").get_child_count() == 3, "An Khê loads animated water highlights")
 	check(main.village_camera.enabled, "Camera follows the village player")
+	main.character_panel.set_touch_layout_enabled(false, false)
+	var pc_zoom := main.character_panel.pc_world_zoom_percent / 100.0
+	check(is_equal_approx(main.village_camera.zoom.x, pc_zoom), "PC view setting is applied to the world camera")
 	check(main.village_camera.limit_right == 1536 and main.village_camera.limit_bottom == 1152, "Camera clamps to An Khê world bounds")
+	main.character_panel.set_touch_layout_enabled(true, false)
+	var mobile_zoom := main.character_panel.mobile_world_zoom_percent / 100.0
+	var world_zoom_slider: HSlider = main.character_panel.get_node("PageHost/SettingsPage/SettingsCard/WorldZoom")
+	check(is_equal_approx(main.village_camera.zoom.x, mobile_zoom), "Mobile view applies its separate camera profile")
+	check(is_equal_approx(world_zoom_slider.value, mobile_zoom * 100.0), "View setting shows the active mobile zoom")
+	main.character_panel.set_touch_layout_enabled(false, false)
 	check(bag.slot_buttons.size() == 24, "Inventory requires exactly 24 visual slots")
 	var character: CharacterPanel = main.character_panel
 	check(not character.visible, "Character panel starts closed")
@@ -257,8 +264,7 @@ func _run() -> void:
 	check(main._movement().x > 0.9, "Keyboard InputMap action drives shared movement")
 	Input.action_release("move_right")
 	check(main._movement() == Vector2.ZERO, "Releasing keyboard action stops movement")
-	main.touch_layout_enabled = true
-	hud.set_touch_layout(true)
+	main.character_panel.set_touch_layout_enabled(true, false)
 	var touch: TouchControls = hud.touch_controls
 	check(touch.visible and not hud.get_node("Hotbar").visible, "Touch layout shows controls without desktop hotbar")
 	touch.set_field_combat_mode(true)
@@ -301,8 +307,7 @@ func _run() -> void:
 	await process_frame
 	touch.set_combat_mode(false)
 	await _capture("an-khe-touch-runtime.png")
-	main.touch_layout_enabled = false
-	hud.set_touch_layout(false)
+	main.character_panel.set_touch_layout_enabled(false, false)
 	var map_panel: WorldMapPanel = hud.get_node("WorldMap")
 	check(not map_panel.visible, "World map starts closed")
 	check(map_panel.map_entries.size() == 4, "World map reads the four-map MVP catalog")

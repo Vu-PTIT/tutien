@@ -10,6 +10,8 @@ const TRANSITION_NORTH := 1
 const TRANSITION_EAST := 2
 const TRANSITION_SOUTH := 4
 const TRANSITION_WEST := 8
+const CAMERA_ZOOM_MIN := 0.75
+const CAMERA_ZOOM_MAX := 1.0
 const INTERACTABLE_SCENE = preload("res://scenes/map_interactable.tscn")
 const WATER_RIPPLE_SCENE = preload("res://scenes/map_water_ripple.tscn")
 const SURFACE_STEP_FX_SCRIPT = preload("res://scripts/map_surface_step_fx.gd")
@@ -110,6 +112,13 @@ func _ready() -> void:
 	_update_prop_occlusion($Actors/Player.position)
 	_update_location_labels($Actors/Player.position)
 	update_interaction_focus($Actors/Player.position)
+
+func set_camera_zoom(zoom_factor: float) -> void:
+	var camera := get_node_or_null("Actors/Player/Camera2D") as Camera2D
+	if camera == null:
+		return
+	var safe_zoom := clampf(zoom_factor, CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX)
+	camera.zoom = Vector2(safe_zoom, safe_zoom)
 
 func _build_authored_tile_layers() -> bool:
 	var layout_path := str(MAP_LAYOUTS.get(map_id, ""))

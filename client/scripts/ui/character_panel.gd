@@ -3,11 +3,16 @@ extends Panel
 ## Character overview, current combat skills and device-local settings.
 signal inventory_requested
 signal touch_layout_changed(enabled: bool)
+signal world_zoom_changed(zoom_factor: float)
 signal profile_updated(profile: Dictionary)
 
 const Visuals = preload("res://scripts/ui/item_visuals.gd")
 const SETTINGS_PATH := "user://game_settings.cfg"
 const REALM_THRESHOLDS := [300, 600, 1000]
+const PC_WORLD_ZOOM_DEFAULT := 0.8
+const MOBILE_WORLD_ZOOM_DEFAULT := 0.9
+const WORLD_ZOOM_MIN_PERCENT := 75.0
+const WORLD_ZOOM_MAX_PERCENT := 100.0
 const PREVIEW_SKILLS := [
 	{"id": "sk_scan", "name": "Mạch Bàn • Truy Dấu", "kind": "utility",
 		"description": "Dò dấu linh mạch và ghi nhận dấu nước trong nhiệm vụ.",
@@ -31,6 +36,8 @@ var loading: bool = false
 var touch_layout_enabled: bool = false
 var fullscreen_enabled: bool = true
 var master_volume: float = 0.8
+var pc_world_zoom_percent: float = PC_WORLD_ZOOM_DEFAULT * 100.0
+var mobile_world_zoom_percent: float = MOBILE_WORLD_ZOOM_DEFAULT * 100.0
 var language_manager: Variant
 
 func _ready() -> void:
@@ -46,6 +53,7 @@ func _ready() -> void:
 	$PageHost/ProfilePage/EquipmentCard/OpenEquipmentBag.pressed.connect(
 		func() -> void: inventory_requested.emit())
 	$PageHost/SettingsPage/SettingsCard/Volume.value_changed.connect(_on_volume_changed)
+	$PageHost/SettingsPage/SettingsCard/WorldZoom.value_changed.connect(_on_world_zoom_changed)
 	$PageHost/SettingsPage/SettingsCard/Fullscreen.toggled.connect(_on_fullscreen_toggled)
 	$PageHost/SettingsPage/SettingsCard/TouchLayout.toggled.connect(_on_touch_layout_toggled)
 	var language_selector: OptionButton = $PageHost/SettingsPage/SettingsCard/Language
@@ -325,20 +333,31 @@ func _load_settings() -> void:
 	if status == OK:
 		master_volume = clampf(float(config.get_value("audio", "master", 0.8)), 0.0, 1.0)
 		touch_layout_enabled = bool(config.get_value("controls", "touch_layout", OS.has_feature("mobile")))
+		pc_world_zoom_percent = clampf(
+			float(config.get_value("view", "pc_world_zoom_percent", PC_WORLD_ZOOM_DEFAULT * 100.0)),
+			WORLD_ZOOM_MIN_PERCENT, WORLD_ZOOM_MAX_PERCENT)
+		mobile_world_zoom_percent = clampf(
+			float(config.get_value("view", "mobile_world_zoom_percent", MOBILE_WORLD_ZOOM_DEFAULT * 100.0)),
+			WORLD_ZOOM_MIN_PERCENT, WORLD_ZOOM_MAX_PERCENT)
 	else:
 		touch_layout_enabled = OS.has_feature("mobile")
+		pc_world_zoom_percent = PC_WORLD_ZOOM_DEFAULT * 100.0
+		mobile_world_zoom_percent = MOBILE_WORLD_ZOOM_DEFAULT * 100.0
 	fullscreen_enabled = true
 	$PageHost/SettingsPage/SettingsCard/Language.select(0 if language_manager.get_locale() == "vi" else 1)
 	$PageHost/SettingsPage/SettingsCard/Volume.set_value(master_volume)
 	$PageHost/SettingsPage/SettingsCard/VolumeValue.text = "%d%%" % roundi(master_volume * 100.0)
 	$PageHost/SettingsPage/SettingsCard/Fullscreen.set_pressed_no_signal(fullscreen_enabled)
 	$PageHost/SettingsPage/SettingsCard/TouchLayout.set_pressed_no_signal(touch_layout_enabled)
+	_update_world_zoom_control()
 
 func _save_settings() -> void:
 	var config := ConfigFile.new()
 	config.load(SETTINGS_PATH)
 	config.set_value("audio", "master", master_volume)
 	config.set_value("controls", "touch_layout", touch_layout_enabled)
+	config.set_value("view", "pc_world_zoom_percent", pc_world_zoom_percent)
+	config.set_value("view", "mobile_world_zoom_percent", mobile_world_zoom_percent)
 	config.set_value("general", "language", language_manager.get_locale())
 	var status := config.save(SETTINGS_PATH)
 	if status != OK:
@@ -358,6 +377,7 @@ func _on_language_changed(locale: String) -> void:
 	$SkillsTab.text = tr("Kỹ năng")
 	$SettingsTab.text = tr("Cài đặt")
 	$PageHost/SettingsPage/SettingsCard/Language.select(0 if locale == "vi" else 1)
+	_update_world_zoom_control()
 	if preview_mode:
 		$DataState.text = tr("BẢN XEM THỬ • OFFLINE • KHÔNG PHẢI DỮ LIỆU TÀI KHOẢN")
 	elif loading:
@@ -389,13 +409,41 @@ func _apply_fullscreen() -> void:
 		DisplayServer.window_set_mode(target_mode)
 
 func _on_touch_layout_toggled(enabled: bool) -> void:
-	touch_layout_enabled = enabled
-	_save_settings()
-	touch_layout_changed.emit(touch_layout_enabled)
+	_set_touch_layout(enabled, true)
 
 func set_touch_layout_enabled(enabled: bool, persist: bool = true) -> void:
+	_set_touch_layout(enabled, persist)
+
+func _set_touch_layout(enabled: bool, persist: bool) -> void:
 	touch_layout_enabled = enabled
 	$PageHost/SettingsPage/SettingsCard/TouchLayout.set_pressed_no_signal(enabled)
+	_update_world_zoom_control()
 	if persist:
 		_save_settings()
 	touch_layout_changed.emit(touch_layout_enabled)
+	world_zoom_changed.emit(get_world_camera_zoom())
+
+func get_world_camera_zoom() -> float:
+	var percent := mobile_world_zoom_percent if touch_layout_enabled else pc_world_zoom_percent
+	return percent / 100.0
+
+func _update_world_zoom_control() -> void:
+	var percent := mobile_world_zoom_percent if touch_layout_enabled else pc_world_zoom_percent
+	var settings_card: Node = $PageHost/SettingsPage/SettingsCard
+	var slider: HSlider = settings_card.get_node("WorldZoom") as HSlider
+	var value_label: Label = settings_card.get_node("WorldZoomValue") as Label
+	var zoom_label: Label = settings_card.get_node("WorldZoomLabel") as Label
+	slider.set_value_no_signal(percent)
+	value_label.text = "%d%%" % roundi(percent)
+	zoom_label.text = tr("Tầm nhìn bản đồ • Cảm ứng" if touch_layout_enabled else "Tầm nhìn bản đồ • PC")
+	slider.tooltip_text = tr("Giảm phần trăm để thấy rộng hơn; HUD và chữ giao diện giữ nguyên kích thước.")
+
+func _on_world_zoom_changed(value: float) -> void:
+	var percent := clampf(round(value / 5.0) * 5.0, WORLD_ZOOM_MIN_PERCENT, WORLD_ZOOM_MAX_PERCENT)
+	if touch_layout_enabled:
+		mobile_world_zoom_percent = percent
+	else:
+		pc_world_zoom_percent = percent
+	_update_world_zoom_control()
+	_save_settings()
+	world_zoom_changed.emit(percent / 100.0)
