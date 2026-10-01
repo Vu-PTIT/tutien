@@ -1,112 +1,82 @@
 # 01 — Tầm nhìn sản phẩm và vòng chơi
 
-**Cập nhật:** 21/09/2026, theo đặc tả tiến trình/PvE mới.
-**Trạng thái:** thiết kế, chưa phải thông báo tính năng đã triển khai.
-**Nguồn số liệu:** [đặc tả liên kết](progression-pve-spec.md) và JSON thiết kế đi kèm.
+**Cập nhật:** 01/10/2026 cho `feat/map-ui-rebuild`.  
+**Canon thế giới:** [04 — Việt Nam thời Linh Chấn](04-world-setting-vietnam-awakening.md).
 
 ## 1. Lời hứa với người chơi
 
-Bạn bắt đầu là một người bình thường ở An Khê. Bạn tiến xa bằng cách học quan sát,
-chuẩn bị vật tư, tìm đúng nguồn tài nguyên, mở công pháp và biết lúc nào nên rút.
-Game cần tạo cảm giác “mình đã biết cách xử lý tốt hơn”, không chỉ “chỉ số lớn hơn”.
+Bạn bắt đầu là một người bình thường trong **Căn cứ Thăng Long**, sáu năm sau Linh Chấn.
+Bạn mạnh lên bằng huấn luyện, công pháp, trang bị, thông tin và những chuyến đi ra ngoài
+vành đai an toàn.
 
-Mỗi bước phát triển phải trả lời:
-**mình thiếu gì → đi đâu → làm gì → nhận gì → dùng vào đâu → mở khả năng gì**.
+Game phải tạo cảm giác:
+**chuẩn bị → rời căn cứ → săn/khảo sát → sống sót → mang tài nguyên/dữ liệu về → nâng cấp →
+đi xa hơn → dần phát hiện bí mật vượt khỏi Trái Đất.**
 
-Cảm hứng tu tiên được chuyển thành thế giới và nhân vật riêng của dự án.
-Không sao chép nhân vật, lời thoại, chuỗi sự kiện, nhạc hoặc hình ảnh của phim.
-Phạm vi cảnh giới trong tài liệu là thiết kế game, không phải bảng mô phỏng phim.
+Không sao chép nhân vật, tổ chức, quái, cấp bậc hoặc diễn biến của bất kỳ IP tham khảo nào.
 
 ## 2. Năm trụ cột
 
-**Chuẩn bị có ích.** Dược liệu và chế tạo cải thiện khả năng sống sót trong chuyến đi.
-Không có một vật phẩm hiếm duy nhất bắt buộc mua mới qua được tuyến chính.
+**Việt Nam hiện đại dễ nhận ra.** Map có đời sống, hạ tầng, biển hiệu, xe cộ và địa hình bản địa.
 
-**Nơi an thân có công dụng.** An Khê cho nghỉ, thu hoạch, luyện đan, đổi trang bị,
-nhận mục tiêu và đột phá. Chuyến đi mang tài nguyên/tri thức về; nơi ở biến chúng
-thành phương án chuẩn bị mới. Vườn không là một minigame tách rời chiến đấu.
+**An toàn và hoang dã tương phản.** Hub đông người và có dịch vụ; vùng ngoài vành đai thưa người,
+cứu viện xa, có tài nguyên tốt hơn và rủi ro thật sự.
 
-**Tiến bộ nhiều chiều, giao diện đơn giản.** Tu vi, lĩnh ngộ và trang bị/vật tư tạo
-ba lớp dễ hiểu trong MVP. Công pháp, tri thức, quan hệ phát triển theo nội dung;
-chưa thêm một thanh XP cho mọi hoạt động hoặc chỉ số “lực chiến” quyết định tất cả.
+**Công nghệ + tu luyện.** Máy quét, drone, vũ khí, thuốc, giáp và dữ liệu vẫn quan trọng song song
+với rèn luyện thể chất và điều khiển linh năng.
 
-**Nguy hiểm đọc được.** Quái có vai trò dạy cơ chế, báo đòn và khoảng phản công.
-Tăng khó bằng tình huống, góc tiếp cận và kết hợp quái; không chỉ tăng máu.
-Chết phải hiểu được nguyên nhân và còn cách thử lại.
+**Nguy hiểm đọc được.** Dị thú có dấu hiệu, vai trò và hành vi; khó tăng bằng tình huống chứ
+không chỉ tăng máu.
 
-**Online không phá tiến trình cá nhân.** Chơi solo được, co-op có phần thưởng cá nhân.
-Không ép PvP, bang, săn boss theo giờ thật hoặc online hằng ngày để hoàn thành MVP.
+**Quy mô tăng dần.** MVP kể chuyện quanh Hà Nội/Ba Vì; chỉ mở Việt Nam rộng hơn rồi Trái Đất,
+quỹ đạo và tinh không khi vòng chơi nhỏ đã hoạt động tốt.
 
 ## 3. Ba nhịp vòng chơi
 
-| Nhịp | Chuỗi hành động | Phản hồi cần có |
-| --- | --- | --- |
-| 10–60 giây | Nhìn đòn → giữ vị trí → đánh/né → quản lý linh lực → phản công/rút | Thấy lý do trúng, hụt hoặc không dùng được kỹ năng |
-| Chuyến 15–20 phút, có thể đến 30 | Ghim mục tiêu → chuẩn bị → chọn tuyến → giao tranh/thu thập → về làng → chế tạo/đột phá | Biết tu vi và vật liệu kiếm được phục vụ mục tiêu nào |
-| Nhiều phiên | Thiếu nguồn/tri thức → tìm cách tiếp cận → mở khả năng → giải thử thách → mở vùng mới | Mỗi mốc có việc mới làm được, không chỉ một con số |
+| Nhịp | Chuỗi |
+| --- | --- |
+| 10–60 giây | đọc đòn → giữ vị trí → đánh/né → dùng kỹ năng/thiết bị → phản công/rút |
+| 15–30 phút | nhận hợp đồng → chuẩn bị → chọn tuyến → giao tranh/thu thập/quét dữ liệu → về căn cứ |
+| nhiều phiên | thiếu tài nguyên/thông tin → tìm nguồn → mở khả năng → vượt khu khó hơn → mở vùng mới |
 
-Đây là nhịp cần kiểm chứng, không cam kết thời lượng hoặc suy phút từ số quái.
-Một chuyến có thể không làm đủ mọi bước; người thích combat dùng đồ đã chuẩn bị
-trước hoặc mua NPC, không bị buộc trồng cây mỗi lần.
+## 4. Hành trình MVP
 
-## 4. Hành trình cần chứng minh trước khi mở rộng
+Huấn luyện tại Căn cứ Thăng Long → tuần tra Vành Đai Tây → săn Lợn Gai Sơn / Nhện Tơ Điện →
+mở Máy Quét Linh Phổ → vào Rừng Ba Vì Dị Biến → thu dữ liệu và vật liệu hiếm →
+xâm nhập Trạm Thiên Mạch → hoàn thành boss/chọn cách xử lý lõi cộng hưởng.
 
-Phàm nhân học tương tác/dò mạch/né → `q_main_003` dẫn khí và mở Phi Nhận →
-trồng mẻ Cam Lộ hướng dẫn và luyện hồi phục → đi Trúc Âm tìm XP + nguyên liệu →
-về làng mở Hộ Thân → xử lý địa hình/quái khó hơn ở Thạch Cạn →
-chuẩn bị và hoàn thành Cổ Tỉnh → kết chương, tới giới hạn Luyện Khí 4.
+## 5. Phiên đầu khoảng 30 phút
 
-Sơn Trư gặp trước khi có phép chỉ là bài học an toàn, không bãi farm miễn phí.
-Sau Phi Nhận, cùng mẫu quái cho thấy lợi ích của tầm đánh. Hộ Thân giúp chịu áp lực
-ở thời điểm quan trọng; Trói Mộc giúp kiểm soát vị trí. Không đặt kỹ năng thành
-ba nút gây sát thương gần giống nhau.
+| Khoảng | Trải nghiệm |
+| --- | --- |
+| 0–5 | tạo nhân vật, nhận giấy phép thực địa, biết hub |
+| 5–10 | học di chuyển/né/đánh/quét |
+| 10–15 | ra Vành Đai Tây, gặp dị thú đầu tiên |
+| 15–20 | nhặt vật liệu và dữ liệu |
+| 20–25 | quay về nâng trang bị/kỹ năng |
+| 25–30 | nhận mục tiêu dẫn tới Ba Vì |
 
-Một chuyến săn cần phục vụ ít nhất hai trong ba mục tiêu: XP; vật tư/trang bị;
-tri thức/đường đi. Ví dụ, săn nhện để tiến tới Hộ Thân và tích tơ làm phù.
-Các bảng quái/loot/công thức phải nối được với mục tiêu này.
-
-## 5. Phiên đầu khoảng 30 phút — mục tiêu thử
-
-| Khoảng mục tiêu | Trải nghiệm | Điều cần quan sát |
-| --- | --- | --- |
-| 0–5 phút | Tạo nhân vật, nhận việc, biết NPC và đường ra | Không cần người phát triển chỉ từng nút |
-| 5–10 phút | Dò dấu, nhận biết một cú lao và né | Không chỉ đứng yên bấm đánh |
-| 10–15 phút | Dẫn khí, dùng Phi Nhận | Hiểu quyền mới đến từ đâu |
-| 15–20 phút | Trồng mẻ hướng dẫn, thu và luyện hồi phục | Hiểu vườn phục vụ chuyến đi |
-| 20–25 phút | Chọn tuyến đi với mục tiêu cụ thể | Biết cần nguyên liệu/tu vi nào |
-| 25–30 phút | Mang thành quả về, xem mục tiêu kế tiếp | Tài sản lưu được; biết sẽ làm gì tiếp |
-
-Không ép hoàn thành 12 quest, cả boss hoặc chắc chắn lên tầng 2 trong 30 phút.
-Đo nút thắt ở giao diện/đường đi trước khi cắt nội dung hoặc tăng tốc XP.
-
-## 6. Phạm vi các bản
+## 6. Phạm vi
 
 | Mảng | MVP | Alpha | Sau Alpha |
 | --- | --- | --- | --- |
-| Cảnh giới | Phàm nhân → Luyện Khí 1–4 | Luyện Khí 5–13, thử Trúc Cơ sơ kỳ | Kết Đan/Nguyên Anh khi có nội dung |
-| Công pháp | Tức Mạch Quyết, một bộ cơ bản | Ba hướng build kiếm/phù/thủ ngự | Khôi lỗi/linh thú nếu thực sự cần |
-| Thế giới | An Khê, Trúc Âm, Thạch Cạn, Cổ Tỉnh | Tông môn, phường thị, bí cảnh mới | Vùng xa và tranh đoạt |
-| Đời sống | 6 ô vườn, 3 cây, 5 công thức | Chuyên nghề và tiện ích | Động phủ/trang trí sâu |
-| Cộng đồng | Backend đã có; trải nghiệm co-op tối đa 2 là mục tiêu | Nhóm 4 và hợp tác nhiều hơn | Liên minh/sự kiện bang |
-| PvP | Đấu tập đồng thuận, chỉ số chuẩn, không kinh tế | Đấu trường cân bằng | Tranh đoạt tự chọn |
-| Kinh tế | NPC, tài sản cá nhân, không chợ người chơi | Giao dịch sau kiểm thử tài sản | Chợ/đấu giá nếu có nhu cầu |
-| Truyện | Một chương, 12 quest chính, 6 quest phụ | Hai chương tiếp | Xung đột vùng dài hạn |
+| thế giới | Thăng Long, Vành Đai Tây, Ba Vì, Trạm Thiên Mạch | thêm cụm Việt Nam | Đông Nam Á → Trái Đất → tinh không |
+| tiến trình | các ngưỡng hiện tại được giữ tạm ở backend | đổi tên/hệ thống cấp bậc sau migration | mở cấp cao khi có nội dung |
+| combat | melee/ranged/kỹ năng cơ bản | build rõ hơn | chuyên hóa sâu |
+| đời sống | chế tạo, dược liệu, loadout | nghề/chuyên môn | kinh tế sâu hơn |
+| cộng đồng | chat/bạn bè/group hiện có | co-op 4 | sự kiện cộng đồng |
+| PvP | đấu tập đồng thuận | đấu trường | vùng tranh đoạt tùy chọn |
 
-Chương đầu dự kiến thử trong 2–4 giờ chơi chủ động. Không kéo dài thành nhiều ngày
-bằng quái nhiều máu, daily bắt buộc hoặc chờ cây. Cày dài hạn chỉ mở khi có mục tiêu
-công pháp/trang bị/nội dung tương ứng; tầng 4 phải báo rõ trần MVP.
+## 7. Không làm lúc này
 
-## 7. Không làm trong phạm vi hiện tại
-
-Không full-loot, PvP ép buộc, nhà đấu giá, auto farm, linh căn quay may rủi, cường hóa
-phá đồ, premium currency, cửa hàng tiền thật, bay xuyên thế giới, hàng chục tông môn,
-tình duyên hoặc AI hội thoại. Không xây cả hệ thống lớn trước rồi mới thử nối vòng chơi.
+Không làm toàn Việt Nam trong một map, không mở phi thuyền ngay, không xây hàng chục cấp sức mạnh,
+không biến UI thành cổ phong nặng, không bỏ công nghệ để chỉ còn tu tiên cổ đại.
 
 ## 8. Nghiệm thu bản sắc
 
-Người mới phải trải nghiệm được: chuẩn bị hữu ích; nguy hiểm đọc được; quyết định
-đi tiếp/rút; phần thưởng có đầu ra; một khả năng mới; trở lại nơi an toàn.
-Hỏi “bạn đang cần gì và sẽ đi đâu tiếp?”. Nếu không trả lời được, sửa mục tiêu/UI
-và nguồn tài nguyên trước khi thêm cảnh giới.
-
-[Xem các mốc P1–P5 và kịch bản nghiệm thu](progression-pve-spec.md).
+Người mới phải trả lời được:
+- đây là Việt Nam hậu Linh Chấn;
+- căn cứ an toàn khác vùng ngoài vành đai thế nào;
+- mình cần gì trước chuyến đi tiếp theo;
+- tài nguyên/dữ liệu vừa kiếm dùng vào đâu;
+- vì sao bí ẩn Ba Vì có thể dẫn tới câu chuyện lớn hơn Trái Đất.
