@@ -1,5 +1,0 @@
-TuTien player sprite contract (2026-09-29)
-Identity: keep the existing young cultivator: dark navy hair in a high bun with a pale blue tie, cream wrap tunic with deep teal crossed collar, dark blue lower robe/trousers, brown sash, short sheathed sword, simple light face.
-View: top-down 3/4. Native 64x64 runtime cells. Compose the final 4x4 atlas from four individually generated and QC-checked 2x2 walk sheets. Row order: down/front, left, right, up/back; four walk poses per row.
-Pixel treatment: hard square clusters, stair-step contours, dark outline, at most 18 opaque colors across the assembled atlas, no smooth gradients, no soft alpha, nearest-neighbor output, binary alpha. Keep the complete sprite inside each cell, shared foot baseline and scale. No detached FX or scene background.
-The four source directions use the same approved front/down sheet for identity, palette and proportions. Atlas frames are stored in client/assets/pixel/cultivator.png; scale 1:1 in Godot.
