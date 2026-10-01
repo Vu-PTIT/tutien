@@ -1,84 +1,59 @@
 # Tu Tiên — Thiết kế sản phẩm và tiến trình PvE
 
-**Bản cập nhật:** 23/09/2026.
-**Mốc đối chiếu:** `feat/inventory-rewards` tại `05f5dd0eb9df36d5790e268879b8fbe3699994ea`.
-**Trạng thái:** tài liệu triển khai + số liệu thử, không phải PvE/tu luyện đã chạy.
+**Bản cập nhật:** 01/10/2026.  
+**Nhánh canon hiện tại:** `feat/map-ui-rebuild`.  
 **Nền dự án:** Godot/GDScript, Nakama/TypeScript, PostgreSQL.
 
-> Một người bình thường tiến thân bằng hiểu biết, chuẩn bị và lựa chọn:
-> biết cần gì, đi đâu để kiếm, dùng thành quả vào đâu và mở được khả năng gì mới.
+> Một người bình thường tại Việt Nam hậu Linh Chấn tiến thân bằng hiểu biết, chuẩn bị,
+> chiến đấu, trang bị và dữ liệu; từ một căn cứ địa phương dần chạm tới bí mật của tinh không.
 
-## 1. Đọc theo thứ tự mới
+## 1. Canon phải đọc trước
 
-Bắt đầu từ [đặc tả tiến trình/PvE](progression-pve-spec.md), rồi
-[tiến độ và mốc triển khai](../implementation-status.md). Sau đó đọc phần chuyên môn.
-Không bắt đầu bằng file 12/14 chưa có trên Git.
+1. [04 — Bối cảnh Việt Nam thời Linh Chấn](04-world-setting-vietnam-awakening.md)
+2. [05 — Story bible](05-story-bible.md)
+3. [01 — Tầm nhìn/vòng chơi](01-vision-and-core-loop.md)
 
-| Tài liệu đang dùng | Vai trò |
-| --- | --- |
-| [00 — review/quyết định](00-review-and-decisions.md) | Quyết định v2 và ghi chú cập nhật; giữ lịch sử |
-| [01 — tầm nhìn/vòng chơi](01-vision-and-core-loop.md) | Lời hứa sản phẩm, nhịp phiên và giới hạn |
-| [02 — nhân vật/tu luyện](02-character-and-cultivation.md) | Nguồn tu vi, điều kiện, dư XP và đột phá |
-| [03 — chiến đấu](03-combat-skills-and-artifacts.md) | Kỹ năng, AI, quái/loot, dùng đồ, settlement |
-| [05 — truyện](05-story-bible.md) | Thế giới/NPC/xung đột; không viết lại trong cập nhật này |
-| [06 — nhiệm vụ](06-quests-and-events.md) | Chuỗi 12 + 6 quest, ngân sách XP/tiền, nhánh và chống kẹt |
-| [07 — kinh tế/chế tạo](07-garden-crafting-and-economy.md) | Đầu ra loot, 24 ID, vườn, 5 công thức và giá thử |
-| [Đặc tả tiến trình/PvE](progression-pve-spec.md) | Nối mọi mảng thành hành trình và mốc P1–P5 |
-| [Nguồn tham khảo](progression-references.md) | Cơ chế game tham khảo, phạm vi nguồn và diễn giải riêng |
-| [Nhật ký](../project-history.md) | Mốc code/CI đã ghi và lần sửa thiết kế hiện tại |
+Các tên An Khê, Trúc Âm, Thạch Cạn, Cổ Tỉnh trong code/tài liệu cũ là **legacy world data**,
+không còn là canon hiển thị của map/UI rebuild.
 
-## 2. Phân biệt code với thiết kế
+## 2. Hệ thống đang giữ
 
-Mốc nguồn có backend xã hội, prototype đấu tập hai người và nền inventory/reward.
-Chưa có PvE, consume/equip/craft, vườn, quest runtime hoặc tu luyện. Xem
-[tiến độ](../implementation-status.md), [combat](../combat-prototype.md) và
-[tài sản](../inventory-and-rewards.md).
+Backend xã hội, inventory/reward, combat authoritative, world movement, field mobs,
+quest/progression hiện có được giữ làm nền kỹ thuật. Việc đổi bối cảnh không đồng nghĩa
+viết lại toàn bộ backend.
 
-Một bảng JSON/Markdown hoặc unit test số học **không** làm tính năng gameplay trở
-thành đã triển khai. Không coi code trên nhánh feature là đã merge vào `main`.
+## 3. Việc cần migrate
 
-Các phần 08–15, `design-samples/mvp.catalog.json` và `scripts/validate_design.py`
-được nhắc ở gói v2 cũ chưa có tại mốc nguồn. Không dùng chúng làm liên kết đọc bắt
-buộc hoặc ghi nhận đã có công cụ. Bản cập nhật này bổ sung các file **tên mới** bên
-dưới, không giả vờ khôi phục nguyên gói còn thiếu.
+- tên map và point/entity;
+- tên quái/vật phẩm/NPC;
+- quest text và localization;
+- tên cảnh giới/công pháp nếu quyết định đổi hẳn sang hệ hiện đại;
+- art direction map/UI;
+- mapping save cũ sang ID mới, có test.
 
-## 3. Phạm vi giữ nguyên
+## 4. Nguyên tắc triển khai
 
-Phàm nhân → Luyện Khí 1–4; 12 quest chính + 6 phụ;
-3 loại quái thường + tinh anh + boss; 6 hành động; 3 ô trang bị chiến đấu;
-6 ô vườn, 3 cây, 5 công thức và 24 ID item. Co-op mục tiêu 2 người.
-PvP là đấu tập đồng thuận, không XP/tiền/loot; không chợ người chơi hoặc cửa hàng thật.
+Không đổi ID runtime hàng loạt trong một commit. Khóa lore → dựng map/UI mới →
+đổi dữ liệu hiển thị → test → sau đó mới migration ID backend nếu thật sự cần.
 
-Không mở rộng số lượng hệ thống để che vòng chơi chưa rõ.
-Mọi con số mới là giá trị khởi đầu cho test, không benchmark.
+## 5. Tài liệu hệ thống
 
-## 4. Nguồn số và kiểm tra
+- [00 — review/quyết định](00-review-and-decisions.md)
+- [01 — tầm nhìn/vòng chơi](01-vision-and-core-loop.md)
+- [02 — nhân vật/tu luyện](02-character-and-cultivation.md)
+- [03 — chiến đấu](03-combat-skills-and-artifacts.md)
+- [04 — bối cảnh Việt Nam thời Linh Chấn](04-world-setting-vietnam-awakening.md)
+- [05 — truyện](05-story-bible.md)
+- [06 — nhiệm vụ](06-quests-and-events.md)
+- [07 — kinh tế/chế tạo](07-garden-crafting-and-economy.md)
+- [Đặc tả tiến trình/PvE](progression-pve-spec.md)
 
-[JSON tiến trình](../../design-samples/progression-pve.v1.json) là nguồn số duy nhất
-của cập nhật này. Nó **không** được import trực tiếp vào runtime.
-Các bảng MD có marker `generated` được đồng bộ từ JSON.
+## 6. Thứ tự sản xuất mới
 
-```sh
-python scripts/validate_progression_design.py
-python scripts/test_progression_design.py
-```
+P1 — dựng Căn cứ Thăng Long đủ chạy/đọc được →  
+P2 — Vành Đai Tây + dị thú đầu tiên →  
+P3 — Ba Vì + Máy Quét Linh Phổ →  
+P4 — Trạm Thiên Mạch + boss/chọn nhánh →  
+P5 — polish PC/mobile, minimap/map detail, social UI và smoke test.
 
-Sau khi chủ đích đổi JSON:
-
-```sh
-python scripts/validate_progression_design.py --write-tables
-python scripts/test_progression_design.py
-```
-
-Validator kiểm ID/tham chiếu, quest không vòng lặp, XP ba chặng, nguồn thay thế,
-loot/công thức/shop, số học chuyến đi và đồng bộ bảng. Không kiểm gameplay/network
-thật hoặc hiệu suất. Chạy lại unit/integration runtime khi bắt đầu triển khai P1–P5.
-
-## 5. Thứ tự sản xuất mới
-
-P1: một Sơn Trư đọc đòn được → P2: chuyến săn có XP/loot lưu được và dùng/equip
-có tác dụng → P3: tài khoản mới từ phàm nhân tới Phi Nhận → P4: chuẩn bị/Trúc Âm/
-trở về/Hộ Thân → P5: chương Thạch Cạn/Cổ Tỉnh và tầng 3–4.
-
-Giữ các gate nghiệm thu combat/tài sản đã làm. Không thêm tông môn hoặc cảnh giới
-trước khi đi hết vòng chơi bằng tài khoản mới, không cấp tay đồ/XP.
+Không mở rộng ra toàn quốc/tinh không trước khi P1–P4 chạy ổn bằng tài khoản mới.
