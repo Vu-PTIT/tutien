@@ -4,3 +4,4 @@ server/build/
 .env
 *.log
 exports/
+.codex/
