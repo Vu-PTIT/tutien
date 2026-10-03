@@ -1,70 +1,64 @@
-extends Node2D
+extends TileMapLayer
 
-var assets: Node
+var asset_provider: Node
 var layer_data: Dictionary = {}
 var map_width := 112
-var cell_size := 16
 var animations: Dictionary = {}
+var _animated_cells: Array[Dictionary] = []
 var _animation_clock := 0.0
-var _redraw_clock := 0.0
-var _has_animated_tiles := false
 
 
-func configure(asset_provider: Node, data: Dictionary, width: int, tile_size: int) -> void:
-	assets = asset_provider
+func configure(provider: Node, data: Dictionary, width: int, _tile_size: int) -> void:
+	asset_provider = provider
 	layer_data = data
 	map_width = width
-	cell_size = tile_size
-	animations = assets.get("map_data").get("animations", {})
-	for raw_gid in layer_data.get("data", []):
-		if animations.has(str(int(raw_gid))):
-			_has_animated_tiles = true
-			break
+	animations = provider.get("map_data").get("animations", {})
+	tile_set = provider.get("tile_set_resource") as TileSet
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	set_process(_has_animated_tiles)
-	queue_redraw()
+	rendering_quadrant_size = 8
+	
+	var values: Array = layer_data.get("data", [])
+	for index in range(values.size()):
+		var gid := int(values[index]) & 0x1fffffff
+		if gid == 0:
+			continue
+		var coords := Vector2i(index % map_width, floori(float(index) / float(map_width)))
+		var tile: Dictionary = provider.get("tile_refs").get(gid, {})
+		if tile.is_empty():
+			push_error("No TileSet atlas cell for map GID %d in %s" % [gid, name])
+			continue
+		set_cell(coords, int(tile.get("source_id", -1)), tile.get("atlas_coords", Vector2i.ZERO))
+		var frames: Array = animations.get(str(gid), [])
+		if not frames.is_empty():
+			_animated_cells.append({"coords": coords, "base_gid": gid, "current_gid": gid, "frames": frames, "phase": float(index % 13) * 0.027})
+	set_process(not _animated_cells.is_empty())
 
 
 func _process(delta: float) -> void:
-	if not _has_animated_tiles:
-		return
 	_animation_clock += delta
-	_redraw_clock += delta
-	if _redraw_clock >= 0.06:
-		_redraw_clock = 0.0
-		queue_redraw()
-
-
-func _draw() -> void:
-	var values: Array = layer_data.get("data", [])
-	for index in range(values.size()):
-		var base_gid := int(values[index])
-		if base_gid == 0:
+	for entry in _animated_cells:
+		var next_gid := _animated_gid(int(entry["base_gid"]), entry["frames"], _animation_clock + float(entry["phase"]))
+		if next_gid == int(entry["current_gid"]):
 			continue
-		var gid := _animated_gid(base_gid)
-		var tile: Dictionary = assets.call("resolve_gid", gid)
+		var tile: Dictionary = asset_provider.get("tile_refs").get(next_gid, {})
 		if tile.is_empty():
 			continue
-		var texture := tile.get("texture") as Texture2D
-		var region: Rect2 = tile.get("region", Rect2())
-		var cell := Vector2i(index % map_width, floori(float(index) / float(map_width)))
-		var destination := Rect2(Vector2(cell.x * cell_size, cell.y * cell_size), Vector2(cell_size, cell_size))
-		draw_texture_rect_region(texture, destination, region)
+		set_cell(entry["coords"], int(tile.get("source_id", -1)), tile.get("atlas_coords", Vector2i.ZERO))
+		entry["current_gid"] = next_gid
 
 
-func _animated_gid(gid: int) -> int:
-	var frames: Array = animations.get(str(gid), [])
+func _animated_gid(base_gid: int, frames: Array, elapsed: float) -> int:
 	if frames.is_empty():
-		return gid
+		return base_gid
 	var total_ms := 0
 	for frame in frames:
-		total_ms += int(frame.get("duration", 100))
+		total_ms += int(frame.get("duration", 100))	
 	if total_ms <= 0:
-		return gid
-	var frame_time := int(fposmod(_animation_clock * 1000.0, float(total_ms)))
+		return base_gid
+	var frame_time := int(fposmod(elapsed * 1000.0, float(total_ms)))
 	for frame in frames:
 		var duration := int(frame.get("duration", 100))
 		if frame_time < duration:
-			return int(frame.get("gid", gid))
+			return int(frame.get("gid", base_gid))
 		frame_time -= duration
-	return gid
+	return base_gid

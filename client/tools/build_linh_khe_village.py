@@ -123,6 +123,9 @@ def pick_wang_tileset(tsx_path: Path) -> tuple[ET.Element, dict[tuple[int, ...],
 
 
 def choose_wang(sig: tuple[int, ...], choices: dict[tuple[int, ...], list[int]], rng: random.Random) -> int:
+    exact = choices.get(sig)
+    if exact:
+        return rng.choice(exact)
     best_score = 10_000
     best: list[int] = []
     for candidate, tile_ids in choices.items():
@@ -137,6 +140,42 @@ def choose_wang(sig: tuple[int, ...], choices: dict[tuple[int, ...], list[int]],
         elif score == best_score:
             best.extend(tile_ids)
     return rng.choice(best)
+
+
+def read_source_layers() -> tuple[ET.Element, dict[str, list[list[int]]], dict[str, int]]:
+    root = ET.parse(SOURCE_MAP).getroot()
+    layers: dict[str, list[list[int]]] = {}
+    for layer in root.findall("layer"):
+        data = layer.find("data")
+        if data is None:
+            continue
+        values = [int(value.strip() or 0) for value in (data.text or "").replace("\n", "").split(",") if value.strip()]
+        width = int(layer.get("width", root.get("width", "0")))
+        height = int(layer.get("height", root.get("height", "0")))
+        layers[str(layer.get("name", ""))] = [values[y * width:(y + 1) * width] for y in range(height)]
+    first_gids = {
+        ET.parse((SOURCE_MAP.parent / entry.get("source", "")).resolve()).getroot().get("name", ""): int(entry.get("firstgid", "1"))
+        for entry in root.findall("tileset")
+    }
+    return root, layers, first_gids
+
+
+def wang_material_cells(grid: list[list[int]], first_gid: int, wang_by_local_id: dict[int, tuple[int, ...]]) -> list[list[bool]]:
+    return [
+        [any(wang_by_local_id.get(gid - first_gid, (0,) * 8)) for gid in row]
+        for row in grid
+    ]
+
+
+def paste_source_region(target: list[list[int]], source: list[list[int]], offset_x: int, offset_y: int) -> None:
+    for sy, row in enumerate(source):
+        y = offset_y + sy
+        if not 0 <= y < HEIGHT:
+            continue
+        for sx, value in enumerate(row):
+            x = offset_x + sx
+            if 0 <= x < WIDTH:
+                target[y][x] = value
 
 
 def rect_tiles(x1: int, y1: int, x2: int, y2: int) -> list[tuple[int, int]]:
@@ -256,173 +295,226 @@ def build() -> None:
     water_root, water_wang = pick_wang_tileset(TILED / "Tilesets" / "Tileset_Water.tsx")
     _, object_sizes, first_by_name = source_assets()
 
-    houses = [
-        (478, 10, 35, "Riverside Home"),
-        (477, 29, 35, "Garden Home"),
-        (479, 45, 35, "Linh Khe Spirit Hall"),
-        (477, 73, 35, "North Lane Home"),
-        (478, 88, 35, "East Lane Home"),
-        (478, 10, 75, "South Garden Home"),
-        (477, 29, 75, "Old Orchard Home"),
-        (478, 45, 75, "Community House"),
-        (480, 77, 75, "Violet Roof House"),
-        (477, 96, 75, "East Garden Home"),
-    ]
-    objects: list[dict[str, object]] = []
-    building_objects = []
-    for gid, tx, ty, name in houses:
-        item = add_object(objects, gid, tx, ty, name, "building", object_sizes[gid], {"canopy": True, "blocking": True})
-        building_objects.append(item)
-    gate = add_object(objects, 481, 52, 96, "South Village Gate", "gate", object_sizes[481], {"canopy": True, "blocking": True})
-    building_objects.append(gate)
+    source_root, source_layers, source_first_gids = read_source_layers()
+    source_width = int(source_root.get("width", "0"))
+    source_height = int(source_root.get("height", "0"))
+    core_x, core_y = 36, 27
+    core_cells = {(core_x + x, core_y + y) for y in range(source_height) for x in range(source_width)}
+    expected_source_layers = {"Ground", "Flowers", "Road", "RockSlopes_Auto", "Water"}
+    missing = expected_source_layers - set(source_layers)
+    if missing:
+        raise RuntimeError(f"Beginning Fields source map is missing layers: {sorted(missing)}")
 
-    # Fixed landmark props: a well and a lively market square.
-    add_object(objects, 482, 53, 53, "Village Well", "well", object_sizes[482], {"blocking": True})
-    add_object(objects, 486, 46, 46, "Village Noticeboard", "noticeboard", object_sizes[486], {"blocking": True})
-    add_object(objects, 490, 43, 53, "Square Lantern West", "lamp", object_sizes[490], {"canopy": True, "blocking": True})
-    add_object(objects, 490, 66, 53, "Square Lantern East", "lamp", object_sizes[490], {"canopy": True, "blocking": True})
-    add_object(objects, 501, 62, 47, "Market Table North", "market", object_sizes[501], {"blocking": True})
-    add_object(objects, 501, 47, 55, "Market Table South", "market", object_sizes[501], {"blocking": True})
-    add_object(objects, 488, 64, 48, "Market Crate Large", "crate", object_sizes[488], {"blocking": True})
-    add_object(objects, 489, 67, 48, "Market Crate Small", "crate", object_sizes[489], {"blocking": True})
-    add_object(objects, 492, 44, 49, "Market Sack", "market", object_sizes[492], {"blocking": True})
-    add_object(objects, 500, 60, 55, "Market Basket", "market", object_sizes[500], {"blocking": True})
-    add_object(objects, 495, 50, 41, "Square Banner West", "banner", object_sizes[495], {"canopy": True})
-    add_object(objects, 495, 61, 41, "Square Banner East", "banner", object_sizes[495], {"canopy": True})
-    add_object(objects, 484, 49, 57, "Stone Bench West", "bench", object_sizes[484], {"blocking": True})
-    add_object(objects, 485, 63, 57, "Stone Bench East", "bench", object_sizes[485], {"blocking": True})
-    add_object(objects, 493, 7, 28, "West Lane Sign", "sign", object_sizes[493], {"blocking": True})
-    add_object(objects, 494, 101, 29, "East Lane Sign", "sign", object_sizes[494], {"blocking": True})
-    add_object(objects, 490, 70, 61, "Camp Lantern", "lamp", object_sizes[490], {"canopy": True, "blocking": True})
-    add_object(objects, 5770, 74, 61, "Night Market Campfire", "animated_effect", object_sizes[5770], {"effect": "fire"})
-
-    # A tree belt frames the village, with smaller groves beside the two ponds.
-    tree_gids = [514, 515, 516, 517]
-    border_positions = [
-        (5, 13), (14, 10), (24, 12), (38, 9), (71, 10), (83, 11), (109, 11),
-        (5, 34), (5, 51), (5, 70), (5, 87), (107, 39), (107, 55), (107, 72), (107, 89),
-        (8, 93), (20, 93), (33, 92), (42, 92), (68, 92), (80, 92), (92, 92), (104, 93),
-        (84, 22), (108, 23), (84, 30), (108, 31), (84, 42), (108, 48),
-    ]
-    tree_objects = []
-    for i, (tx, ty) in enumerate(border_positions):
-        gid = tree_gids[(i * 3 + 1) % len(tree_gids)]
-        if ty < 20 and 85 <= tx <= 109:
-            continue  # Keep the pond edge open for a readable shoreline.
-        tree = add_object(objects, gid, tx, ty, f"Village Tree {i + 1:02d}", "tree", object_sizes[gid], {"canopy": True, "blocking": True})
-        tree_objects.append(tree)
-
-    # An orchard and a few rocks soften the large empty greens beyond the lanes.
-    small_objects = [
-        (507, 17, 45, "Emerald Bush 01", "bush"), (509, 31, 45, "Emerald Bush 02", "bush"),
-        (508, 38, 60, "Emerald Bush 03", "bush"), (510, 25, 62, "Emerald Bush 04", "bush"),
-        (511, 40, 64, "Emerald Bush 05", "bush"), (512, 34, 59, "Emerald Bush 06", "bush"),
-        (513, 37, 68, "Emerald Bush 07", "bush"), (507, 80, 56, "Emerald Bush 08", "bush"),
-        (509, 87, 59, "Emerald Bush 09", "bush"), (508, 86, 65, "Emerald Bush 10", "bush"),
-        (502, 84, 20, "Pond Rock 01", "rock"), (504, 107, 18, "Pond Rock 02", "rock"),
-        (503, 86, 18, "Pond Rock 03", "rock"), (505, 98, 23, "Pond Rock 04", "rock"),
-        (506, 19, 88, "Garden Rock 01", "rock"), (502, 24, 89, "Garden Rock 02", "rock"),
-        (505, 27, 90, "Garden Rock 03", "rock"), (506, 15, 89, "Garden Rock 04", "rock"),
-        (487, 20, 60, "Orchard Stump", "stump"), (498, 15, 62, "Hay Stack", "farm_prop"),
-        (496, 33, 48, "Water Crate", "market"), (499, 68, 49, "Village Barrel", "market"),
-        (497, 72, 62, "Outdoor Fireplace", "fireplace"),
-    ]
-    for gid, tx, ty, name, kind in small_objects:
-        add_object(objects, gid, tx, ty, name, kind, object_sizes[gid], {"blocking": kind in {"rock", "stump", "market", "fireplace"}})
-
-    # Neat rows of edible garden plants make the south-west plot read as a farm.
-    for row, ty in enumerate((62, 65, 68, 71)):
-        for column, tx in enumerate((11, 16, 21, 26, 31)):
-            add_object(objects, 491, tx, ty, f"Garden Crop {row + 1}-{column + 1}", "crop", object_sizes[491])
-
-    # Add a light scattering of village trees in open, non-road plots.
-    occupancy = {(int(item["x"]) // CELL, int(item["y"]) // CELL) for item in objects if item["kind"] in {"building", "tree", "gate"}}
-    for i, (tx, ty) in enumerate([(15, 19), (37, 18), (82, 18), (21, 55), (38, 57), (75, 20), (101, 44), (101, 59), (18, 89), (35, 88), (75, 88), (89, 89)]):
-        if (tx, ty) in occupancy:
-            continue
-        gid = tree_gids[(i + 2) % len(tree_gids)]
-        tree = add_object(objects, gid, tx, ty, f"Village Tree Grove {i + 1:02d}", "tree", object_sizes[gid], {"canopy": True, "blocking": True})
-        tree_objects.append(tree)
-
-    canopy_objects = [item for item in objects if item.get("canopy")]
-
-    # Grass and worn earth form the editable base layer. Dirt wraps house yards and the square.
-    terrain = [[1 for _ in range(WIDTH)] for _ in range(HEIGHT)]
-    paint_blob(terrain, 56, 50, 10, 8, 2, rng, 0.08)
-    for gid, tx, ty, _ in houses:
-        w, h = object_sizes[gid]
-        cx = tx + w / CELL * 0.52
-        cy = ty - h / CELL * 0.45
-        paint_blob(terrain, cx, cy, w / CELL * 0.53 + 2, h / CELL * 0.56 + 1.5, 2, rng, 0.1)
-    # A small cultivation plot south-west of the square, with alternating furrows.
-    paint_blob(terrain, 21, 68, 16, 11, 2, rng, 0.08)
-    for y in (61, 64, 67, 70, 73):
-        for x in range(9, 33):
-            if (x + y) % 9 != 0:
-                terrain[y][x] = 2
-    # Low-contrast footworn patches near the orchard and lakeside paths.
-    paint_blob(terrain, 39, 57, 7, 3, 2, rng, 0.2)
-    paint_blob(terrain, 82, 56, 6, 4, 2, rng, 0.18)
-
-    # Main lane, a market square, and branches linking every residential block.
-    roads = [[False for _ in range(WIDTH)] for _ in range(HEIGHT)]
-    stamp_path(roads, [(4, 50), (17, 50), (29, 48), (40, 49), (56, 50), (70, 49), (85, 50), (98, 48), (108, 48)], 1.7)
-    stamp_path(roads, [(56, 94), (56, 83), (54, 75), (55, 64), (54, 57), (56, 50), (58, 43), (58, 32), (60, 26), (60, 5)], 1.7)
-    stamp_path(roads, [(7, 27), (20, 27), (31, 29), (43, 27), (56, 27), (73, 27), (84, 29), (96, 27)], 1.1)
-    stamp_path(roads, [(7, 78), (21, 78), (34, 76), (46, 78), (56, 78), (69, 77), (83, 79), (97, 78), (107, 78)], 1.2)
-    stamp_path(roads, [(24, 27), (25, 38), (23, 50), (25, 63), (24, 78)], 1.05)
-    stamp_path(roads, [(92, 27), (91, 38), (92, 50), (90, 63), (92, 78)], 1.05)
-    # Small lanes to the doors of the northern houses.
-    for x in (17, 33, 54, 78, 99):
-        stamp_path(roads, [(x, 35), (x, 40), (56 if x < 56 else 92, 50)], 0.85)
-    # The large central market square and a walk toward the south gate.
-    for y in range(43, 57):
-        for x in range(48, 65):
-            roads[y][x] = True
-
-    # Two water features: a northern pond with a narrow outlet and a southern garden pool.
-    water = [[False for _ in range(WIDTH)] for _ in range(HEIGHT)]
-    for y in range(HEIGHT):
-        for x in range(WIDTH):
-            if point_in_ellipse(x + 0.5, y + 0.5, 99, 15, 10, 7.5) or point_in_ellipse(x + 0.5, y + 0.5, 13, 88, 7, 4.5):
-                water[y][x] = True
-    stamp_path(water, [(94, 19), (91, 22), (88, 25), (86, 27)], 1.15)
-    for y in range(HEIGHT):
-        for x in range(WIDTH):
-            if roads[y][x]:
-                water[y][x] = False
-
+    # Keep the supplied Beginning Fields tile layout as the visible village core.
+    # Only the space around it is extended; no replacement ground field is invented.
     ground_first = first_by_name["Tileset_Ground"]
     road_first = first_by_name["Road"]
     water_first = first_by_name["Tileset_Water"]
-    ground_values = []
-    for y in range(HEIGHT):
-        row = []
-        for x in range(WIDTH):
-            sig = terrain_signature(terrain, x, y)
-            local = choose_wang(sig, ground_wang, rng)
-            row.append(ground_first + local)
-        ground_values.append(row)
-    road_values = []
-    water_values = []
-    for y in range(HEIGHT):
-        road_row, water_row = [], []
-        for x in range(WIDTH):
-            road_row.append(road_first + choose_wang(mask_signature(roads, x, y), road_wang, rng) if roads[y][x] else 0)
-            water_row.append(water_first + choose_wang(mask_signature(water, x, y), water_wang, rng) if water[y][x] else 0)
-        road_values.append(road_row)
-        water_values.append(water_row)
+    grass_tiles = ground_wang.get((1, 1, 1, 1, 1, 1, 1, 1), [])
+    if not grass_tiles:
+        raise RuntimeError("Tileset_Ground has no all-grass Wang tiles")
+    ground_values = [[ground_first + rng.choice(grass_tiles) for _ in range(WIDTH)] for _ in range(HEIGHT)]
+    roads = [[False for _ in range(WIDTH)] for _ in range(HEIGHT)]
+    water = [[False for _ in range(WIDTH)] for _ in range(HEIGHT)]
+    road_values = [[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
+    water_values = [[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
+    rock_values = [[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
+    flowers = [[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
+    effects = [[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
+    effects[core_y + 32][core_x + 17] = 5770
+    paste_source_region(ground_values, source_layers["Ground"], core_x, core_y)
+    paste_source_region(road_values, source_layers["Road"], core_x, core_y)
+    paste_source_region(water_values, source_layers["Water"], core_x, core_y)
+    paste_source_region(rock_values, source_layers["RockSlopes_Auto"], core_x, core_y)
+    paste_source_region(flowers, source_layers["Flowers"], core_x, core_y)
 
-    # Flower tiles animate in place; density stays outside paths, yards, and water.
-    blooms = [[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
+    road_tile_root, _ = pick_wang_tileset(TILED / "Tilesets" / "Tilesets_Road.tsx")
+    water_tile_root, _ = pick_wang_tileset(TILED / "Tilesets" / "Tileset_Water.tsx")
+    road_wang_map = {
+        int(tile.get("tileid", "0")): tuple(int(part) for part in tile.get("wangid", "").split(","))
+        for tile in road_tile_root.findall("./wangsets/wangset/wangtile")
+    }
+    water_wang_map = {
+        int(tile.get("tileid", "0")): tuple(int(part) for part in tile.get("wangid", "").split(","))
+        for tile in water_tile_root.findall("./wangsets/wangset/wangtile")
+    }
+    core_roads = wang_material_cells(source_layers["Road"], source_first_gids["Road"], road_wang_map)
+    core_water = wang_material_cells(source_layers["Water"], source_first_gids["Tileset_Water"], water_wang_map)
+    for y in range(source_height):
+        for x in range(source_width):
+            roads[core_y + y][core_x + x] = core_roads[y][x]
+            water[core_y + y][core_x + x] = core_water[y][x]
+
+    # Extend the sample's winding village lanes to four new residential/garden areas.
+    # Each branch is a narrow footpath, with the screenshot's sandy road tiles.
+    path_specs = [
+        ([(46, 31), (43, 24), (37, 21), (34, 23), (30, 24), (24, 24), (18, 24), (14, 22)], 1.0),
+        ([(70, 41), (77, 42), (83, 38), (90, 36), (96, 38)], 1.05),
+        ([(36, 60), (30, 61), (24, 58), (19, 54), (11, 53), (4, 57)], 0.95),
+        ([(72, 63), (77, 69), (84, 73), (92, 76), (101, 74)], 1.05),
+        ([(27, 69), (24, 75), (20, 80), (13, 83), (5, 82)], 0.85),
+        ([(90, 42), (96, 45), (100, 50), (99, 56), (96, 59)], 0.8),
+        ([(42, 23), (33, 23), (28, 27), (24, 33), (20, 38)], 0.75),
+        ([(62, 76), (55, 78), (50, 79), (46, 80)], 0.75),
+        ([(46, 80), (45, 78), (45, 76.5)], 0.6),
+        ([(13, 18), (12, 24), (13, 29)], 0.65),
+        ([(28, 20), (31, 23), (34, 28)], 0.65),
+        ([(9, 43), (14, 44), (18, 48)], 0.65),
+        ([(10, 68), (13, 71), (16, 72)], 0.65),
+        ([(84, 36), (84, 41), (87, 46)], 0.65),
+        ([(83, 54), (87, 56), (90, 58)], 0.65),
+        ([(96, 59), (99, 62), (99, 68), (94, 69)], 0.65),
+        ([(45, 75), (45, 78), (46, 80)], 0.65),
+        ([(63, 75), (68, 77), (73, 78)], 0.65),
+    ]
+    for points, radius in path_specs:
+        stamp_path(roads, points, radius)
+
+    # The reference river already enters from the north-east and south of the core.
+    # Continue those channels along the village edge, leaving the homes on grass.
+    stamp_path(water, [(68, 30), (77, 27), (87, 24), (97, 27), (106, 33), (110, 42), (110, 57), (109, 72), (112, 83), (106, 94)], 2.7)
+    stamp_path(water, [(36, 62), (29, 66), (20, 69), (10, 73), (2, 76), (-2, 79)], 2.7)
+    stamp_path(water, [(66, 65), (62, 73), (56, 79), (47, 84), (35, 87), (22, 87), (10, 90), (-2, 91)], 2.8)
+
+    # The extension stays on grass. Only source paths and the existing river expose sand.
+    terrain = [[1 for _ in range(WIDTH)] for _ in range(HEIGHT)]
+    for y in range(HEIGHT):
+        for x in range(WIDTH):
+            if (x, y) in core_cells:
+                continue
+            ground_values[y][x] = ground_first + choose_wang(terrain_signature(terrain, x, y), ground_wang, rng)
+
+    # Build Wang-matched tiles for the new road and river cells while retaining every
+    # original source cell unchanged inside the sample's 40 x 40 footprint.
+    for y in range(HEIGHT):
+        for x in range(WIDTH):
+            if (x, y) not in core_cells:
+                if roads[y][x]:
+                    road_values[y][x] = road_first + choose_wang(mask_signature(roads, x, y), road_wang, rng)
+                if water[y][x]:
+                    water_values[y][x] = water_first + choose_wang(mask_signature(water, x, y), water_wang, rng)
+
+    objects: list[dict[str, object]] = []
+    building_objects: list[dict[str, object]] = []
+
+    def place_house(gid: int, tx: float, top_ty: float, name: str) -> None:
+        height_tiles = object_sizes[gid][1] / CELL
+        item = add_object(objects, gid, tx, top_ty + height_tiles, name, "building", object_sizes[gid], {"canopy": True, "blocking": True})
+        building_objects.append(item)
+
+    # Four houses line up with the same landmarks in the supplied village image.
+    place_house(479, core_x + 15.4, core_y + 2.0, "Beginning Fields Spirit Hall")
+    place_house(477, core_x + 29.9, core_y + 7.2, "East River Cottage")
+    place_house(480, core_x + 3.9, core_y + 12.9, "Old West Cottage")
+    place_house(478, core_x + 21.3, core_y + 19.9, "South Garden Home")
+
+    # New homes extend the pictured core as connected hamlets instead of new terrain.
+    outer_houses = [
+        (478, 9, 9, "North Orchard Home"), (477, 25, 13, "North Lane Cottage"),
+        (479, 4, 34, "West Garden Hall"), (477, 18, 48, "West Lane Home"),
+        (478, 3, 58, "Lower West Cottage"), (479, 86, 7, "East Bank Hall"),
+        (477, 82, 30, "East Lane Home"), (478, 87, 49, "Riverside House"),
+        (478, 40, 69, "South Orchard Home"), (479, 78, 60, "South Market Hall"),
+        (477, 76, 74, "Eastern Garden Home"),
+        (477, 17, 27, "Northwest Settlement Cottage"), (478, 20, 39, "West Midlane Home"),
+        (477, 31, 50, "Central West Cottage"), (477, 78, 7, "Upper East Cottage"),
+        (478, 31, 73, "Lower Orchard Home"), (477, 91, 61, "Lower East Cottage"),
+        (478, 78, 47, "East Footpath Cottage"),
+    ]
+    for gid, tx, top_ty, name in outer_houses:
+        place_house(gid, tx, top_ty, name)
+
+    # A compact edge gate and small market points give the extensions readable goals.
+    gate = add_object(objects, 481, 91, 84, "South Village Gate", "gate", object_sizes[481], {"canopy": True, "blocking": True})
+    building_objects.append(gate)
+    add_object(objects, 482, 52, 69, "South Orchard Well", "well", object_sizes[482], {"blocking": True})
+    add_object(objects, 486, 71, 48, "East Lane Noticeboard", "noticeboard", object_sizes[486], {"blocking": True})
+    add_object(objects, 501, 22, 22, "North Field Cart", "market", object_sizes[501], {"blocking": True})
+    add_object(objects, 490, 89, 44, "Riverside Lamp", "lamp", object_sizes[490], {"canopy": True, "blocking": True})
+    add_object(objects, 495, 67, 61, "South Lane Banner", "banner", object_sizes[495], {"canopy": True})
+
+    # Core props follow the sample image: hay, crates, a cart, benches, flowers and fire.
+    prop_specs = [
+        (498, core_x + 10, core_y + 5, "North Yard Haystack", "farm_prop"),
+        (499, core_x + 8, core_y + 3, "North Yard Barrel", "market"),
+        (484, core_x + 14, core_y + 17, "West Path Bench", "bench"),
+        (485, core_x + 23, core_y + 16, "Central Path Bench", "bench"),
+        (493, core_x + 1, core_y + 14, "West Path Sign", "sign"),
+        (496, core_x + 15, core_y + 13, "Handcart Crate", "market"),
+        (490, core_x + 33, core_y + 25, "East Path Lantern", "lamp"),
+        (495, core_x + 31, core_y + 35, "South Banner West", "banner"),
+        (495, core_x + 35, core_y + 35, "South Banner East", "banner"),
+        (488, core_x + 28, core_y + 18, "East Yard Crate", "crate"),
+        (489, core_x + 30, core_y + 18, "Small East Crate", "crate"),
+        (492, core_x + 5, core_y + 22, "West Yard Sack", "market"),
+        (500, core_x + 31, core_y + 29, "South Garden Basket", "market"),
+        (487, core_x + 16, core_y + 30, "Garden Stump", "stump"),
+        (498, 14, 69, "West Farm Haystack", "farm_prop"),
+        (497, 43, 78, "Orchard Outdoor Fireplace", "fireplace"),
+        (499, 79, 74, "East Garden Barrel", "market"),
+        (500, 95, 58, "Riverside Basket", "market"),
+        (488, 86, 70, "South Market Crate", "crate"),
+        (489, 89, 70, "South Market Small Crate", "crate"),
+    ]
+    for gid, tx, ty, name, kind in prop_specs:
+        add_object(objects, gid, tx, ty, name, kind, object_sizes[gid], {"blocking": kind in {"market", "crate", "stump", "fireplace"}})
+    # Full-size tree sprites stay on the edge of yards; low bushes and bank rocks
+    # add detail around the reference's rock walls and channels.
+    core_trees = [
+        (514, core_x + 1, core_y + 11), (515, core_x + 5, core_y + 1),
+        (517, core_x + 33, core_y + 3), (514, core_x + 37, core_y + 16),
+        (517, core_x + 26, core_y + 19), (516, core_x + 2, core_y + 34),
+        (514, core_x + 18, core_y + 38), (517, core_x + 38, core_y + 37),
+        (515, core_x + 30, core_y + 33), (516, core_x + 7, core_y + 25),
+    ]
+    outer_trees = [
+        (3, 3), (18, 2), (34, 4), (76, 4), (82, 7), (107, 7),
+        (2, 17), (1, 30), (3, 43), (3, 54), (1, 87),
+        (109, 13), (109, 20), (110, 31), (108, 61), (104, 77),
+        (5, 92), (16, 93), (29, 91), (39, 94), (80, 93), (95, 91), (107, 92),
+        (31, 8), (6, 27), (27, 43), (80, 30), (82, 55), (33, 78), (70, 83), (47, 16),
+    ]
+    tree_specs = core_trees + [
+        (514 + (i % 4), tx, ty) for i, (tx, ty) in enumerate(outer_trees)
+    ]
+    tree_objects: list[dict[str, object]] = []
+    for i, (gid, tx, ty) in enumerate(tree_specs):
+        item = add_object(objects, gid, tx, ty, f"Village Tree {i + 1:02d}", "tree", object_sizes[gid], {"canopy": True, "blocking": True})
+        tree_objects.append(item)
+
+    bush_specs = [
+        (507, 7, 18), (509, 13, 17), (508, 20, 5), (511, 31, 7),
+        (512, 7, 48), (510, 13, 59), (513, 29, 45), (508, 26, 64),
+        (510, 79, 21), (507, 82, 26), (512, 82, 43), (509, 96, 47),
+        (513, 101, 63), (511, 70, 78), (508, 53, 82), (510, 27, 84),
+        (509, 8, 61), (512, 30, 58), (507, 94, 18), (511, 72, 12),
+    ]
+    for i, (gid, tx, ty) in enumerate(bush_specs):
+        add_object(objects, gid, tx, ty, f"Village Shrub {i + 1:02d}", "bush", object_sizes[gid], {"blocking": True})
+
+    rock_specs = [
+        (502, 73, 32), (503, 79, 26), (504, 104, 34), (505, 108, 53), (506, 97, 67),
+        (502, 3, 73), (504, 23, 68), (503, 44, 87), (505, 67, 84), (506, 25, 90),
+    ]
+    for i, (gid, tx, ty) in enumerate(rock_specs):
+        add_object(objects, gid, tx, ty, f"River Rock {i + 1:02d}", "rock", object_sizes[gid], {"blocking": True})
+
+    # Tiny garden rows are set on grass and in small Wang-tiled beds, never in broad dirt yards.
+    crop_rows = [(12, 72), (15, 72), (18, 72), (93, 63), (96, 63), (79, 80), (82, 80), (85, 80)]
+    for i, (tx, ty) in enumerate(crop_rows):
+        add_object(objects, 491, tx, ty, f"Small Garden Plant {i + 1:02d}", "crop", object_sizes[491])
+
+    canopy_objects = [item for item in objects if item.get("canopy")]
+
+    # Low-density animated flowers follow the sample's existing flower clusters.
     flower_gids = [5578 + n for n in (0, 1, 3, 5, 48, 49, 51)] + [5674 + n for n in (0, 1, 3, 5, 48, 49, 51)]
-    patches = [(8, 20), (17, 18), (37, 19), (68, 18), (81, 25), (103, 31), (8, 42), (19, 56), (37, 60), (43, 70), (66, 68), (76, 57), (83, 87), (101, 88), (34, 86), (7, 61)]
-    for cx, cy in patches:
+    flower_patches = [(9, 21), (29, 13), (22, 31), (16, 61), (31, 72), (48, 13), (81, 16), (100, 51), (91, 59), (67, 74), (42, 84), (22, 86)]
+    for cx, cy in flower_patches:
         for _ in range(rng.randint(3, 6)):
             x = max(1, min(WIDTH - 2, cx + rng.randint(-2, 2)))
             y = max(1, min(HEIGHT - 2, cy + rng.randint(-2, 2)))
-            if not roads[y][x] and not water[y][x] and blooms[y][x] == 0:
-                blooms[y][x] = rng.choice(flower_gids)
+            if not roads[y][x] and not water[y][x] and flowers[y][x] == 0 and (x, y) not in core_cells:
+                flowers[y][x] = rng.choice(flower_gids)
 
     # Add collision footprints at water, building bases, tree trunks, and a few hard props.
     collision_rects: list[tuple[int, int, int, int, str]] = []
@@ -445,14 +537,21 @@ def build() -> None:
             collision_rects.append((x + max(0, int(w * 0.2)), max(0, y - max(7, int(h * 0.16))), max(8, int(w * 0.6)), max(7, int(h * 0.16)), "prop"))
 
     # Tiled map retains the supplied TSX files and their native 16px cell metadata.
-    source_root = ET.parse(SOURCE_MAP).getroot()
     root = ET.Element("map", {
         "version": "1.10", "tiledversion": "1.11.2", "orientation": "orthogonal",
         "renderorder": "right-down", "width": str(WIDTH), "height": str(HEIGHT),
         "tilewidth": str(CELL), "tileheight": str(CELL), "infinite": "0",
-        "nextlayerid": "9", "nextobjectid": str(1 + len(objects) + len(canopy_objects) + len(collision_rects) + 1),
+        "nextlayerid": "11", "nextobjectid": str(1 + len(objects) + len(canopy_objects) + len(collision_rects) + 1),
     })
-    tmx_properties(root, {"display_name": "Làng Linh Khê", "region": "Vietnam", "tile_grid": "16x16", "playable_preview": True})
+    tmx_properties(root, {
+        "display_name": "Làng Linh Khê",
+        "region": "Vietnam",
+        "tile_grid": "16x16",
+        "playable_preview": True,
+        "source_layout": "tileset/Tiled/Tilemaps/Beginning Fields.tmx",
+        "source_layout_offset": f"{core_x},{core_y}",
+        "expansion_style": "grass plots, narrow sandy lanes, winding stream and stone walls",
+    })
     for ts in source_root.findall("tileset"):
         ET.SubElement(root, "tileset", {"firstgid": ts.get("firstgid", "1"), "source": "../tileset/Tiled/Tilesets/" + Path(ts.get("source", "")).name})
 
@@ -463,9 +562,11 @@ def build() -> None:
         data.text = "\n" + ",\n".join(",".join(str(value) for value in row) for row in values) + "\n"
 
     add_tile_layer(1, "L0_Ground", ground_values, "ground")
-    add_tile_layer(2, "L1_Dirt_Roads", road_values, "decals")
-    add_tile_layer(3, "L1_Animated_Flowers", blooms, "animated_decals")
-    add_tile_layer(4, "L2_Water_Shoreline", water_values, "water_and_obstacles")
+    add_tile_layer(2, "L1_Sandy_Lanes", road_values, "paths")
+    add_tile_layer(3, "L2_Water_Shoreline", water_values, "water_and_obstacles")
+    add_tile_layer(4, "L2_Rock_Walls_Bridges", rock_values, "rock_edges_and_crossings")
+    add_tile_layer(5, "L3_Animated_Flowers", flowers, "animated_decals")
+    add_tile_layer(6, "L3_Animated_Fire", effects, "animated_effects")
 
     next_object_id = 1
 
@@ -485,16 +586,16 @@ def build() -> None:
                 tmx_properties(obj, props)
             next_object_id += 1
 
-    add_object_group("L3_YSort_Props", objects, 5)
-    add_object_group("L4_Canopy_Roofs", canopy_objects, 6)
+    add_object_group("L4_YSort_Props", objects, 7)
+    add_object_group("L5_Canopy_Roofs", canopy_objects, 8)
 
-    collision_group = ET.SubElement(root, "objectgroup", {"id": "7", "name": "L2_Collision_Data", "visible": "0", "opacity": "0"})
+    collision_group = ET.SubElement(root, "objectgroup", {"id": "9", "name": "L2_Collision_Data", "visible": "0", "opacity": "0"})
     for x, y, w, h, kind in collision_rects:
         obj = ET.SubElement(collision_group, "object", {"id": str(next_object_id), "name": kind, "class": "collision", "x": str(x), "y": str(y), "width": str(w), "height": str(h)})
         tmx_properties(obj, {"collision_kind": kind, "solid": True})
         next_object_id += 1
-    spawn_group = ET.SubElement(root, "objectgroup", {"id": "8", "name": "PlayerSpawn", "visible": "0"})
-    ET.SubElement(spawn_group, "object", {"id": str(next_object_id), "name": "PlayerSpawn", "class": "spawn", "x": str(56 * CELL), "y": str(56 * CELL), "point": "1"})
+    spawn_group = ET.SubElement(root, "objectgroup", {"id": "10", "name": "PlayerSpawn", "visible": "0"})
+    ET.SubElement(spawn_group, "object", {"id": str(next_object_id), "name": "PlayerSpawn", "class": "spawn", "x": str((core_x + 20) * CELL), "y": str((core_y + 19) * CELL), "point": "1"})
 
     ET.indent(root, space=" ")
     ET.ElementTree(root).write(OUT_TMX, encoding="UTF-8", xml_declaration=True)
@@ -503,7 +604,7 @@ def build() -> None:
     print(f"Wrote {OUT_TMX}")
     print(f"Wrote {OUT_JSON}")
     print(f"Wrote {OUT_PNG}")
-    print(f"Grid: {WIDTH}x{HEIGHT} ({WIDTH * CELL}x{HEIGHT * CELL}px); objects: {len(objects)}; collision boxes: {len(collision_rects)}")
+    print(f"Grid: {WIDTH}x{HEIGHT} ({WIDTH * CELL}x{HEIGHT * CELL}px); source core: {source_width}x{source_height} at ({core_x},{core_y}); objects: {len(objects)}; collision boxes: {len(collision_rects)}")
 
 
 def export_runtime_json(root: ET.Element) -> None:
@@ -560,7 +661,7 @@ def export_runtime_json(root: ET.Element) -> None:
                     if prop.get("type") == "bool":
                         value = value.lower() == "true"
                     item[prop.get("name", "")] = value
-                (canopies if name == "L4_Canopy_Roofs" else objects).append(item)
+                (canopies if name == "L5_Canopy_Roofs" else objects).append(item)
 
     result = {
         "name": "Làng Linh Khê",
@@ -568,6 +669,8 @@ def export_runtime_json(root: ET.Element) -> None:
         "height": HEIGHT,
         "tile_width": CELL,
         "tile_height": CELL,
+        "source_layout": "tileset/Tiled/Tilemaps/Beginning Fields.tmx",
+        "source_core": {"x": 36, "y": 27, "width": 40, "height": 40},
         "tilesets": tilesets,
         "layers": layers,
         "objects": objects,
@@ -627,15 +730,30 @@ def render_preview(root: ET.Element) -> None:
             if tile is not None:
                 out.alpha_composite(tile, ((index % WIDTH) * CELL, (index // WIDTH) * CELL))
     for group in root.findall("objectgroup"):
-        if group.get("name") != "L3_YSort_Props":
+        if group.get("name") != "L4_YSort_Props":
             continue
-        for obj in group.findall("object"):
+        entries = sorted(group.findall("object"), key=lambda obj: float(obj.get("y", "0")))
+        for obj in entries:
             gid = int(obj.get("gid", "0"))
             tile = tile_image(gid)
             if tile is None:
                 continue
             x, y = round(float(obj.get("x", "0"))), round(float(obj.get("y", "0")))
             out.alpha_composite(tile, (x, y - tile.height))
+    for group in root.findall("objectgroup"):
+        if group.get("name") != "L5_Canopy_Roofs":
+            continue
+        for obj in group.findall("object"):
+            gid = int(obj.get("gid", "0"))
+            tile = tile_image(gid)
+            if tile is None:
+                continue
+            kind = obj.get("class", "")
+            ratio = 0.62 if kind in {"building", "gate"} else 0.7
+            visible_height = min(tile.height, max(1, round(tile.height * ratio)))
+            canopy = tile.crop((0, 0, tile.width, visible_height))
+            x, y = round(float(obj.get("x", "0"))), round(float(obj.get("y", "0")))
+            out.alpha_composite(canopy, (x, y - tile.height))
     OUT_PNG.parent.mkdir(parents=True, exist_ok=True)
     out.convert("RGB").save(OUT_PNG, optimize=True)
 

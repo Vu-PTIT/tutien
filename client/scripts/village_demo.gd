@@ -3,11 +3,13 @@ extends Node2D
 const MAP_PATH := "res://assets/maps/lang_linh_khe_112x96.json"
 const PLAYER_SCENE_SCRIPT := "res://scripts/village_player.gd"
 const TILE_LAYER_SCRIPT := "res://scripts/village_tile_layer.gd"
-const OBJECT_SCRIPT := "res://scripts/village_sprite_object.gd"
+const OBJECT_SCENE := "res://scenes/map_sprite_object.tscn"
 const MINIMAP_SCRIPT := "res://scripts/village_minimap.gd"
 
 var map_data: Dictionary = {}
 var texture_cache: Dictionary = {}
+var tile_set_resource: TileSet
+var tile_refs: Dictionary = {}
 var _info_label: Label
 var _player: CharacterBody2D
 var _hud_tick := 0.0
@@ -20,6 +22,7 @@ func _ready() -> void:
 		return
 	map_data = parsed
 
+	_build_tile_set()
 	_build_ground_layers()
 	_build_world_objects()
 	_build_collisions()
@@ -97,11 +100,84 @@ func resolve_gid(raw_gid: int) -> Dictionary:
 func _build_ground_layers() -> void:
 	var layer_script: Script = load(TILE_LAYER_SCRIPT)
 	for layer_data in map_data.get("layers", []):
-		var layer := Node2D.new()
+		var layer := TileMapLayer.new()
 		layer.name = str(layer_data.get("name", "TileLayer"))
 		layer.set_script(layer_script)
 		layer.call("configure", self, layer_data, int(map_data.get("width", 112)), int(map_data.get("tile_width", 16)))
 		add_child(layer)
+
+
+func _build_tile_set() -> void:
+	var tile_width := int(map_data.get("tile_width", 16))
+	var tile_height := int(map_data.get("tile_height", 16))
+	tile_set_resource = TileSet.new()
+	tile_set_resource.tile_size = Vector2i(tile_width, tile_height)
+	tile_refs.clear()
+
+	var required_gids: Dictionary = {}
+	var animations: Dictionary = map_data.get("animations", {})
+	for layer in map_data.get("layers", []):
+		for raw_gid in layer.get("data", []):
+			var gid := int(raw_gid) & 0x1fffffff
+			if gid == 0:
+				continue
+			required_gids[gid] = true
+			for frame in animations.get(str(gid), []):
+				required_gids[int(frame.get("gid", gid))] = true
+
+	for tileset in map_data.get("tilesets", []):
+		var image_path := str(tileset.get("image", ""))
+		if image_path.is_empty():
+			continue
+		var first_gid := int(tileset.get("first_gid", 1))
+		var tile_count := int(tileset.get("tile_count", 0))
+		var columns := int(tileset.get("columns", 0))
+		var tw := int(tileset.get("tile_width", tile_width))
+		var th := int(tileset.get("tile_height", tile_height))
+		if columns <= 0 or tw <= 0 or th <= 0:
+			continue
+
+		var local_ids: Dictionary = {}
+		for raw_gid in required_gids.keys():
+			var local_id := int(raw_gid) - first_gid
+			if local_id >= 0 and local_id < tile_count:
+				local_ids[local_id] = true
+		if local_ids.is_empty():
+			continue
+
+		var texture := texture_for(image_path)
+		if texture == null:
+			continue
+		var margin := int(tileset.get("margin", 0))
+		var spacing := int(tileset.get("spacing", 0))
+		var source := TileSetAtlasSource.new()
+		source.texture = texture
+		source.texture_region_size = Vector2i(tw, th)
+		source.margins = Vector2i(margin, margin)
+		source.separation = Vector2i(spacing, spacing)
+
+		var ordered_ids: Array = local_ids.keys()
+		ordered_ids.sort()
+		for raw_local_id in ordered_ids:
+			var local_id := int(raw_local_id)
+			var atlas_coords := Vector2i(local_id % columns, floori(float(local_id) / float(columns)))
+			var source_x := margin + atlas_coords.x * (tw + spacing)
+			var source_y := margin + atlas_coords.y * (th + spacing)
+			if source_x + tw > texture.get_width() or source_y + th > texture.get_height():
+				push_error("Atlas tile %s:%d is outside its source texture" % [tileset.get("name", "Tileset"), local_id])
+				continue
+			source.create_tile(atlas_coords)
+			var tile_data := source.get_tile_data(atlas_coords, 0)
+			if tile_data != null:
+				tile_data.texture_origin = Vector2i(int(tileset.get("tile_offset_x", 0)), int(tileset.get("tile_offset_y", 0)))
+		var source_id := tile_set_resource.add_source(source)
+		for raw_local_id in ordered_ids:
+			var local_id := int(raw_local_id)
+			var atlas_coords := Vector2i(local_id % columns, floori(float(local_id) / float(columns)))
+			var source_x := margin + atlas_coords.x * (tw + spacing)
+			var source_y := margin + atlas_coords.y * (th + spacing)
+			if source_x + tw <= texture.get_width() and source_y + th <= texture.get_height():
+				tile_refs[first_gid + local_id] = {"source_id": source_id, "atlas_coords": atlas_coords}
 
 
 func _build_world_objects() -> void:
@@ -110,10 +186,9 @@ func _build_world_objects() -> void:
 	world_sort.y_sort_enabled = true
 	add_child(world_sort)
 
-	var object_script: Script = load(OBJECT_SCRIPT)
+	var object_scene := load(OBJECT_SCENE) as PackedScene
 	for object_data in map_data.get("objects", []):
-		var visual := Node2D.new()
-		visual.set_script(object_script)
+		var visual := object_scene.instantiate() as Node2D
 		visual.call("configure", self, object_data, false)
 		world_sort.add_child(visual)
 
@@ -151,10 +226,9 @@ func _build_canopies() -> void:
 	canopy_layer.name = "L4_Canopy_Roofs"
 	canopy_layer.z_index = 5
 	add_child(canopy_layer)
-	var object_script: Script = load(OBJECT_SCRIPT)
+	var object_scene := load(OBJECT_SCENE) as PackedScene
 	for object_data in map_data.get("canopies", []):
-		var visual := Node2D.new()
-		visual.set_script(object_script)
+		var visual := object_scene.instantiate() as Node2D
 		visual.call("configure", self, object_data, true)
 		canopy_layer.add_child(visual)
 
