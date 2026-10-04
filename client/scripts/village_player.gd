@@ -2,6 +2,8 @@ extends CharacterBody2D
 
 const WALK_SHEET := "res://assets/tileset/Art/Characters/Main Character/Character_Walk.png"
 const IDLE_SHEET := "res://assets/tileset/Art/Characters/Main Character/Character_Idle.png"
+const FRAME_WIDTH := 32
+const FRAME_HEIGHT := 48
 
 var move_speed := 88.0
 var camera: Camera2D
@@ -23,7 +25,7 @@ func _ready() -> void:
 	_sprite = AnimatedSprite2D.new()
 	_sprite.name = "Character"
 	_sprite.sprite_frames = _make_sprite_frames()
-	_sprite.position = Vector2(0.0, -16.0)
+	_sprite.position = Vector2(0.0, -24.0)
 	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(_sprite)
 	_sprite.play("idle_down")
@@ -75,7 +77,7 @@ func _make_sprite_frames() -> SpriteFrames:
 		frames.remove_animation("default")
 	var walk_texture := load(WALK_SHEET) as Texture2D
 	var idle_texture := load(IDLE_SHEET) as Texture2D
-	var rows := {"down": 1, "side": 0, "up": 2}
+	var rows := {"down": 3, "side": 0, "up": 2}
 	for direction in rows:
 		for movement in ["idle", "walk"]:
 			var animation_name := movement + "_" + direction
@@ -83,8 +85,9 @@ func _make_sprite_frames() -> SpriteFrames:
 			if texture == null:
 				push_error("Could not load character sprite sheet: " + animation_name)
 				continue
-			var frame_count := int(texture.get_width() / 32)
-			if frame_count <= 0 or (int(rows[direction]) + 1) * 32 > texture.get_height():
+			var frame_count := floori(float(texture.get_width()) / float(FRAME_WIDTH))
+			var row_index := int(rows[direction])
+			if frame_count <= 0 or texture.get_width() % FRAME_WIDTH != 0 or (row_index + 1) * FRAME_HEIGHT > texture.get_height():
 				push_error("Character sprite frame or row is outside the sheet: " + animation_name)
 				continue
 			frames.add_animation(animation_name)
@@ -93,7 +96,7 @@ func _make_sprite_frames() -> SpriteFrames:
 			for column in range(frame_count):
 				var frame := AtlasTexture.new()
 				frame.atlas = texture
-				frame.region = Rect2(column * 32, int(rows[direction]) * 32, 32, 32)
+				frame.region = Rect2(column * FRAME_WIDTH, row_index * FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT)
 				frames.add_frame(animation_name, frame)
 	return frames
 
