@@ -79,17 +79,17 @@ func _make_sprite_frames() -> SpriteFrames:
 	for direction in rows:
 		for movement in ["idle", "walk"]:
 			var animation_name := movement + "_" + direction
-			frames.add_animation(animation_name)
-			frames.set_animation_speed(animation_name, 8.0 if movement == "walk" else 4.0)
-			frames.set_animation_loop(animation_name, true)
 			var texture := idle_texture if movement == "idle" else walk_texture
-			var frame_count := int(texture.get_width() / 32)
 			if texture == null:
 				push_error("Could not load character sprite sheet: " + animation_name)
 				continue
-			if (int(rows[direction]) + 1) * 32 > texture.get_height():
-				push_error("Character sprite row is outside the sheet: " + animation_name)
+			var frame_count := int(texture.get_width() / 32)
+			if frame_count <= 0 or (int(rows[direction]) + 1) * 32 > texture.get_height():
+				push_error("Character sprite frame or row is outside the sheet: " + animation_name)
 				continue
+			frames.add_animation(animation_name)
+			frames.set_animation_speed(animation_name, 8.0 if movement == "walk" else 4.0)
+			frames.set_animation_loop(animation_name, true)
 			for column in range(frame_count):
 				var frame := AtlasTexture.new()
 				frame.atlas = texture
