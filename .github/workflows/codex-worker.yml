@@ -12,7 +12,7 @@ on:
 
 permissions:
   contents: write
-  issues: read
+  issues: write
   pull-requests: write
 
 concurrency:
@@ -93,7 +93,7 @@ jobs:
       - name: Run Codex
         if: steps.issue.outputs.found == 'true'
         id: codex
-        uses: openai/codex-action@main
+        uses: openai/codex-action@v1
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           permission-profile: ":workspace"
