@@ -1,0 +1,190 @@
+name: Codex autonomous worker
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Optional GitHub issue number. Leave blank to pick the oldest open [codex] issue."
+        required: false
+        type: string
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: write
+
+concurrency:
+  group: codex-autonomous-worker
+  cancel-in-progress: false
+
+jobs:
+  work:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Select one issue
+        id: issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_ISSUE: ${{ inputs.issue_number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -n "${REQUESTED_ISSUE:-}" ]; then
+            issue_json="$(gh issue view "$REQUESTED_ISSUE"               --repo "$GITHUB_REPOSITORY"               --json number,title,body,state,url)"
+            state="$(printf '%s' "$issue_json" | jq -r '.state')"
+            if [ "$state" != "OPEN" ]; then
+              echo "Requested issue is not open."
+              exit 1
+            fi
+          else
+            issue_json="$(gh issue list               --repo "$GITHUB_REPOSITORY"               --state open               --limit 100               --json number,title,body,url,createdAt               | jq -c '[.[] | select(.title | startswith("[codex]"))] | sort_by(.createdAt) | .[0] // empty')"
+          fi
+
+          if [ -z "$issue_json" ]; then
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "No open issue with a title starting with [codex]."
+            exit 0
+          fi
+
+          number="$(printf '%s' "$issue_json" | jq -r '.number')"
+          title="$(printf '%s' "$issue_json" | jq -r '.title')"
+          body="$(printf '%s' "$issue_json" | jq -r '.body // ""')"
+          url="$(printf '%s' "$issue_json" | jq -r '.url')"
+
+          {
+            echo "found=true"
+            echo "number=$number"
+            echo "title<<CODEX_EOF"
+            echo "$title"
+            echo "CODEX_EOF"
+            echo "body<<CODEX_EOF"
+            echo "$body"
+            echo "CODEX_EOF"
+            echo "url=$url"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Stop when queue is empty
+        if: steps.issue.outputs.found != 'true'
+        run: echo "Codex queue is empty."
+
+      - name: Prepare task branch
+        if: steps.issue.outputs.found == 'true'
+        id: branch
+        env:
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch="codex/issue-${ISSUE_NUMBER}-run-${GITHUB_RUN_ID}"
+          git checkout -b "$branch"
+          echo "name=$branch" >> "$GITHUB_OUTPUT"
+
+      - name: Run Codex
+        if: steps.issue.outputs.found == 'true'
+        id: codex
+        uses: openai/codex-action@main
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          permission-profile: ":workspace"
+          effort: high
+          prompt: |
+            You are working autonomously in repository ${{ github.repository }}.
+
+            Read AGENTS.md first and follow it strictly.
+
+            Work on exactly this GitHub issue:
+            Number: #${{ steps.issue.outputs.number }}
+            Title: ${{ steps.issue.outputs.title }}
+            URL: ${{ steps.issue.outputs.url }}
+
+            Issue body:
+            ---
+            ${{ steps.issue.outputs.body }}
+            ---
+
+            Requirements:
+            - Inspect the existing implementation before editing.
+            - Make the smallest correct change that addresses this issue.
+            - Do not touch unrelated systems.
+            - Do not push, merge, or modify GitHub settings yourself.
+            - Do not create commits; the workflow handles Git operations after you finish.
+            - Run relevant local checks available in the runner.
+            - If the request is ambiguous or requires destructive changes not explicitly authorized by the issue, make no destructive change and explain the blocker in your final message.
+            - Leave the working tree containing only the intended solution.
+
+            Finish with a concise report of files changed, checks run, and remaining risks.
+
+      - name: Detect changes
+        if: steps.issue.outputs.found == 'true'
+        id: changes
+        shell: bash
+        run: |
+          if git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push task branch
+        if: steps.issue.outputs.found == 'true' && steps.changes.outputs.changed == 'true'
+        env:
+          BRANCH: ${{ steps.branch.outputs.name }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "codex: work on issue #${ISSUE_NUMBER}"
+          git push origin "$BRANCH"
+
+      - name: Open draft pull request
+        if: steps.issue.outputs.found == 'true' && steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ steps.branch.outputs.name }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          ISSUE_TITLE: ${{ steps.issue.outputs.title }}
+          CODEX_MESSAGE: ${{ steps.codex.outputs.final-message }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          body_file="$(mktemp)"
+          {
+            echo "Automated Codex run for #${ISSUE_NUMBER}."
+            echo
+            echo "This PR is intentionally created as a draft and is never auto-merged."
+            echo
+            echo "## Codex report"
+            echo
+            printf '%s\n' "$CODEX_MESSAGE"
+            echo
+            echo "Closes #${ISSUE_NUMBER}"
+          } > "$body_file"
+
+          gh pr create             --repo "$GITHUB_REPOSITORY"             --base main             --head "$BRANCH"             --draft             --title "Codex: ${ISSUE_TITLE}"             --body-file "$body_file"
+
+      - name: Report no-code result
+        if: steps.issue.outputs.found == 'true' && steps.changes.outputs.changed != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          CODEX_MESSAGE: ${{ steps.codex.outputs.final-message }}
+        shell: bash
+        run: |
+          gh issue comment "$ISSUE_NUMBER"             --repo "$GITHUB_REPOSITORY"             --body "Codex worker made no repository changes in this run.
+
+          Report:
+          ${CODEX_MESSAGE}"
