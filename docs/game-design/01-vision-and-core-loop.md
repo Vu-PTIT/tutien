@@ -1,112 +1,55 @@
 # 01 — Tầm nhìn sản phẩm và vòng chơi
 
-**Cập nhật:** 21/09/2026, theo đặc tả tiến trình/PvE mới.
-**Trạng thái:** thiết kế, chưa phải thông báo tính năng đã triển khai.
-**Nguồn số liệu:** [đặc tả liên kết](progression-pve-spec.md) và JSON thiết kế đi kèm.
+**Cập nhật:** 05/10/2026 cho `feat/dual-experience-platform`.  
+**Định hướng đầy đủ:** [09 — Hai không gian sản phẩm](09-dual-experience-platform.md).  
+**Hiện diện xã hội:** [08 — Trạng thái sinh hoạt](08-social-presence-and-lifestyle.md).
 
-## 1. Lời hứa với người chơi
+## 1. Lời hứa với người dùng
 
-Bạn bắt đầu là một người bình thường ở An Khê. Bạn tiến xa bằng cách học quan sát,
-chuẩn bị vật tư, tìm đúng nguồn tài nguyên, mở công pháp và biết lúc nào nên rút.
-Game cần tạo cảm giác “mình đã biết cách xử lý tốt hơn”, không chỉ “chỉ số lớn hơn”.
+Tu Tiên hướng tới người trẻ, đặc biệt là Gen Z, với hai trải nghiệm song song: một nền tảng để sắp xếp việc học/làm và giữ kết nối với bạn bè; một thế giới game pixel để giao lưu, chăm chút nơi ở và tiến triển theo nhịp riêng. Phần game kết hợp vòng sống thư thái như trồng trọt, câu cá, thu thập, chế tạo và chăm nhà/vườn với không khí gặp gỡ, kết bạn của game Avatar Việt Nam thời trước.
 
-Mỗi bước phát triển phải trả lời:
-**mình thiếu gì → đi đâu → làm gì → nhận gì → dùng vào đâu → mở khả năng gì**.
+Hai phần dùng chung tài khoản, avatar, bạn bè, tin nhắn và trạng thái. Người dùng có thể mở từng phần độc lập; khi họ chọn “đang đi làm” trong app, nhân vật trong thế giới game tự đi tới khu làm việc và bắt đầu hoạt động, kể cả khi người dùng không vào game.
 
-Cảm hứng tu tiên được chuyển thành thế giới và nhân vật riêng của dự án.
-Không sao chép nhân vật, lời thoại, chuỗi sự kiện, nhạc hoặc hình ảnh của phim.
-Phạm vi cảnh giới trong tài liệu là thiết kế game, không phải bảng mô phỏng phim.
+## 2. Hai vòng trải nghiệm
 
-## 2. Năm trụ cột
+| Không gian | Vòng chơi |
+| --- | --- |
+| Nền tảng sinh hoạt | Xem lịch/việc trong ngày → chọn phòng tập trung hoặc tự làm → chia sẻ trạng thái với bạn → hoàn tất việc và điều chỉnh kế hoạch |
+| Thế giới game | Vào thị trấn → gặp bạn/chăm nhà-vườn → trồng trọt, câu cá, thu thập hoặc chế tạo → khi muốn thì thiền hay đi đánh quái → quay lại không gian sống |
 
-**Chuẩn bị có ích.** Dược liệu và chế tạo cải thiện khả năng sống sót trong chuyến đi.
-Không có một vật phẩm hiếm duy nhất bắt buộc mua mới qua được tuyến chính.
+Nền tảng sinh hoạt cần có ích mà không yêu cầu mở game: danh sách việc, lịch cá nhân, hẹn giờ tập trung, phòng học/làm việc chung, hồ sơ và chat bạn bè. Bắt đầu bằng các công cụ nhẹ để hình thành thói quen; chỉ mở rộng sau khi người dùng thực sự dùng thường xuyên.
 
-**Nơi an thân có công dụng.** An Khê cho nghỉ, thu hoạch, luyện đan, đổi trang bị,
-nhận mục tiêu và đột phá. Chuyến đi mang tài nguyên/tri thức về; nơi ở biến chúng
-thành phương án chuẩn bị mới. Vườn không là một minigame tách rời chiến đấu.
+## 3. Trụ cột sản phẩm
 
-**Tiến bộ nhiều chiều, giao diện đơn giản.** Tu vi, lĩnh ngộ và trang bị/vật tư tạo
-ba lớp dễ hiểu trong MVP. Công pháp, tri thức, quan hệ phát triển theo nội dung;
-chưa thêm một thanh XP cho mọi hoạt động hoặc chỉ số “lực chiến” quyết định tất cả.
+1. **Làm việc và sinh hoạt cùng bạn bè:** xem trạng thái, hẹn giờ tập trung, vào phòng yên tĩnh chung, trò chuyện hoặc để lại lời nhắn.
+2. **Hiện diện có lựa chọn:** người dùng tự đặt trạng thái như “đang đi học”, “đang làm việc”, “đang nghỉ” hoặc “đang tu luyện”. Avatar và hồ sơ phản ánh lựa chọn đó theo thời gian đã chọn.
+3. **Đời sống trong thế giới game:** trồng trọt, câu cá, thu thập, chế tạo, chăm nhà/vườn, thăm bạn, trang phục và biểu cảm.
+4. **Tu luyện tùy ý:** ngồi thiền để tăng sức mạnh hoặc chủ động đi đánh quái PvE, theo cảm hứng chiến đấu của Ngọc Rồng Online. Chiến đấu không bắt buộc để dùng nền tảng, giao lưu hay chăm vườn.
+5. **Chất Việt Nam gần gũi:** thị trấn pixel là nơi mọi người muốn ghé qua, gặp gỡ và kết bạn; lấy cảm giác cộng đồng của Avatar Việt Nam thời trước, kết hợp nhà/vườn và cảnh quan đời thường. Linh khí, thiền và dị thú là lớp kỳ ảo mở rộng.
 
-**Nguy hiểm đọc được.** Quái có vai trò dạy cơ chế, báo đòn và khoảng phản công.
-Tăng khó bằng tình huống, góc tiếp cận và kết hợp quái; không chỉ tăng máu.
-Chết phải hiểu được nguyên nhân và còn cách thử lại.
+Định hướng hiện tại không có minigame. PvP không phải trọng tâm sản phẩm.
 
-**Online không phá tiến trình cá nhân.** Chơi solo được, co-op có phần thưởng cá nhân.
-Không ép PvP, bang, săn boss theo giờ thật hoặc online hằng ngày để hoàn thành MVP.
+## 4. Kết nối hai không gian
 
-## 3. Ba nhịp vòng chơi
+- Dùng chung tài khoản, tên nhân vật, avatar, hồ sơ, bạn bè, chat và trạng thái hiện diện.
+- Khi người dùng chọn “đang đi làm” hoặc “đang học” trên nền tảng, hệ thống gửi lệnh cho thế giới game: avatar tự đi theo đường trong map tới khu làm việc/lớp học và bắt đầu hoạt động tương ứng. Chủ nhân không cần mở game; bạn bè nhìn thấy nhân vật đang di chuyển hoặc đã tới nơi.
+- Công cụ lịch, việc cần làm và focus là trải nghiệm của nền tảng; chúng không biến thành hệ thống chấm công hoặc yêu cầu bằng chứng về hoạt động ngoài đời.
+- Có thể ghi nhận việc hoàn thành bằng phản hồi xã hội hoặc phần thưởng trang trí tùy chọn. Không tạo chênh lệch sức mạnh PvE dựa trên năng suất ngoài đời.
+- Việc chia sẻ trạng thái do người dùng kiểm soát; đặt thời hạn, sửa hoặc ẩn bất cứ lúc nào.
 
-| Nhịp | Chuỗi hành động | Phản hồi cần có |
-| --- | --- | --- |
-| 10–60 giây | Nhìn đòn → giữ vị trí → đánh/né → quản lý linh lực → phản công/rút | Thấy lý do trúng, hụt hoặc không dùng được kỹ năng |
-| Chuyến 15–20 phút, có thể đến 30 | Ghim mục tiêu → chuẩn bị → chọn tuyến → giao tranh/thu thập → về làng → chế tạo/đột phá | Biết tu vi và vật liệu kiếm được phục vụ mục tiêu nào |
-| Nhiều phiên | Thiếu nguồn/tri thức → tìm cách tiếp cận → mở khả năng → giải thử thách → mở vùng mới | Mỗi mốc có việc mới làm được, không chỉ một con số |
+## 5. Thứ tự sản xuất
 
-Đây là nhịp cần kiểm chứng, không cam kết thời lượng hoặc suy phút từ số quái.
-Một chuyến có thể không làm đủ mọi bước; người thích combat dùng đồ đã chuẩn bị
-trước hoặc mua NPC, không bị buộc trồng cây mỗi lần.
+| Giai đoạn | Trọng tâm |
+| --- | --- |
+| P0 | Bản sắc hình ảnh: bản đồ, UI, nhân vật, di chuyển và các khu sinh hoạt Việt Nam |
+| P1 | Nền tảng sinh hoạt tối thiểu: lịch/việc, focus, phòng học/làm việc và hồ sơ xã hội |
+| P2 | Đồng bộ bạn bè/chat và lệnh hoạt động; avatar tự đi đến nơi học/làm trong thế giới game dù chủ nhân không mở game |
+| P3 | Vòng đời sống trong game: nhà/vườn, trồng trọt, câu cá, thu thập và chế tạo |
+| P4 | Tu luyện bằng thiền và quái PvE như nhánh chơi tùy chọn |
+| Sau đó | Cốt truyện dài, vùng đất mới và hệ thống nâng cao |
 
-## 4. Hành trình cần chứng minh trước khi mở rộng
+Bố cục sản phẩm/app cuối cùng còn mở. Trước mắt thiết kế hai trải nghiệm như hai phần riêng có thể dùng độc lập và đồng bộ qua một tài khoản; quyết định một ứng dụng hay hai ứng dụng sau khi kiểm tra luồng sử dụng.
 
-Phàm nhân học tương tác/dò mạch/né → `q_main_003` dẫn khí và mở Phi Nhận →
-trồng mẻ Cam Lộ hướng dẫn và luyện hồi phục → đi Trúc Âm tìm XP + nguyên liệu →
-về làng mở Hộ Thân → xử lý địa hình/quái khó hơn ở Thạch Cạn →
-chuẩn bị và hoàn thành Cổ Tỉnh → kết chương, tới giới hạn Luyện Khí 4.
+## 6. Ranh giới tầm nhìn và hiện trạng
 
-Sơn Trư gặp trước khi có phép chỉ là bài học an toàn, không bãi farm miễn phí.
-Sau Phi Nhận, cùng mẫu quái cho thấy lợi ích của tầm đánh. Hộ Thân giúp chịu áp lực
-ở thời điểm quan trọng; Trói Mộc giúp kiểm soát vị trí. Không đặt kỹ năng thành
-ba nút gây sát thương gần giống nhau.
-
-Một chuyến săn cần phục vụ ít nhất hai trong ba mục tiêu: XP; vật tư/trang bị;
-tri thức/đường đi. Ví dụ, săn nhện để tiến tới Hộ Thân và tích tơ làm phù.
-Các bảng quái/loot/công thức phải nối được với mục tiêu này.
-
-## 5. Phiên đầu khoảng 30 phút — mục tiêu thử
-
-| Khoảng mục tiêu | Trải nghiệm | Điều cần quan sát |
-| --- | --- | --- |
-| 0–5 phút | Tạo nhân vật, nhận việc, biết NPC và đường ra | Không cần người phát triển chỉ từng nút |
-| 5–10 phút | Dò dấu, nhận biết một cú lao và né | Không chỉ đứng yên bấm đánh |
-| 10–15 phút | Dẫn khí, dùng Phi Nhận | Hiểu quyền mới đến từ đâu |
-| 15–20 phút | Trồng mẻ hướng dẫn, thu và luyện hồi phục | Hiểu vườn phục vụ chuyến đi |
-| 20–25 phút | Chọn tuyến đi với mục tiêu cụ thể | Biết cần nguyên liệu/tu vi nào |
-| 25–30 phút | Mang thành quả về, xem mục tiêu kế tiếp | Tài sản lưu được; biết sẽ làm gì tiếp |
-
-Không ép hoàn thành 12 quest, cả boss hoặc chắc chắn lên tầng 2 trong 30 phút.
-Đo nút thắt ở giao diện/đường đi trước khi cắt nội dung hoặc tăng tốc XP.
-
-## 6. Phạm vi các bản
-
-| Mảng | MVP | Alpha | Sau Alpha |
-| --- | --- | --- | --- |
-| Cảnh giới | Phàm nhân → Luyện Khí 1–4 | Luyện Khí 5–13, thử Trúc Cơ sơ kỳ | Kết Đan/Nguyên Anh khi có nội dung |
-| Công pháp | Tức Mạch Quyết, một bộ cơ bản | Ba hướng build kiếm/phù/thủ ngự | Khôi lỗi/linh thú nếu thực sự cần |
-| Thế giới | An Khê, Trúc Âm, Thạch Cạn, Cổ Tỉnh | Tông môn, phường thị, bí cảnh mới | Vùng xa và tranh đoạt |
-| Đời sống | 6 ô vườn, 3 cây, 5 công thức | Chuyên nghề và tiện ích | Động phủ/trang trí sâu |
-| Cộng đồng | Backend đã có; trải nghiệm co-op tối đa 2 là mục tiêu | Nhóm 4 và hợp tác nhiều hơn | Liên minh/sự kiện bang |
-| PvP | Đấu tập đồng thuận, chỉ số chuẩn, không kinh tế | Đấu trường cân bằng | Tranh đoạt tự chọn |
-| Kinh tế | NPC, tài sản cá nhân, không chợ người chơi | Giao dịch sau kiểm thử tài sản | Chợ/đấu giá nếu có nhu cầu |
-| Truyện | Một chương, 12 quest chính, 6 quest phụ | Hai chương tiếp | Xung đột vùng dài hạn |
-
-Chương đầu dự kiến thử trong 2–4 giờ chơi chủ động. Không kéo dài thành nhiều ngày
-bằng quái nhiều máu, daily bắt buộc hoặc chờ cây. Cày dài hạn chỉ mở khi có mục tiêu
-công pháp/trang bị/nội dung tương ứng; tầng 4 phải báo rõ trần MVP.
-
-## 7. Không làm trong phạm vi hiện tại
-
-Không full-loot, PvP ép buộc, nhà đấu giá, auto farm, linh căn quay may rủi, cường hóa
-phá đồ, premium currency, cửa hàng tiền thật, bay xuyên thế giới, hàng chục tông môn,
-tình duyên hoặc AI hội thoại. Không xây cả hệ thống lớn trước rồi mới thử nối vòng chơi.
-
-## 8. Nghiệm thu bản sắc
-
-Người mới phải trải nghiệm được: chuẩn bị hữu ích; nguy hiểm đọc được; quyết định
-đi tiếp/rút; phần thưởng có đầu ra; một khả năng mới; trở lại nơi an toàn.
-Hỏi “bạn đang cần gì và sẽ đi đâu tiếp?”. Nếu không trả lời được, sửa mục tiêu/UI
-và nguồn tài nguyên trước khi thêm cảnh giới.
-
-[Xem các mốc P1–P5 và kịch bản nghiệm thu](progression-pve-spec.md).
+Tài khoản, hồ sơ, túi đồ, cộng đồng và prototype chiến đấu là nền code được mô tả trong README. Lịch/việc, focus rooms, lệnh hoạt động và di chuyển avatar trong thế giới game khi chủ nhân không mở game, nông trại/câu cá và tiến trình thiền vẫn là mục tiêu cần triển khai và kiểm chứng.

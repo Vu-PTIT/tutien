@@ -1,5 +1,18 @@
 # Tu Tiên
 
+## Hướng sản phẩm — 05/10/2026
+
+Tu Tiên đang được định hướng cho người trẻ, đặc biệt là Gen Z, thành hai trải nghiệm song song:
+
+- **Nền tảng sinh hoạt và kết nối:** lịch/việc cá nhân, focus, phòng học/làm chung, hồ sơ, bạn bè và chat.
+- **Thế giới game pixel:** giao lưu kiểu game Avatar Việt Nam thời trước, kết hợp trồng trọt, câu cá, thu thập, chế tạo, chăm nhà/vườn kiểu Stardew Valley; người chơi có thể ngồi thiền tăng sức mạnh hoặc chủ động đánh quái PvE theo cảm hứng Ngọc Rồng Online. Không có minigame.
+
+Hai phần dùng chung tài khoản, avatar, bạn bè, chat và trạng thái. Ví dụ, bấm “đang đi làm” trong app sẽ gửi hoạt động sang thế giới game để nhân vật tự đi đến khu làm việc và bắt đầu làm, kể cả khi người dùng không mở game.
+
+Đây là định hướng sản phẩm trên nhánh thử nghiệm; lịch/focus và việc nhân vật tự đi, tự làm khi offline chưa được triển khai. Xem [01 — Tầm nhìn](docs/game-design/01-vision-and-core-loop.md), [08 — Hiện diện xã hội](docs/game-design/08-social-presence-and-lifestyle.md) và [09 — Hai không gian sản phẩm](docs/game-design/09-dual-experience-platform.md).
+
+## Nền kỹ thuật hiện tại
+
 Base game 2D: Godot + GDScript, Nakama + TypeScript, PostgreSQL.
 
 **Backend tương tác người chơi:** đăng ký email, đăng nhập email/tên + mật khẩu,

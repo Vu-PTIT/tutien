@@ -1,3 +1,6 @@
+> **Định hướng sản phẩm mới — 05/10/2026, nhánh `feat/dual-experience-platform`.** Tu Tiên được định hướng thành nền tảng sinh hoạt kết nối bạn bè song song với thế giới game pixel. App có thể gửi lệnh “đang đi làm/đang học” để nhân vật tự tìm đường tới địa điểm trong game và tiếp tục hoạt động khi chủ nhân không mở game. Game ưu tiên giao lưu, trồng trọt, câu cá, thu thập, chế tạo và chăm nhà/vườn; thiền và đánh quái PvE là các lựa chọn phát triển sức mạnh. Không có minigame, và năng suất ngoài đời không quyết định sức mạnh.  
+> Đọc [01 — Tầm nhìn](01-vision-and-core-loop.md), [08 — Hiện diện xã hội](08-social-presence-and-lifestyle.md) và [09 — Hai không gian](09-dual-experience-platform.md) làm nguồn định hướng hiện hành. Các quyết định và cân bằng phía dưới được viết cho prototype trước đây; giữ làm tham khảo hệ thống, không dùng để lấn át hướng sản phẩm mới.
+
 > **Cập nhật thiết kế 21/09/2026 — áp dụng trước các đoạn v2 giữ bên dưới.**
 > Mốc nguồn `feat/inventory-rewards` tại `05f5dd0`.
 > Đọc [đặc tả tiến trình/PvE](progression-pve-spec.md) và

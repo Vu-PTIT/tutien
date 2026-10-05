@@ -1,3 +1,5 @@
+> **Định hướng sản phẩm mới — 05/10/2026:** chăm nhà/vườn, trồng trọt, câu cá, thu thập và chế tạo là vòng chơi chính, không chỉ là hỗ trợ cho PvE. Các giá, thời gian cây, công thức và giả định phía dưới thuộc prototype kinh tế trước; cần cân bằng lại theo nhịp chơi thư thái và giao lưu. Xem [01 — Tầm nhìn](01-vision-and-core-loop.md) và [09 — Hai không gian sản phẩm](09-dual-experience-platform.md).
+
 # 07 — Vườn, chế tạo và đầu ra của chiến lợi phẩm
 
 **Cập nhật:** 21/09/2026. **Trạng thái:** thiết kế kinh tế prototype.
