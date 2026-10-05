@@ -1,3 +1,5 @@
+> **Cập nhật:** tài liệu này mô tả lớp hiện diện xã hội được dùng bởi cả nền tảng sinh hoạt và thế giới game. Thiết kế tổng thể hai phần nằm ở [09 — Hai không gian sản phẩm](09-dual-experience-platform.md).
+
 # 08 — Trạng thái sinh hoạt và hiện diện xã hội
 
 **Trạng thái:** định hướng sản phẩm, 05/10/2026; chưa được triển khai trong client.  

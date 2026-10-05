@@ -1,53 +1,55 @@
 # 01 — Tầm nhìn sản phẩm và vòng chơi
 
 **Cập nhật:** 05/10/2026 cho `feat/map-ui-rebuild`.  
-**Canon sản phẩm:** tài liệu này cùng [08 — Trạng thái sinh hoạt và hiện diện xã hội](08-social-presence-and-lifestyle.md).  
-**Bối cảnh:** Việt Nam hiện đại khi linh khí vừa trở lại; xem [04 — Bối cảnh Việt Nam](04-world-setting-vietnam-awakening.md).
+**Định hướng đầy đủ:** [09 — Hai không gian sản phẩm](09-dual-experience-platform.md).  
+**Hiện diện xã hội:** [08 — Trạng thái sinh hoạt](08-social-presence-and-lifestyle.md).
 
-## 1. Lời hứa với người chơi
+## 1. Lời hứa với người dùng
 
-Tu Tiên là một game pixel online dành cho Gen Z, nơi bạn có thể ghé vào một thị trấn Việt Nam để gặp bạn bè, chăm nhà/vườn, hoặc chọn một hoạt động để nhân vật đại diện cho mình trong lúc bạn bận học hay đi làm. Bạn có thể chơi vài phút để chào bạn bè, ở lại lâu hơn để câu cá và thu thập, hoặc chủ động tu luyện và đi đánh quái.
+Tu Tiên kết hợp một **nền tảng sinh hoạt xã hội** với một **thế giới game pixel**. Người dùng có thể sắp xếp việc trong ngày, tập trung học/làm và trò chuyện cùng bạn bè mà không cần vào game. Khi muốn chơi, họ bước vào một thế giới Việt Nam hiện đại pha kỳ ảo để chăm chút nhà/vườn, gặp bạn hoặc phát triển sức mạnh theo nhịp riêng.
 
-Trải nghiệm hướng tới sự thư giãn, thân thuộc và có cộng đồng. Người chơi được tự chọn nhịp chơi, không phải liên tục cày cấp hay tham gia chiến đấu để theo kịp người khác.
+Hai phần dùng chung tài khoản, avatar, bạn bè, tin nhắn và trạng thái. Người dùng có thể dùng từng phần độc lập; trạng thái giữa chúng được đồng bộ để bạn bè luôn biết họ đang học, làm, nghỉ hay chơi.
 
-## 2. Trụ cột trải nghiệm
+## 2. Hai vòng trải nghiệm
 
-1. **Hiện diện có ý nghĩa:** người chơi tự đặt trạng thái đời thường; bạn bè có thể biết họ đang học, làm việc, nghỉ ngơi hay tu luyện và thấy nhân vật thể hiện hoạt động đó.
-2. **Một nơi muốn quay lại:** thị trấn, nhà riêng và khu sinh hoạt chung tạo cơ hội trò chuyện, thăm bạn, khoe trang phục và cùng thư giãn.
-3. **Niềm vui chăm chút:** trồng trọt, câu cá, thu thập, chế tạo và chăm nhà/vườn là các hoạt động có giá trị riêng, không chỉ để chuẩn bị đánh quái.
-4. **Sức mạnh theo lựa chọn:** ai muốn phát triển nhân vật có thể ngồi thiền hoặc chủ động đi đánh quái. Người chơi có thể bỏ qua combat mà vẫn tận hưởng cộng đồng và đời sống.
-5. **Chất Việt Nam hiện đại pha kỳ ảo:** cảnh quan, kiến trúc và sinh hoạt gợi Việt Nam; linh khí, tu luyện và dị thú làm lớp phiêu lưu mở rộng dần.
-
-## 3. Vòng chơi
-
-| Nhịp | Trải nghiệm |
+| Không gian | Vòng chơi |
 | --- | --- |
-| Vài phút | Chọn trạng thái, vào làng, xem bạn bè, trò chuyện hoặc để lại lời nhắn |
-| Một phiên thư giãn | Chăm vườn, câu cá, thu thập, chế tạo, trang trí nhà hoặc thăm bạn |
-| Khi muốn tiến bộ | Chọn ngồi thiền để tu luyện hoặc đi ra ngoài đánh quái, nhận vật phẩm và trang bị |
-| Qua nhiều phiên | Hoàn thiện góc sống, mở thêm hoạt động/địa điểm, phát triển sức mạnh theo nhịp riêng |
+| Nền tảng sinh hoạt | Xem lịch/việc trong ngày → chọn phòng tập trung hoặc tự làm → chia sẻ trạng thái với bạn → hoàn tất việc và điều chỉnh kế hoạch |
+| Thế giới game | Vào thị trấn → gặp bạn/chăm nhà-vườn → trồng trọt, câu cá, thu thập hoặc chế tạo → khi muốn thì thiền hay đi đánh quái → quay lại không gian sống |
 
-Người chơi có thể chọn trạng thái trước khi rời máy. Mục tiêu là trạng thái đó tiếp tục hiện cho bạn bè trong thời gian đã chọn, cùng hình ảnh nhân vật ở hoạt động phù hợp. Đây là thông tin do người chơi tự đặt, không phải theo dõi lịch, vị trí hay hành vi ngoài đời.
+Nền tảng sinh hoạt cần có ích mà không yêu cầu mở game: danh sách việc, lịch cá nhân, hẹn giờ tập trung, phòng học/làm việc chung, hồ sơ và chat bạn bè. Bắt đầu bằng các công cụ nhẹ để hình thành thói quen; chỉ mở rộng sau khi người dùng thực sự dùng thường xuyên.
 
-## 4. Hai kiểu hoạt động cần tách biệt
+## 3. Trụ cột sản phẩm
 
-- **Trạng thái xã hội:** “đang đi học”, “đang học bài”, “đang đi làm”, “đang nghỉ”. Chúng giúp bạn bè hiểu mình đang bận hay muốn được ghé thăm; không tự cấp sức mạnh, tiền hoặc lợi thế.
-- **Hành động trong game:** trồng trọt, câu cá, thu thập, chế tạo, chăm nhà/vườn, ngồi thiền hoặc đánh quái. Thiền có thể tăng sức mạnh theo thời gian; đánh quái là cách chơi chủ động để thử sức và kiếm chiến lợi phẩm.
+1. **Làm việc và sinh hoạt cùng bạn bè:** xem trạng thái, hẹn giờ tập trung, vào phòng yên tĩnh chung, trò chuyện hoặc để lại lời nhắn.
+2. **Hiện diện có lựa chọn:** người dùng tự đặt trạng thái như “đang đi học”, “đang làm việc”, “đang nghỉ” hoặc “đang tu luyện”. Avatar và hồ sơ phản ánh lựa chọn đó theo thời gian đã chọn.
+3. **Đời sống trong thế giới game:** trồng trọt, câu cá, thu thập, chế tạo, chăm nhà/vườn, thăm bạn, trang phục và biểu cảm.
+4. **Tu luyện tùy ý:** ngồi thiền để tăng sức mạnh hoặc chủ động đi đánh quái PvE để thử sức và kiếm chiến lợi phẩm. Combat không bắt buộc để sử dụng nền tảng hay vui chơi trong thị trấn.
+5. **Chất Việt Nam hiện đại pha kỳ ảo:** không gian gần gũi, đời thường và tự nhiên; linh khí, thiền và dị thú là lớp khám phá mở rộng.
 
-Cách chia này giữ cho trạng thái đời thường chân thật, đồng thời để tiến trình tu luyện có lựa chọn và giới hạn cân bằng riêng.
+Định hướng hiện tại không có minigame. PvP không phải trọng tâm sản phẩm.
 
-## 5. Phạm vi và thứ tự sản xuất
+## 4. Kết nối hai không gian
+
+- Dùng chung tài khoản, tên nhân vật, avatar, hồ sơ, bạn bè, chat và trạng thái hiện diện.
+- Nếu người dùng đặt “đang học” trên nền tảng, bạn bè thấy trạng thái và avatar đang học trong khu phù hợp; người dùng không phải duy trì game mở.
+- Công cụ lịch, việc cần làm và focus là trải nghiệm của nền tảng; chúng không biến thành hệ thống chấm công hoặc yêu cầu bằng chứng về hoạt động ngoài đời.
+- Có thể ghi nhận việc hoàn thành bằng phản hồi xã hội hoặc phần thưởng trang trí tùy chọn. Không tạo chênh lệch sức mạnh PvE dựa trên năng suất ngoài đời.
+- Việc chia sẻ trạng thái do người dùng kiểm soát; đặt thời hạn, sửa hoặc ẩn bất cứ lúc nào.
+
+## 5. Thứ tự sản xuất
 
 | Giai đoạn | Trọng tâm |
 | --- | --- |
-| P0 | Chốt hình ảnh sản phẩm qua bản đồ, UI, nhân vật, di chuyển và các khu sinh hoạt Việt Nam |
-| P1 | Không gian làng online, bạn bè/chat và trạng thái hoạt động có thể xem khi chủ nhân bận |
-| P2 | Vòng sinh hoạt cơ bản: nhà/vườn, trồng trọt, câu cá, thu thập và chế tạo |
-| P3 | Tu luyện bằng thiền, quái PvE và phần thưởng để người chơi chủ động lựa chọn |
-| Sau đó | Mở rộng câu chuyện, vùng đất và hệ thống nâng cao sau khi vòng chơi nhỏ đã rõ |
+| P0 | Bản sắc hình ảnh: bản đồ, UI, nhân vật, di chuyển và các khu sinh hoạt Việt Nam |
+| P1 | Nền tảng sinh hoạt tối thiểu: lịch/việc, focus, phòng học/làm việc và hồ sơ xã hội |
+| P2 | Đồng bộ bạn bè, chat, trạng thái và avatar giữa nền tảng với thế giới game |
+| P3 | Vòng đời sống trong game: nhà/vườn, trồng trọt, câu cá, thu thập và chế tạo |
+| P4 | Tu luyện bằng thiền và quái PvE như nhánh chơi tùy chọn |
+| Sau đó | Cốt truyện dài, vùng đất mới và hệ thống nâng cao |
 
-Không có minigame trong định hướng hiện tại. PvP không phải trọng tâm. Cốt truyện dài, hành trình tinh không và nội dung cấp cao không được phép lấn át thị trấn, nhân vật và giao lưu trong các bước đầu.
+Bố cục sản phẩm/app cuối cùng còn mở. Trước mắt thiết kế hai trải nghiệm như hai phần riêng có thể dùng độc lập và đồng bộ qua một tài khoản; quyết định một ứng dụng hay hai ứng dụng sau khi kiểm tra luồng sử dụng.
 
-## 6. Ranh giới giữa tầm nhìn và code
+## 6. Ranh giới tầm nhìn và hiện trạng
 
-Các trạng thái học/làm/nghỉ, hiện diện khi client đóng, hoạt động nông trại/câu cá và tiến trình thiền là **đề xuất sản phẩm**, chưa đồng nghĩa với code đã có. Tính năng chỉ chuyển thành “đã triển khai” sau khi có code, kiểm thử và xác nhận chạy trong game.
+Tài khoản, hồ sơ, túi đồ, cộng đồng và prototype chiến đấu là nền code được mô tả trong README. Lịch/việc, focus rooms, presence chạy khi đóng client, đồng bộ avatar hai chiều, nông trại/câu cá và tiến trình thiền vẫn là mục tiêu cần triển khai và kiểm chứng.
