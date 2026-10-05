@@ -32,7 +32,7 @@ Nền tảng sinh hoạt cần có ích mà không yêu cầu mở game: danh s�
 ## 4. Kết nối hai không gian
 
 - Dùng chung tài khoản, tên nhân vật, avatar, hồ sơ, bạn bè, chat và trạng thái hiện diện.
-- Nếu người dùng đặt “đang học” trên nền tảng, bạn bè thấy trạng thái và avatar đang học trong khu phù hợp; người dùng không phải duy trì game mở.
+- Khi người dùng chọn “đang đi làm” hoặc “đang học” trên nền tảng, hệ thống gửi lệnh cho thế giới game: avatar tự đi theo đường trong map tới khu làm việc/lớp học và bắt đầu hoạt động tương ứng. Chủ nhân không cần mở game; bạn bè nhìn thấy nhân vật đang di chuyển hoặc đã tới nơi.
 - Công cụ lịch, việc cần làm và focus là trải nghiệm của nền tảng; chúng không biến thành hệ thống chấm công hoặc yêu cầu bằng chứng về hoạt động ngoài đời.
 - Có thể ghi nhận việc hoàn thành bằng phản hồi xã hội hoặc phần thưởng trang trí tùy chọn. Không tạo chênh lệch sức mạnh PvE dựa trên năng suất ngoài đời.
 - Việc chia sẻ trạng thái do người dùng kiểm soát; đặt thời hạn, sửa hoặc ẩn bất cứ lúc nào.
@@ -43,7 +43,7 @@ Nền tảng sinh hoạt cần có ích mà không yêu cầu mở game: danh s�
 | --- | --- |
 | P0 | Bản sắc hình ảnh: bản đồ, UI, nhân vật, di chuyển và các khu sinh hoạt Việt Nam |
 | P1 | Nền tảng sinh hoạt tối thiểu: lịch/việc, focus, phòng học/làm việc và hồ sơ xã hội |
-| P2 | Đồng bộ bạn bè, chat, trạng thái và avatar giữa nền tảng với thế giới game |
+| P2 | Đồng bộ bạn bè/chat và lệnh hoạt động; avatar tự đi đến nơi học/làm trong thế giới game dù chủ nhân không mở game |
 | P3 | Vòng đời sống trong game: nhà/vườn, trồng trọt, câu cá, thu thập và chế tạo |
 | P4 | Tu luyện bằng thiền và quái PvE như nhánh chơi tùy chọn |
 | Sau đó | Cốt truyện dài, vùng đất mới và hệ thống nâng cao |
@@ -52,4 +52,4 @@ Bố cục sản phẩm/app cuối cùng còn mở. Trước mắt thiết kế 
 
 ## 6. Ranh giới tầm nhìn và hiện trạng
 
-Tài khoản, hồ sơ, túi đồ, cộng đồng và prototype chiến đấu là nền code được mô tả trong README. Lịch/việc, focus rooms, presence chạy khi đóng client, đồng bộ avatar hai chiều, nông trại/câu cá và tiến trình thiền vẫn là mục tiêu cần triển khai và kiểm chứng.
+Tài khoản, hồ sơ, túi đồ, cộng đồng và prototype chiến đấu là nền code được mô tả trong README. Lịch/việc, focus rooms, lệnh hoạt động và di chuyển avatar trong thế giới game khi chủ nhân không mở game, nông trại/câu cá và tiến trình thiền vẫn là mục tiêu cần triển khai và kiểm chứng.

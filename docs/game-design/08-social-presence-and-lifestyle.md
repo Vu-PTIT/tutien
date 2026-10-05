@@ -26,9 +26,9 @@ Có thể bổ sung lời nhắn ngắn tùy chọn như “đang ôn thi” ho�
 
 ## Khi chủ nhân rời game
 
-Mục tiêu là trạng thái đã chọn tiếp tục hiển thị trong khoảng thời gian người chơi đặt, kể cả khi họ đóng client. Bạn bè nhìn thấy hoạt động trong danh sách bạn bè/hồ sơ; khi cùng vào một khu sinh hoạt, họ có thể thấy avatar đang làm hoạt động đó. Khi chủ nhân quay lại, trạng thái có thể kết thúc hoặc chuyển về hoạt động trực tiếp của nhân vật.
+Mục tiêu là khi người chơi chọn một hoạt động như “đang đi làm” trong app, thế giới game nhận lệnh và avatar tự đi từ vị trí đã lưu tới khu làm việc được gắn với hoạt động đó, sau đó thực hiện animation làm việc. Người chơi không cần vào hoặc giữ game mở. Bạn bè có thể thấy nhân vật đi trên đường nếu đang ở cùng khu; nếu vào sau, họ thấy avatar đã tới nơi và đang làm việc.
 
-Bạn bè có thể ghé qua, ngồi cạnh, trò chuyện hoặc để lại lời nhắn. Hoạt động của chủ nhân không bị gián đoạn bởi lời mời, và game không bắt họ phải online để duy trì hình ảnh hiện diện.
+Bạn bè có thể ghé qua, ngồi cạnh, trò chuyện hoặc để lại lời nhắn. Hoạt động của chủ nhân không bị gián đoạn bởi lời mời. Thời hạn, điểm đến và tiến trình hoạt động phải được lưu ngoài phiên game để hệ thống tiếp tục trạng thái khi chủ nhân offline.
 
 ## Trạng thái đời thường và tiến trình tu luyện
 
@@ -46,7 +46,7 @@ Cảnh quan giữ chất pixel và lấy Việt Nam hiện đại làm cảm h�
 
 1. Chọn trạng thái, thời hạn và quyền hiển thị.
 2. Hiện trạng thái trong hồ sơ/danh sách bạn bè.
-3. Thể hiện avatar cùng tư thế hoạt động tại một điểm sinh hoạt.
+3. Nhận lệnh từ app và cho avatar tự đi trên map tới điểm học/làm/nghỉ rồi thực hiện animation tương ứng.
 4. Cho bạn bè ghé thăm, chat hoặc để lại lời nhắn mà không làm gián đoạn chủ nhân.
 5. Đồng bộ trạng thái khi client đóng, hết hạn, đổi thiết bị hoặc mất kết nối.
 
@@ -56,5 +56,7 @@ Cảnh quan giữ chất pixel và lấy Việt Nam hiện đại làm cảm h�
 - Bạn bè thấy trạng thái đúng; người không được phép xem thì không thấy.
 - Trạng thái hết hạn đúng giờ và không để lại avatar treo cũ.
 - Đóng client không xóa trạng thái đang còn hạn; mở lại không nhân đôi trạng thái.
+- Chọn “đang đi làm” làm avatar tự đi tới khu làm việc, rồi chuyển sang animation làm việc; không cần mở game.
+- Đường đi tới các điểm hoạt động thông suốt; nếu chủ nhân offline, người khác vào vẫn thấy trạng thái và điểm đến nhất quán.
 - Tư thế nhân vật thể hiện rõ hoạt động và dùng cùng phong cách pixel của game.
 - Không có thưởng sức mạnh cho trạng thái học/làm/nghỉ; không yêu cầu người chơi cung cấp dữ liệu đời thực.

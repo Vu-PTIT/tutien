@@ -8,7 +8,7 @@ Tu Tiên có **hai không gian song song, dùng chung tài khoản, avatar, bạ
 
 - **Nền tảng sinh hoạt:** bảng việc trong ngày, lịch cá nhân, hẹn giờ tập trung, phòng học/làm việc chung và trò chuyện với bạn bè. Người chơi tự chọn chia sẻ hoạt động như “đang học”, “đang làm” hoặc “đang nghỉ”.
 - **Thế giới game:** gặp bạn trong thị trấn, trồng trọt, câu cá, thu thập, chế tạo, chăm nhà/vườn và thay trang phục. Khi muốn phát triển sức mạnh, người chơi chọn ngồi thiền hoặc chủ động đi đánh quái PvE.
-- **Kết nối giữa hai phần:** một tài khoản, hồ sơ, danh sách bạn và trạng thái hoạt động. Khi người dùng đang học/làm trong nền tảng, bạn bè vẫn thấy trạng thái đó và avatar tương ứng; không cần mở game để báo mình đang bận.
+- **Kết nối giữa hai phần:** một tài khoản, hồ sơ, danh sách bạn và trạng thái hoạt động. Khi bấm “đang đi làm” trong app, thế giới game nhận lệnh để avatar tự đi từ vị trí hiện tại tới khu làm việc rồi bắt đầu hoạt động ở đó. Bạn không cần mở game; bạn bè có thể thấy hành trình và nhân vật đang làm việc.
 
 Định hướng hiện tại không có minigame. Hoàn thành việc đời thường có thể được ghi nhận bằng phản hồi nhẹ hoặc vật trang trí; không tạo áp lực phải khai việc thật để cạnh tranh sức mạnh.
 

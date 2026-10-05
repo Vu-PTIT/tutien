@@ -15,11 +15,13 @@ Phần này giúp người dùng thực hiện các hoạt động thường ng�
 
 - Bảng hôm nay với lịch cá nhân và danh sách việc cần làm.
 - Hẹn giờ tập trung cho học/làm, có thể vào phòng chung với bạn bè.
-- Trạng thái ngắn như “đang học”, “đang làm”, “đang nghỉ”, cùng lời nhắn tùy chọn.
+- Trạng thái ngắn như “đang học”, “đang đi làm”, “đang nghỉ”, cùng lời nhắn tùy chọn; trạng thái có thể gửi lệnh cho avatar trong game.
 - Hồ sơ, danh sách bạn, chat và lời nhắn để duy trì kết nối.
 - Lịch sử focus đơn giản để người dùng tự xem thời gian mình đã tập trung.
 
 Tính năng đầu tiên nên gọn: người dùng tự nhập việc, chọn thời lượng, bắt đầu một phiên tập trung, mời bạn hoặc vào phòng chung, rồi tự kết thúc/đánh dấu việc. Mở rộng thêm công cụ sau khi luồng hằng ngày này có người dùng quay lại thường xuyên.
+
+Khi người dùng bấm “đang đi làm”, nền tảng gửi một activity command tới thế giới game. Avatar tự đi từ tọa độ đã lưu tới khu làm việc trong thị trấn rồi thực hiện hoạt động ở đó, kể cả khi game client đã đóng. Mỗi trạng thái có điểm đến và hành động tương ứng, ví dụ học → thư viện/lớp học, làm → khu làm việc, nghỉ → nhà/quán nước.
 
 ## B. Thế giới game
 
@@ -38,16 +40,16 @@ Người chơi có thể vào game chỉ để gặp bạn hoặc chăm chút n�
 | --- | --- | --- |
 | Tài khoản và hồ sơ | Đăng nhập, ảnh đại diện, trạng thái | Nhân vật và hồ sơ trong game |
 | Bạn bè và chat | Tìm bạn, nhắn tin, phòng tập trung | Gặp nhau, chat và ghé thăm |
-| Trạng thái | Đang học/làm/nghỉ/focus | Avatar biểu hiện trạng thái phù hợp |
+| Trạng thái và lệnh | Người dùng chọn học/làm/nghỉ/focus trong app | Avatar tự đi tới địa điểm tương ứng và thực hiện hoạt động trong thế giới game |
 | Việc hoàn thành | Danh sách việc, phiên tập trung | Có thể nhận phản hồi hoặc trang trí tùy chọn |
 | Tiến trình game | Hiển thị nhân vật, không bắt buộc chơi | Nông trại/nhà, thiền và PvE |
 
-Người dùng tự kiểm soát trạng thái, thời hạn và người xem. Hệ thống không tự thu thập lịch, vị trí hoặc hành vi ngoài sản phẩm. Ghi nhận hoạt động thật không nên quyết định sức mạnh chiến đấu.
+Người dùng tự kiểm soát trạng thái, thời hạn và người xem. Thế giới lưu lệnh, điểm đi, điểm đến, thời gian và animation để giữ trạng thái nhất quán mà không cần chủ nhân mở game. Hệ thống không tự thu thập lịch, vị trí hoặc hành vi ngoài sản phẩm. Ghi nhận hoạt động thật không nên quyết định sức mạnh chiến đấu.
 
 ## D. Trải nghiệm mẫu
 
 1. Người chơi mở nền tảng, thêm “ôn môn Kinh tế đô thị” vào danh sách hôm nay và chọn focus 40 phút.
-2. Họ vào phòng thư viện với bạn bè. Hồ sơ hiện “đang học”; avatar trong thế giới game được thể hiện đang đọc sách.
+2. Họ vào phòng thư viện với bạn bè. Hồ sơ hiện “đang học”; lệnh được gửi sang game và avatar tự đi tới thư viện rồi ngồi đọc sách, dù chủ nhân không mở game.
 3. Khi kết thúc, người chơi tự đánh dấu việc hoàn thành và trò chuyện hoặc để lại lời nhắn.
 4. Tối họ mở thế giới game, tưới vườn, thăm nhà bạn; nếu thích thì ngồi thiền hoặc đi đánh quái.
 
@@ -64,8 +66,8 @@ Người dùng tự kiểm soát trạng thái, thời hạn và người xem. H
 1. Tạo hồ sơ và thêm bạn.
 2. Tạo việc trong ngày và bắt đầu/kết thúc focus timer.
 3. Vào phòng tập trung chung và thấy trạng thái bạn bè.
-4. Đồng bộ trạng thái sang hồ sơ và hiển thị tư thế avatar trong thế giới game.
+4. Gửi lệnh hoạt động từ app; avatar trong game tự đi tới địa điểm tương ứng và bắt đầu animation.
 5. Mở game riêng, gặp bạn và thử một hoạt động đời sống hoặc thiền.
-6. Kiểm tra trạng thái hết hạn, ẩn trạng thái và hoạt động khi đóng/mở client.
+6. Kiểm tra avatar vẫn hoàn tất đường đi và giữ hoạt động khi chủ nhân đóng game; trạng thái hết hạn/ẩn đúng và không tạo avatar trùng khi mở lại.
 
 Chỉ sau khi lát cắt này dễ hiểu và ổn định mới mở rộng lịch, ghi chú, tính năng cộng đồng hoặc nội dung PvE.
