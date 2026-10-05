@@ -1,3 +1,15 @@
+> **Định hướng sản phẩm cập nhật 05/10/2026 — ưu tiên tài liệu 01 và 08.**
+> Tu Tiên chuyển trọng tâm sang game pixel online đời sống và giao lưu dành cho Gen Z:
+> trạng thái hoạt động do người chơi tự chọn, cộng đồng trong thị trấn Việt Nam,
+> trồng trọt/câu cá/thu thập/chế tạo/chăm nhà-vườn, cùng thiền và PvE tùy chọn.
+> Không có minigame trong định hướng mới; chiến đấu với quái là lựa chọn, không phải vòng chơi bắt buộc.
+> Ưu tiên sản xuất: map/UI/nhân vật → không gian xã hội và trạng thái → hoạt động đời sống →
+> thiền và quái PvE → cốt truyện/mở rộng.
+>
+> Các mục lịch sử bên dưới về săn quái là vòng chơi chính, phiên đầu 30 phút, quest và P1–P5
+> không còn là thứ tự ưu tiên sản phẩm hiện hành. Nền backend/code cũ vẫn có thể được giữ lại
+> sau khi đánh giá; các tính năng đời sống và trạng thái mới chưa được triển khai chỉ vì có tài liệu.
+>
 > **Cập nhật thiết kế 21/09/2026 — áp dụng trước các đoạn v2 giữ bên dưới.**
 > Mốc nguồn `feat/inventory-rewards` tại `05f5dd0`.
 > Đọc [đặc tả tiến trình/PvE](progression-pve-spec.md) và

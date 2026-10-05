@@ -1,3 +1,5 @@
+> **Ghi chú định hướng 05/10/2026:** chăm nhà/vườn, trồng trọt, câu cá, thu thập và chế tạo nay là một trụ cột đời sống, không chỉ là bước chuẩn bị combat. Các con số và quy tắc dưới đây thuộc prototype kinh tế PvE trước; giữ để tham khảo, chưa phải đặc tả cân bằng cuối cùng cho hướng mới. Xem [01 — Tầm nhìn](01-vision-and-core-loop.md) và [08 — Trạng thái sinh hoạt](08-social-presence-and-lifestyle.md) làm định hướng ưu tiên.
+
 # 07 — Vườn, chế tạo và đầu ra của chiến lợi phẩm
 
 **Cập nhật:** 21/09/2026. **Trạng thái:** thiết kế kinh tế prototype.
