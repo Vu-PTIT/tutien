@@ -1,3 +1,4 @@
+@tool
 extends TileMapLayer
 
 var asset_provider: Node
@@ -12,8 +13,9 @@ func configure(provider: Node, data: Dictionary, width: int, _tile_size: int) ->
 	asset_provider = provider
 	layer_data = data
 	map_width = width
-	animations = provider.get("map_data").get("animations", {})
-	tile_set = provider.get("tile_set_resource") as TileSet
+	if provider != null and provider.get("map_data") != null:
+		animations = provider.get("map_data").get("animations", {})
+		tile_set = provider.get("tile_set_resource") as TileSet
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	rendering_quadrant_size = 8
 	
@@ -34,13 +36,29 @@ func configure(provider: Node, data: Dictionary, width: int, _tile_size: int) ->
 	set_process(not _animated_cells.is_empty())
 
 
+func _get_provider() -> Node:
+	if is_instance_valid(asset_provider):
+		return asset_provider
+	if is_instance_valid(owner) and owner.has_method("resolve_gid"):
+		return owner
+	var p := get_parent()
+	while p != null:
+		if p.has_method("resolve_gid"):
+			return p
+		p = p.get_parent()
+	return null
+
+
 func _process(delta: float) -> void:
+	var provider := _get_provider()
+	if provider == null or _animated_cells.is_empty():
+		return
 	_animation_clock += delta
 	for entry in _animated_cells:
 		var next_gid := _animated_gid(int(entry["base_gid"]), entry["frames"], _animation_clock + float(entry["phase"]))
 		if next_gid == int(entry["current_gid"]):
 			continue
-		var tile: Dictionary = asset_provider.get("tile_refs").get(next_gid, {})
+		var tile: Dictionary = provider.get("tile_refs").get(next_gid, {})
 		if tile.is_empty():
 			continue
 		set_cell(entry["coords"], int(tile.get("source_id", -1)), tile.get("atlas_coords", Vector2i.ZERO))

@@ -77,11 +77,11 @@ func _make_sprite_frames() -> SpriteFrames:
 		frames.remove_animation("default")
 	var walk_texture := load(WALK_SHEET) as Texture2D
 	var idle_texture := load(IDLE_SHEET) as Texture2D
-	var rows := {"down": 3, "side": 0, "up": 2}
-	for direction in rows:
-		for movement in ["idle", "walk"]:
-			var animation_name := movement + "_" + direction
-			var texture := idle_texture if movement == "idle" else walk_texture
+	var rows: Dictionary = {"down": 3, "side": 0, "up": 2}
+	for direction: String in rows:
+		for movement: String in ["idle", "walk"]:
+			var animation_name: String = movement + "_" + direction
+			var texture: Texture2D = idle_texture if movement == "idle" else walk_texture
 			if texture == null:
 				push_error("Could not load character sprite sheet: " + animation_name)
 				continue
@@ -109,7 +109,7 @@ func _update_animation(direction: Vector2) -> void:
 		_facing = "up"
 	elif direction.y > 0.0:
 		_facing = "down"
-	var movement := "walk" if direction.length_squared() > 0.0 else "idle"
-	var animation_name := movement + "_" + _facing
+	var movement: String = "walk" if direction.length_squared() > 0.0 else "idle"
+	var animation_name: String = movement + "_" + _facing
 	if _sprite.animation != animation_name:
 		_sprite.play(animation_name)

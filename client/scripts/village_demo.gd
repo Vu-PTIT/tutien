@@ -1,3 +1,4 @@
+@tool
 extends Node2D
 
 const MAP_PATH := "res://assets/maps/lang_linh_khe_112x96.json"
@@ -5,6 +6,24 @@ const PLAYER_SCENE_SCRIPT := "res://scripts/village_player.gd"
 const TILE_LAYER_SCRIPT := "res://scripts/village_tile_layer.gd"
 const OBJECT_SCENE := "res://scenes/map_sprite_object.tscn"
 const MINIMAP_SCRIPT := "res://scripts/village_minimap.gd"
+
+@export var bake_to_scene_tree: bool = false:
+	set(val):
+		if val:
+			bake_to_scene_tree = false
+			_bake_nodes_to_scene()
+
+@export var reload_map_preview: bool = false:
+	set(val):
+		if val:
+			reload_map_preview = false
+			_build_map_preview()
+
+@export var clear_map_nodes: bool = false:
+	set(val):
+		if val:
+			clear_map_nodes = false
+			_clear_generated_nodes()
 
 var map_data: Dictionary = {}
 var texture_cache: Dictionary = {}
@@ -16,21 +35,111 @@ var _hud_tick := 0.0
 
 
 func _ready() -> void:
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(MAP_PATH))
-	if typeof(parsed) != TYPE_DICTIONARY:
-		push_error("Could not read village map data: " + MAP_PATH)
+	if Engine.is_editor_hint():
+		if not _has_baked_map():
+			_build_map_preview()
 		return
-	map_data = parsed
 
+	if not _has_baked_map():
+		_build_full_game()
+	else:
+		_setup_runtime_for_baked_scene()
+
+
+func _has_baked_map() -> bool:
+	return has_node("L3_YSort_Props_and_Player") or has_node("L0_Ground")
+
+
+func _load_map_data() -> bool:
+	if not map_data.is_empty():
+		return true
+	var raw := FileAccess.get_file_as_string(MAP_PATH)
+	if raw.is_empty():
+		push_error("Could not read village map data: " + MAP_PATH)
+		return false
+	var parsed: Variant = JSON.parse_string(raw)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		push_error("Invalid village map JSON structure: " + MAP_PATH)
+		return false
+	map_data = parsed
+	return true
+
+
+func _build_map_preview() -> void:
+	_clear_generated_nodes()
+	if not _load_map_data():
+		return
 	_build_tile_set()
 	_build_ground_layers()
-	_build_world_objects()
+	_build_world_objects(false)
+	_build_collisions()
+	_build_canopies()
+	_bake_nodes_to_scene()
+	print("[LinhKheVillage] Đã dựng và hiển thị toàn bộ node trên Scene Tree để chỉnh sửa trực tiếp.")
+
+
+func _build_full_game() -> void:
+	_clear_generated_nodes()
+	if not _load_map_data():
+		return
+	_build_tile_set()
+	_build_ground_layers()
+	_build_world_objects(true)
 	_build_collisions()
 	_build_canopies()
 	_build_hud()
 
 
+func _setup_runtime_for_baked_scene() -> void:
+	_load_map_data()
+	_player = get_node_or_null("L3_YSort_Props_and_Player/Player") as CharacterBody2D
+	if _player == null:
+		var world_sort := get_node_or_null("L3_YSort_Props_and_Player")
+		if world_sort != null:
+			var player_script: Script = load(PLAYER_SCENE_SCRIPT)
+			_player = CharacterBody2D.new()
+			_player.name = "Player"
+			_player.set_script(player_script)
+			var spawn: Dictionary = map_data.get("player_spawn", {"x": 896, "y": 896})
+			var half_tile := Vector2(float(map_data.get("tile_width", 16)), float(map_data.get("tile_height", 16))) * 0.5
+			_player.position = Vector2(float(spawn.get("x", 0)), float(spawn.get("y", 0))) + half_tile
+			world_sort.add_child(_player)
+	_build_hud()
+
+
+func _bake_nodes_to_scene() -> void:
+	if not Engine.is_editor_hint():
+		return
+	var root: Node = null
+	if get_tree() != null:
+		root = get_tree().edited_scene_root
+	if root == null:
+		root = self
+	_recursive_set_owner(self, root)
+	print("[LinhKheVillage] ĐÃ BAKE BẢN ĐỒ THÀNH CÁC NODE TRONG SCENE TREE!")
+	print("Bạn có thể chọn từng ngôi nhà, cái cây để di chuyển hoặc dùng TileMap vẽ gạch. Bấm Ctrl+S để lưu scene.")
+
+
+func _recursive_set_owner(node: Node, root: Node) -> void:
+	for child in node.get_children():
+		if child != root:
+			child.owner = root
+		_recursive_set_owner(child, root)
+
+
+func _clear_generated_nodes() -> void:
+	var children := get_children()
+	for child in children:
+		remove_child(child)
+		child.queue_free()
+	tile_refs.clear()
+	texture_cache.clear()
+	print("[LinhKheVillage] Đã dọn dẹp các node bản đồ.")
+
+
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	_hud_tick += delta
 	if _hud_tick < 0.2 or _player == null or _info_label == null:
 		return
@@ -180,7 +289,7 @@ func _build_tile_set() -> void:
 				tile_refs[first_gid + local_id] = {"source_id": source_id, "atlas_coords": atlas_coords}
 
 
-func _build_world_objects() -> void:
+func _build_world_objects(spawn_player: bool = true) -> void:
 	var world_sort := Node2D.new()
 	world_sort.name = "L3_YSort_Props_and_Player"
 	world_sort.y_sort_enabled = true
@@ -192,14 +301,22 @@ func _build_world_objects() -> void:
 		visual.call("configure", self, object_data, false)
 		world_sort.add_child(visual)
 
-	var player_script: Script = load(PLAYER_SCENE_SCRIPT)
-	_player = CharacterBody2D.new()
-	_player.name = "Player"
-	_player.set_script(player_script)
 	var spawn: Dictionary = map_data.get("player_spawn", {"x": 896, "y": 896})
 	var half_tile := Vector2(float(map_data.get("tile_width", 16)), float(map_data.get("tile_height", 16))) * 0.5
-	_player.position = Vector2(float(spawn.get("x", 0)), float(spawn.get("y", 0))) + half_tile
-	world_sort.add_child(_player)
+	var spawn_pos := Vector2(float(spawn.get("x", 0)), float(spawn.get("y", 0))) + half_tile
+
+	if spawn_player:
+		var player_script: Script = load(PLAYER_SCENE_SCRIPT)
+		_player = CharacterBody2D.new()
+		_player.name = "Player"
+		_player.set_script(player_script)
+		_player.position = spawn_pos
+		world_sort.add_child(_player)
+	else:
+		var spawn_marker := Marker2D.new()
+		spawn_marker.name = "PlayerSpawnPoint"
+		spawn_marker.position = spawn_pos
+		world_sort.add_child(spawn_marker)
 
 
 func _build_collisions() -> void:
