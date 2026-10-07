@@ -137,7 +137,7 @@ func _select_map(map_id: String) -> void:
 	if button != null:
 		button.button_pressed = true
 	var preview_path := str(map_data.get("preview", ""))
-	var texture: Texture2D = load(preview_path) if not preview_path.is_empty() else null
+	var texture: Texture2D = load(preview_path) if (not preview_path.is_empty() and ResourceLoader.exists(preview_path)) else null
 	preview.texture = texture
 	preview.visible = texture != null
 	no_preview.visible = texture == null

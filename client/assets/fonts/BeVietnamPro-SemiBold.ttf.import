@@ -2,18 +2,18 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://bkaifu42kr4g8"
-path="res://.godot/imported/tiny5_pixel_ui.ttf-699da300bffd30cec392487827738dfe.fontdata"
+uid="uid://bknoibgu6tft7"
+path="res://.godot/imported/BeVietnamPro-SemiBold.ttf-b33b0691bc355ff142c79ad6b932c0ea.fontdata"
 
 [deps]
 
-source_file="res://assets/pixel/tiny5_pixel_ui.ttf"
-dest_files=["res://.godot/imported/tiny5_pixel_ui.ttf-699da300bffd30cec392487827738dfe.fontdata"]
+source_file="res://assets/fonts/BeVietnamPro-SemiBold.ttf"
+dest_files=["res://.godot/imported/BeVietnamPro-SemiBold.ttf-b33b0691bc355ff142c79ad6b932c0ea.fontdata"]
 
 [params]
 
 Rendering=null
-antialiasing=0
+antialiasing=1
 generate_mipmaps=false
 disable_embedded_bitmaps=true
 multichannel_signed_distance_field=false
@@ -22,8 +22,8 @@ msdf_size=48
 allow_system_fallback=true
 force_autohinter=false
 modulate_color_glyphs=false
-hinting=0
-subpixel_positioning=0
+hinting=1
+subpixel_positioning=4
 keep_rounding_remainders=true
 oversampling=0.0
 Fallbacks=null

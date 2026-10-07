@@ -2,10 +2,10 @@ extends Node2D
 ## No @tool runtime simulation: all visual nodes are serialized in .tscn.
 const Api = preload("res://scripts/combat_api.gd")
 const Actor = preload("res://scenes/player.tscn")
-const MapWorldScene = preload("res://scenes/map_world.tscn")
+const MapWorldScene: PackedScene = null
 const InputScript = preload("res://scripts/game_input.gd")
 const WorldWeatherScript = preload("res://scripts/world_weather.gd")
-const SON_TRU_BACKGROUND: Texture2D = preload("res://assets/pixel/maps/bai_son_tru.png")
+const SON_TRU_BACKGROUND: Texture2D = null
 const SON_TRU_SPRITE: Texture2D = preload("res://assets/pixel/enemies/son_tru/clean.png")
 const ARENA_SCALE := 2.0 / 3.0
 const PVE_SCALE := 0.6
@@ -24,7 +24,7 @@ const WALK_SPEED := 72.0
 @onready var account_panel: AccountAuthPanel = $Presentation/AccountAuthPanel
 @onready var touch_controls: TouchControls = $Presentation/HUD/TouchControls
 @onready var weather_fx = $Presentation/WeatherFX
-var map_world: GameMap
+var map_world: Node2D = null
 var language_manager: Variant
 var world_weather
 var _weather_fx_exposure: String = ""
@@ -80,7 +80,12 @@ func _ready() -> void:
 	add_child(game_input)
 	game_input.action_requested.connect(_action)
 	_load_map(current_map_id)
-	offline_position = player.position
+	if player == null and Actor != null:
+		player = Actor.instantiate() as PixelActor
+		map_host.add_child(player)
+		player.position = offline_position
+	elif player != null:
+		offline_position = player.position
 	api = Api.new()
 	add_child(api)
 	social_panel.set_api(api)
@@ -159,7 +164,7 @@ func _on_language_changed(_locale: String) -> void:
 	elif not _last_dock_status_source.is_empty():
 		dock.get_node("Status").text = language_manager.translate_message(_last_dock_status_source)
 	world_map.set_current_map(current_map_id)
-	var focused: MapInteractable = map_world.update_interaction_focus(player.position) if player != null else null
+	var focused: Node2D = map_world.update_interaction_focus(player.position) if (map_world != null and player != null) else null
 	hud.set_interaction_prompt(focused.prompt_text() if focused != null else "")
 	if not character_panel.profile.is_empty():
 		hud.apply_profile(character_panel.profile)
@@ -188,16 +193,17 @@ func _sync_weather_fx_for_map(state: Dictionary = {}) -> void:
 	weather_fx.set_weather_state(fx_state)
 
 func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
-	if world_map == null or not world_map.maps_by_id.has(map_id):
+	if MapWorldScene == null or world_map == null or not world_map.maps_by_id.has(map_id):
 		return false
 	local_map_panel.close_panel()
 	if map_world != null:
-		local_resource_states.merge(map_world.get_resource_tree_states(), true)
+		local_resource_states.merge(map_world.get_resource_tree_states() if map_world.has_method("get_resource_tree_states") else {}, true)
 	var data: Dictionary = world_map.maps_by_id[map_id].duplicate(true)
 	if arrival_tiles.size() >= 2:
 		data["spawn_tiles"] = arrival_tiles.duplicate()
-	var next_map := MapWorldScene.instantiate() as GameMap
-	next_map.configure(data, int(world_map.catalog.get("tile_size_px", 32)), local_resource_states)
+	var next_map := MapWorldScene.instantiate() as Node2D
+	if next_map.has_method("configure"):
+		next_map.configure(data, int(world_map.catalog.get("tile_size_px", 32)), local_resource_states)
 	if map_world != null:
 		map_host.remove_child(map_world)
 		map_world.queue_free()
@@ -230,7 +236,7 @@ func _load_map(map_id: String, arrival_tiles: Array = []) -> bool:
 	hud.get_node("FieldInfo/Body").text = tr(str(data.get("region_body", "")))
 	hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, map_world.active_area_name)
 	hud.get_node("Location/State").text = (tr("An toàn • %s") % tr(map_world.active_area_name)) if map_id == "m_an_khe" else tr(map_world.active_area_name)
-	var focused: MapInteractable = map_world.update_interaction_focus(player.position)
+	var focused: Node2D = map_world.update_interaction_focus(player.position) if map_world != null else null
 	hud.set_interaction_prompt(focused.prompt_text() if focused != null else "")
 	_update_field_combat_controls()
 	return true
@@ -258,7 +264,7 @@ func _apply_world_location(state: Dictionary, force_position: bool = true) -> bo
 		var area_name := map_world.update_player_context(player.position)
 		if map_world.get_weather_exposure() != _weather_fx_exposure:
 			_sync_weather_fx_for_map()
-		var focused: MapInteractable = map_world.update_interaction_focus(player.position)
+		var focused: Node2D = map_world.update_interaction_focus(player.position) if map_world != null else null
 		hud.set_interaction_prompt(focused.prompt_text() if focused != null else "")
 		hud.update_position(player.position, map_world.map_size_px, map_world.tile_size_px, area_name)
 		hud.get_node("Location/State").text = (tr("An toàn • %s") % tr(area_name)) if server_map == "m_an_khe" else tr(area_name)
@@ -442,7 +448,7 @@ func _action(action: String) -> void:
 				return
 			if inventory_panel.visible or character_panel.visible or social_panel.visible or dock.visible or world_map.visible or local_map_panel.visible:
 				return
-			var target: MapInteractable = map_world.update_interaction_focus(player.position)
+			var target: Node2D = map_world.update_interaction_focus(player.position) if map_world != null else null
 			if target == null:
 				hud.notify("Đến gần một điểm tương tác rồi nhấn E hoặc chạm nút tương tác.")
 			else:
@@ -450,7 +456,7 @@ func _action(action: String) -> void:
 		_:
 			hud.notify("Chức năng chưa mở. Không tiêu hao vật phẩm.")
 
-func _interact_with_world_object(target: MapInteractable) -> void:
+func _interact_with_world_object(target: Node2D) -> void:
 	if busy:
 		return
 	var details := target.interaction_data
@@ -587,7 +593,7 @@ func _physics_process(delta: float) -> void:
 	var area_name := map_world.update_player_context(player.position)
 	if map_world.get_weather_exposure() != _weather_fx_exposure:
 		_sync_weather_fx_for_map()
-	var focused: MapInteractable = map_world.update_interaction_focus(player.position)
+	var focused: Node2D = map_world.update_interaction_focus(player.position) if map_world != null else null
 	var nearby_mob := map_world.nearest_field_mob(player.position, 72.0)
 	var nearby_tree := map_world.nearest_choppable_tree(player.position, player.facing_direction()) != null
 	var action_prompt := "J / Chạm • Chặt cây" if nearby_tree else ("J / Chạm • Đánh quái gần nhất" if not nearby_mob.is_empty() else "")

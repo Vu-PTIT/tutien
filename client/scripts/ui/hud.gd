@@ -172,8 +172,10 @@ func configure_map(map_data: Dictionary) -> void:
 	$Location/State.text = tr(str(map_data.get("summary", "")))
 	$Minimap/Coordinates.tooltip_text = tr(str(map_data.get("name", "Map")))
 
+const MAP_TILE_SYMBOLS := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"
+
 func _build_authored_minimap(data: Dictionary) -> ImageTexture:
-	var layout_path := str(GameMap.MAP_LAYOUTS.get(str(data.get("id", "")), ""))
+	var layout_path := str(data.get("layout_path", ""))
 	if layout_path.is_empty() or not FileAccess.file_exists(layout_path):
 		return null
 	var file := FileAccess.open(layout_path, FileAccess.READ)
@@ -197,7 +199,7 @@ func _build_authored_minimap(data: Dictionary) -> ImageTexture:
 		if row.length() != width:
 			return null
 		for x in range(width):
-			var tile := GameMap.TILE_SYMBOLS.find(row.substr(x, 1))
+			var tile := MAP_TILE_SYMBOLS.find(row.substr(x, 1))
 			var color := Color("52794c") # grass
 			if tile >= 16 and tile < 24:
 				color = Color("af865b") # soil paths

@@ -7,15 +7,8 @@ không phải tileset vẽ/tách thủ công.
 
 | File | Kích thước | Dùng trong project |
 | --- | --- | --- |
-| `an_khe.png` | 640 × 360 RGB | Nền An Khê, TextureRect 640 × 360 |
-| `an_khe_world_v1.png` | 1448 × 1086 RGB | Nền world An Khê 48 × 36 tile; Sprite2D scale 1.0608 đến 1536 × 1152 |
-| `truc_am_world_v1.png` | 1448 × 1086 RGB | Ven Suối, Rừng Trúc Sâu, Bãi Sơn Trư; nền prototype ba khu |
-| `thach_can_world_v1.png` | 1448 × 1086 RGB | Ngoại Vi và Mỏ Cũ; nền prototype hai khu |
-| `co_tinh_world_v1.png` | 1448 × 1086 RGB | Năm phòng nối tiếp; nền prototype dungeon Cổ Tỉnh |
 | `cultivator.png` | 256 × 256 RGBA, 18 màu | Atlas 4 × 4, frame native 64 × 64; 4 hướng × 4 bước đi |
 | `icons.png` | 1254 × 1254 transparent PNG | 16 icon, nền trong suốt |
-| `maps/bai_son_tru.png` | 1586 × 992 RGB | Nền bãi săn cố định; chỉ là phông chiến đấu, bounds do server điều khiển |
-| `maps/world_route_overview.png` | 768 × 256 RGB | Sơ đồ tổng quan UI: một đường liên tục An Khê → Trúc Âm → Thạch Cạn → Cổ Tỉnh; không dùng làm map runtime |
 | `enemies/son_tru.png` | 192 × 128 RGBA, 13 màu + alpha trong suốt | Sơn Trư combat atlas 3 × 2, ô 64 × 64; dùng chung cho encounter và overworld |
 | `enemies/son_tru/clean.png` | 64 × 64 RGBA | Frame Sơn Trư idle để dùng độc lập |
 | `enemies/doc_chu/processed/sheet-transparent.png` | 128 × 128 RGBA | Độc Chu atlas 2 × 2, bốn frame 64 × 64; dùng trong mob overworld |

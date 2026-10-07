@@ -4,7 +4,7 @@ extends Control
 
 signal route_requested
 
-const MAP_WORLD_SCENE: PackedScene = preload("res://scenes/map_world.tscn")
+const MAP_WORLD_SCENE: PackedScene = null
 
 @onready var overview_viewport: SubViewport = $OverviewViewport
 @onready var map_view: LocalMapView = $Window/Layout/Content/Body/MapFrame/MapView
@@ -21,7 +21,7 @@ const MAP_WORLD_SCENE: PackedScene = preload("res://scenes/map_world.tscn")
 @onready var fit_button: Button = $Window/Layout/Content/Footer/Fit
 @onready var zoom_in_button: Button = $Window/Layout/Content/Footer/ZoomIn
 
-var _overview_world: GameMap
+var _overview_world: Node2D
 var _map_data: Dictionary = {}
 var _map_size_px := Vector2.ZERO
 var _tile_size_px := 32
@@ -48,7 +48,7 @@ func _ready() -> void:
 	zoom_in_button.pressed.connect(map_view.zoom_in)
 	_render_details()
 
-func open_map(world: GameMap, player_position: Vector2) -> void:
+func open_map(world: Variant, player_position: Vector2) -> void:
 	if world == null:
 		return
 	visible = true
@@ -87,20 +87,23 @@ func close_panel() -> void:
 	map_view.set_map_texture(null)
 	overview_viewport.size = Vector2i(2, 2)
 
-func _build_overview(source_world: GameMap) -> void:
+func _build_overview(source_world: Variant) -> void:
 	overview_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	if is_instance_valid(_overview_world):
 		_overview_world.free()
 	_overview_world = null
+	if MAP_WORLD_SCENE == null:
+		return
 	overview_viewport.size = Vector2i(roundi(_map_size_px.x), roundi(_map_size_px.y))
 	overview_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	var snapshot := MAP_WORLD_SCENE.instantiate() as GameMap
+	var snapshot := MAP_WORLD_SCENE.instantiate() as Node2D
 	if snapshot == null:
 		push_error("Could not create current-map overview scene")
 		overview_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 		overview_viewport.size = Vector2i(2, 2)
-		return
-	snapshot.configure(_map_data, _tile_size_px, source_world.get_resource_tree_states())
+	if snapshot.has_method("configure"):
+		var states = source_world.get_resource_tree_states() if (source_world != null and source_world.has_method("get_resource_tree_states")) else {}
+		snapshot.configure(_map_data, _tile_size_px, states)
 	snapshot.process_mode = Node.PROCESS_MODE_DISABLED
 	var duplicate_player := snapshot.get_node_or_null("Actors/Player") as CanvasItem
 	if duplicate_player != null:
