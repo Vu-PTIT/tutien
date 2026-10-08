@@ -1,24 +1,58 @@
 # 10 — Map phân lớp và vật thể tương tác
 
-**Quyết định thiết kế:** 08/10/2026, phiên bản 1.  
+**Quyết định thiết kế:** 08/10/2026, phiên bản 2.  
 **Áp dụng:** `feat/map-ui-rebuild` và `feat/dual-experience-platform`.  
 **Trạng thái:** đã chốt hướng thiết kế; tài liệu này không chứng nhận runtime, asset, hiệu ứng hay backend mới đã được triển khai.
 
 ## 1. Quyết định và phạm vi
 
-Map giữ phong cách pixel, chất Việt Nam và góc nhìn của sản phẩm, nhưng **không phải dựng hoàn toàn bằng tileset**. Địa hình có bố cục vẽ riêng; vật thể và hoạt động là những thành phần độc lập. Không chuyển game sang một ảnh nền phẳng chỉ để ngắm.
+Map dùng **2D pixel, góc nhìn top-down 3/4**, thấy mặt đất cùng mái/mặt trước vật thể. Không chuyển sang side-view, không tự đổi sang bản đồ isometric hình thoi và không dùng camera 3D để giả định rằng asset sai góc nhìn sẽ tự được sửa. Tỷ lệ nhân vật, mật độ pixel và cách vẽ phối cảnh phải thống nhất.
+
+**Mặc định thiết kế map mới không phụ thuộc TileSet/TileMapLayer.** Ưu tiên nền vẽ phân lớp, vùng địa hình tự do và vật thể độc lập. Tileset là ngoại lệ cuối cùng có lý do kỹ thuật được kiểm chứng, không phải lựa chọn sẵn cho sàn, vườn, hàng rào hay mọi nội dung lặp. Không chuyển game sang một ảnh nền phẳng chỉ để ngắm.
 
 Hướng chuẩn cho map mới:
 
 - `map_mode`: `scene_mode`.
-- `visual_model`: `layered_raster` — nền sạch phân lớp, có thể chia thành nhiều mảng tải.
+- `visual_model`: `layered_raster` — nền sạch phân lớp, chia mảng tải khi cần; có thể kết hợp vùng polygon/mesh 2D phủ texture cho nước hoặc địa hình phù hợp.
 - `runtime_object_model`: `y_sorted_props + interactive_scene_objects + scene_hooks`.
 - `collision_model`: hình va chạm tường minh, vùng đi lại đa giác và vùng kích hoạt; không suy ra từ màu ảnh.
 - `engine_target`: scene Godot 4.6.1 và dữ liệu riêng của dự án.
+- `tile_generation`: `none` cho bản thử mới; không tự sinh lại atlas địa hình hoặc ép bố cục về lưới cũ.
 
-TileMap/tileset vẫn được phép dùng cục bộ cho luống trồng, sàn, hàng rào lặp, vùng đặt đồ hoặc tài nguyên có sẵn. Lưới logic không quyết định đường cong bờ sông hay toàn bộ hình dáng làng. Không đặt tỷ lệ bắt buộc giữa nền vẽ và tile.
+Tài liệu này ưu tiên cho **kiến trúc map mới** khi tài liệu cũ mặc định mọi thứ là tile. Phiên bản 2 thay quy tắc phiên bản 1 cho phép mặc định dùng tile cục bộ ở luống trồng/sàn/chi tiết lặp. Tầm nhìn, hai không gian sản phẩm và hiện diện xã hội tiếp tục theo 01/09/08. Không thay đổi combat/economy, không thêm minigame và không đưa quest/cốt truyện dài trở lại ưu tiên đầu.
 
-Tài liệu này ưu tiên cho **kiến trúc map mới** khi tài liệu cũ mặc định mọi thứ là tile. Tầm nhìn, hai không gian sản phẩm và hiện diện xã hội tiếp tục theo 01/09/08. Không thay đổi combat/economy, không thêm minigame và không đưa quest/cốt truyện dài trở lại ưu tiên đầu.
+### 1.1. Phân biệt tài nguyên, lưới logic và cách dựng map
+
+TileMapLayer là một phương án dựng map theo lưới, có công cụ biên tập và tối ưu cho nhiều tile; không phải điều kiện bắt buộc để có tương tác hay hoạt ảnh. Không có thành phần nào trong phạm vi đang chốt được xác nhận là chỉ TileSet mới làm được. Không gọi một phương án là bắt buộc chỉ vì dễ làm bằng tile hoặc đã có tileset trong kho. [S4]
+
+- **Pixel art** là quy chuẩn hình ảnh, không đồng nghĩa map phải ghép ô.
+- **Atlas/sprite sheet** là cách đóng gói ảnh. Có thể lấy một cây hoặc ghế nguyên vẹn từ atlas bằng Sprite2D rồi đặt tự do; không cần TileMapLayer. Không cấm atlas khi ưu tiên không dùng tile. [S6, S9]
+- **Lưới logic** có thể quản lý ô gieo hạt, vùng đặt đồ, quyền xây dựng hoặc tìm kiếm vị trí. Lưới này không bắt buộc phần hiển thị dùng tileset.
+- **Chunk nền** là mảng của bố cục đã thiết kế để tải/vẽ theo khu vực, không phải một ô mẫu được lặp để quyết định hình dáng làng.
+- **Lặp texture hoặc tái sử dụng prop** được phép khi hợp mỹ thuật và hiệu năng; không biến các lựa chọn đó thành yêu cầu ghép toàn bộ địa hình bằng tile.
+
+### 1.2. Cách dựng ưu tiên cho từng thành phần
+
+| Thành phần | Phương án không tile ưu tiên | Điều phải giữ |
+| --- | --- | --- |
+| Đất, sân, cỏ nền, quảng trường | Mảng nền pixel được thiết kế riêng; chia chunk từ cùng bố cục nếu cần | Nền sạch, không bake vật thể có state hoặc che nhân vật |
+| Đường đất và bờ sông | Hình dạng vẽ riêng; có thể dùng dải mesh/polygon phủ texture khi cần chỉnh đường cong | Bề rộng, mép nối và chi tiết pixel không bị kéo giãn; không tạo công cụ phức tạp khi mảng vẽ đã đủ |
+| Ao/sông | Vùng Polygon2D/mesh 2D hoặc lớp nước có mask, shader riêng | Nước chỉ chuyển động trong vùng nước; bờ và collider riêng |
+| Nhà, cây, ghế, cửa, rương | Scene/prop độc lập; tái sử dụng sprite/atlas khi hợp phong cách | ID, anchor, chiều sâu, va chạm, action và state không phụ thuộc gid |
+| Vườn trồng trọt | Lưới dữ liệu ẩn + lớp đất theo trạng thái + cây trồng riêng | Có thể thay đất/cây mà không sửa nền toàn map; không mặc định TileMapLayer |
+| Sàn và đặt nội thất | Mảng sàn/texture phù hợp + dữ liệu vị trí hoặc lưới đặt đồ tùy chọn | Đồ vật độc lập; sàn không bắt buộc ghép ô |
+| Hàng rào, tường, chi tiết lặp | Các đoạn scene/sprite có điểm nối hoặc dải hình phù hợp | Hình và collision khớp; không kéo giãn pixel để bù tài nguyên thiếu |
+| Cỏ thấp, lá và chi tiết số lượng lớn | Nhóm sprite/mesh/particle phù hợp, chỉ tối ưu gom vẽ sau khi đo | Không gom vật thể cần Y-sort/tương tác độc lập thành một khối không kiểm soát được |
+
+Polygon2D hỗ trợ phủ texture lên hình dạng tự do; đây là công cụ dựng hình chứ không tự làm mỹ thuật đẹp hay tạo collision. Mesh 2D có thể giảm phần trong suốt bị vẽ nhưng tăng công việc xử lý đỉnh, nên không chuyển mọi sprite thành mesh một cách máy móc. [S5, S7]
+
+### 1.3. Điều kiện ngoại lệ dùng tileset
+
+Trước hết thử phương án không tile đơn giản nhất đáp ứng yêu cầu. Chỉ đề xuất TileMapLayer cục bộ khi có ràng buộc bắt buộc đã xác định mà các phương án không tile phù hợp không đáp ứng hợp lý, ví dụ giới hạn tài nguyên đã đo trên thiết bị mục tiêu hoặc một hợp đồng tích hợp bắt buộc chưa thể thay thế an toàn. Không coi lợi thế biên tập theo thói quen hoặc có sẵn tài nguyên là bằng chứng bắt buộc dùng tile.
+
+Mỗi ngoại lệ phải ghi trong thay đổi triển khai: khu vực và phạm vi, ràng buộc phải đáp ứng, các phương án không tile đã đánh giá, bằng chứng/kết quả đo, ảnh hưởng mỹ thuật và tương tác, lý do chọn tile, khả năng thay thế về sau. Nếu căn cứ chỉ là đánh đổi chi phí/chất lượng chứ không phải điều kiện bắt buộc, phải nêu rõ để chủ sản phẩm quyết định; không âm thầm diễn giải lại yêu cầu.
+
+Không có ngoại lệ TileMapLayer mới nào được phê duyệt trong đợt tài liệu này. Không dành trước tỷ lệ tile; bản thử M1 hướng tới **không có TileMapLayer đang dùng để dựng cảnh mới**. Scene cũ vẫn được giữ làm đối chiếu trong thời gian chuyển đổi, không bị xóa chỉ để đạt mục tiêu này.
 
 ## 2. Các lớp và trách nhiệm
 
@@ -83,7 +117,7 @@ Luồng dùng chung cho bàn phím, chuột và cảm ứng: **chọn vật th�
 | Cỏ/hoa | Đi qua, cắt/hái khi được phép | Nghiêng cục bộ; thu hoạch và hồi phục là state riêng |
 | Ghế/giường/bàn học | Ngồi, nghỉ, học | Đi đến đúng slot, giữ chỗ, quay đúng hướng, hủy/rời được |
 | Cửa/rương/đèn | Mở/đóng, lấy đồ, bật/tắt | Đổi hình và state; chỉ đổi collision/navigation nếu chức năng yêu cầu |
-| Luống vườn | Cuốc, gieo, tưới, thu hoạch | Lưới logic cục bộ; thời điểm tăng trưởng được lưu riêng |
+| Luống vườn | Cuốc, gieo, tưới, thu hoạch | Lưới logic cục bộ và lớp hiển thị độc lập; thời điểm tăng trưởng được lưu riêng |
 | Ao/sông | Câu tại điểm cho phép | Đứng ở bờ, phao và vòng sóng ở nước; không cho đứng giữa ao |
 
 Không phải mọi cây trang trí đều chặt được. Asset có thể dùng chung, nhưng loại tương tác, quyền sở hữu và trạng thái là dữ liệu của từng instance. Cây rung theo gió không đồng nghĩa cây đã có tính năng chặt/loot.
@@ -125,16 +159,18 @@ Theo [09 — Hai không gian sản phẩm](09-dual-experience-platform.md), họ
 
 ## 9. Quy trình tài nguyên và dựng cảnh
 
-1. Chốt camera PC/mobile, tỷ lệ nhân vật, map bounds, lối chính và điểm hoạt động trước khi tăng diện tích.
+1. Chốt camera PC/mobile, tỷ lệ nhân vật, map bounds, lối chính và điểm hoạt động trước khi tăng diện tích. Duyệt hình đúng top-down 3/4, không dùng ảnh nhìn ngang làm chuẩn phối cảnh.
 2. Chuẩn bị nền sạch, tách nước và giữ nền đầy đủ dưới props. Bản vẽ làng hoàn chỉnh chỉ là tham chiếu; không dùng ảnh dính cả nhà/cây làm nền cuối.
-3. Tận dụng asset người dùng đã cung cấp nếu hợp phong cách. Tạo mới phần thiếu; giữ giấy phép/nguồn gốc. Không xóa tileset chỉ vì đổi kiến trúc, không kéo giãn tile nhỏ để giả thành cảnh lớn.
-4. Chuẩn bị props riêng theo cùng camera, bảng màu, tỷ lệ; lưu anchor/offset. Nếu dùng ảnh sinh, lưu prompt và nguồn tham chiếu cùng asset. Nhân vật/animation là gói riêng, không vẽ dính vào map.
+3. Tận dụng asset người dùng đã cung cấp nếu hợp phong cách. Một prop trong bộ tileset có thể được lấy thành sprite độc lập; việc giữ nguồn atlas không buộc dùng TileMapLayer. Tạo mới phần thiếu, giữ giấy phép/nguồn gốc. Không xóa tileset chỉ vì đổi kiến trúc, không kéo giãn tile nhỏ để giả thành cảnh lớn.
+4. Chuẩn bị props riêng theo cùng camera, bảng màu, tỷ lệ; lưu anchor/offset. Nếu dùng ảnh sinh, lưu prompt và nguồn tham chiếu cùng asset. Nhân vật/animation là gói riêng, không vẽ dính vào map. Code dựng polygon/mesh chỉ lo hình học và tích hợp texture, không thay tài nguyên mỹ thuật bằng mảng màu placeholder trong bản cuối.
 5. Đặt props, collider, vùng nước, navigation, điểm tiếp cận và slot trong dữ liệu/cảnh có thể chỉnh sửa. Preview ghép phẳng phải được tạo lại từ đúng các thành phần này.
-6. Kiểm tra nhân vật ở trước/sau vật thể, một lần đổi trạng thái có lưu và một tuyến đến điểm hoạt động; sau đó mới nhân rộng làng.
+6. Kiểm tra nhân vật ở trước/sau vật thể, một lần đổi trạng thái có lưu và một tuyến đến điểm hoạt động; sau đó mới nhân rộng làng. Không đưa TileMapLayer vào bản thử chỉ vì có sẵn đường dựng cũ.
 
 Nền có thể chia thành các chunk tải riêng. Điểm bắt đầu để thử là 1024 hoặc 2048 pixel, không phải giới hạn cố định; chọn lại sau khi đo thiết bị. Các mảng phải chung tọa độ và nối sạch, không thay cách lộ ô nhỏ bằng cách lộ ô lớn. Chỉ ẩn node không có nghĩa texture đã được giải phóng.
 
-Không cam kết FPS trước benchmark. Đo bộ nhớ texture, thời gian frame, draw calls và số vật thể/hiệu ứng trên PC/mobile mục tiêu. Mức thấp giảm hiệu ứng và bóng động, không bỏ va chạm, quyền tương tác hoặc dữ liệu người chơi. Không gom cây cần Y-sort/interaction độc lập vào một khối vẽ chung chỉ để giảm draw calls.
+**Tối ưu là kết quả kiểm chứng, không phải tên kỹ thuật.** Không mặc định nền raster nhẹ hơn tile, nhiều sprite nhanh hơn TileMapLayer hoặc mesh luôn tốt hơn sprite. Dùng mảng vẽ riêng ở nơi cần hình dáng riêng, giữ khả năng tái sử dụng texture/prop ở nơi phù hợp; tránh một PNG khổng lồ cho toàn thế giới và tránh một node cho từng chi tiết cực nhỏ. Việc đóng gói atlas không được làm toàn bộ tài nguyên xa camera phải luôn ở trong bộ nhớ. [S4, S7, S8, S9]
+
+Không cam kết FPS trước benchmark. So sánh ở cùng camera, số avatar, độ phức tạp hình ảnh và thiết bị; ghi thời gian frame CPU/GPU khi công cụ hỗ trợ, phân vị 95% thời gian frame, bộ nhớ texture, draw calls, thời gian tải/chuyển khu và công sức chỉnh sửa. Mức thấp giảm hiệu ứng và bóng động, không bỏ va chạm, quyền tương tác hoặc dữ liệu người chơi. Không gom cây cần Y-sort/interaction độc lập vào một khối vẽ chung chỉ để giảm draw calls. Nếu bản không tile chưa đạt, tối ưu phạm vi tải, overdraw, độ phân giải và vật thể trước khi đề xuất ngoại lệ ở mục 1.3.
 
 ## 10. Chuyển đổi trên hai nhánh
 
@@ -142,16 +178,16 @@ Mốc đối chiếu trước thay đổi thiết kế:
 
 | Nhánh | Điểm xuất phát đã đọc | Hướng chuyển đổi |
 | --- | --- | --- |
-| `feat/map-ui-rebuild` tại `d8565ca` | `village_demo.gd` đọc JSON làng, dựng lớp tile/vật thể/collision; `village_sprite_object.gd` lấy hình qua `gid` | Giữ demo và tài nguyên tham chiếu. Tách loader/hình ảnh khỏi ID gameplay; hỗ trợ nền raster, props độc lập và adapter tile cục bộ. Không xóa map đang dùng trước khi bản mới qua kiểm tra |
+| `feat/map-ui-rebuild` tại `d8565ca` | `village_demo.gd` đọc JSON làng, dựng lớp tile/vật thể/collision; `village_sprite_object.gd` lấy hình qua `gid` | Giữ demo và tài nguyên tham chiếu. Tách loader/hình ảnh khỏi ID gameplay; dựng scene mới không phụ thuộc tile. Adapter chỉ phục vụ chuyển dữ liệu cũ hoặc ngoại lệ đã được duyệt, không mặc định đưa tile vào map mới |
 | `feat/dual-experience-platform` tại `31080e8` | `main.gd` khai báo `MapWorldScene = null`; có điểm nối HUD, tài khoản, social và weather | Không coi bản đồ bốn vùng cũ trong README là hiện trạng. Tích hợp scene phân lớp sau khi bản thử đạt; nối activity bằng ID/slot, giữ nguyên các hệ thống ngoài phạm vi |
 
 Hai nhánh dùng cùng bản thiết kế này nhưng **không merge toàn bộ lịch sử/code chỉ để đồng bộ tài liệu**. Khi hiện thực, port các thành phần map đã kiểm chứng bằng thay đổi có phạm vi rõ; không ghi đè UI hoặc tài sản của nhánh kia. Ghi hiện trạng mới vào nhật ký khi thực sự có code và kết quả test.
 
 ## 11. Thứ tự thực hiện và nghiệm thu
 
-**M0 — Đã chốt thiết kế:** cập nhật tài liệu chuẩn, mục lục, hướng dẫn client và liên kết platform trên cả hai nhánh. Không đánh dấu M1–M4 hoàn tất trong commit tài liệu.
+**M0 — Đã chốt thiết kế:** cập nhật tài liệu chuẩn, mục lục, hướng dẫn client và liên kết platform trên cả hai nhánh. Phiên bản 2 chốt top-down 3/4 và quy tắc tileset chỉ là ngoại lệ. Không đánh dấu M1–M4 hoàn tất trong commit tài liệu.
 
-**M1 — Cảnh chơi được:** một góc làng có đường cong, ao, nhà/quán, cây và ghế. Nền sạch, nước/props tách riêng, collision, Y-sort, camera và minimap dùng cùng dữ liệu; giữ scene cũ để đối chiếu.
+**M1 — Cảnh chơi được:** một góc làng top-down 3/4 có đường cong, ao, nhà/quán, cây và ghế, không dùng TileMapLayer trong cảnh mới. Nền sạch, nước/props tách riêng, collision, Y-sort, camera và minimap dùng cùng dữ liệu; giữ scene cũ để đối chiếu.
 
 **M2 — Tương tác thật:** ghế ngồi/rời, cửa mở/đóng và một cây đổi trạng thái. Kiểm tra bàn phím/chuột/cảm ứng, khoảng cách, đường tới, phản hồi lỗi. Prototype offline phải ghi rõ không cấp tài sản online; bước lưu/đồng bộ có test riêng.
 
@@ -161,13 +197,15 @@ Hai nhánh dùng cùng bản thiết kế này nhưng **không merge toàn bộ 
 
 Điều kiện nghiệm thu runtime, hiện đều chưa được xác nhận bởi bản thiết kế này:
 
+- [ ] Đúng 2D pixel top-down 3/4, không side-view hoặc tự đổi sang isometric; mật độ pixel và phối cảnh thống nhất.
+- [ ] Cảnh thử mới không dựng bằng TileMapLayer; mọi ngoại lệ về sau có ràng buộc và bằng chứng được ghi rõ, không tự coi vườn/sàn là ngoại lệ.
 - [ ] Không bake vật thể có state hoặc che nhân vật vào nền; tắt hiệu ứng vẫn đọc được lối đi.
 - [ ] Spawn/cầu/cửa/điểm hoạt động tới được; không xuyên gốc cây, đi vào nước cấm hoặc tương tác xuyên tường.
 - [ ] Người chơi được nhận biết rõ khi đi trước/sau mái và tán; không có lớp vẽ trùng.
 - [ ] Action đổi state đúng, từ chối đúng khi thiếu quyền/dụng cụ hoặc ngoài tầm; lưu/mở lại không phát thưởng lặp.
 - [ ] Lệnh app hoạt động khi client đóng, slot có sức chứa đúng, hủy/hết hạn giải phóng chỗ và không lộ trạng thái riêng tư.
 - [ ] Chuyển chunk không mất state, lộ mép nối hoặc làm sai minimap; so sánh scene/editor với preview từ cùng dữ liệu.
-- [ ] Đo PC/mobile ở camera thực, ban ngày/đêm/mưa và nhiều avatar; ghi kết quả thay vì tự nhận đạt FPS.
+- [ ] Đo PC/mobile ở camera thực, ban ngày/đêm/mưa và nhiều avatar; ghi kết quả thay vì tự nhận đạt FPS hoặc gọi cách mới là tối ưu hơn.
 
 ## 12. Tài liệu kỹ thuật
 
@@ -176,3 +214,9 @@ Các nguồn sau hỗ trợ lựa chọn node; kiến trúc và tiêu chí ở t
 - [S1 — CanvasItem: thứ tự vẽ và Y-sort](https://docs.godotengine.org/en/4.6/classes/class_canvasitem.html).
 - [S2 — Area2D: vùng phát hiện và hình va chạm](https://docs.godotengine.org/en/4.6/classes/class_area2d.html).
 - [S3 — Điều hướng 2D](https://docs.godotengine.org/en/4.6/tutorials/navigation/navigation_introduction_2d.html).
+- [S4 — TileMap: lợi ích, cách dựng theo lưới và giới hạn](https://docs.godotengine.org/en/4.6/tutorials/2d/using_tilemaps.html).
+- [S5 — Polygon2D và texture](https://docs.godotengine.org/en/4.6/classes/class_polygon2d.html).
+- [S6 — Sprite2D: texture, atlas và sprite sheet](https://docs.godotengine.org/en/4.6/classes/class_sprite2d.html).
+- [S7 — MeshInstance2D: đánh đổi fill rate và xử lý đỉnh](https://docs.godotengine.org/en/4.6/classes/class_meshinstance2d.html).
+- [S8 — Nhập ảnh, nén và bộ nhớ texture](https://docs.godotengine.org/en/4.6/tutorials/assets_pipeline/importing_images.html).
+- [S9 — AtlasTexture](https://docs.godotengine.org/en/4.6/classes/class_atlastexture.html).
