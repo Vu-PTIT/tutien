@@ -1,6 +1,6 @@
 # 09 — Nền tảng sinh hoạt và thế giới game
 
-**Cập nhật:** 05/10/2026.  
+**Cập nhật:** 08/10/2026.  
 **Trạng thái:** định hướng sản phẩm; chưa phải mô tả code hiện có.
 
 ## Mục tiêu
@@ -33,6 +33,8 @@ Tu luyện chia thành hai lựa chọn:
 - **PvE:** người chơi chủ động ra ngoài đánh quái để nhận kinh nghiệm, nguyên liệu và trang bị, theo hướng chiến đấu của Ngọc Rồng Online. Không có minigame; PvE là lựa chọn.
 
 Người chơi có thể vào game chỉ để gặp bạn hoặc chăm chút nơi ở. Không có minigame trong hướng hiện tại; combat không bắt buộc.
+
+Map theo [10 — Map phân lớp và vật thể tương tác](10-layered-interactive-maps.md): nền vẽ tự do, nước và props riêng; không bắt toàn bộ cảnh dùng tileset. Cây, cửa, ghế, giường và bàn học có dữ liệu tương tác/trạng thái độc lập. Đây là yêu cầu thiết kế, không phải tính năng đã nghiệm thu.
 
 ## C. Lớp kết nối
 
@@ -71,3 +73,13 @@ Người dùng tự kiểm soát trạng thái, thời hạn và người xem. T
 6. Kiểm tra avatar vẫn hoàn tất đường đi và giữ hoạt động khi chủ nhân đóng game; trạng thái hết hạn/ẩn đúng và không tạo avatar trùng khi mở lại.
 
 Chỉ sau khi lát cắt này dễ hiểu và ổn định mới mở rộng lịch, ghi chú, tính năng cộng đồng hoặc nội dung PvE.
+
+## G. Hợp đồng hoạt động trên map phân lớp
+
+Địa điểm khai báo `map_id`, ID vật thể/slot, điểm tiếp cận, vị trí thực hiện, hướng và animation. App gửi loại hoạt động và `command_id`; server chọn địa điểm/slot hợp lệ theo quyền, đường đi và sức chứa. Không lấy vị trí ngồi từ tâm ảnh hoặc mã tile.
+
+Server quản lý lộ trình/mốc thời gian và trạng thái `idle → travelling → active → completed/cancelled/expired`; xử lý lệnh lặp, lệnh cũ, hủy, hết hạn, hết chỗ và reconnect. Đóng game không dừng logic hoạt động; mở lại dựng một avatar từ snapshot. Khi người chơi tự điều khiển, phải chuyển quyền điều khiển khỏi hoạt động tự động.
+
+Dữ liệu hoạt động gửi cho bạn bè phải tuân thủ quyền xem; không chỉ giấu nhãn trong UI trong khi vẫn gửi đích riêng tư. Sóng nước, lá và khói chạy cục bộ; cây trồng/loot/sở hữu và slot dùng chung có xác nhận server. Trạng thái học/làm ngoài đời không tự sinh tài sản hay sức mạnh chiến đấu.
+
+M4 của tài liệu 10 là bước kiểm chứng liên thông; chưa có API mới hoặc hoạt động offline được triển khai chỉ bởi cập nhật tài liệu này.

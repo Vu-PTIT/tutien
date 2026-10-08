@@ -1,5 +1,13 @@
 # Tu Tiên
 
+## Thiết kế map — 08/10/2026
+
+Map mới theo hướng **nền vẽ phân lớp + nước riêng + vật thể tương tác độc lập + dữ liệu va chạm/đi lại riêng**. Giữ phong cách pixel nhưng không bắt toàn bộ làng ghép từ tileset. Tile vẫn dùng được ở luống trồng, sàn hoặc chi tiết lặp. Cây, ghế, cửa và đồ vật có ID, action và state riêng; không bake vào một ảnh nền phẳng.
+
+Quy chuẩn áp dụng trên cả `feat/dual-experience-platform` và `feat/map-ui-rebuild`, không merge chéo toàn bộ code. Xem [10 — Thiết kế map và lộ trình nghiệm thu](docs/game-design/10-layered-interactive-maps.md) và [hướng dẫn client](client/MAP_DESIGN.md).
+
+**Đây là cập nhật thiết kế, chưa phải bản map/hiệu ứng mới đã chạy.** Ở mốc platform `31080e8`, `client/scripts/main.gd` còn khai báo `MapWorldScene = null`. Những mô tả map bốn vùng của bản base cũ bên dưới là lịch sử/tham chiếu, không phải hiện trạng map đã nghiệm thu trên nhánh này. Scene mới, tương tác có lưu và liên thông activity cần được tích hợp và kiểm tra riêng.
+
 ## Hướng sản phẩm — 05/10/2026
 
 Tu Tiên đang được định hướng cho người trẻ, đặc biệt là Gen Z, thành hai trải nghiệm song song:
@@ -7,7 +15,7 @@ Tu Tiên đang được định hướng cho người trẻ, đặc biệt là G
 - **Nền tảng sinh hoạt và kết nối:** lịch/việc cá nhân, focus, phòng học/làm chung, hồ sơ, bạn bè và chat.
 - **Thế giới game pixel:** giao lưu kiểu game Avatar Việt Nam thời trước, kết hợp trồng trọt, câu cá, thu thập, chế tạo, chăm nhà/vườn kiểu Stardew Valley; người chơi có thể ngồi thiền tăng sức mạnh hoặc chủ động đánh quái PvE theo cảm hứng Ngọc Rồng Online. Không có minigame.
 
-Hai phần dùng chung tài khoản, avatar, bạn bè, chat và trạng thái. Ví dụ, bấm “đang đi làm” trong app sẽ gửi hoạt động sang thế giới game để nhân vật tự đi đến khu làm việc và bắt đầu làm, kể cả khi người dùng không mở game.
+Hai phần dùng chung tài khoản, avatar, bạn bè, chat và trạng thái. Ví dụ, bấm “đang đi làm” trong app sẽ gửi hoạt động sang thế giới game để nhân vật tự đi đến khu làm việc và bắt đầu làm, kể cả khi người dùng không mở game. Địa điểm và chỗ hoạt động theo ID/slot, do server kiểm tra quyền, đường đi và sức chứa; bạn bè xem theo phạm vi chia sẻ.
 
 Đây là định hướng sản phẩm trên nhánh thử nghiệm; lịch/focus và việc nhân vật tự đi, tự làm khi offline chưa được triển khai. Xem [01 — Tầm nhìn](docs/game-design/01-vision-and-core-loop.md), [08 — Hiện diện xã hội](docs/game-design/08-social-presence-and-lifestyle.md) và [09 — Hai không gian sản phẩm](docs/game-design/09-dual-experience-platform.md).
 
@@ -32,8 +40,7 @@ docker compose up --build -d
 ```
 
 3. Import `client/project.godot` trong Godot, nhấn **F6/F5** chạy scene/project. Chạy với `--touch-preview` hoặc nhấn **F9** trong bản PC để thử bố cục cảm ứng màn hình ngang; trên thiết bị mobile, bố cục này tự bật.
-4. Di chuyển bằng **WASD / phím mũi tên**, hoặc kéo cần trái ở chế độ cảm ứng. **C** mở hồ sơ nhân vật, **E** tương tác, **M** mở tuyến bản đồ. Quái xuất hiện trực tiếp trên map **Trúc Âm**; đến gần Sơn Trư hoặc Độc Chu rồi nhấn **Q/J/chuột trái** hoặc nút **Đánh**. Đòn đánh đầu tự đăng nhập thiết bị nếu backend đang chạy. XP, nguyên liệu và trang bị được máy chủ cộng thẳng vào **Túi đồ**. Nếu backend chưa chạy, mở **Farm → Kết nối** rồi chạy `docker compose up --build -d`; khi backend offline chỉ có thể khám phá map.
-   Đấu tập online vẫn mở từ **Farm**; xem [luật đấu tập](docs/combat-prototype.md).
+4. Bàn phím/chuột và cảm ứng dùng lớp input chung. Luồng khám phá bốn map, tương tác **E**, tuyến map **M** và farm quái trên Trúc Âm của bản base cũ phải được kiểm tra lại sau khi nối map mới; không coi chúng đã khả dụng chỉ từ hướng dẫn lịch sử. Đấu tập/PvE có tài liệu riêng: [luật đấu tập](docs/combat-prototype.md).
 5. **Nhân vật [C]** mở hồ sơ, cảnh giới, chỉ số, trang bị, kỹ năng và cài đặt thiết bị. **Mở Túi đồ để trang bị** chọn/tháo Kiếm hoặc Áo; **Túi [I]** mở kho, **Esc** đóng cửa sổ. Chế độ offline chỉ hiển thị dữ liệu mẫu, không lưu hoặc nhận thưởng. Sau khi kết nối, tài sản được đồng bộ và vật tư khởi đầu chỉ nhận một lần. Xem [hợp đồng inventory/reward](docs/inventory-and-rewards.md).
 6. Kiểm tra backend: `docker compose ps`, `docker compose logs nakama`. Sau khi backend healthy: `node scripts/smoke.mjs`.
 
@@ -47,7 +54,8 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 
 ## Cấu trúc
 
-- `client/`: scene làng/HUD/túi chỉnh được trong editor, atlas nhân vật/icon, đăng nhập, đấu tập và bãi Sơn Trư.
+- `client/`: HUD/túi, atlas nhân vật/icon, đăng nhập và các luồng prototype; phần map đang chờ tích hợp theo thiết kế phân lớp.
+- `client/MAP_DESIGN.md`: quy chuẩn dựng map, dữ liệu vật thể và điểm chuyển đổi theo nhánh.
 - `client/scripts/combat_api.gd`: adapter sparring/PvE dùng chung kết nối với `SocialApi`.
 - `server/src/combat.ts`: mô phỏng authoritative 20 Hz, hai người, đánh thường/né và vòng đời trận.
 - `server/src/pve_son_tru.ts`: AI và va chạm Sơn Trư authoritative 20 Hz; encounter P1 không cấp XP/loot.
@@ -59,19 +67,15 @@ Dừng backend bằng `docker compose down`. Dữ liệu PostgreSQL nằm trong 
 - `scripts/social-smoke.mjs`: kiểm thử nhiều tài khoản, chat WebSocket và quyền nhóm trên backend thật.
 - `.github/workflows/ci.yml`: build, unit test và smoke test Docker.
 
-## Phạm vi bản base
+## Bản base cũ — tham chiếu lịch sử
 
-Giao diện dùng atlas pixel, theme xanh đen/đồng, HUD và túi dạng scene Godot.
-Bốn map đang dựng từ atlas địa hình 32 px và vật thể 128 px riêng trong runtime;
-PNG world chỉ dùng làm ảnh ý tưởng ở panel tuyến, minimap đọc layout thật. An Khê có vật thể cao mờ đi khi che người chơi,
-sprite cây anh đào tách nền và va chạm gốc cây, vùng cản ngăn tương tác xuyên tường. Bàn phím/chuột và cảm ứng đi qua cùng lớp lệnh InputMap; bố cục cảm ứng là prototype cho màn hình ngang,
-chưa phải bản xuất Android đã nghiệm thu. Xem [thiết kế và kiểm chứng](docs/ui-product-slice.md)
-và [trạng thái triển khai](docs/implementation-status.md).
+Phần này giữ lại lịch sử prototype, không xác nhận khả năng chạy map ở nhánh platform hiện tại. Quy chuẩn cho mọi map mới là tài liệu 10 ở đầu README.
 
-Đã có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**. P1 thêm encounter Sơn Trư một người chơi: báo hướng 0,75 giây, lao 4 tile, hồi 0,8 giây, né/phản công, chết/reset và reconnect ngắn. Encounter hiện chỉ thử combat; **chưa cấp XP, linh thạch hay vật phẩm**. Inventory 24 ô, catalog, migration và gói khởi đầu đã có; dùng/trang bị đồ, quest runtime, trồng trọt, giao dịch và PvP mở vẫn chưa làm. Mobile export và đồ họa toàn game chưa nghiệm thu.
+Bản base trước đây dùng atlas địa hình 32 px và vật thể 128 px cho bốn map; PNG world làm ảnh ý tưởng ở panel tuyến, minimap đọc layout thật. An Khê có thử nghiệm vật thể cao mờ đi khi che người chơi, sprite cây anh đào tách nền và va chạm gốc cây, vùng cản ngăn tương tác xuyên tường. Những quy ước kích thước/atlas này không còn là yêu cầu bắt buộc cho map mới. Xem [thiết kế và kiểm chứng cũ](docs/ui-product-slice.md) và [trạng thái triển khai](docs/implementation-status.md); đối chiếu code nhánh trước khi dùng lại nội dung map.
 
-Xem [tiến độ và thứ tự triển khai](docs/implementation-status.md), [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md). P2 đã qua CI trên PR #8; P3 đang được triển khai trên `feat/p3-world-quests`: server-authoritative world interaction và quest 001–003. Cần CI Godot/Nakama xác nhận trước khi merge.
-Xem [nhật ký phát triển và lịch sử Git](docs/project-history.md) để biết các mốc đã commit, trạng thái sản phẩm và thứ tự làm tiếp theo.
+Bản base có khung offline, backend xã hội và **prototype đấu tập hai người do server xử lý**. P1 thêm encounter Sơn Trư một người chơi: báo hướng 0,75 giây, lao 4 tile, hồi 0,8 giây, né/phản công, chết/reset và reconnect ngắn. Encounter P1 chỉ thử combat; **chưa cấp XP, linh thạch hay vật phẩm**. Inventory 24 ô, catalog, migration và gói khởi đầu là nền kỹ thuật. Mobile export và đồ họa toàn game chưa nghiệm thu.
+
+Lịch sử P2 qua CI trên PR #8 và P3 trên `feat/p3-world-quests` không thay thế nghiệm thu nhánh hiện hành. Xem [hợp đồng combat và kiểm thử](docs/combat-prototype.md), [thiết kế sản phẩm](docs/game-design/README.md) và [nhật ký phát triển và lịch sử Git](docs/project-history.md).
 
 ## Môi trường phát triển
 
