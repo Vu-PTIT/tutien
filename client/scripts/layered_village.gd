@@ -6,6 +6,7 @@ const PROP_SCRIPT := preload("res://scripts/layered_prop.gd")
 const PLAYER_SCRIPT := preload("res://scripts/layered_player.gd")
 const MINI_SCRIPT := preload("res://scripts/layered_minimap.gd")
 const RASTER_SCRIPT := preload("res://scripts/layered_raster_chunks.gd")
+const LANDFORM_SCRIPT := preload("res://scripts/layered_landforms.gd")
 const SURFACE_SHADER := preload("res://shaders/layered_surface.gdshader")
 const FONT := preload("res://assets/fonts/BeVietnamPro-Regular.ttf")
 
@@ -29,6 +30,7 @@ func _ready() -> void:
     layout = parsed
     world_extent = _v(layout.get("size", [1120, 800]))
     _build_surfaces()
+    _build_landforms()
     _build_raster_details()
     _build_props_and_player()
     _build_water_collision()
@@ -146,6 +148,14 @@ func _build_surfaces() -> void:
         _surface(key, _ribbon(points, radius, 1.0), 1, -8)
 
 
+func _build_landforms() -> void:
+    var landforms := Node2D.new()
+    landforms.name = "L2_Landforms_Bridges_Shorelines"
+    landforms.set_script(LANDFORM_SCRIPT)
+    add_child(landforms)
+    landforms.call("configure", layout, self, water_polygons)
+
+
 func _build_raster_details() -> void:
     var brush := Node2D.new()
     brush.name = "L1_RasterBrushChunks"
@@ -179,18 +189,44 @@ func _build_water_collision() -> void:
     collision_root.name = "L2_WaterCollision"
     add_child(collision_root)
     for key in water_polygons.keys():
-        var polygon: PackedVector2Array = water_polygons[key]
-        if polygon.size() < 3:
+        var visible_polygon: PackedVector2Array = water_polygons[key]
+        if visible_polygon.size() < 3:
             continue
-        var body := StaticBody2D.new()
-        body.name = "SolidWater_" + str(key)
-        body.collision_layer = 1
-        body.collision_mask = 0
-        var collider := CollisionPolygon2D.new()
-        collider.build_mode = CollisionPolygon2D.BUILD_SOLIDS
-        collider.polygon = polygon
-        body.add_child(collider)
-        collision_root.add_child(body)
+        var parts: Array[PackedVector2Array] = [visible_polygon]
+        # Remove ONLY the covered bridge corridor from collision. Water
+        # remains visually continuous below the independently drawn deck.
+        # Geometry2D difference returns separate upstream/downstream pieces,
+        # so no empty "walkable river" exists outside the bridge.
+        for bridge in layout.get("bridges", []):
+            if str(bridge.get("water_id", "")) != str(key):
+                continue
+            var center := _v(bridge.get("position", [0, 0]))
+            var span := _v(bridge.get("size", [110, 24]))
+            var gap := float(bridge.get("collision_gap", 23))
+            var left := center.x - span.x * 0.5
+            var right := center.x + span.x * 0.5
+            var top := center.y - gap
+            var bottom := center.y + gap
+            var cutout := PackedVector2Array([
+                Vector2(left, top), Vector2(right, top),
+                Vector2(right, bottom), Vector2(left, bottom)])
+            var remaining: Array[PackedVector2Array] = []
+            for part in parts:
+                var fragments: Array[PackedVector2Array] = Geometry2D.clip_polygons(part, cutout)
+                for shape in fragments:
+                    if shape.size() >= 3:
+                        remaining.append(shape)
+            parts = remaining
+        for i in range(parts.size()):
+            var body := StaticBody2D.new()
+            body.name = "SolidWater_%s_%d" % [str(key), i]
+            body.collision_layer = 1
+            body.collision_mask = 0
+            var collider := CollisionPolygon2D.new()
+            collider.build_mode = CollisionPolygon2D.BUILD_SOLIDS
+            collider.polygon = parts[i]
+            body.add_child(collider)
+            collision_root.add_child(body)
 
 
 func _build_hud() -> void:

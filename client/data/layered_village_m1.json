@@ -140,6 +140,46 @@
           503
         ]
       ]
+    },
+    {
+      "id": "bridge_west_approach",
+      "radius": 11,
+      "points": [
+        [
+          748,
+          293
+        ],
+        [
+          806,
+          328
+        ],
+        [
+          865,
+          346
+        ],
+        [
+          903,
+          351
+        ]
+      ]
+    },
+    {
+      "id": "bridge_east_approach",
+      "radius": 11,
+      "points": [
+        [
+          1032,
+          351
+        ],
+        [
+          1072,
+          345
+        ],
+        [
+          1128,
+          340
+        ]
+      ]
     }
   ],
   "waters": [
@@ -859,8 +899,8 @@
       "name": "Bụi cây ven đường",
       "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_4.png",
       "position": [
-        254,
-        296
+        257,
+        319
       ],
       "solid": [],
       "action": "",
@@ -1770,6 +1810,32 @@
         0,
         0
       ]
+    },
+    {
+      "id": "bridge_signpost",
+      "kind": "sign",
+      "name": "Cầu gỗ Linh Khê",
+      "texture": "res://assets/tileset/Art/Props/Sign_2.png",
+      "position": [
+        851,
+        324
+      ],
+      "solid": [
+        12,
+        7,
+        0,
+        -4
+      ],
+      "action": "notice",
+      "radius": 48,
+      "interaction_offset": [
+        0,
+        17
+      ],
+      "door_offset": [
+        0,
+        -15
+      ]
     }
   ],
   "activity_slots": [
@@ -1804,7 +1870,7 @@
       ]
     }
   ],
-  "art_revision": "m1-2-raster-brushes",
+  "art_revision": "m1-3-landforms-river-bridge",
   "terrain_patches": [
     {
       "id": "north_house_yard",
@@ -1961,7 +2027,7 @@
         199,
         75
       ],
-      "count": 76,
+      "count": 48,
       "theme": "mixed"
     },
     {
@@ -1974,7 +2040,7 @@
         147,
         65
       ],
-      "count": 58,
+      "count": 45,
       "theme": "white"
     },
     {
@@ -2000,8 +2066,102 @@
         79,
         118
       ],
-      "count": 76,
+      "count": 54,
       "theme": "mixed"
+    }
+  ],
+  "terraces": [
+    {
+      "id": "northwest_hillside",
+      "side": "north",
+      "depth": 17,
+      "edge": [
+        [
+          0,
+          272
+        ],
+        [
+          61,
+          276
+        ],
+        [
+          120,
+          268
+        ],
+        [
+          183,
+          278
+        ],
+        [
+          256,
+          263
+        ],
+        [
+          320,
+          276
+        ],
+        [
+          388,
+          264
+        ],
+        [
+          438,
+          271
+        ]
+      ],
+      "collision": true
+    },
+    {
+      "id": "southern_rock_garden",
+      "side": "south",
+      "depth": 18,
+      "edge": [
+        [
+          538,
+          695
+        ],
+        [
+          594,
+          681
+        ],
+        [
+          656,
+          687
+        ],
+        [
+          716,
+          670
+        ],
+        [
+          780,
+          681
+        ],
+        [
+          844,
+          668
+        ],
+        [
+          910,
+          685
+        ]
+      ],
+      "collision": true
+    }
+  ],
+  "bridges": [
+    {
+      "id": "east_river_footbridge",
+      "water_id": "river_east",
+      "position": [
+        967,
+        351
+      ],
+      "size": [
+        128,
+        26
+      ],
+      "collision_gap": 23,
+      "kind": "timber_footbridge"
     }
   ]
 }

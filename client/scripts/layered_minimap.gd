@@ -35,6 +35,13 @@ func _draw() -> void:
         if str(patch.get("kind", "")) == "soil":
             color = Color(0.52, 0.38, 0.28)
         _draw_ellipse(_v(patch.get("center", [])), _v(patch.get("radii", [])), color, frame, extent)
+    for terrace in layout.get("terraces", []):
+        var lip: PackedVector2Array = geometry_provider.call("_smooth_path", terrace.get("edge", []))
+        var scaled := PackedVector2Array()
+        for p in lip:
+            scaled.append(_pin(p, frame, extent))
+        if scaled.size() >= 2:
+            draw_polyline(scaled, Color(0.42, 0.46, 0.34, 0.95), 2.0, false)
     for water in layout.get("waters", []):
         if str(water.get("shape", "")) == "pond":
             var center := _v(water.get("center", []))
@@ -51,6 +58,13 @@ func _draw() -> void:
         var radius := float(road.get("radius", 13.0))
         _draw_stroke(points, radius + 3.0, Color(0.67, 0.72, 0.45), frame, extent)
         _draw_stroke(points, radius, Color(0.86, 0.73, 0.53), frame, extent)
+    for bridge in layout.get("bridges", []):
+        var center := _v(bridge.get("position", []))
+        var bridge_size := _v(bridge.get("size", [128, 26]))
+        var p := _pin(center - bridge_size * 0.5, frame, extent)
+        var dims := bridge_size / extent * frame.size
+        draw_rect(Rect2(p, dims), Color(0.47, 0.31, 0.21))
+        draw_rect(Rect2(p, dims).grow(-0.7), Color(0.83, 0.62, 0.36))
     for obj in layout.get("objects", []):
         var p := _pin(_v(obj.get("position", [])), frame, extent)
         var kind := str(obj.get("kind", ""))

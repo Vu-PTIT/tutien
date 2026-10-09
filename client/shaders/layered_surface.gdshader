@@ -107,6 +107,33 @@ void fragment() {
         if (soil_speck > 0.87) {
             color_rgb = mix(color_rgb, vec3(0.77, 0.58, 0.40), 0.38);
         }
+    } else if (surface_kind == 7) {
+        // Higher village meadow. A subtle shift in tone conveys a raised bank
+        // without creating a rectangular brown "island".
+        color_rgb = mix(vec3(0.49, 0.69, 0.41), vec3(0.55, 0.75, 0.46), fields);
+        if (coarse > 0.82) {
+            color_rgb = mix(color_rgb, vec3(0.35, 0.59, 0.34), 0.41);
+        }
+        if (tiny_leaf(p) > 0.5) {
+            color_rgb = vec3(0.39, 0.61, 0.36);
+        }
+    } else if (surface_kind == 8) {
+        // Side-facing exposed soil and small stone ledges. Continuous world
+        // pixels keep horizontal strata aligned across an irregular cliff.
+        color_rgb = mix(vec3(0.54, 0.47, 0.34), vec3(0.64, 0.54, 0.38), fields);
+        float band = mod(p.y + floor(p.x / 37.0) * 2.0, 7.0);
+        if (band <= 1.0) {
+            color_rgb = mix(color_rgb, vec3(0.37, 0.37, 0.29), 0.54);
+        } else if (band > 5.0) {
+            color_rgb = mix(color_rgb, vec3(0.78, 0.67, 0.48), 0.33);
+        }
+        if (soil_speck > 0.91) {
+            color_rgb *= 0.77;
+        }
+        float crack = noise21(floor(p / vec2(31.0, 9.0)) + 22.0);
+        if (crack > 0.88 && mod(p.x, 31.0) < 2.0) {
+            color_rgb = vec3(0.36, 0.36, 0.28);
+        }
     } else {
         // Irregular sandy verge under the lane's main footprint.
         color_rgb = mix(vec3(0.65, 0.72, 0.45), vec3(0.74, 0.73, 0.48), fields);

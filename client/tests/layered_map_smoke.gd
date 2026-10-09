@@ -46,10 +46,18 @@ func _run_checks() -> void:
     if info_label != null:
         var text_color: Color = info_label.get_theme_color("font_color")
         _check(text_color.r > 0.8 and text_color.g > 0.8, "HUD text is not light on dark")
+    var landforms := stage.get_node_or_null("L2_Landforms_Bridges_Shorelines")
+    _check(landforms != null, "Missing separate landform renderer")
+    if landforms != null:
+        _check(int(landforms.get("terrace_count")) == 2, "Expected two authored ridges")
+        _check(int(landforms.get("bridge_count")) == 1, "Timber bridge was not built")
+        _check(int(landforms.get("shoreline_count")) == 2, "Bank outlines out of sync")
+        _check(landforms.get_node_or_null("TerraceWall_northwest_hillside") is StaticBody2D, "North cliff collision missing")
+        _check(landforms.get_node_or_null("BridgeRail_east_river_footbridge_1") is StaticBody2D, "Bridge rail collision missing")
     var collision_root := stage.get_node_or_null("L2_WaterCollision")
     _check(collision_root != null, "Missing water collision root")
     if collision_root != null:
-        _check(collision_root.get_child_count() == 2, "Expected two water collision bodies")
+        _check(collision_root.get_child_count() >= 2, "Water collision pieces missing")
         for body in collision_root.get_children():
             _check(body is StaticBody2D, "Water blocker is not a static body")
             _check(body.get_child_count() == 1 && body.get_child(0) is CollisionPolygon2D,
