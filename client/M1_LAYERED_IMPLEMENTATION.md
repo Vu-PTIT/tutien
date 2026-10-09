@@ -9,7 +9,7 @@
 - `shaders/layered_surface.gdshader`: world-coordinate pixel textures (fixes former implicit UV stretching), water ripples clipped to waterways, locally distinguishable sandy trails, grass, bank and planting soil.
 - `scripts/layered_prop.gd`: independent PNG scene objects from the original resource pack. Colliders, interaction sensing, visual Y-sort and access points are separate. Tree/shrub crowns sway gently about their ground anchor.
 - `scripts/layered_player.gd`: inherits corrected walk/idle 32×48 sheet and bounded 2D camera. Local bench sit/stand action.
-- `scripts/layered_minimap.gd`: renders **the same generated polygons** as the world and location data; no independently maintained preview bitmap.
+- `scripts/layered_minimap.gd`: renders the **same smoothed paths, water centerlines and prop coordinates**, scaled as strokes for minimap safety; no independently maintained preview bitmap.
 - `L2_WaterCollision`: uses solid `CollisionPolygon2D` derived from the same rendered water outlines; no approximate circle chain.
 - `scripts/check-layered-map.cjs`: checks map schema, sprite resource paths, unique IDs, valid activity slot anchors and non-tile runtime contract.
 - `tests/layered_map_smoke.gd` and `tests/layered_map_capture.gd`: smoke-check live Godot nodes, local interactions and create viewport screenshot in CI.
@@ -23,7 +23,7 @@
 
 ## Verification and limitations
 
-- An automated Godot 4.6.1 import, map-specific smoke test and screenshot capture are configured in `.github/workflows/ci.yml`. Inspect the **actual workflow result and uploaded PNG** before reporting runtime/visual acceptance.
+- An automated Godot 4.6.1 import, map-specific smoke test, strict runtime error gate and screenshot capture are configured in `.github/workflows/ci.yml`. Inspect the **actual workflow result and uploaded PNG** before reporting runtime/visual acceptance.
 - All procedural ground colors remain temporary authored M1 materials, **not final hand-painted raster art**. The next art pass should replace broad flat procedural surfaces with art-directed pixel chunks/textured shapes and add proper riverbank details that match the supplied sprites.
 - The new map is a **compact playable prototype**. It has no complete navigation mesh, bridges, indoor rooms, weather/day-night integration, platform RPC, authoritative activities, online persistence or loot. The three activity slots in the JSON are nonfunctional placeholders.
 - Local prop state resets when the scene is reopened. Touch/mobile controls and camera framing must be checked on actual devices.
