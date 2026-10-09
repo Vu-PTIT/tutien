@@ -5,6 +5,7 @@ const DATA_PATH := "res://data/layered_village_m1.json"
 const PROP_SCRIPT := preload("res://scripts/layered_prop.gd")
 const PLAYER_SCRIPT := preload("res://scripts/layered_player.gd")
 const MINI_SCRIPT := preload("res://scripts/layered_minimap.gd")
+const RASTER_SCRIPT := preload("res://scripts/layered_raster_chunks.gd")
 const SURFACE_SHADER := preload("res://shaders/layered_surface.gdshader")
 const FONT := preload("res://assets/fonts/BeVietnamPro-Regular.ttf")
 
@@ -14,6 +15,7 @@ var props: Array[Node2D] = []
 var label: Label
 var _selected_seat: Node2D
 var _tick := 0.0
+var _status_until_ms := 0
 var world_extent := Vector2(1120.0, 800.0)
 var water_polygons: Dictionary = {}
 
@@ -27,6 +29,7 @@ func _ready() -> void:
     layout = parsed
     world_extent = _v(layout.get("size", [1120, 800]))
     _build_surfaces()
+    _build_raster_details()
     _build_props_and_player()
     _build_water_collision()
     _build_hud()
@@ -143,6 +146,15 @@ func _build_surfaces() -> void:
         _surface(key, _ribbon(points, radius, 1.0), 1, -8)
 
 
+func _build_raster_details() -> void:
+    var brush := Node2D.new()
+    brush.name = "L1_RasterBrushChunks"
+    brush.set_script(RASTER_SCRIPT)
+    brush.z_index = -7
+    add_child(brush)
+    brush.call("configure", layout, water_polygons)
+
+
 func _build_props_and_player() -> void:
     var sorted := Node2D.new()
     sorted.name = "L3_YSort_Props_and_Player"
@@ -187,15 +199,28 @@ func _build_hud() -> void:
     canvas.layer = 20
     add_child(canvas)
     var panel := PanelContainer.new()
-    panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+    panel.name = "InfoPanel"
+    panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
     panel.position = Vector2(14, 14)
-    panel.custom_minimum_size = Vector2(475, 84)
+    panel.custom_minimum_size = Vector2(472, 78)
+    var card := StyleBoxFlat.new()
+    card.bg_color = Color(0.095, 0.16, 0.14, 0.91)
+    card.border_color = Color(0.82, 0.75, 0.53, 0.98)
+    card.set_border_width_all(2)
+    card.set_corner_radius_all(3)
+    card.content_margin_left = 14
+    card.content_margin_right = 14
+    card.content_margin_top = 9
+    card.content_margin_bottom = 9
+    panel.add_theme_stylebox_override("panel", card)
     canvas.add_child(panel)
     label = Label.new()
+    label.name = "InfoLabel"
+    label.mouse_filter = Control.MOUSE_FILTER_IGNORE
     label.add_theme_font_override("font", FONT)
     label.add_theme_font_size_override("font_size", 15)
-    label.add_theme_color_override("font_color", Color(0.14, 0.20, 0.16))
-    label.text = "Làng Linh Khê · Scene-based M1\nWASD: di chuyển · E: tương tác · Cuộn chuột: camera"
+    label.add_theme_color_override("font_color", Color(0.97, 0.94, 0.82))
+    label.text = "LÀNG LINH KHÊ · BẢN THỬ PIXEL\nWASD: đi lại · E: tương tác · Cuộn chuột: zoom"
     panel.add_child(label)
     var minimap := Control.new()
     minimap.name = "MapOverview"
@@ -211,13 +236,16 @@ func _build_hud() -> void:
 
 
 func _process(delta: float) -> void:
-    if player == null:
+    if player == null or label == null:
         return
     _tick += delta
     if _tick < 0.15:
         return
     _tick = 0.0
+    if Time.get_ticks_msec() < _status_until_ms:
+        return
     if bool(player.get("seated")):
+        label.text = "ĐANG NGỒI NGHỈ · BẢN DEMO OFFLINE\n[E] đứng dậy"
         return
     var closest: Node2D
     var distance := INF
@@ -229,7 +257,9 @@ func _process(delta: float) -> void:
             closest = prop
             distance = d
     if closest != null:
-        label.text = "Làng Linh Khê · M1\n[E] %s · WASD để đi lại" % str(closest.get("display_name"))
+        label.text = "LÀNG LINH KHÊ · KHÁM PHÁ\n[E] %s" % str(closest.get("display_name"))
+    else:
+        label.text = "LÀNG LINH KHÊ · BẢN THỬ PIXEL\nWASD: đi lại · E: tương tác · Cuộn chuột: zoom"
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -238,6 +268,7 @@ func _unhandled_input(event: InputEvent) -> void:
     if bool(player.get("seated")):
         player.call("leave_seat")
         label.text = "Bạn đã đứng dậy. Dữ liệu chưa lưu lên server."
+        _status_until_ms = Time.get_ticks_msec() + 2300
         get_viewport().set_input_as_handled()
         return
     var nearest: Node2D
@@ -254,6 +285,7 @@ func _unhandled_input(event: InputEvent) -> void:
         if bool(result.get("sit", false)):
             player.call("sit_at", nearest.call("action_world_point") + Vector2(0, 3))
         label.text = str(result.get("message", ""))
+        _status_until_ms = Time.get_ticks_msec() + 3000
         get_viewport().set_input_as_handled()
 
 

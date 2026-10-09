@@ -42,6 +42,10 @@
         [
           819,
           509
+        ],
+        [
+          886,
+          504
         ]
       ]
     },
@@ -128,8 +132,12 @@
           481
         ],
         [
-          850,
-          506
+          847,
+          497
+        ],
+        [
+          902,
+          503
         ]
       ]
     }
@@ -554,8 +562,8 @@
       "name": "Điểm câu ven sông",
       "texture": "res://assets/tileset/Art/Props/Sign_1.png",
       "position": [
-        851,
-        511
+        903,
+        504
       ],
       "solid": [
         14,
@@ -564,10 +572,10 @@
         -5
       ],
       "action": "fishing",
-      "radius": 52,
+      "radius": 54,
       "interaction_offset": [
-        -9,
-        15
+        2,
+        20
       ],
       "door_offset": [
         0,
@@ -1684,6 +1692,84 @@
         0,
         0
       ]
+    },
+    {
+      "id": "village_well",
+      "kind": "well",
+      "name": "Giếng làng",
+      "texture": "res://assets/tileset/Art/Buildings/Well_Hay_1.png",
+      "position": [
+        192,
+        585
+      ],
+      "solid": [
+        31,
+        12,
+        0,
+        -6
+      ],
+      "action": "notice",
+      "radius": 53,
+      "interaction_offset": [
+        0,
+        21
+      ],
+      "door_offset": [
+        0,
+        -14
+      ]
+    },
+    {
+      "id": "orchard_rock",
+      "kind": "rock",
+      "name": "Đá bên vườn",
+      "texture": "res://assets/tileset/Art/Rocks/Rock_Brown_2.png",
+      "position": [
+        638,
+        648
+      ],
+      "solid": [
+        12,
+        9,
+        0,
+        -4
+      ],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "frontyard_crate",
+      "kind": "crate",
+      "name": "Thùng dụng cụ",
+      "texture": "res://assets/tileset/Art/Props/Crate_Large_Empty.png",
+      "position": [
+        439,
+        695
+      ],
+      "solid": [
+        17,
+        9,
+        0,
+        -4
+      ],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
     }
   ],
   "activity_slots": [
@@ -1693,8 +1779,8 @@
       "activity": "fishing",
       "capacity": 1,
       "position": [
-        845,
-        523
+        916,
+        521
       ]
     },
     {
@@ -1718,7 +1804,7 @@
       ]
     }
   ],
-  "art_revision": "m1-visual-pass-2026-10-09",
+  "art_revision": "m1-2-raster-brushes",
   "terrain_patches": [
     {
       "id": "north_house_yard",
@@ -1810,6 +1896,112 @@
         19
       ],
       "seed": 17
+    }
+  ],
+  "brush_zones": [
+    {
+      "id": "wildflowers_northwest",
+      "center": [
+        178,
+        174
+      ],
+      "radii": [
+        150,
+        120
+      ],
+      "count": 72,
+      "theme": "white"
+    },
+    {
+      "id": "small_meadow_west",
+      "center": [
+        108,
+        395
+      ],
+      "radii": [
+        94,
+        85
+      ],
+      "count": 60,
+      "theme": "mixed"
+    },
+    {
+      "id": "orchard_north",
+      "center": [
+        396,
+        176
+      ],
+      "radii": [
+        140,
+        88
+      ],
+      "count": 58,
+      "theme": "white"
+    },
+    {
+      "id": "east_orchard",
+      "center": [
+        859,
+        177
+      ],
+      "radii": [
+        72,
+        108
+      ],
+      "count": 46,
+      "theme": "red"
+    },
+    {
+      "id": "village_plaza_edges",
+      "center": [
+        591,
+        554
+      ],
+      "radii": [
+        199,
+        75
+      ],
+      "count": 76,
+      "theme": "mixed"
+    },
+    {
+      "id": "garden_wilds",
+      "center": [
+        227,
+        716
+      ],
+      "radii": [
+        147,
+        65
+      ],
+      "count": 58,
+      "theme": "white"
+    },
+    {
+      "id": "south_forest",
+      "center": [
+        685,
+        690
+      ],
+      "radii": [
+        166,
+        94
+      ],
+      "count": 68,
+      "theme": "red"
+    },
+    {
+      "id": "river_meadow",
+      "center": [
+        855,
+        402
+      ],
+      "radii": [
+        79,
+        118
+      ],
+      "count": 76,
+      "theme": "mixed"
     }
   ]
 }

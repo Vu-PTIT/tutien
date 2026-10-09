@@ -36,6 +36,16 @@ func _run_checks() -> void:
     _check(stage.get_node_or_null("garden_bed_a") is Polygon2D, "Missing independent garden soil")
     _check(stage.get_node_or_null("LayeredMapHUD/MapOverview") != null, "Missing shared-data minimap")
 
+    var decals := stage.get_node_or_null("L1_RasterBrushChunks")
+    _check(decals != null, "Missing authored pixel-art raster brushes")
+    if decals != null:
+        _check(int(decals.get("stamp_count")) >= 120, "Missing foliage and shoreline brushwork")
+        _check(int(decals.get("raster_chunk_count")) > 2, "Raster brushwork was not composited into chunks")
+    var info_label := stage.get_node_or_null("LayeredMapHUD/InfoPanel/InfoLabel") as Label
+    _check(info_label != null, "Missing readable high-contrast HUD")
+    if info_label != null:
+        var text_color: Color = info_label.get_theme_color("font_color")
+        _check(text_color.r > 0.8 and text_color.g > 0.8, "HUD text is not light on dark")
     var collision_root := stage.get_node_or_null("L2_WaterCollision")
     _check(collision_root != null, "Missing water collision root")
     if collision_root != null:

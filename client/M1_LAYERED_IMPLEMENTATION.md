@@ -29,3 +29,15 @@
 - Local prop state resets when the scene is reopened. Touch/mobile controls and camera framing must be checked on actual devices.
 - The platform branch stays untouched, and **the server remains authoritative** when activity syncing is implemented.
 - Desktop/mobile scene performance, accessibility, exact prop footprints and potential water polygon collision concavity need Godot QA. No FPS or full M1 acceptance is claimed.
+
+## M1.2 — authored raster decoration and contrast (2026-10-09)
+
+- Added eight explicitly positioned biome/flower brush zones in `data/layered_village_m1.json`.
+- `layered_raster_chunks.gd` composites actual source-pack pixel artwork (flower sheets, tiny shrubs, plants and stones) into reusable 256×256 RGBA chunks; scenery remains a separate layer rather than part of the ground, with consistent nearest filtering. Placement uses seeded, non-grid freeform distributions and keeps main footpaths, buildings, water and plantable beds clear.
+- River/pond verges get locally painted reeds, flowers and stones; footpaths get sparse pixel stone details. All decorative stamps are presentation-only, not loot/colliders.
+- Props gain separate soft ground-contact shadow polygons independent of Y-sorted sprites and wind pivots.
+- HUD now uses a dark, high-contrast card with a readable Vietnamese font. Interaction feedback lasts briefly and default tips reappear.
+- The fishing-sign/slot position was moved toward the main riverbank, and three independent environment props were added.
+- Smoke test now checks brush chunks and HUD contrast.
+- **Visual quality gate:** inspect captured Godot screenshot in GitHub Actions, especially path continuity, density, foliage variation and alpha edges. The raster brush stamps are sourced from existing licensed sprites; **not a claim that all terrain is hand-painted**.
+- `feat/dual-experience-platform` was not modified. No NPC routines, persistence, multiplayer activity or server economy added.

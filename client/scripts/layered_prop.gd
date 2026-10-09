@@ -55,8 +55,33 @@ func _create_visual(resource_path: String) -> void:
     else:
         _visual.texture = texture
         _visual.position = Vector2(0.0, -float(texture.get_height()) / 2.0)
+        _create_contact_shadow(texture)
     _visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
     _sway_pivot.add_child(_visual)
+
+
+func _create_contact_shadow(texture: Texture2D) -> void:
+    if kind not in ["house", "tree", "bush", "rock", "well", "bench", "crate"]:
+        return
+    # Anchored to the ground footprint, independent from the tree canopy sway.
+    # Three pixel-step silhouettes give depth without baked shadows in terrain.
+    var size := texture.get_size()
+    var width := minf(float(size.x) * 0.43, 73.0)
+    var height := 9.0 if kind in ["house", "well"] else 5.0
+    if kind == "rock" or kind == "bush":
+        height = 3.0
+    for ring in range(3):
+        var ellipse := Polygon2D.new()
+        ellipse.name = "ContactShadow_%d" % ring
+        ellipse.color = Color(0.14, 0.24, 0.12, 0.055 + float(2 - ring) * 0.041)
+        var outline := PackedVector2Array()
+        var half_w := maxf(3.0, width + float(2 - ring) * 1.8)
+        var half_h := maxf(2.0, height + float(2 - ring) * 1.4)
+        for i in range(20):
+            var angle := TAU * float(i) / 20.0
+            outline.append(Vector2(roundi(cos(angle) * half_w), roundi(sin(angle) * half_h) + 1))
+        ellipse.polygon = outline
+        add_child(ellipse)
 
 
 func _process(delta: float) -> void:
