@@ -1,55 +1,90 @@
 # 01 — Tầm nhìn sản phẩm và vòng chơi
 
-**Cập nhật:** 05/10/2026 cho `feat/dual-experience-platform`.  
-**Định hướng đầy đủ:** [09 — Hai không gian sản phẩm](09-dual-experience-platform.md).  
-**Hiện diện xã hội:** [08 — Trạng thái sinh hoạt](08-social-presence-and-lifestyle.md).
+**Cập nhật:** 09/10/2026 cho `feat/dual-experience-platform`.  
+**Vai trò nhánh:** **SẢNH / PLATFORM** — lịch, kế hoạch, nhật ký, thống kê, hồ sơ xã hội và điều khiển activity.  
+**Nhánh game tương ứng:** `feat/map-ui-rebuild` — map, UI trong game, nhân vật, animation và thực thi activity trong thế giới.
 
 ## 1. Lời hứa với người dùng
 
-Tu Tiên hướng tới người trẻ, đặc biệt là Gen Z, với hai trải nghiệm song song: một nền tảng để sắp xếp việc học/làm và giữ kết nối với bạn bè; một thế giới game pixel để giao lưu, chăm chút nơi ở và tiến triển theo nhịp riêng. Phần game kết hợp vòng sống thư thái như trồng trọt, câu cá, thu thập, chế tạo và chăm nhà/vườn với không khí gặp gỡ, kết bạn của game Avatar Việt Nam thời trước.
+Tu Tiên kết hợp một **nền tảng đời sống cá nhân** với một **thế giới game pixel xã hội**.
 
-Hai phần dùng chung tài khoản, avatar, bạn bè, tin nhắn và trạng thái. Người dùng có thể mở từng phần độc lập; khi họ chọn “đang đi làm” trong app, nhân vật trong thế giới game tự đi tới khu làm việc và bắt đầu hoạt động, kể cả khi người dùng không vào game.
+Trên nhánh platform, trọng tâm là giao diện sảnh: người dùng lên lịch học/làm, ghi lại việc đã làm bằng icon/note, xem thống kê nhẹ, kết nối bạn bè và giao một hoạt động cho nhân vật khi đang bận ngoài đời.
 
-## 2. Hai vòng trải nghiệm
+Thế giới game được phát triển ở `feat/map-ui-rebuild`. Platform không tự dựng map hay mô phỏng animation; nó gửi activity command và đọc trạng thái/kết quả do backend đồng bộ.
 
-| Không gian | Vòng chơi |
-| --- | --- |
-| Nền tảng sinh hoạt | Xem lịch/việc trong ngày → chọn phòng tập trung hoặc tự làm → chia sẻ trạng thái với bạn → hoàn tất việc và điều chỉnh kế hoạch |
-| Thế giới game | Vào thị trấn → gặp bạn/chăm nhà-vườn → trồng trọt, câu cá, thu thập hoặc chế tạo → khi muốn thì thiền hay đi đánh quái → quay lại không gian sống |
+## 2. Ba lớp dữ liệu
 
-Nền tảng sinh hoạt cần có ích mà không yêu cầu mở game: danh sách việc, lịch cá nhân, hẹn giờ tập trung, phòng học/làm việc chung, hồ sơ và chat bạn bè. Bắt đầu bằng các công cụ nhẹ để hình thành thói quen; chỉ mở rộng sau khi người dùng thực sự dùng thường xuyên.
+| Lớp | Ví dụ | Chủ sở hữu chính |
+| --- | --- | --- |
+| `real_life_entry` | Học 8–11h, đi làm, đi cà phê | Platform |
+| `real_life_status` | Đang học, đang làm, đang nghỉ | Platform/social |
+| `avatar_activity` | Đi câu, chăm vườn, thiền | Hợp đồng chung; platform tạo lệnh, game thực thi/hiển thị |
 
-## 3. Trụ cột sản phẩm
+Người dùng có thể đang học ngoài đời trong khi avatar đang câu cá. Không tự ánh xạ “đang học” → “avatar phải vào thư viện”.
 
-1. **Làm việc và sinh hoạt cùng bạn bè:** xem trạng thái, hẹn giờ tập trung, vào phòng yên tĩnh chung, trò chuyện hoặc để lại lời nhắn.
-2. **Hiện diện có lựa chọn:** người dùng tự đặt trạng thái như “đang đi học”, “đang làm việc”, “đang nghỉ” hoặc “đang tu luyện”. Avatar và hồ sơ phản ánh lựa chọn đó theo thời gian đã chọn.
-3. **Đời sống trong thế giới game:** trồng trọt, câu cá, thu thập, chế tạo, chăm nhà/vườn, thăm bạn, trang phục và biểu cảm.
-4. **Tu luyện tùy ý:** ngồi thiền để tăng sức mạnh hoặc chủ động đi đánh quái PvE, theo cảm hứng chiến đấu của Ngọc Rồng Online. Chiến đấu không bắt buộc để dùng nền tảng, giao lưu hay chăm vườn.
-5. **Chất Việt Nam gần gũi:** thị trấn pixel là nơi mọi người muốn ghé qua, gặp gỡ và kết bạn; lấy cảm giác cộng đồng của Avatar Việt Nam thời trước, kết hợp nhà/vườn và cảnh quan đời thường. Linh khí, thiền và dị thú là lớp kỳ ảo mở rộng.
+## 3. Vòng trải nghiệm của platform
 
-Định hướng hiện tại không có minigame. PvP không phải trọng tâm sản phẩm.
+**Lên kế hoạch → thực hiện ngoài đời → ghi nhận/note → xem lại lịch/thống kê → tùy chọn giao activity cho avatar.**
 
-## 4. Kết nối hai không gian
+Platform cần:
+- lịch ngày/tuần/tháng;
+- lịch lặp;
+- trạng thái planned/done/skipped/cancelled;
+- icon hoạt động và note;
+- thống kê nhẹ;
+- thẻ avatar hiển thị activity hiện tại;
+- gửi lệnh bắt đầu/dừng/đổi activity;
+- nút chuyển sang thế giới game.
 
-- Dùng chung tài khoản, tên nhân vật, avatar, hồ sơ, bạn bè, chat và trạng thái hiện diện.
-- Khi người dùng chọn “đang đi làm” hoặc “đang học” trên nền tảng, hệ thống gửi lệnh cho thế giới game: avatar tự đi theo đường trong map tới khu làm việc/lớp học và bắt đầu hoạt động tương ứng. Chủ nhân không cần mở game; bạn bè nhìn thấy nhân vật đang di chuyển hoặc đã tới nơi.
-- Công cụ lịch, việc cần làm và focus là trải nghiệm của nền tảng; chúng không biến thành hệ thống chấm công hoặc yêu cầu bằng chứng về hoạt động ngoài đời.
-- Có thể ghi nhận việc hoàn thành bằng phản hồi xã hội hoặc phần thưởng trang trí tùy chọn. Không tạo chênh lệch sức mạnh PvE dựa trên năng suất ngoài đời.
-- Việc chia sẻ trạng thái do người dùng kiểm soát; đặt thời hạn, sửa hoặc ẩn bất cứ lúc nào.
+## 4. Giao activity cho nhân vật
 
-## 5. Thứ tự sản xuất
+Ví dụ:
+1. Người dùng có lịch “Học 08:00–11:00”.
+2. Trong thẻ nhân vật chọn “Đi câu tại hồ An Khê 2 giờ”.
+3. Platform gửi `activity_command` lên backend.
+4. Backend xác nhận phiên.
+5. Nhánh game `feat/map-ui-rebuild` chịu trách nhiệm cho avatar đi đến slot câu và hiển thị đúng animation/trạng thái.
+6. Platform chỉ hiển thị tiến trình, kết quả và cho phép dừng/đổi activity.
+
+Platform không tính thưởng bằng logic client và không giả lập đường đi của avatar.
+
+## 5. Phần thưởng
+
+Hoạt động đời thật không tự sinh tài sản game.
+
+Kết quả câu cá/làm vườn/thiền thuộc `avatar_activity` và phải do server settlement idempotent. Platform có thể hiển thị kết quả, nhưng không được tự cộng vật phẩm.
+
+## 6. Thứ tự sản xuất của nhánh platform
 
 | Giai đoạn | Trọng tâm |
 | --- | --- |
-| P0 | Bản sắc hình ảnh: bản đồ, UI, nhân vật, di chuyển và các khu sinh hoạt Việt Nam |
-| P1 | Nền tảng sinh hoạt tối thiểu: lịch/việc, focus, phòng học/làm việc và hồ sơ xã hội |
-| P2 | Đồng bộ bạn bè/chat và lệnh hoạt động; avatar tự đi đến nơi học/làm trong thế giới game dù chủ nhân không mở game |
-| P3 | Vòng đời sống trong game: nhà/vườn, trồng trọt, câu cá, thu thập và chế tạo |
-| P4 | Tu luyện bằng thiền và quái PvE như nhánh chơi tùy chọn |
-| Sau đó | Cốt truyện dài, vùng đất mới và hệ thống nâng cao |
+| PLAT-P0 | Khung sảnh, điều hướng và hồ sơ |
+| PLAT-P1 | Lịch ngày/tuần/tháng, lịch lặp, icon, note |
+| PLAT-P2 | Nhật ký đã làm + thống kê cơ bản |
+| PLAT-P3 | Thẻ avatar + gửi lệnh “Đi câu” |
+| PLAT-P4 | Theo dõi activity session, dừng/đổi hoạt động, hiển thị kết quả |
+| PLAT-P5 | Bạn bè, chat, quyền chia sẻ trạng thái/hoạt động |
+| Sau đó | Focus room, tích hợp lịch nâng cao và activity khác |
 
-Bố cục sản phẩm/app cuối cùng còn mở. Trước mắt thiết kế hai trải nghiệm như hai phần riêng có thể dùng độc lập và đồng bộ qua một tài khoản; quyết định một ứng dụng hay hai ứng dụng sau khi kiểm tra luồng sử dụng.
+## 7. Ranh giới nhánh
 
-## 6. Ranh giới tầm nhìn và hiện trạng
+**Được làm ở platform**
+- lịch, note, icon, thống kê;
+- social/profile/chat;
+- activity command UI;
+- xem trạng thái/kết quả activity;
+- quyền riêng tư và cài đặt.
 
-Tài khoản, hồ sơ, túi đồ, cộng đồng và prototype chiến đấu là nền code được mô tả trong README. Lịch/việc, focus rooms, lệnh hoạt động và di chuyển avatar trong thế giới game khi chủ nhân không mở game, nông trại/câu cá và tiến trình thiền vẫn là mục tiêu cần triển khai và kiểm chứng.
+**Không làm ở platform**
+- dựng map;
+- collision/navigation;
+- slot câu/vườn trong scene;
+- animation câu cá/trồng cây;
+- camera/game HUD;
+- logic điều khiển nhân vật trực tiếp.
+
+Các phần đó thuộc `feat/map-ui-rebuild`.
+
+## 8. Hiện trạng
+
+Đây là quyết định phạm vi nhánh. Tài liệu không có nghĩa lịch, activity offline hay câu cá tự động đã chạy. Mỗi tính năng phải có runtime test riêng trước khi đánh dấu hoàn thành.
