@@ -154,17 +154,6 @@ func _blocked_for_foliage(point: Vector2) -> bool:
         for i in range(vertices.size() - 1):
             if _distance_to_segment(point, _v(vertices[i]), _v(vertices[i + 1])) <= clearance:
                 return true
-    for terrace in _map.get("terraces", []):
-        var lip: Array = terrace.get("edge", [])
-        var clearance := float(terrace.get("depth", 16.0)) + 8.0
-        for i in range(lip.size() - 1):
-            if _distance_to_segment(point, _v(lip[i]), _v(lip[i + 1])) < clearance:
-                return true
-    for bridge in _map.get("bridges", []):
-        var middle := _v(bridge.get("position", []))
-        var extent := _v(bridge.get("size", [120, 26]))
-        if absf(point.x - middle.x) < extent.x * 0.5 + 12.0 and absf(point.y - middle.y) < extent.y * 0.5 + 15.0:
-            return true
     for patch in _map.get("terrain_patches", []):
         if str(patch.get("kind", "")) != "soil":
             continue
