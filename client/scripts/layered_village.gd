@@ -7,6 +7,8 @@ const PLAYER_SCRIPT := preload("res://scripts/layered_player.gd")
 const MINI_SCRIPT := preload("res://scripts/layered_minimap.gd")
 const RASTER_SCRIPT := preload("res://scripts/layered_raster_chunks.gd")
 const LANDFORM_SCRIPT := preload("res://scripts/layered_landforms.gd")
+const WATER_FX_SCRIPT := preload("res://scripts/layered_water_fx.gd")
+const CLIFF_DETAIL_SCRIPT := preload("res://scripts/layered_cliff_details.gd")
 const SURFACE_SHADER := preload("res://shaders/layered_surface.gdshader")
 const FONT := preload("res://assets/fonts/BeVietnamPro-Regular.ttf")
 
@@ -31,6 +33,7 @@ func _ready() -> void:
     world_extent = _v(layout.get("size", [1120, 800]))
     _build_surfaces()
     _build_landforms()
+    _build_ambient_environment()
     _build_raster_details()
     _build_props_and_player()
     _build_water_collision()
@@ -167,6 +170,20 @@ func _build_landforms() -> void:
     landforms.set_script(LANDFORM_SCRIPT)
     add_child(landforms)
     landforms.call("configure", layout, self, water_polygons)
+
+
+func _build_ambient_environment() -> void:
+    var cliff := Node2D.new()
+    cliff.name = "L2_CliffArtDetails"
+    cliff.set_script(CLIFF_DETAIL_SCRIPT)
+    add_child(cliff)
+    cliff.call("configure", layout, self)
+    var water := Node2D.new()
+    water.name = "L2_AnimatedWaterAccents"
+    water.set_script(WATER_FX_SCRIPT)
+    add_child(water)
+    water.call("set_bridges", layout.get("bridges", []))
+    water.call("configure", layout, water_polygons)
 
 
 func _build_raster_details() -> void:

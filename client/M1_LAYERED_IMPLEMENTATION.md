@@ -52,3 +52,10 @@
 - Added `layered_route_smoke.gd`: Godot physics probes plus 16px AStar connectivity checks for doorways, garden, river crossing and major districts. The grid is **only a QA tool**; runtime art remains non-tile.
 - Updated CI to capture both the camera gameplay shot and a full-map review shot from Godot.
 - No server-backed travel, saved activities, autonomous NPC routing, multiplayer, real shop, or functional trade implemented here. Bridges and terrain remain subject to QA against all approach paths.
+
+## M1.5 — Water / cliff environment art (2026-10-09)
+
+- `layered_water_fx.gd`: one independently animated CanvasItem for water ripples and intermittent coastline highlights. FX seeds are deterministic, their positions are constrained to authored water polygons, and visual animation does not affect water collision.
+- `layered_cliff_details.gd`: static moss, segmented cracks, and pebble accents follow the existing ridge splines. No new tile grids, gameplay obstacles, or world-scale PNG required.
+- The water-specific density and flow parameters are defined in `water_fx` within `layered_village_m1.json` and validated in static and Godot smoke checks.
+- **Limits:** M1.5 is an art pass, not weather, a full lighting simulation, new navigation, or runtime world streaming. Requires actual Godot visual quality review and device FPS measurements before art acceptance.

@@ -51,6 +51,15 @@ func _run_checks() -> void:
     if info_label != null:
         var text_color: Color = info_label.get_theme_color("font_color")
         _check(text_color.r > 0.8 and text_color.g > 0.8, "HUD text is not light on dark")
+    var water_accents := stage.get_node_or_null("L2_AnimatedWaterAccents")
+    _check(water_accents != null, "M1.5 water effects node missing")
+    if water_accents != null:
+        _check(int(water_accents.get("ripple_count")) >= 30, "Too few water ripple accents")
+        _check(int(water_accents.get("foam_count")) >= 8, "Shoreline foam not generated")
+    var cliff_accents := stage.get_node_or_null("L2_CliffArtDetails")
+    _check(cliff_accents != null, "M1.5 terrain art node missing")
+    if cliff_accents != null:
+        _check(int(cliff_accents.get("detail_count")) >= 10, "Cliff moss and crack details absent")
     var landforms := stage.get_node_or_null("L2_Landforms_Bridges_Shorelines")
     _check(landforms != null, "Missing separate landform renderer")
     if landforms != null:

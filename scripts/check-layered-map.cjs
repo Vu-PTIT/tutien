@@ -18,6 +18,7 @@ assert.ok(map.waters.length >= 2, "Missing separate water bodies");
 assert.ok(map.terrain_patches.length >= 3, "No authored grass/soil clearings");
 assert.ok(map.terraces.length >= 2, "Expected two irregular terrain ridges");
 assert.ok(map.bridges.length >= 1, "Missing timber river crossing");
+assert.ok(Array.isArray(map.water_fx) && map.water_fx.length === map.waters.length, "Missing independent water effects");
 assert.ok(Array.isArray(map.courtyards) && map.courtyards.length >= 3, "No village heart and linked yards");
 assert.ok(Array.isArray(map.districts) && map.districts.length >= 5, "Village lacks named neighborhoods");
 assert.ok(Array.isArray(map.door_routes) && map.door_routes.length >= 5, "Entrances have no paths");
@@ -72,6 +73,10 @@ for (const [group,records] of Object.entries({
 }
 const objectIds = new Set(map.objects.map(o => o.id));
 const waterIds = new Set(map.waters.map(o => o.id));
+for (const effect of map.water_fx) {
+ assert.ok(waterIds.has(effect.water_id) && effect.ripple_count > 0 && effect.ripple_count <= 150,
+   "Invalid ambient water effect: "+effect.water_id);
+}
 for (const bridge of map.bridges) assert.ok(waterIds.has(bridge.water_id), "Bridge refers to missing water body");
 const roadById = new Map(map.roads.map(r=>[r.id,r]));
 const objectById = new Map(map.objects.map(o=>[o.id,o]));
@@ -98,7 +103,8 @@ for (const slot of map.activity_slots) {
 for (const p of [
   "scenes/main.tscn", "scenes/layered_village_m1.tscn", "scenes/legacy_linh_khe.tscn",
   "scripts/layered_village.gd", "scripts/layered_prop.gd", "scripts/layered_player.gd",
-  "scripts/layered_minimap.gd", "scripts/layered_landforms.gd", "shaders/layered_surface.gdshader"
+  "scripts/layered_minimap.gd", "scripts/layered_landforms.gd", "scripts/layered_water_fx.gd",
+  "scripts/layered_cliff_details.gd", "shaders/layered_surface.gdshader"
 ]) assert.ok(fs.existsSync(file(p)), "Missing M1 resource: " + p);
 const scene = load("scenes/layered_village_m1.tscn");
 const mapScript = load("scripts/layered_village.gd");

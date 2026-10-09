@@ -2184,7 +2184,7 @@
       ]
     }
   ],
-  "art_revision": "m1-4-coherent-village-layout",
+  "art_revision": "m1-5-water-cliff-environment",
   "terrain_patches": [
     {
       "id": "north_house_yard",
@@ -2602,6 +2602,20 @@
     {
       "object_id": "farm_crop_01",
       "route_id": "lane_garden_beds"
+    }
+  ],
+  "water_fx": [
+    {
+      "water_id": "river_east",
+      "ripple_count": 78,
+      "foam_stride": 8,
+      "flow_speed": 0.44
+    },
+    {
+      "water_id": "garden_pond",
+      "ripple_count": 25,
+      "foam_stride": 6,
+      "flow_speed": 0.18
     }
   ]
 }
