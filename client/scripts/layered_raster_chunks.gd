@@ -102,8 +102,8 @@ func _paint_pond_and_river_verges() -> void:
             for j in range(step_count):
                 var t := (float(j) + random.randf_range(0.1, 0.8)) / float(step_count)
                 var center := begin.lerp(end, clampf(t, 0.0, 1.0))
-                for sign_dir in [-1.0, 1.0]:
-                    var point := (center + normal * sign_dir * (half_width + random.randf_range(9.0, 19.0))).round()
+                for sign_dir: float in [-1.0, 1.0]:
+                    var point: Vector2 = (center + normal * sign_dir * (half_width + random.randf_range(9.0, 19.0))).round()
                     _shore_plant(point, random)
 
 
