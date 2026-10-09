@@ -781,6 +781,909 @@
         0,
         -18
       ]
+    },
+    {
+      "id": "wild_bush_01",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_1.png",
+      "position": [
+        92,
+        420
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_02",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_2.png",
+      "position": [
+        181,
+        345
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_03",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_3.png",
+      "position": [
+        73,
+        575
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_04",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_4.png",
+      "position": [
+        254,
+        296
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_05",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_5.png",
+      "position": [
+        294,
+        203
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_06",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_2.png",
+      "position": [
+        440,
+        235
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_07",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_1.png",
+      "position": [
+        612,
+        197
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_08",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_3.png",
+      "position": [
+        808,
+        285
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_09",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_4.png",
+      "position": [
+        875,
+        342
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_10",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_3.png",
+      "position": [
+        903,
+        564
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_11",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_1.png",
+      "position": [
+        829,
+        721
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_12",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_4.png",
+      "position": [
+        744,
+        742
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_13",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_3.png",
+      "position": [
+        601,
+        733
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_14",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_4.png",
+      "position": [
+        621,
+        596
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_15",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_5.png",
+      "position": [
+        568,
+        564
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_16",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_3.png",
+      "position": [
+        213,
+        554
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_17",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_1.png",
+      "position": [
+        253,
+        737
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_18",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_6.png",
+      "position": [
+        390,
+        588
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_19",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_4.png",
+      "position": [
+        475,
+        620
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_20",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_2.png",
+      "position": [
+        704,
+        593
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_21",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_1.png",
+      "position": [
+        1034,
+        222
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_22",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_2.png",
+      "position": [
+        1070,
+        498
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_23",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_4.png",
+      "position": [
+        1010,
+        669
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_24",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_2.png",
+      "position": [
+        160,
+        162
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_25",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_5.png",
+      "position": [
+        520,
+        173
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_26",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_1.png",
+      "position": [
+        924,
+        164
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_27",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_2.png",
+      "position": [
+        830,
+        91
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_28",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_3.png",
+      "position": [
+        290,
+        100
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_29",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_5.png",
+      "position": [
+        1033,
+        734
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "wild_bush_30",
+      "kind": "bush",
+      "name": "Bụi cây ven đường",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_4.png",
+      "position": [
+        100,
+        720
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "landscape_rock_01",
+      "kind": "rock",
+      "name": "Đá tự nhiên",
+      "texture": "res://assets/tileset/Art/Rocks/Rock_Brown_6.png",
+      "position": [
+        925,
+        312
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "landscape_rock_02",
+      "kind": "rock",
+      "name": "Đá tự nhiên",
+      "texture": "res://assets/tileset/Art/Rocks/Rock_Brown_9.png",
+      "position": [
+        889,
+        492
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "landscape_rock_03",
+      "kind": "rock",
+      "name": "Đá tự nhiên",
+      "texture": "res://assets/tileset/Art/Rocks/Rock_Brown_4.png",
+      "position": [
+        1007,
+        347
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "landscape_rock_04",
+      "kind": "rock",
+      "name": "Đá tự nhiên",
+      "texture": "res://assets/tileset/Art/Rocks/Rock_Brown_6.png",
+      "position": [
+        930,
+        665
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "landscape_rock_05",
+      "kind": "rock",
+      "name": "Đá tự nhiên",
+      "texture": "res://assets/tileset/Art/Rocks/Rock_Brown_9.png",
+      "position": [
+        55,
+        656
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "landscape_rock_06",
+      "kind": "rock",
+      "name": "Đá tự nhiên",
+      "texture": "res://assets/tileset/Art/Rocks/Rock_Brown_1.png",
+      "position": [
+        222,
+        679
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "landscape_rock_07",
+      "kind": "rock",
+      "name": "Đá tự nhiên",
+      "texture": "res://assets/tileset/Art/Rocks/Rock_Brown_9.png",
+      "position": [
+        812,
+        398
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "landscape_rock_08",
+      "kind": "rock",
+      "name": "Đá tự nhiên",
+      "texture": "res://assets/tileset/Art/Rocks/Rock_Brown_6.png",
+      "position": [
+        762,
+        751
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "grass_detail_01",
+      "kind": "flower",
+      "name": "Lá và cỏ",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_6.png",
+      "position": [
+        166,
+        493
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "grass_detail_02",
+      "kind": "flower",
+      "name": "Lá và cỏ",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_7.png",
+      "position": [
+        579,
+        320
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "grass_detail_03",
+      "kind": "flower",
+      "name": "Lá và cỏ",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_6.png",
+      "position": [
+        640,
+        510
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "grass_detail_04",
+      "kind": "flower",
+      "name": "Lá và cỏ",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_7.png",
+      "position": [
+        221,
+        618
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "grass_detail_05",
+      "kind": "flower",
+      "name": "Lá và cỏ",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_6.png",
+      "position": [
+        688,
+        714
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        0
+      ]
     }
   ],
   "activity_slots": [
@@ -813,6 +1716,100 @@
         298,
         617
       ]
+    }
+  ],
+  "art_revision": "m1-visual-pass-2026-10-09",
+  "terrain_patches": [
+    {
+      "id": "north_house_yard",
+      "kind": "clearing",
+      "center": [
+        536,
+        417
+      ],
+      "radii": [
+        100,
+        48
+      ],
+      "seed": 8
+    },
+    {
+      "id": "west_house_yard",
+      "kind": "clearing",
+      "center": [
+        243,
+        448
+      ],
+      "radii": [
+        76,
+        39
+      ],
+      "seed": 11
+    },
+    {
+      "id": "east_house_yard",
+      "kind": "clearing",
+      "center": [
+        746,
+        406
+      ],
+      "radii": [
+        92,
+        39
+      ],
+      "seed": 15
+    },
+    {
+      "id": "south_garden_yard",
+      "kind": "clearing",
+      "center": [
+        371,
+        700
+      ],
+      "radii": [
+        99,
+        42
+      ],
+      "seed": 14
+    },
+    {
+      "id": "garden_bed_a",
+      "kind": "soil",
+      "center": [
+        315,
+        614
+      ],
+      "radii": [
+        64,
+        20
+      ],
+      "seed": 5
+    },
+    {
+      "id": "garden_bed_b",
+      "kind": "soil",
+      "center": [
+        319,
+        645
+      ],
+      "radii": [
+        64,
+        15
+      ],
+      "seed": 7
+    },
+    {
+      "id": "riverbank_flowers",
+      "kind": "meadow",
+      "center": [
+        808,
+        487
+      ],
+      "radii": [
+        62,
+        19
+      ],
+      "seed": 17
     }
   ]
 }

@@ -12,6 +12,9 @@ var opened := false
 var changed := false
 
 var _visual: Sprite2D
+var _sway_pivot: Node2D
+var _wind_time := 0.0
+var _wind_phase := 0.0
 var _open_door: ColorRect
 
 
@@ -27,6 +30,8 @@ func configure(info: Dictionary) -> void:
     _create_visual(str(info.get("texture", "")))
     _create_collision(info.get("solid", []))
     _create_interaction_area()
+    _wind_phase = float(absi(object_id.hash()) % 314) * 0.02
+    set_process(kind == "tree" or kind == "bush")
     if action == "door":
         _open_door = ColorRect.new()
         _open_door.name = "OpenDoorIndicator"
@@ -39,6 +44,9 @@ func configure(info: Dictionary) -> void:
 
 
 func _create_visual(resource_path: String) -> void:
+    _sway_pivot = Node2D.new()
+    _sway_pivot.name = "SwayPivot"
+    add_child(_sway_pivot)
     _visual = Sprite2D.new()
     _visual.name = "Visual"
     var texture := load(resource_path) as Texture2D
@@ -48,7 +56,15 @@ func _create_visual(resource_path: String) -> void:
         _visual.texture = texture
         _visual.position = Vector2(0.0, -float(texture.get_height()) / 2.0)
     _visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-    add_child(_visual)
+    _sway_pivot.add_child(_visual)
+
+
+func _process(delta: float) -> void:
+    if not is_visible_in_tree() or _sway_pivot == null:
+        return
+    _wind_time += delta
+    var breeze := 0.014 if kind == "tree" else 0.008
+    _sway_pivot.rotation = sin(_wind_time * 0.9 + _wind_phase) * breeze + sin(_wind_time * 0.4 + _wind_phase * 2.0) * breeze * 0.42
 
 
 func _create_collision(raw: Array) -> void:

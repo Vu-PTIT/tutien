@@ -15,6 +15,7 @@ var label: Label
 var _selected_seat: Node2D
 var _tick := 0.0
 var world_extent := Vector2(1120.0, 800.0)
+var water_polygons: Dictionary = {}
 
 
 func _ready() -> void:
@@ -42,53 +43,104 @@ func _surface(name: String, points: PackedVector2Array, kind: int, order: int) -
     var material := ShaderMaterial.new()
     material.shader = SURFACE_SHADER
     material.set_shader_parameter("surface_kind", kind)
-    material.set_shader_parameter("world_extent", world_extent)
     polygon.material = material
     add_child(polygon)
 
 
-func _ribbon(points: Array, radius: float) -> PackedVector2Array:
+func _spline_point(a: Vector2, b: Vector2, c: Vector2, d: Vector2, t: float) -> Vector2:
+    var t2 := t * t
+    var t3 := t2 * t
+    return (b * 2.0 + (c - a) * t + (a * 2.0 - b * 5.0 + c * 4.0 - d) * t2 + (-a + b * 3.0 - c * 3.0 + d) * t3) * 0.5
+
+
+func _smooth_path(raw: Array) -> PackedVector2Array:
+    var smoothed := PackedVector2Array()
+    if raw.size() < 2:
+        return smoothed
+    for i in range(raw.size() - 1):
+        var a := _v(raw[maxi(0, i - 1)])
+        var b := _v(raw[i])
+        var c := _v(raw[i + 1])
+        var d := _v(raw[mini(raw.size() - 1, i + 2)])
+        var steps := maxi(2, ceili(b.distance_to(c) / 8.0))
+        for step in range(steps):
+            smoothed.append(_spline_point(a, b, c, d, float(step) / float(steps)))
+    smoothed.append(_v(raw[raw.size() - 1]))
+    return smoothed
+
+
+func _ribbon(raw: Array, radius: float, roughness: float = 1.0) -> PackedVector2Array:
+    var points := _smooth_path(raw)
+    if points.size() < 2:
+        return PackedVector2Array()
     var left := PackedVector2Array()
     var right := PackedVector2Array()
     for i in range(points.size()):
-        var p := _v(points[i])
-        var prev := _v(points[maxi(0, i - 1)])
-        var following := _v(points[mini(i + 1, points.size() - 1)])
-        var tangent := (following - prev).normalized()
-        var normal := Vector2(-tangent.y, tangent.x)
-        left.append(p + normal * radius)
-        right.append(p - normal * radius)
-    var joined := PackedVector2Array()
+        var p := points[i]
+        var prev := points[maxi(0, i - 1)]
+        var next := points[mini(i + 1, points.size() - 1)]
+        var direction := (next - prev).normalized()
+        var n := Vector2(-direction.y, direction.x)
+        # Bends are continuously interpolated; small irregular shore/road edges
+        # are baked as world-pixel vertices, not as rectangular Wang cells.
+        var a := roughness * (2.0 * sin(float(i) * 0.63) + sin(float(i) * 0.21))
+        var b := roughness * (2.0 * sin(float(i) * 0.72 + 2.1) + sin(float(i) * 0.31 + 1.2))
+        left.append((p + n * maxf(3.0, radius + a)).round())
+        right.append((p - n * maxf(3.0, radius + b)).round())
+    var polygon := PackedVector2Array()
     for p in left:
-        joined.append(p)
+        polygon.append(p)
     for i in range(right.size() - 1, -1, -1):
-        joined.append(right[i])
-    return joined
+        polygon.append(right[i])
+    return polygon
 
 
-func _ellipse(center: Vector2, radii: Vector2) -> PackedVector2Array:
+func _ellipse(center: Vector2, radii: Vector2, seed: float = 0.0) -> PackedVector2Array:
     var points := PackedVector2Array()
-    for i in range(48):
-        var theta := TAU * float(i) / 48.0
-        points.append(center + Vector2(cos(theta) * radii.x, sin(theta) * radii.y))
+    for i in range(72):
+        var theta := TAU * float(i) / 72.0
+        var outline := 1.0 + 0.045 * sin(5.0 * theta + seed) + 0.038 * sin(9.0 * theta + 1.7 + seed)
+        points.append((center + Vector2(cos(theta) * radii.x * outline, sin(theta) * radii.y * outline)).round())
     return points
 
 
+func _water_polygon(region: Dictionary, extra_radius: float = 0.0) -> PackedVector2Array:
+    if str(region.get("shape", "")) == "pond":
+        return _ellipse(_v(region.get("center", [])), _v(region.get("radii", [])) + Vector2.ONE * extra_radius, 4.3)
+    return _ribbon(region.get("points", []), float(region.get("radius", 30.0)) + extra_radius, 1.2)
+
+
 func _build_surfaces() -> void:
-    _surface("L0_Ground", PackedVector2Array([Vector2.ZERO, Vector2(world_extent.x, 0), world_extent, Vector2(0, world_extent.y)]), 0, -15)
-    for lake in layout.get("waters", []):
-        var outline := PackedVector2Array()
-        if lake.get("shape") == "pond":
-            outline = _ellipse(_v(lake.get("center", [])), _v(lake.get("radii", [])) + Vector2(8, 8))
-            _surface(str(lake.get("id")) + "_bank", outline, 2, -12)
-            outline = _ellipse(_v(lake.get("center", [])), _v(lake.get("radii", [])))
-        else:
-            var width := float(lake.get("radius", 30))
-            _surface(str(lake.get("id")) + "_bank", _ribbon(lake.get("points", []), width + 8), 2, -12)
-            outline = _ribbon(lake.get("points", []), width)
-        _surface(str(lake.get("id")) + "_water", outline, 3, -11)
+    var ground := PackedVector2Array([
+        Vector2.ZERO, Vector2(world_extent.x, 0.0), world_extent, Vector2(0.0, world_extent.y)])
+    _surface("L0_Ground", ground, 0, -15)
+
+    # Author-selected grass clearings and plantable soil; no repeating TileMap.
+    for patch in layout.get("terrain_patches", []):
+        var center := _v(patch.get("center", []))
+        var radii := _v(patch.get("radii", [30, 18]))
+        var kind := str(patch.get("kind", ""))
+        var material_kind := 4
+        if kind == "soil":
+            material_kind = 5
+        elif kind == "meadow":
+            material_kind = 0
+        _surface(str(patch.get("id", "patch")), _ellipse(center, radii, float(patch.get("seed", 0))), material_kind, -14)
+
+    water_polygons.clear()
+    for water in layout.get("waters", []):
+        var key := str(water.get("id", "water"))
+        _surface(key + "_bank", _water_polygon(water, 10.0), 2, -12)
+        var body := _water_polygon(water)
+        water_polygons[key] = body
+        _surface(key + "_water", body, 3, -11)
+
     for road in layout.get("roads", []):
-        _surface(str(road.get("id", "path")), _ribbon(road.get("points", []), float(road.get("radius", 13))), 1, -8)
+        var key := str(road.get("id", "road"))
+        var radius := float(road.get("radius", 13))
+        var points: Array = road.get("points", [])
+        _surface(key + "_verge", _ribbon(points, radius + 4.0, 1.25), 6, -9)
+        _surface(key, _ribbon(points, radius, 1.0), 1, -8)
 
 
 func _build_props_and_player() -> void:
@@ -110,40 +162,23 @@ func _build_props_and_player() -> void:
     player.call("set_world_bounds", world_extent)
 
 
-func _add_static_circle(root: Node2D, p: Vector2, radius: float) -> void:
-    var body := StaticBody2D.new()
-    body.position = p
-    body.collision_layer = 1
-    body.collision_mask = 0
-    var collider := CollisionShape2D.new()
-    var shape := CircleShape2D.new()
-    shape.radius = radius
-    collider.shape = shape
-    body.add_child(collider)
-    root.add_child(body)
-
-
 func _build_water_collision() -> void:
     var collision_root := Node2D.new()
     collision_root.name = "L2_WaterCollision"
     add_child(collision_root)
-    for region in layout.get("waters", []):
-        if region.get("shape") == "pond":
-            var radius := _v(region.get("radii", [50, 40]))
-            var center := _v(region.get("center", []))
-            for xi in range(-3, 4):
-                for yi in range(-2, 3):
-                    var offset := Vector2(float(xi) * 15.0, float(yi) * 15.0)
-                    if (offset.x * offset.x) / (radius.x * radius.x) + (offset.y * offset.y) / (radius.y * radius.y) < 0.82:
-                        _add_static_circle(collision_root, center + offset, 12)
-        else:
-            var pts: Array = region.get("points", [])
-            for index in range(pts.size() - 1):
-                var a := _v(pts[index])
-                var b := _v(pts[index + 1])
-                var steps := maxi(1, ceili(a.distance_to(b) / 21.0))
-                for i in range(steps + 1):
-                    _add_static_circle(collision_root, a.lerp(b, float(i) / float(steps)), float(region.get("radius", 30)) * 0.86)
+    for key in water_polygons.keys():
+        var polygon: PackedVector2Array = water_polygons[key]
+        if polygon.size() < 3:
+            continue
+        var body := StaticBody2D.new()
+        body.name = "SolidWater_" + str(key)
+        body.collision_layer = 1
+        body.collision_mask = 0
+        var collider := CollisionPolygon2D.new()
+        collider.build_mode = CollisionPolygon2D.BUILD_SOLIDS
+        collider.polygon = polygon
+        body.add_child(collider)
+        collision_root.add_child(body)
 
 
 func _build_hud() -> void:
@@ -165,7 +200,7 @@ func _build_hud() -> void:
     var minimap := Control.new()
     minimap.name = "MapOverview"
     minimap.set_script(MINI_SCRIPT)
-    minimap.call("configure", layout, player)
+    minimap.call("configure", layout, player, self)
     minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
     minimap.set_offsets_preset(Control.PRESET_TOP_RIGHT)
     minimap.offset_left = -235

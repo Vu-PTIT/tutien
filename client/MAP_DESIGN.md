@@ -41,3 +41,7 @@ Trên platform, `scripts/main.gd` có `MapWorldScene = null` ở mốc `31080e8`
 Một góc làng top-down 3/4 không dựng bằng TileMapLayer phải đi được, có thao tác đổi state, hình/va chạm đúng, nhân vật đọc được, preview và minimap cùng dữ liệu. Mọi ngoại lệ tile về sau có bản giải trình theo mục 1.3 của tài liệu 10. Test online kiểm tra quyền, lệnh lặp, tranh slot và reconnect. Đo hiệu năng trên thiết bị mục tiêu, không gọi phương án mới là tối ưu hơn khi chưa có số liệu.
 
 Đợt cập nhật hiện tại chỉ chốt **thiết kế và quy chuẩn**. Không có loader mới, asset mới, hiệu ứng mới, RPC mới hay kết quả chạy Godot được tạo bởi tài liệu này.
+
+## Runtime M1 — cập nhật 09/10/2026
+
+Mốc triển khai đầu tiên nằm ở `res://scenes/layered_village_m1.tscn`, khác với scene Tiled được lưu thành `legacy_linh_khe.tscn`. Bộ sinh hình học tự do, shader pixel theo tọa độ thế giới, vật thể sprite có anchor/collider riêng, nước có polygon collision và minimap dùng chung hình học. Đây **mới là bản thử M1**, chưa phải bản chuyển đổi toàn bộ làng hay nghiệm thu trên thiết bị. Xem `client/M1_LAYERED_IMPLEMENTATION.md` để biết giới hạn và cách test.

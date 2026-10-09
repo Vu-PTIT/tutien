@@ -1,33 +1,31 @@
-# M1 — Playable layered map vertical slice (09/10/2026)
+# M1 — Layered village art pass (09/10/2026)
 
-**Branch:** `feat/map-ui-rebuild`. The new entry scene is `client/scenes/main.tscn`, pointing to `layered_village_m1.tscn`.
+**Branch:** `feat/map-ui-rebuild`. The main scene opens `res://scenes/layered_village_m1.tscn`. The prior 112×96 Tiled village stays intact as `res://scenes/legacy_linh_khe.tscn` for comparison.
 
-This is **a new compact prototype**, not a claim that the old 112×96 tile-built map was automatically converted. The original Tiled/TMX/JSON/PNG assets and generator remain unchanged. Open `res://scenes/legacy_linh_khe.tscn` explicitly to compare.
+## Implemented in the isolated map slice
 
-## Runtime structure
-- `data/layered_village_m1.json`: bounds, freeform paths, water geometry, props and activity slot anchors. Geometry and visual props share world coordinates.
-- `scripts/layered_village.gd`: procedural river/road/ground `Polygon2D` surfaces (no `TileMapLayer` or `gid`), collision, actors and HUD.
-- `shaders/layered_surface.gdshader`: low-contrast pixel grass and dirt plus locally clipped water ripples. Procedural colors are temporary M1 visual materials, **not final hand-drawn background assets**.
-- `scripts/layered_prop.gd`: original PNG props as independently anchored sprites, footprint collision, separate interaction sensing and local state.
-- `scripts/layered_player.gd`: inherits corrected existing 32×48 character sprite setup; updated camera bounds.
-- `scripts/layered_minimap.gd`: draws the same freeform road/water layout and prop positions from M1 JSON.
+- `data/layered_village_m1.json`: one authored 1120×800 world-space layout, 5 independent walking paths, river + pond, irregular house clearings, garden beds, separately named buildings/trees/bushes/rocks and three future activity slots.
+- `scripts/layered_village.gd`: freeform spline-built `Polygon2D` roads, dirt verges, riverbanks, water bodies and authored ground patches. **No TileMapLayer, TileSet or gameplay GID** is used in the new runtime map.
+- `shaders/layered_surface.gdshader`: world-coordinate pixel textures (fixes former implicit UV stretching), water ripples clipped to waterways, locally distinguishable sandy trails, grass, bank and planting soil.
+- `scripts/layered_prop.gd`: independent PNG scene objects from the original resource pack. Colliders, interaction sensing, visual Y-sort and access points are separate. Tree/shrub crowns sway gently about their ground anchor.
+- `scripts/layered_player.gd`: inherits corrected walk/idle 32×48 sheet and bounded 2D camera. Local bench sit/stand action.
+- `scripts/layered_minimap.gd`: renders **the same generated polygons** as the world and location data; no independently maintained preview bitmap.
+- `L2_WaterCollision`: uses solid `CollisionPolygon2D` derived from the same rendered water outlines; no approximate circle chain.
+- `scripts/check-layered-map.cjs`: checks map schema, sprite resource paths, unique IDs, valid activity slot anchors and non-tile runtime contract.
+- `tests/layered_map_smoke.gd` and `tests/layered_map_capture.gd`: smoke-check live Godot nodes, local interactions and create viewport screenshot in CI.
 
-## Try it
-1. Open `client/project.godot` with **Godot 4.6.1**, run `main.tscn`.
-2. WASD or arrow keys to walk, wheel to zoom, E next to a bench/tree/door/plant/river sign to interact. Bench can be left with E. This prototype is desktop keyboard/mouse oriented.
-3. Compare against `legacy_linh_khe.tscn`, which uses the existing Tiled-driven `village_demo.gd`.
+## Try locally
 
-## Scope and verification
-- **M1 prototype source implemented**, interactive props partly demonstrate M2. Slots for gardening, rest, fishing are **visual references only**. No server RPC, persistence, pathfinding or autonomous avatar has been added.
-- Need a **Godot 4.6.1 editor import/run**, visual inspection, collision/interaction regression, client FPS measurement and mobile tests. These were **not performed** in this environment.
-- Current river collision uses overlapping circles based on shared geometry; replace with precise polygons and real crossings. The map currently has no complete navigation mesh.
-- Night/weather, environmental audio, grass movement, animated tree crowns and action-specific sprite animations are **not implemented**.
-- Accept the visual and camera scale before scaling beyond the M1 sample. Replace shader-generated placeholder surfaces with **art-directed raster chunks or authored textured shapes**, while keeping scene objects and gameplay ID independent.
-- The external platform `feat/dual-experience-platform` remains untouched. Activity session authoritative state belongs to server, not local map objects.
+1. `git checkout feat/map-ui-rebuild && git pull origin feat/map-ui-rebuild`.
+2. Open `client/project.godot` with **Godot 4.6.1**; run the project (F5) or `layered_village_m1.tscn` (F6).
+3. Use WASD or arrow keys to walk, mouse wheel to zoom and E near doors/trees/bench/plant/fishing point to interact.
+4. Compare the scene tree with `legacy_linh_khe.tscn`, which intentionally retains the old tile-driven renderer.
 
-## Acceptance to finish M1
-- Confirm visually correct top-down 3/4 style with original art; avoid rescaling/mixing incompatible props.
-- Verify no `TileMapLayer` in the new scene at runtime.
-- Verify river barriers, free movement on all intended paths, house footprint and canopies, Y-sort behavior.
-- Verify minimap matches world data and collisions prevent unreachable interaction through water/walls.
-- Record CI/import/FPS evidence on target desktop and mobile before announcing M1 complete.
+## Verification and limitations
+
+- An automated Godot 4.6.1 import, map-specific smoke test and screenshot capture are configured in `.github/workflows/ci.yml`. Inspect the **actual workflow result and uploaded PNG** before reporting runtime/visual acceptance.
+- All procedural ground colors remain temporary authored M1 materials, **not final hand-painted raster art**. The next art pass should replace broad flat procedural surfaces with art-directed pixel chunks/textured shapes and add proper riverbank details that match the supplied sprites.
+- The new map is a **compact playable prototype**. It has no complete navigation mesh, bridges, indoor rooms, weather/day-night integration, platform RPC, authoritative activities, online persistence or loot. The three activity slots in the JSON are nonfunctional placeholders.
+- Local prop state resets when the scene is reopened. Touch/mobile controls and camera framing must be checked on actual devices.
+- The platform branch stays untouched, and **the server remains authoritative** when activity syncing is implemented.
+- Desktop/mobile scene performance, accessibility, exact prop footprints and potential water polygon collision concavity need Godot QA. No FPS or full M1 acceptance is claimed.

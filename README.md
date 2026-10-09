@@ -10,7 +10,7 @@ Map mới theo hướng **nền vẽ phân lớp + nước riêng + vật thể 
 
 Quy chuẩn áp dụng trên cả `feat/map-ui-rebuild` và `feat/dual-experience-platform`, không merge chéo toàn bộ code. Xem [10 — Thiết kế map và lộ trình nghiệm thu](docs/game-design/10-layered-interactive-maps.md) và [hướng dẫn client](client/MAP_DESIGN.md).
 
-**Đây là cập nhật thiết kế, chưa phải bản map/hiệu ứng mới đã chạy.** Ở mốc rebuild `d8565ca`, demo làng còn dựng từ dữ liệu tile và vật thể qua `village_demo.gd`/`village_sprite_object.gd`. Giữ tài nguyên hiện có để chuyển đổi từng phần; không xóa bản đang dùng trước khi scene phân lớp được kiểm tra.
+**Đã có bản thử M1** tại `client/scenes/layered_village_m1.tscn`: nền/đường/nước bằng các polygon pixel phân lớp, vật thể riêng, tương tác offline mẫu và minimap cùng dữ liệu. Giữ bản đồ cũ tại `legacy_linh_khe.tscn`. Đây chưa phải bản art hoàn chỉnh hoặc đã nghiệm thu Godot/mobile; xem `client/M1_LAYERED_IMPLEMENTATION.md` để theo dõi.
 
 ## Vai trò nhánh — 09/10/2026
 
@@ -48,8 +48,8 @@ Client trên nhánh này tập trung demo làng. Các nền tài khoản/hồ s�
    docker compose up --build -d
    ```
 
-3. Mở `client/project.godot` trong Godot và chạy project. Đối chiếu scene khởi động của nhánh; cập nhật thiết kế này không thay scene hoặc tự bật luồng tích hợp platform.
-4. Demo làng hiển thị hướng dẫn di chuyển/phóng to trên HUD. Các phím hồ sơ/túi/cộng đồng/đấu tập của client tích hợp trước đây không phải bằng chứng các màn hình đó đang có trong demo làng.
+3. Mở `client/project.godot` trong Godot và chạy project. `main.tscn` hiện trỏ tới cảnh thử M1, còn `legacy_linh_khe.tscn` là cảnh cũ đối chiếu.
+4. Demo làng M1 hiển thị hướng dẫn di chuyển/phóng to và nhấn E để tương tác. Các phím hồ sơ/túi/cộng đồng/đấu tập của client tích hợp trước đây không phải bằng chứng các màn hình đó đang có trong demo làng.
 
 Kiểm tra server:
 
