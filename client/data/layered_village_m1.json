@@ -7,132 +7,48 @@
     800
   ],
   "spawn": [
-    485,
-    521
+    493,
+    528
   ],
   "roads": [
     {
       "id": "road_west_east",
-      "radius": 21,
+      "radius": 18,
       "points": [
         [
-          -50,
-          487
+          -40,
+          488
         ],
         [
-          110,
-          472
+          115,
+          475
         ],
         [
-          265,
-          457
+          226,
+          467
         ],
         [
-          420,
-          479
-        ],
-        [
-          568,
-          466
-        ],
-        [
-          703,
-          472
-        ],
-        [
-          819,
-          509
-        ],
-        [
-          886,
-          504
-        ]
-      ]
-    },
-    {
-      "id": "road_north",
-      "radius": 15,
-      "points": [
-        [
-          483,
-          471
-        ],
-        [
-          505,
-          368
-        ],
-        [
-          544,
-          259
-        ],
-        [
-          550,
-          123
-        ],
-        [
-          571,
-          -45
-        ]
-      ]
-    },
-    {
-      "id": "road_garden",
-      "radius": 14,
-      "points": [
-        [
-          312,
-          469
-        ],
-        [
-          288,
-          550
-        ],
-        [
-          275,
-          660
-        ],
-        [
-          300,
-          832
-        ]
-      ]
-    },
-    {
-      "id": "road_east",
-      "radius": 14,
-      "points": [
-        [
-          675,
-          473
-        ],
-        [
-          698,
-          388
-        ],
-        [
-          754,
-          291
-        ],
-        [
-          778,
-          194
-        ]
-      ]
-    },
-    {
-      "id": "road_fishing",
-      "radius": 10,
-      "points": [
-        [
-          704,
+          341,
           474
         ],
         [
-          780,
-          481
+          454,
+          485
         ],
         [
-          847,
+          536,
+          484
+        ],
+        [
+          636,
+          484
+        ],
+        [
+          739,
+          484
+        ],
+        [
+          831,
           497
         ],
         [
@@ -142,24 +58,144 @@
       ]
     },
     {
+      "id": "road_north",
+      "radius": 12,
+      "points": [
+        [
+          481,
+          486
+        ],
+        [
+          458,
+          456
+        ],
+        [
+          428,
+          410
+        ],
+        [
+          418,
+          360
+        ],
+        [
+          424,
+          296
+        ],
+        [
+          423,
+          218
+        ],
+        [
+          411,
+          140
+        ],
+        [
+          404,
+          -24
+        ]
+      ]
+    },
+    {
+      "id": "road_garden",
+      "radius": 12,
+      "points": [
+        [
+          345,
+          477
+        ],
+        [
+          321,
+          514
+        ],
+        [
+          278,
+          561
+        ],
+        [
+          250,
+          616
+        ],
+        [
+          251,
+          676
+        ],
+        [
+          284,
+          751
+        ],
+        [
+          303,
+          827
+        ]
+      ]
+    },
+    {
+      "id": "road_east",
+      "radius": 12,
+      "points": [
+        [
+          738,
+          484
+        ],
+        [
+          779,
+          436
+        ],
+        [
+          825,
+          385
+        ],
+        [
+          832,
+          331
+        ],
+        [
+          827,
+          266
+        ],
+        [
+          811,
+          206
+        ]
+      ]
+    },
+    {
+      "id": "road_fishing",
+      "radius": 10,
+      "points": [
+        [
+          739,
+          484
+        ],
+        [
+          794,
+          489
+        ],
+        [
+          848,
+          497
+        ],
+        [
+          901,
+          503
+        ]
+      ]
+    },
+    {
       "id": "bridge_west_approach",
       "radius": 11,
       "points": [
         [
-          748,
-          293
+          832,
+          331
         ],
         [
-          806,
-          328
-        ],
-        [
-          865,
-          346
+          871,
+          345
         ],
         [
           903,
-          351
+          350
         ]
       ]
     },
@@ -168,16 +204,132 @@
       "radius": 11,
       "points": [
         [
-          1032,
+          1031,
           351
         ],
         [
-          1072,
-          345
+          1083,
+          335
         ],
         [
           1128,
-          340
+          323
+        ]
+      ]
+    },
+    {
+      "id": "lane_communal_hall",
+      "radius": 9,
+      "points": [
+        [
+          428,
+          410
+        ],
+        [
+          465,
+          407
+        ],
+        [
+          501,
+          404
+        ],
+        [
+          531,
+          402
+        ]
+      ]
+    },
+    {
+      "id": "lane_west_cottage",
+      "radius": 8,
+      "points": [
+        [
+          226,
+          467
+        ],
+        [
+          235,
+          446
+        ],
+        [
+          242,
+          430
+        ]
+      ]
+    },
+    {
+      "id": "lane_east_cottage",
+      "radius": 9,
+      "points": [
+        [
+          779,
+          436
+        ],
+        [
+          773,
+          413
+        ],
+        [
+          766,
+          393
+        ]
+      ]
+    },
+    {
+      "id": "lane_garden_home",
+      "radius": 9,
+      "points": [
+        [
+          251,
+          676
+        ],
+        [
+          294,
+          704
+        ],
+        [
+          336,
+          713
+        ],
+        [
+          381,
+          710
+        ]
+      ]
+    },
+    {
+      "id": "lane_garden_beds",
+      "radius": 8,
+      "points": [
+        [
+          250,
+          616
+        ],
+        [
+          275,
+          619
+        ],
+        [
+          300,
+          618
+        ]
+      ]
+    },
+    {
+      "id": "lane_village_market",
+      "radius": 9,
+      "points": [
+        [
+          638,
+          484
+        ],
+        [
+          647,
+          526
+        ],
+        [
+          634,
+          567
         ]
       ]
     }
@@ -524,8 +676,8 @@
       "name": "Cây quảng trường",
       "texture": "res://assets/tileset/Art/Trees and Bushes/Tree_Emerald_4.png",
       "position": [
-        680,
-        552
+        684,
+        589
       ],
       "solid": [
         17,
@@ -547,11 +699,11 @@
     {
       "id": "bench_square",
       "kind": "bench",
-      "name": "Ghế quảng trường",
+      "name": "Ghế sân làng",
       "texture": "res://assets/tileset/Art/Props/Bench_3.png",
       "position": [
-        411,
-        468
+        462,
+        549
       ],
       "solid": [
         12,
@@ -573,11 +725,11 @@
     {
       "id": "bench_east",
       "kind": "bench",
-      "name": "Ghế trước nhà",
+      "name": "Ghế bên chợ",
       "texture": "res://assets/tileset/Art/Props/Bench_3.png",
       "position": [
-        643,
-        464
+        610,
+        550
       ],
       "solid": [
         12,
@@ -625,11 +777,11 @@
     {
       "id": "village_board",
       "kind": "notice",
-      "name": "Bảng tin làng",
+      "name": "Bảng tin thôn",
       "texture": "res://assets/tileset/Art/Props/BulletinBoard_1.png",
       "position": [
-        325,
-        370
+        420,
+        521
       ],
       "solid": [
         24,
@@ -651,11 +803,11 @@
     {
       "id": "village_lamp",
       "kind": "lamp",
-      "name": "Đèn đầu đường",
+      "name": "Đèn sân làng",
       "texture": "res://assets/tileset/Art/Props/LampPost_3.png",
       "position": [
-        592,
-        492
+        581,
+        555
       ],
       "solid": [
         14,
@@ -1109,8 +1261,8 @@
       "name": "Bụi cây ven đường",
       "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_4.png",
       "position": [
-        621,
-        596
+        744,
+        589
       ],
       "solid": [],
       "action": "",
@@ -1130,8 +1282,8 @@
       "name": "Bụi cây ven đường",
       "texture": "res://assets/tileset/Art/Trees and Bushes/Bush_Emerald_5.png",
       "position": [
-        568,
-        564
+        717,
+        552
       ],
       "solid": [],
       "action": "",
@@ -1736,11 +1888,11 @@
     {
       "id": "village_well",
       "kind": "well",
-      "name": "Giếng làng",
+      "name": "Giếng làng trung tâm",
       "texture": "res://assets/tileset/Art/Buildings/Well_Hay_1.png",
       "position": [
-        192,
-        585
+        534,
+        546
       ],
       "solid": [
         31,
@@ -1836,6 +1988,168 @@
         0,
         -15
       ]
+    },
+    {
+      "id": "market_table",
+      "kind": "table",
+      "name": "Bàn phiên chợ",
+      "texture": "res://assets/tileset/Art/Props/Table_Medium_1.png",
+      "position": [
+        629,
+        564
+      ],
+      "solid": [
+        23,
+        8,
+        0,
+        -4
+      ],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        14
+      ],
+      "door_offset": [
+        0,
+        -12
+      ]
+    },
+    {
+      "id": "market_basket",
+      "kind": "basket",
+      "name": "Giỏ đồ",
+      "texture": "res://assets/tileset/Art/Props/Basket_Empty.png",
+      "position": [
+        667,
+        582
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        14
+      ],
+      "door_offset": [
+        0,
+        -12
+      ]
+    },
+    {
+      "id": "market_barrel",
+      "kind": "barrel",
+      "name": "Thùng hàng",
+      "texture": "res://assets/tileset/Art/Props/Barrel_Small_Empty.png",
+      "position": [
+        607,
+        585
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        14
+      ],
+      "door_offset": [
+        0,
+        -12
+      ]
+    },
+    {
+      "id": "market_sack",
+      "kind": "sack",
+      "name": "Bao hàng",
+      "texture": "res://assets/tileset/Art/Props/Sack_3.png",
+      "position": [
+        645,
+        592
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        14
+      ],
+      "door_offset": [
+        0,
+        -12
+      ]
+    },
+    {
+      "id": "plaza_farm_basket",
+      "kind": "basket",
+      "name": "Giỏ vườn",
+      "texture": "res://assets/tileset/Art/Props/Basket_Empty.png",
+      "position": [
+        405,
+        730
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        14
+      ],
+      "door_offset": [
+        0,
+        -12
+      ]
+    },
+    {
+      "id": "plaza_north_lantern",
+      "kind": "lamp",
+      "name": "Đèn lối lên hội quán",
+      "texture": "res://assets/tileset/Art/Props/LampPost_3.png",
+      "position": [
+        454,
+        438
+      ],
+      "solid": [
+        9,
+        9,
+        0,
+        -4
+      ],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        14
+      ],
+      "door_offset": [
+        0,
+        -12
+      ]
+    },
+    {
+      "id": "market_notice",
+      "kind": "notice",
+      "name": "Bảng chợ",
+      "texture": "res://assets/tileset/Art/Props/Sign_1.png",
+      "position": [
+        677,
+        550
+      ],
+      "solid": [
+        12,
+        6,
+        0,
+        -3
+      ],
+      "action": "notice",
+      "radius": 45,
+      "interaction_offset": [
+        0,
+        16
+      ],
+      "door_offset": [
+        0,
+        -12
+      ]
     }
   ],
   "activity_slots": [
@@ -1870,18 +2184,18 @@
       ]
     }
   ],
-  "art_revision": "m1-3-landforms-river-bridge",
+  "art_revision": "m1-4-coherent-village-layout",
   "terrain_patches": [
     {
       "id": "north_house_yard",
       "kind": "clearing",
       "center": [
-        536,
-        417
+        529,
+        418
       ],
       "radii": [
-        100,
-        48
+        120,
+        53
       ],
       "seed": 8
     },
@@ -1889,12 +2203,12 @@
       "id": "west_house_yard",
       "kind": "clearing",
       "center": [
-        243,
-        448
+        248,
+        446
       ],
       "radii": [
-        76,
-        39
+        78,
+        37
       ],
       "seed": 11
     },
@@ -1902,12 +2216,12 @@
       "id": "east_house_yard",
       "kind": "clearing",
       "center": [
-        746,
-        406
+        757,
+        415
       ],
       "radii": [
-        92,
-        39
+        85,
+        35
       ],
       "seed": 15
     },
@@ -1915,12 +2229,12 @@
       "id": "south_garden_yard",
       "kind": "clearing",
       "center": [
-        371,
-        700
+        374,
+        704
       ],
       "radii": [
-        99,
-        42
+        117,
+        59
       ],
       "seed": 14
     },
@@ -2020,12 +2334,12 @@
     {
       "id": "village_plaza_edges",
       "center": [
-        591,
-        554
+        520,
+        606
       ],
       "radii": [
-        199,
-        75
+        176,
+        35
       ],
       "count": 48,
       "theme": "mixed"
@@ -2033,14 +2347,14 @@
     {
       "id": "garden_wilds",
       "center": [
-        227,
-        716
+        163,
+        739
       ],
       "radii": [
-        147,
-        65
+        103,
+        50
       ],
-      "count": 45,
+      "count": 52,
       "theme": "white"
     },
     {
@@ -2078,35 +2392,31 @@
       "edge": [
         [
           0,
-          272
+          269
         ],
         [
-          61,
-          276
+          65,
+          279
         ],
         [
-          120,
+          122,
           268
         ],
         [
-          183,
-          278
+          179,
+          277
         ],
         [
-          256,
-          263
+          246,
+          262
         ],
         [
-          320,
+          318,
           276
         ],
         [
-          388,
-          264
-        ],
-        [
-          438,
-          271
+          364,
+          266
         ]
       ],
       "collision": true
@@ -2117,32 +2427,28 @@
       "depth": 18,
       "edge": [
         [
-          538,
-          695
+          771,
+          733
         ],
         [
-          594,
-          681
+          824,
+          709
         ],
         [
-          656,
-          687
+          902,
+          718
         ],
         [
-          716,
-          670
+          980,
+          705
         ],
         [
-          780,
-          681
+          1043,
+          717
         ],
         [
-          844,
-          668
-        ],
-        [
-          910,
-          685
+          1118,
+          701
         ]
       ],
       "collision": true
@@ -2162,6 +2468,140 @@
       ],
       "collision_gap": 23,
       "kind": "timber_footbridge"
+    }
+  ],
+  "layout_notes": "Village heart: shared well and gathering lawn; homes are connected to the through-route by explicit approach lanes. Paths stay separate from collision footprints.",
+  "courtyards": [
+    {
+      "id": "village_heart",
+      "name": "Sân làng",
+      "kind": "cobblestone",
+      "center": [
+        532,
+        500
+      ],
+      "radii": [
+        103,
+        62
+      ],
+      "seed": 6
+    },
+    {
+      "id": "market_terrace",
+      "name": "Sân chợ",
+      "kind": "packed_earth",
+      "center": [
+        628,
+        573
+      ],
+      "radii": [
+        59,
+        28
+      ],
+      "seed": 11
+    },
+    {
+      "id": "garden_frontyard",
+      "name": "Sân nhà vườn",
+      "kind": "packed_earth",
+      "center": [
+        378,
+        722
+      ],
+      "radii": [
+        71,
+        31
+      ],
+      "seed": 13
+    }
+  ],
+  "districts": [
+    {
+      "id": "village_center",
+      "name": "Sân làng",
+      "center": [
+        531,
+        500
+      ],
+      "size": [
+        234,
+        148
+      ],
+      "landmark": "village_well"
+    },
+    {
+      "id": "north_homes",
+      "name": "Ngõ nhà bắc",
+      "center": [
+        530,
+        391
+      ],
+      "size": [
+        254,
+        105
+      ],
+      "landmark": "communal_hall"
+    },
+    {
+      "id": "western_hamlet",
+      "name": "Xóm phía tây",
+      "center": [
+        246,
+        426
+      ],
+      "size": [
+        180,
+        108
+      ],
+      "landmark": "west_cottage"
+    },
+    {
+      "id": "orchard",
+      "name": "Vườn phía nam",
+      "center": [
+        318,
+        662
+      ],
+      "size": [
+        211,
+        182
+      ],
+      "landmark": "garden_home"
+    },
+    {
+      "id": "river_crossing",
+      "name": "Bờ sông và cầu",
+      "center": [
+        956,
+        407
+      ],
+      "size": [
+        245,
+        216
+      ],
+      "landmark": "fishing_bank"
+    }
+  ],
+  "door_routes": [
+    {
+      "object_id": "communal_hall",
+      "route_id": "lane_communal_hall"
+    },
+    {
+      "object_id": "west_cottage",
+      "route_id": "lane_west_cottage"
+    },
+    {
+      "object_id": "east_cottage",
+      "route_id": "lane_east_cottage"
+    },
+    {
+      "object_id": "garden_home",
+      "route_id": "lane_garden_home"
+    },
+    {
+      "object_id": "farm_crop_01",
+      "route_id": "lane_garden_beds"
     }
   ]
 }

@@ -147,6 +147,19 @@ func _build_surfaces() -> void:
         _surface(key + "_verge", _ribbon(points, radius + 4.0, 1.25), 6, -9)
         _surface(key, _ribbon(points, radius, 1.0), 1, -8)
 
+    # M1.4: a central gathering place and two smaller yards.
+    # Edges use freeform ellipses (not rectangular pasted map snippets).
+    # The courtyard ring renders over through-paths so every approach feels
+    # part of one connected hamlet instead of a boxed central starter map.
+    for court in layout.get("courtyards", []):
+        var key := str(court.get("id", "courtyard"))
+        var center := _v(court.get("center", [0, 0]))
+        var radii := _v(court.get("radii", [60, 35]))
+        var seed := float(court.get("seed", 0.0))
+        var kind := 9 if str(court.get("kind", "")) == "cobblestone" else 10
+        _surface(key + "_grass_fringe", _ellipse(center, radii + Vector2(9, 7), seed), 11, -7)
+        _surface(key + "_paving", _ellipse(center, radii, seed), kind, -6)
+
 
 func _build_landforms() -> void:
     var landforms := Node2D.new()

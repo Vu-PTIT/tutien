@@ -34,6 +34,11 @@ func _run_checks() -> void:
     _check(stage.get_node_or_null("river_east_water") is Polygon2D, "Missing real water polygon")
     _check(stage.get_node_or_null("road_west_east") is Polygon2D, "Missing freeform road")
     _check(stage.get_node_or_null("garden_bed_a") is Polygon2D, "Missing independent garden soil")
+    _check(stage.get_node_or_null("village_heart_paving") is Polygon2D, "Village center lacks shared cobblestone plaza")
+    _check(stage.get_node_or_null("market_terrace_paving") is Polygon2D, "Missing outdoor market yard")
+    var world_data: Dictionary = stage.get("layout")
+    _check(world_data.get("districts", []).size() >= 5, "Named village districts are missing")
+    _check(world_data.get("door_routes", []).size() >= 5, "Homes lack connected access routes")
     _check(stage.get_node_or_null("LayeredMapHUD/MapOverview") != null, "Missing shared-data minimap")
 
     var decals := stage.get_node_or_null("L1_RasterBrushChunks")

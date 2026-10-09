@@ -58,6 +58,14 @@ func _draw() -> void:
         var radius := float(road.get("radius", 13.0))
         _draw_stroke(points, radius + 3.0, Color(0.67, 0.72, 0.45), frame, extent)
         _draw_stroke(points, radius, Color(0.86, 0.73, 0.53), frame, extent)
+    # Central village courtyard and two smaller gathering yards share world coordinates.
+    for court in layout.get("courtyards", []):
+        var center := _v(court.get("center", []))
+        var radii := _v(court.get("radii", [60, 35]))
+        var kind := str(court.get("kind", ""))
+        _draw_ellipse(center, radii + Vector2(6, 5), Color(0.65, 0.69, 0.45), frame, extent)
+        var tint := Color(0.78, 0.72, 0.59) if kind == "cobblestone" else Color(0.79, 0.67, 0.48)
+        _draw_ellipse(center, radii, tint, frame, extent)
     for bridge in layout.get("bridges", []):
         var center := _v(bridge.get("position", []))
         var bridge_size := _v(bridge.get("size", [128, 26]))

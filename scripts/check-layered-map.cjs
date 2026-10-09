@@ -18,10 +18,13 @@ assert.ok(map.waters.length >= 2, "Missing separate water bodies");
 assert.ok(map.terrain_patches.length >= 3, "No authored grass/soil clearings");
 assert.ok(map.terraces.length >= 2, "Expected two irregular terrain ridges");
 assert.ok(map.bridges.length >= 1, "Missing timber river crossing");
+assert.ok(Array.isArray(map.courtyards) && map.courtyards.length >= 3, "No village heart and linked yards");
+assert.ok(Array.isArray(map.districts) && map.districts.length >= 5, "Village lacks named neighborhoods");
+assert.ok(Array.isArray(map.door_routes) && map.door_routes.length >= 5, "Entrances have no paths");
 
 const ids = new Set();
 for (const [group,records] of Object.entries({
-  roads:map.roads, waters:map.waters, terrain_patches:map.terrain_patches, terraces:map.terraces, bridges:map.bridges, objects:map.objects, activity_slots:map.activity_slots
+  roads:map.roads, waters:map.waters, terrain_patches:map.terrain_patches, courtyards:map.courtyards, districts:map.districts, terraces:map.terraces, bridges:map.bridges, objects:map.objects, activity_slots:map.activity_slots
 })) {
   for (const item of records) {
     assert.ok(typeof item.id === "string" && item.id.length, group + " without ID");
@@ -31,6 +34,16 @@ for (const [group,records] of Object.entries({
       assert.ok(Array.isArray(item.points) && item.points.length >= 2, "Broken freeform path: " + item.id);
       for (const p of item.points) assert.ok(Array.isArray(p) && p.length === 2 && p.every(Number.isFinite), item.id);
       assert.ok(item.radius >= 4, "Unusable road/water radius: " + item.id);
+    }
+    if (group === "courtyards") {
+      assert.ok(inside(item.center), "Courtyard outside village");
+      assert.ok(item.radii.length === 2 && item.radii[0] > 35 && item.radii[1] > 20,
+        "Courtyard needs intentional open space: " + item.id);
+      assert.ok(["cobblestone", "packed_earth"].includes(item.kind), "Unsupported courtyard art");
+    }
+    if (group === "districts") {
+      assert.ok(inside(item.center), "District center outside village");
+      assert.ok(item.size.length === 2 && item.size.every(n => n > 0), "Invalid district dimensions");
     }
     if (group === "terraces") {
       assert.ok(["north", "south"].includes(item.side), "Terrace side must face map border");
@@ -60,6 +73,23 @@ for (const [group,records] of Object.entries({
 const objectIds = new Set(map.objects.map(o => o.id));
 const waterIds = new Set(map.waters.map(o => o.id));
 for (const bridge of map.bridges) assert.ok(waterIds.has(bridge.water_id), "Bridge refers to missing water body");
+const roadById = new Map(map.roads.map(r=>[r.id,r]));
+const objectById = new Map(map.objects.map(o=>[o.id,o]));
+const separation = (a,b) => Math.hypot(a[0]-b[0], a[1]-b[1]);
+for (const district of map.districts) assert.ok(objectById.has(district.landmark),
+  "District landmark is missing: " + district.id);
+for (const route of map.door_routes) {
+  const road = roadById.get(route.route_id);
+  const object = objectById.get(route.object_id);
+  assert.ok(road && object, "Entrance route refers to missing road/prop: " + JSON.stringify(route));
+  assert.ok(object.action !== "", "Entrance route must lead to an interactable prop");
+  const target = [object.position[0] + object.interaction_offset[0],
+    object.position[1] + object.interaction_offset[1]];
+  const approach = road.points[road.points.length-1];
+  assert.ok(separation(target,approach) <= 9,
+    "Path ends too far from prop access: " + route.object_id + " (" +
+    separation(target,approach).toFixed(1) + "px)");
+}
 for (const slot of map.activity_slots) {
   assert.ok(objectIds.has(slot.object_id), "Activity slot lacks a world object: " + slot.id);
   assert.ok(inside(slot.position), "Activity slot outside world");
@@ -76,6 +106,9 @@ assert.ok(!scene.includes("TileMapLayer"), "New runtime scene uses TileMapLayer"
 assert.ok(!mapScript.includes("TileMapLayer.new"), "New renderer constructs TileMapLayer");
 assert.ok(mapScript.includes("CollisionPolygon2D.new"), "Water collider is not freeform");
 assert.ok(mapScript.includes("terrain_patches"), "Map ignores authored terrain details");
+assert.ok(mapScript.includes('layout.get("courtyards"'), "Missing non-tile village square");
+assert.ok(load("scripts/layered_minimap.gd").includes('layout.get("courtyards"'),
+  "Minimap does not show the village square");
 assert.ok(mapScript.includes("Geometry2D.clip_polygons"), "No collision-aware water crossing");
 assert.ok(load("scripts/layered_landforms.gd").includes("CollisionPolygon2D"),
   "Terrace rock faces are not collision-backed");
@@ -87,6 +120,7 @@ assert.ok(load("scenes/legacy_linh_khe.tscn").includes("village_demo.gd"),
   "Legacy reference scene was not preserved");
 console.log("PASS scene-mode map: " + map.objects.length + " independent props, " +
   map.roads.length + " roads, " + map.waters.length + " waterways, " +
-  map.terrain_patches.length + " visual clearings, " + map.terraces.length +
-  " ridges, " + map.bridges.length + " footbridges, " + map.activity_slots.length +
+  map.terrain_patches.length + " visual clearings, " + map.terraces.length + " ridges, " +
+  map.courtyards.length + " yards, " + map.door_routes.length + " linked entrances, " +
+  map.bridges.length + " footbridges, " + map.activity_slots.length +
   " activity placeholders.");

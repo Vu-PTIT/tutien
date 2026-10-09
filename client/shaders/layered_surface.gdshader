@@ -134,6 +134,45 @@ void fragment() {
         if (crack > 0.88 && mod(p.x, 31.0) < 2.0) {
             color_rgb = vec3(0.36, 0.36, 0.28);
         }
+    } else if (surface_kind == 9) {
+        // Shared village heart: irregular staggered cobbles, never a TileMap.
+        // Pattern follows the same world-space pixel lattice as surrounding soil.
+        float row = floor(p.y / 9.0);
+        float shift = mod(row, 2.0) * 7.0;
+        vec2 cobble_id = floor(vec2((p.x + shift) / 15.0, p.y / 9.0));
+        vec2 within = mod(vec2(p.x + shift, p.y), vec2(15.0, 9.0));
+        float stone = noise21(cobble_id + vec2(49.0, 12.0));
+        float wear = noise21(floor(p / 3.0) + vec2(17.0, 29.0));
+        color_rgb = mix(vec3(0.76, 0.72, 0.59), vec3(0.87, 0.79, 0.62), stone);
+        float jagged = noise21(vec2(cobble_id.x * 7.0 + floor(p.y / 4.0), cobble_id.y * 13.0));
+        if (within.y < 1.0 || within.x < (jagged > 0.72 ? 2.0 : 1.0)) {
+            color_rgb = vec3(0.54, 0.52, 0.43);
+        } else if (within.y > 6.0 || within.x > 12.0) {
+            color_rgb *= 0.90;
+        } else if (wear > 0.91) {
+            color_rgb = mix(color_rgb, vec3(0.96, 0.85, 0.66), 0.28);
+        }
+        if (stone > 0.90 && wear > 0.86) {
+            color_rgb = mix(color_rgb, vec3(0.61, 0.58, 0.48), 0.43);
+        }
+    } else if (surface_kind == 10) {
+        // Lighter packed-earth yards; no rectangular paved pads around homes.
+        color_rgb = mix(vec3(0.75, 0.67, 0.48), vec3(0.82, 0.74, 0.53), fields);
+        if (coarse > 0.82) {
+            color_rgb = mix(color_rgb, vec3(0.62, 0.56, 0.40), 0.38);
+        }
+        if (soil_speck > 0.956) {
+            color_rgb = mix(color_rgb, vec3(0.92, 0.84, 0.63), 0.46);
+        }
+    } else if (surface_kind == 11) {
+        // Transitional grass-and-sand band between roads and courtyard stones.
+        color_rgb = mix(vec3(0.66, 0.70, 0.45), vec3(0.75, 0.73, 0.48), fields);
+        if (coarse > 0.77) {
+            color_rgb = mix(color_rgb, vec3(0.82, 0.73, 0.52), 0.53);
+        }
+        if (tiny_leaf(p) > 0.5) {
+            color_rgb = vec3(0.48, 0.67, 0.37);
+        }
     } else {
         // Irregular sandy verge under the lane's main footprint.
         color_rgb = mix(vec3(0.65, 0.72, 0.45), vec3(0.74, 0.73, 0.48), fields);

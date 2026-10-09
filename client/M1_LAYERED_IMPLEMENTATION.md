@@ -41,3 +41,14 @@
 - Smoke test now checks brush chunks and HUD contrast.
 - **Visual quality gate:** inspect captured Godot screenshot in GitHub Actions, especially path continuity, density, foliage variation and alpha edges. The raster brush stamps are sourced from existing licensed sprites; **not a claim that all terrain is hand-painted**.
 - `feat/dual-experience-platform` was not modified. No NPC routines, persistence, multiplayer activity or server economy added.
+
+## M1.4 — Village circulation and connected neighborhoods (09/10/2026)
+
+- Reorganized paths into thirteen authored freeform routes: main street, north/south lanes, market, fishing path, bridge approaches, and explicit house/garden entrance spurs.
+- Authored a connected village center (`village_heart`) with an irregular cobblestone plaza and two packed-earth yards. These use polygon shaders in world pixels, **not a TileMap or pasted full-scene PNG**.
+- Moved well, notice board, benches and lanterns into a legible shared village heart; added a table, goods, baskets and a sign to establish a small market cluster.
+- Added five named districts and five `door_routes` to the single map JSON for eventual navigation/activity routing. Their visual presentation stays independent of the platform branch.
+- Updated minimap and raster brush exclusion masks so new courtyard edges and approach paths remain visible rather than obscured by random brush sprites.
+- Added `layered_route_smoke.gd`: Godot physics probes plus 16px AStar connectivity checks for doorways, garden, river crossing and major districts. The grid is **only a QA tool**; runtime art remains non-tile.
+- Updated CI to capture both the camera gameplay shot and a full-map review shot from Godot.
+- No server-backed travel, saved activities, autonomous NPC routing, multiplayer, real shop, or functional trade implemented here. Bridges and terrain remain subject to QA against all approach paths.

@@ -11,7 +11,8 @@ func _capture_scene() -> void:
         push_error("Could not load layered village for capture")
         quit(1)
         return
-    root.add_child(packed.instantiate())
+    var village := packed.instantiate()
+    root.add_child(village)
     for _frame in range(8):
         await process_frame
     await RenderingServer.frame_post_draw
@@ -31,5 +32,25 @@ func _capture_scene() -> void:
         push_error("Screenshot save failed: " + str(err))
         quit(1)
         return
-    print("PASS screenshot captured to: " + path)
+    print("PASS viewport screenshot captured to: " + path)
+
+    # Actual full-map art review shot (camera-only). Both images are rendered
+    # by Godot, not decorative PNG mockups.
+    var camera := Camera2D.new()
+    camera.name = "ArtReviewCamera"
+    camera.position = Vector2(560.0, 400.0)
+    camera.zoom = Vector2(0.89, 0.89)
+    camera.position_smoothing_enabled = false
+    village.add_child(camera)
+    camera.make_current()
+    for _frame in range(3):
+        await process_frame
+    await RenderingServer.frame_post_draw
+    var overview := root.get_texture().get_image()
+    var output_path := "/tmp/tutien-previews/layered_m1_overview.png"
+    if overview == null or overview.is_empty() or overview.save_png(output_path) != OK:
+        push_error("Full-map art review capture failed")
+        quit(1)
+        return
+    print("PASS village overview captured to: " + output_path)
     quit(0)
