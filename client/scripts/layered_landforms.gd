@@ -153,8 +153,8 @@ func _build_bridges() -> void:
             _rect(id + "_plank_%d" % x, Rect2(x, top + 3, 6, half_height * 2 - 5), tint)
             _rect(id + "_plank_light_%d" % x, Rect2(x, top + 3, 6, 2), Color(0.87, 0.70, 0.43))
             _rect(id + "_plank_seam_%d" % x, Rect2(x + 6, top + 3, 1, half_height * 2 - 5), Color(0.42, 0.33, 0.20))
-        for side in [-1, 1]:
-            var rail_y := roundi(point.y) + side * (half_height + 4)
+        for side: int in [-1, 1]:
+            var rail_y: int = roundi(point.y) + side * (half_height + 4)
             _rect(id + "_rail_%d" % side, Rect2(left - 2, rail_y, span + 4, 3), Color(0.39, 0.26, 0.16))
             _rect(id + "_rail_light_%d" % side, Rect2(left - 2, rail_y, span + 4, 1), Color(0.83, 0.66, 0.38))
             for x in range(left + 3, left + span, 27):
