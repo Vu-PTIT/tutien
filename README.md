@@ -12,11 +12,17 @@ Quy chuẩn áp dụng trên cả `feat/map-ui-rebuild` và `feat/dual-experienc
 
 **Đây là cập nhật thiết kế, chưa phải bản map/hiệu ứng mới đã chạy.** Ở mốc rebuild `d8565ca`, demo làng còn dựng từ dữ liệu tile và vật thể qua `village_demo.gd`/`village_sprite_object.gd`. Giữ tài nguyên hiện có để chuyển đổi từng phần; không xóa bản đang dùng trước khi scene phân lớp được kiểm tra.
 
+## Vai trò nhánh — 09/10/2026
+
+`feat/map-ui-rebuild` là **nhánh GAME / MAP UI**. Trọng tâm là map, camera, nhân vật, animation, tương tác trực tiếp và biểu diễn các activity trong thế giới game. Lịch, kế hoạch, nhật ký, icon và thống kê đời sống thuộc `feat/dual-experience-platform`.
+
+Backend/hợp đồng `activity_session` là phần giao nhau: platform gửi lệnh; game nhận trạng thái/snapshot để avatar tự đi, hoạt động và cho phép takeover trực tiếp.
+
 ## Hai không gian
 
-- **Nền tảng sinh hoạt:** bảng việc trong ngày, lịch cá nhân, hẹn giờ tập trung, phòng học/làm việc chung và trò chuyện với bạn bè. Người chơi tự chọn chia sẻ hoạt động như “đang học”, “đang làm” hoặc “đang nghỉ”.
+- **Sảnh/platform:** lịch, kế hoạch, nhật ký icon/note, thống kê và quản lý activity; được phát triển ở `feat/dual-experience-platform`.
 - **Thế giới game:** gặp bạn trong thị trấn, trồng trọt, câu cá, thu thập, chế tạo, chăm nhà/vườn và thay trang phục. Khi muốn phát triển sức mạnh, người chơi chọn ngồi thiền hoặc chủ động đi đánh quái PvE.
-- **Kết nối giữa hai phần:** một tài khoản, hồ sơ, danh sách bạn và trạng thái hoạt động. Khi bấm “đang đi làm” trong app, thế giới game nhận lệnh để avatar tự đi từ vị trí hiện tại tới khu làm việc rồi bắt đầu hoạt động ở đó. Bạn không cần mở game; bạn bè có thể thấy hành trình và nhân vật đang làm việc theo quyền chia sẻ.
+- **Kết nối giữa hai phần:** một tài khoản và hợp đồng activity chung. Trạng thái đời thật không bắt buộc quyết định hoạt động avatar. Ví dụ người dùng đang học ngoài đời nhưng giao **Đi câu** từ platform; nhánh game phải đưa đúng avatar tới slot câu, duy trì trạng thái autonomous và cho phép takeover khi người dùng vào game.
 
 Định hướng hiện tại không có minigame. Hoàn thành việc đời thường có thể được ghi nhận bằng phản hồi nhẹ hoặc vật trang trí; không tạo áp lực phải khai việc thật để cạnh tranh sức mạnh.
 
