@@ -8,14 +8,20 @@ Quy chuẩn áp dụng trên cả `feat/dual-experience-platform` và `feat/map-
 
 **Đây là cập nhật thiết kế, chưa phải bản map/hiệu ứng mới đã chạy.** Ở mốc platform `31080e8`, `client/scripts/main.gd` còn khai báo `MapWorldScene = null`. Những mô tả map bốn vùng của bản base cũ bên dưới là lịch sử/tham chiếu, không phải hiện trạng map đã nghiệm thu trên nhánh này. Scene mới, tương tác có lưu và liên thông activity cần được tích hợp và kiểm tra riêng.
 
-## Hướng sản phẩm — 05/10/2026
+## Vai trò nhánh — 09/10/2026
+
+`feat/dual-experience-platform` là **nhánh SẢNH / PLATFORM**. Trọng tâm của nhánh là lịch, kế hoạch, nhật ký, icon hoạt động, thống kê, hồ sơ xã hội và giao activity cho avatar. Map, camera, collision, animation và gameplay trực tiếp thuộc `feat/map-ui-rebuild`.
+
+Backend/hợp đồng `activity_session` là phần giao nhau giữa hai nhánh: platform phát lệnh và hiển thị trạng thái/kết quả; game nhận snapshot và thể hiện avatar trong thế giới.
+
+## Hướng sản phẩm — 09/10/2026
 
 Tu Tiên đang được định hướng cho người trẻ, đặc biệt là Gen Z, thành hai trải nghiệm song song:
 
-- **Nền tảng sinh hoạt và kết nối:** lịch/việc cá nhân, focus, phòng học/làm chung, hồ sơ, bạn bè và chat.
+- **Sảnh/platform:** lịch ngày/tuần/tháng, kế hoạch, nhật ký bằng icon/note, thống kê nhẹ, hồ sơ, bạn bè/chat và thẻ avatar để giao hoạt động.
 - **Thế giới game pixel:** giao lưu kiểu game Avatar Việt Nam thời trước, kết hợp trồng trọt, câu cá, thu thập, chế tạo, chăm nhà/vườn kiểu Stardew Valley; người chơi có thể ngồi thiền tăng sức mạnh hoặc chủ động đánh quái PvE theo cảm hứng Ngọc Rồng Online. Không có minigame.
 
-Hai phần dùng chung tài khoản, avatar, bạn bè, chat và trạng thái. Ví dụ, bấm “đang đi làm” trong app sẽ gửi hoạt động sang thế giới game để nhân vật tự đi đến khu làm việc và bắt đầu làm, kể cả khi người dùng không mở game. Địa điểm và chỗ hoạt động theo ID/slot, do server kiểm tra quyền, đường đi và sức chứa; bạn bè xem theo phạm vi chia sẻ.
+Hai phần dùng chung tài khoản, avatar, bạn bè, chat và activity session. Trạng thái đời thật và hoạt động avatar là hai lớp riêng. Ví dụ người dùng có thể đang học ngoài đời nhưng từ sảnh giao avatar **đi câu**; game branch sẽ thể hiện avatar tự đi tới hồ và hoạt động ngay cả khi game client đóng. Địa điểm và chỗ hoạt động theo ID/slot, do server kiểm tra quyền, đường đi và sức chứa; bạn bè xem theo phạm vi chia sẻ.
 
 Đây là định hướng sản phẩm trên nhánh thử nghiệm; lịch/focus và việc nhân vật tự đi, tự làm khi offline chưa được triển khai. Xem [01 — Tầm nhìn](docs/game-design/01-vision-and-core-loop.md), [08 — Hiện diện xã hội](docs/game-design/08-social-presence-and-lifestyle.md) và [09 — Hai không gian sản phẩm](docs/game-design/09-dual-experience-platform.md).
 
