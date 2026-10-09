@@ -1,85 +1,193 @@
-# 09 — Nền tảng sinh hoạt và thế giới game
+# 09 — Nền tảng đời sống và thế giới game
 
-**Cập nhật:** 08/10/2026.  
+**Cập nhật:** 09/10/2026.  
 **Trạng thái:** định hướng sản phẩm; chưa phải mô tả code hiện có.
 
 ## Mục tiêu
 
-Tu Tiên có hai trải nghiệm song song để người dùng không cần mở game mỗi khi muốn ở trong cộng đồng. Họ có thể sử dụng nền tảng cho việc hằng ngày, học/làm cùng bạn và trò chuyện; game là một không gian riêng để sinh hoạt, khám phá và tu luyện.
+Tu Tiên có hai trải nghiệm song song:
 
-Hai phần có thể mở riêng, dùng chung tài khoản, avatar, hồ sơ, bạn bè, chat và trạng thái. Chưa khóa cách phát hành thành một ứng dụng có hai chế độ hay hai ứng dụng liên kết; trước tiên cần kiểm chứng cả hai luồng sử dụng.
+1. **Nền tảng đời sống:** lịch, kế hoạch, nhật ký, ghi chú, biểu tượng hoạt động, thống kê nhẹ và kết nối bạn bè.
+2. **Thế giới game:** một thị trấn pixel Việt Nam hiện đại pha kỳ ảo, nơi cùng một nhân vật có thể được người dùng trực tiếp điều khiển hoặc tự sinh hoạt khi chủ nhân bận.
 
-## A. Nền tảng sinh hoạt
+Hai phần dùng chung tài khoản, nhân vật, hồ sơ, bạn bè, chat, tài sản và các phiên hoạt động game. Người dùng không cần mở game để giao một hoạt động cho nhân vật, nhưng khi muốn chơi có thể vào thế giới và tiếp quản chính nhân vật đó.
 
-Phần này giúp người dùng thực hiện các hoạt động thường ngày ngay trong sản phẩm:
+## A. Sảnh / nền tảng đời sống
 
-- Bảng hôm nay với lịch cá nhân và danh sách việc cần làm.
-- Hẹn giờ tập trung cho học/làm, có thể vào phòng chung với bạn bè.
-- Trạng thái ngắn như “đang học”, “đang đi làm”, “đang nghỉ”, cùng lời nhắn tùy chọn; trạng thái có thể gửi lệnh cho avatar trong game.
-- Hồ sơ, danh sách bạn, chat và lời nhắn để duy trì kết nối.
-- Lịch sử focus đơn giản để người dùng tự xem thời gian mình đã tập trung.
+Sảnh không phải menu game đơn thuần. Nó là một trang đời sống cá nhân có giá trị độc lập.
 
-Tính năng đầu tiên nên gọn: người dùng tự nhập việc, chọn thời lượng, bắt đầu một phiên tập trung, mời bạn hoặc vào phòng chung, rồi tự kết thúc/đánh dấu việc. Mở rộng thêm công cụ sau khi luồng hằng ngày này có người dùng quay lại thường xuyên.
+### 1. Lịch và kế hoạch
 
-Khi người dùng bấm “đang đi làm”, nền tảng gửi một activity command tới thế giới game. Avatar tự đi từ tọa độ đã lưu tới khu làm việc trong thị trấn rồi thực hiện hoạt động ở đó, kể cả khi game client đã đóng. Mỗi trạng thái có điểm đến và hành động tương ứng, ví dụ học → thư viện/lớp học, làm → khu làm việc, nghỉ → nhà/quán nước.
+- Xem theo ngày, tuần và tháng.
+- Tạo lịch học, lịch làm, cuộc hẹn hoặc việc cá nhân.
+- Hỗ trợ lịch lặp theo thứ và khoảng ngày áp dụng.
+- Phân biệt rõ `planned`, `done`, `skipped`, `cancelled`; thời gian trôi qua không tự biến việc thành `done`.
+- Có thể nhập thời lượng hoặc chỉ ghi nhận một hoạt động không có giờ.
 
-## B. Thế giới game
+### 2. Nhật ký và icon hoạt động
 
-Game tiếp tục là thế giới pixel online với bối cảnh Việt Nam hiện đại pha kỳ ảo. Vòng chơi đời sống gồm trồng trọt, câu cá, thu thập, chế tạo, chăm nhà/vườn, thăm nhà bạn và thay trang phục.
+Người dùng có thể:
+- ghi một việc vừa làm mà trước đó không có trong lịch;
+- gắn icon như học, đi làm, đi cà phê, tập thể dục, đọc sách hoặc hoạt động tùy chỉnh;
+- thêm note ngắn và dữ liệu tùy chọn;
+- nhìn vào lịch tháng để biết mỗi ngày đã ghi nhận những gì.
 
-Tu luyện chia thành hai lựa chọn:
+Ngày không ghi nhận gì được phép để trống; không coi đó là thất bại hoặc mất streak.
 
-- **Thiền:** nhân vật ngồi thiền và tăng sức mạnh theo thời gian.
-- **PvE:** người chơi chủ động ra ngoài đánh quái để nhận kinh nghiệm, nguyên liệu và trang bị.
+### 3. Thống kê
 
-Người chơi có thể vào game chỉ để gặp bạn hoặc chăm chút nơi ở. Không có minigame trong hướng hiện tại; combat không bắt buộc.
+Thống kê phản ánh dữ liệu người dùng đã nhập hoặc xác nhận:
+- số lần ghi nhận theo nhóm hoạt động;
+- số kế hoạch đã đánh dấu hoàn thành;
+- tổng thời lượng nếu người dùng có nhập hoặc dùng bộ đếm;
+- xu hướng theo tuần/tháng.
 
-Map theo [10 — Map phân lớp và vật thể tương tác](10-layered-interactive-maps.md): nền vẽ tự do, nước và props riêng; không bắt toàn bộ cảnh dùng tileset. Cây, cửa, ghế, giường và bàn học có dữ liệu tương tác/trạng thái độc lập. Đây là yêu cầu thiết kế, không phải tính năng đã nghiệm thu.
+Không dùng thống kê để chấm điểm giá trị người dùng hoặc tạo lợi thế chiến đấu.
 
-## C. Lớp kết nối
+### 4. Quản lý nhân vật ngay trong sảnh
 
-| Dữ liệu/hoạt động | Nền tảng sinh hoạt | Thế giới game |
+Sảnh có một thẻ nhân vật gọn:
+- hoạt động game hiện tại;
+- địa điểm;
+- trạng thái `travelling / active / completed`;
+- kết quả tạm thời hoặc đã settlement;
+- nút dừng/đổi hoạt động;
+- nút vào thế giới game.
+
+Ví dụ: người dùng đang học ngoài đời nhưng trong thẻ nhân vật chọn **Đi câu tại hồ An Khê trong 2 giờ**.
+
+## B. Tách đời thật khỏi hoạt động nhân vật
+
+Ba lớp dữ liệu không được gộp:
+
+| Lớp | Ví dụ | Tác dụng |
 | --- | --- | --- |
-| Tài khoản và hồ sơ | Đăng nhập, ảnh đại diện, trạng thái | Nhân vật và hồ sơ trong game |
-| Bạn bè và chat | Tìm bạn, nhắn tin, phòng tập trung | Gặp nhau, chat và ghé thăm |
-| Trạng thái và lệnh | Người dùng chọn học/làm/nghỉ/focus trong app | Avatar tự đi tới địa điểm tương ứng và thực hiện hoạt động trong thế giới game |
-| Việc hoàn thành | Danh sách việc, phiên tập trung | Có thể nhận phản hồi hoặc trang trí tùy chọn |
-| Tiến trình game | Hiển thị nhân vật, không bắt buộc chơi | Nông trại/nhà, thiền và PvE |
+| `real_life_entry` | Học 8–11h, đi cà phê, tập thể dục | Lịch/nhật ký |
+| `real_life_status` | Đang học, đang làm, đang nghỉ | Hiện diện xã hội |
+| `avatar_activity` | Câu cá, chăm vườn, thiền | Tiến trình trong game |
 
-Người dùng tự kiểm soát trạng thái, thời hạn và người xem. Thế giới lưu lệnh, điểm đi, điểm đến, thời gian và animation để giữ trạng thái nhất quán mà không cần chủ nhân mở game. Hệ thống không tự thu thập lịch, vị trí hoặc hành vi ngoài sản phẩm. Ghi nhận hoạt động thật không nên quyết định sức mạnh chiến đấu.
+Người dùng có thể:
+- đang học ngoài đời;
+- đặt trạng thái “Đang học” cho bạn bè thấy;
+- đồng thời giao avatar đi câu cá.
 
-## D. Trải nghiệm mẫu
+Không dùng `real_life_status` làm nguồn sự thật cho hoạt động game.
 
-1. Người chơi mở nền tảng, thêm “ôn môn Kinh tế đô thị” vào danh sách hôm nay và chọn focus 40 phút.
-2. Họ vào phòng thư viện với bạn bè. Hồ sơ hiện “đang học”; lệnh được gửi sang game và avatar tự đi tới thư viện rồi ngồi đọc sách, dù chủ nhân không mở game.
-3. Khi kết thúc, người chơi tự đánh dấu việc hoàn thành và trò chuyện hoặc để lại lời nhắn.
-4. Tối họ mở thế giới game, tưới vườn, thăm nhà bạn; nếu thích thì ngồi thiền hoặc đi đánh quái.
+## C. Thế giới game
 
-## E. Nguyên tắc trải nghiệm
+Game là thế giới pixel top-down 3/4, Việt Nam hiện đại hồi phục linh khí.
 
-- Hai phần cùng nhận diện và cộng đồng nhưng mỗi phần vẫn có giá trị riêng.
-- Mọi trạng thái đời thường đều do người dùng khởi tạo, kết thúc hoặc ẩn.
-- Focus hỗ trợ thói quen cá nhân và học/làm cùng bạn; không biến thành chấm điểm năng suất.
-- Phần thưởng nối việc đời thường với game nên thiên về biểu cảm/trang trí. Sức mạnh chiến đấu phát triển qua lựa chọn trong game như thiền và PvE.
-- Người dùng có thể mở game mà không cần dùng lịch/focus; họ cũng có thể dùng nền tảng mà không cần vào game.
+Các khu sinh hoạt như hồ câu, vườn, quán nước, thư viện, nhà ở và điểm thiền phải dùng được bởi:
+- người chơi đang điều khiển trực tiếp;
+- avatar đang chạy hoạt động tự động;
+- bạn bè tới xem, ngồi cạnh hoặc tương tác xã hội.
 
-## F. Lát cắt thử nghiệm
+Câu cá, làm vườn và các hoạt động đời sống không nên buộc người dùng phải online lâu. Khi rảnh, họ vẫn có thể tự chơi trực tiếp để tận hưởng thế giới, chọn vị trí, thay đổi kế hoạch và giao lưu.
 
-1. Tạo hồ sơ và thêm bạn.
-2. Tạo việc trong ngày và bắt đầu/kết thúc focus timer.
-3. Vào phòng tập trung chung và thấy trạng thái bạn bè.
-4. Gửi lệnh hoạt động từ app; avatar trong game tự đi tới địa điểm tương ứng và bắt đầu animation.
-5. Mở game riêng, gặp bạn và thử một hoạt động đời sống hoặc thiền.
-6. Kiểm tra avatar vẫn hoàn tất đường đi và giữ hoạt động khi chủ nhân đóng game; trạng thái hết hạn/ẩn đúng và không tạo avatar trùng khi mở lại.
+PvE và tu luyện là nhánh chơi tự chọn; không phải yêu cầu để sử dụng nền tảng đời sống.
 
-Chỉ sau khi lát cắt này dễ hiểu và ổn định mới mở rộng lịch, ghi chú, tính năng cộng đồng hoặc nội dung PvE.
+## D. Một hoạt động, hai chế độ
 
-## G. Hợp đồng hoạt động trên map phân lớp
+Mỗi hoạt động hỗ trợ cùng một state machine và cùng luật phần thưởng cho hai chế độ:
 
-Địa điểm khai báo `map_id`, ID vật thể/slot, điểm tiếp cận, vị trí thực hiện, hướng và animation. App gửi loại hoạt động và `command_id`; server chọn địa điểm/slot hợp lệ theo quyền, đường đi và sức chứa. Không lấy vị trí ngồi từ tâm ảnh hoặc mã tile.
+### Direct control
+Người dùng tự điều khiển avatar, tự đi đến địa điểm và thực hiện hoạt động.
 
-Server quản lý lộ trình/mốc thời gian và trạng thái `idle → travelling → active → completed/cancelled/expired`; xử lý lệnh lặp, lệnh cũ, hủy, hết hạn, hết chỗ và reconnect. Đóng game không dừng logic hoạt động; mở lại dựng một avatar từ snapshot. Khi người chơi tự điều khiển, phải chuyển quyền điều khiển khỏi hoạt động tự động.
+### Autonomous control
+Người dùng giao hoạt động từ sảnh hoặc trong game. Server:
+1. kiểm tra điều kiện;
+2. tạo `activity_session`;
+3. chọn địa điểm/slot hợp lệ;
+4. quản lý trạng thái di chuyển và hoạt động;
+5. settlement kết quả;
+6. lưu snapshot để người khác thấy trạng thái nhất quán.
 
-Dữ liệu hoạt động gửi cho bạn bè phải tuân thủ quyền xem; không chỉ giấu nhãn trong UI trong khi vẫn gửi đích riêng tư. Sóng nước, lá và khói chạy cục bộ; cây trồng/loot/sở hữu và slot dùng chung có xác nhận server. Trạng thái học/làm ngoài đời không tự sinh tài sản hay sức mạnh chiến đấu.
+Đóng client không dừng phiên đã được server chấp nhận.
 
-M4 của tài liệu 10 là bước kiểm chứng liên thông; chưa có API mới hoặc hoạt động offline được triển khai chỉ bởi cập nhật tài liệu này.
+## E. Tiếp quản nhân vật
+
+Khi mở game trong lúc avatar đang tự hoạt động:
+
+- game dựng đúng **một** avatar từ snapshot;
+- người dùng có thể chỉ xem hoặc bấm **Tự điều khiển**;
+- server chuyển quyền từ autonomous → direct;
+- tiến trình và kết quả đã hoàn tất được giữ nguyên;
+- không tạo avatar trùng;
+- không settlement lại cùng một kết quả.
+
+Khi người dùng muốn rời game, có thể giao lại hoạt động tự động nếu hoạt động hỗ trợ.
+
+## F. Phần thưởng
+
+Phần thưởng game xuất phát từ `avatar_activity`, không phải từ việc người dùng tự khai đã học/làm.
+
+Ví dụ phiên câu cá có thể lưu:
+- `session_id`;
+- thời gian bắt đầu/kết thúc;
+- địa điểm và slot;
+- dụng cụ/điều kiện;
+- các lần kết quả đã settlement;
+- phần thưởng còn chờ hiển thị;
+- trạng thái điều khiển direct/autonomous.
+
+Khi người dùng vào game, màn hình có thể tóm tắt “nhân vật đã làm gì”, nhưng việc mở màn hình không phải điều kiện để server ghi nhận thành quả.
+
+## G. Trải nghiệm mẫu
+
+1. Người dùng mở sảnh sáng thứ Hai và thấy lịch học 08:00–11:00.
+2. Họ bắt đầu buổi học hoặc chỉ để lịch ở trạng thái planned.
+3. Trong thẻ nhân vật, họ chọn **Đi câu tại hồ An Khê trong 2 giờ**.
+4. Server tạo phiên; avatar tự đi tới hồ và bắt đầu câu. Người dùng đóng ứng dụng.
+5. Một người bạn đang ở trong thế giới game có thể thấy avatar đang câu với nhãn cho biết chủ nhân không trực tiếp điều khiển.
+6. Sau giờ học, người dùng đánh dấu buổi học là done và ghi note nếu muốn.
+7. Họ mở game; avatar vẫn ở hồ. Có thể xem kết quả hoặc tiếp quản để tự câu tiếp.
+8. Khi rời game, có thể giao avatar tiếp tục tự động.
+
+## H. Hợp đồng kỹ thuật cấp sản phẩm
+
+`activity_session` tối thiểu cần:
+- `session_id`, `user_id`, `avatar_id`;
+- `activity_type`;
+- `map_id`, `activity_slot_id`;
+- `control_mode`: `autonomous | direct`;
+- `state`: `queued | travelling | active | completed | cancelled | expired`;
+- `started_at`, `expected_end_at`, `completed_at`;
+- `state_version` để chống ghi cũ;
+- dữ liệu settlement và idempotency để chống nhận trùng.
+
+Lệnh mới cần `command_id`; server xử lý lệnh lặp, lệnh cũ, slot hết chỗ, reconnect và takeover.
+
+Map khai báo điểm tiếp cận, vị trí hoạt động, hướng, animation và quyền dùng slot; không lấy các thông tin này từ tâm sprite hoặc mã tile.
+
+## I. Lát cắt thử nghiệm ưu tiên
+
+Vertical slice đầu tiên phải chạy end-to-end:
+
+1. Sảnh có lịch ngày/tuần/tháng.
+2. Tạo một mục lịch học và đánh dấu done sau đó.
+3. Có icon/note cho nhật ký.
+4. Từ sảnh chọn **Đi câu**.
+5. Avatar tự tới một hồ có slot hoạt động.
+6. Đóng game mà phiên vẫn tiến triển.
+7. Mở game thấy đúng avatar và trạng thái.
+8. Tiếp quản trực tiếp.
+9. Trả lại autonomous.
+10. Kết quả chỉ settlement một lần.
+11. Người khác thấy avatar theo đúng quyền chia sẻ.
+
+Sau khi lát cắt này ổn định mới nhân rộng sang chăm vườn, thiền, thu thập và các hoạt động khác.
+
+## J. Nguyên tắc trải nghiệm
+
+- Nền tảng đời sống phải hữu ích nếu không chơi game.
+- Game phải vui nếu người dùng không dùng lịch.
+- Không ép duy trì streak.
+- Không phạt vì vài ngày không mở sản phẩm.
+- Không yêu cầu treo máy thật.
+- Không lấy năng suất ngoài đời để quyết định lực chiến.
+- Không tự thu thập GPS, camera hoặc dữ liệu đời thật để “chứng minh” hoạt động.
+- Hoạt động tự động giúp người bận tiếp tục có mặt trong thế giới, không thay thế hoàn toàn phần chơi trực tiếp.
+
+## K. Hiện trạng
+
+Đây là hướng sản phẩm đã chốt ngày 09/10/2026. Lịch/nhật ký, activity session offline, câu cá/làm vườn tự động và takeover chưa được coi là đã triển khai chỉ vì tài liệu này tồn tại. Mỗi mốc phải có runtime test và bằng chứng riêng trước khi đổi trạng thái implementation.
