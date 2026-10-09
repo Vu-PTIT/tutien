@@ -77,7 +77,7 @@ func _run_checks() -> void:
     for slot in json.get("activity_slots", []):
         targets["activity_" + str(slot.get("id", ""))] = _v(slot.get("position", []))
     targets["bridge_opposite_bank"] = Vector2(1080, 346)
-    targets["plaza_market"] = Vector2(628, 573)
+    targets["plaza_market"] = Vector2(629, 608)
     targets["northern_lane"] = Vector2(423, 218)
     targets["southern_orchard"] = Vector2(710, 665)
     for name in targets:
