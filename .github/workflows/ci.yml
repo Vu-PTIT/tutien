@@ -91,7 +91,7 @@ jobs:
       - name: Capture actual M1 viewport for visual review
         run: |
           mkdir -p /tmp/tutien-previews
-          timeout 90 xvfb-run -a /tmp/godot/engine --path client --script res://tests/layered_map_capture.gd 2>&1 | tee /tmp/map-capture.log
+          timeout 90 xvfb-run -a /tmp/godot/engine --audio-driver Dummy --path client --script res://tests/layered_map_capture.gd 2>&1 | tee /tmp/map-capture.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load|ERROR:' /tmp/map-capture.log
       - if: always()
         uses: actions/upload-artifact@v4
