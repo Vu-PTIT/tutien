@@ -79,3 +79,13 @@
 - Both cliff ridges have short, broken, irregularly positioned anchor points and thinner, tapered stone faces. Collision uses the same face polygon, keeping render/physics aligned.
 - Eight extra existing-asset tree props organized into three named grove clusters, independent from their foot collisions; no generated filler art.
 - Navigation route and scene smoke tests remain required. CI screenshot review is required before visual acceptance; changes are a further art pass, not final world graphics.
+
+## M1.9 — Vietnamese village functional identity (2026-10-10)
+
+- **Playable scope**: adds 8 named Vietnamese-style hamlet activity and navigation zones (communal hall, village square, well, market, western/eastern hamlets, vegetable garden, village pond and riverside) linked to independent place marker objects. Zones have Godot Area2D sensors, localized display names, and lightweight HUD context.
+- Adds six original licensed source-pack scene props including haystacks, market baskets, water crate and rural signposts. The existing separate house/tree scenes remain live and collision-backed.
+- Local offline actions: communal hall information, well glint, market information, village signs; no simulated quests, online trade or fake server rewards.
+- Important art truth: available `House_Hay` buildings are not accurate historical Vietnamese communal architecture. Mark those objects `art_status: source_placeholder` and store their intended `art_role` (communal hall, thatched village house, banyan, river landing) in map JSON. Never claim these source sprites are finished authentic Vietnamese pixel art.
+- New source: `client/scripts/village_culture_zones.gd`; the script uses independent trigger objects, and map JSON remains the source of truth. Future authentic Vietnamese sprites can be swapped per object without replacing terrain or collision architecture.
+- Does NOT introduce NPC schedules, missions, autonomous movement, platform syncing or economy.
+- Required QA: Godot 4.6.1 import, scene smoke, route test, and screenshot; review artwork/identity before claiming visual acceptance.

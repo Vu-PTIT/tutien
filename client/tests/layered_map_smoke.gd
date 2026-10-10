@@ -86,6 +86,12 @@ func _run_checks() -> void:
     _check(main_road.get("width_profile", []).size() == main_road.get("points", []).size(),
         "Road width variations are missing")
 
+    var culture := stage.get_node_or_null("L4_CulturalPlaces")
+    _check(culture != null, "M1.9 cultural zone scenes missing")
+    if culture != null:
+        _check(int(culture.get("zone_count")) == 8, "Expected eight village identity zones")
+        var square: Dictionary = culture.call("zone_at", Vector2(530, 500))
+        _check(not square.is_empty(), "Player cannot discover village square")
     _check(stage.get_node_or_null("LayeredMapHUD/MapOverview") != null, "Missing shared-data minimap")
 
     var decals := stage.get_node_or_null("L1_RasterBrushChunks")
@@ -129,6 +135,9 @@ func _run_checks() -> void:
     var door: Node2D
     var tree: Node2D
     var bench: Node2D
+    var communal: Node2D
+    var well: Node2D
+    var market: Node2D
     var prop_count := 0
     if sorted != null:
         _check(sorted.y_sort_enabled, "Y sorting is disabled")
@@ -137,6 +146,12 @@ func _run_checks() -> void:
             if child.has_method("interact"):
                 prop_count += 1
                 var act := str(child.get("action"))
+                if act == "communal":
+                    communal = child
+                elif act == "well":
+                    well = child
+                elif act == "market":
+                    market = child
                 if act == "door" && door == null:
                     door = child
                 elif act == "tree" && tree == null:
@@ -146,6 +161,18 @@ func _run_checks() -> void:
         _check(prop_count >= 50, "Missing separately anchored scenery props")
     var actor := stage.get_node_or_null("L3_YSort_Props_and_Player/Player")
     _check(actor is CharacterBody2D, "Missing playable CharacterBody2D")
+    _check(communal != null, "Vietnamese communal hall action missing")
+    _check(well != null, "Village well action missing")
+    _check(market != null, "Village market action missing")
+    if communal != null:
+        var hall_message: Dictionary = communal.call("interact")
+        _check(not str(hall_message.get("message", "")).is_empty(), "Communal hall text missing")
+    if well != null:
+        well.call("interact")
+        _check(bool(well.get("changed")), "Village well does not change state locally")
+    if market != null:
+        var market_message: Dictionary = market.call("interact")
+        _check(str(market_message.get("message", "")).contains("Chợ phiên"), "Market text missing")
     if door != null:
         door.call("interact")
         _check(bool(door.get("opened")), "Door action must change local visual state")

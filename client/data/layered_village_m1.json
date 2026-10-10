@@ -500,7 +500,7 @@
     {
       "id": "communal_hall",
       "kind": "house",
-      "name": "Nhà sinh hoạt",
+      "name": "Đình Linh Khê",
       "texture": "res://assets/tileset/Art/Buildings/House_Hay_3.png",
       "position": [
         529,
@@ -512,7 +512,7 @@
         0,
         -9
       ],
-      "action": "door",
+      "action": "communal",
       "radius": 65,
       "interaction_offset": [
         3,
@@ -521,12 +521,15 @@
       "door_offset": [
         5,
         -16
-      ]
+      ],
+      "art_role": "vietnamese_community_hall",
+      "art_status": "source_placeholder",
+      "flavor_text": "Đình Linh Khê là nơi sinh hoạt chung của dân làng. Bên trong sẽ được mở ở giai đoạn sau."
     },
     {
       "id": "west_cottage",
       "kind": "house",
-      "name": "Nhà phía tây",
+      "name": "Nhà xóm Tây",
       "texture": "res://assets/tileset/Art/Buildings/House_Hay_1.png",
       "position": [
         242,
@@ -547,12 +550,15 @@
       "door_offset": [
         0,
         -17
-      ]
+      ],
+      "art_role": "vietnamese_thatched_house",
+      "art_status": "source_placeholder",
+      "flavor_text": "Căn nhà mái rơm bên ngõ nhỏ xóm Tây."
     },
     {
       "id": "east_cottage",
       "kind": "house",
-      "name": "Nhà ven đường",
+      "name": "Nhà xóm Đông",
       "texture": "res://assets/tileset/Art/Buildings/House_Hay_2.png",
       "position": [
         746,
@@ -573,12 +579,15 @@
       "door_offset": [
         28,
         -16
-      ]
+      ],
+      "art_role": "vietnamese_thatched_house",
+      "art_status": "source_placeholder",
+      "flavor_text": "Ngôi nhà nằm trên lối ra bến nước."
     },
     {
       "id": "garden_home",
       "kind": "house",
-      "name": "Nhà vườn",
+      "name": "Nhà vườn phía Nam",
       "texture": "res://assets/tileset/Art/Buildings/House_Hay_4_Purple.png",
       "position": [
         377,
@@ -599,7 +608,10 @@
       "door_offset": [
         3,
         -16
-      ]
+      ],
+      "art_role": "vietnamese_garden_house",
+      "art_status": "source_placeholder",
+      "flavor_text": "Khoảnh vườn có luống rau và sân phơi nhỏ."
     },
     {
       "id": "tree_west",
@@ -786,7 +798,7 @@
     {
       "id": "tree_square",
       "kind": "tree",
-      "name": "Cây quảng trường",
+      "name": "Cây bóng mát sân đình",
       "texture": "res://assets/tileset/Art/Trees and Bushes/Tree_Emerald_4.png",
       "position": [
         684,
@@ -807,12 +819,14 @@
       "door_offset": [
         0,
         -18
-      ]
+      ],
+      "art_role": "vietnamese_banyan_tree",
+      "art_status": "source_placeholder"
     },
     {
       "id": "bench_square",
       "kind": "bench",
-      "name": "Ghế sân làng",
+      "name": "Ghế nghỉ sân đình",
       "texture": "res://assets/tileset/Art/Props/Bench_3.png",
       "position": [
         462,
@@ -838,7 +852,7 @@
     {
       "id": "bench_east",
       "kind": "bench",
-      "name": "Ghế bên chợ",
+      "name": "Ghế cạnh chợ phiên",
       "texture": "res://assets/tileset/Art/Props/Bench_3.png",
       "position": [
         610,
@@ -864,7 +878,7 @@
     {
       "id": "fishing_bank",
       "kind": "fishing",
-      "name": "Điểm câu ven sông",
+      "name": "Bến nước Linh Khê",
       "texture": "res://assets/tileset/Art/Props/Sign_1.png",
       "position": [
         903,
@@ -885,12 +899,15 @@
       "door_offset": [
         0,
         -18
-      ]
+      ],
+      "art_role": "vietnamese_river_jetty",
+      "art_status": "source_placeholder",
+      "flavor_text": "Bến nước ven sông, có thể chọn hoạt động câu cá khi hệ thống hoạt động được kết nối."
     },
     {
       "id": "village_board",
       "kind": "notice",
-      "name": "Bảng tin thôn",
+      "name": "Bảng tin thôn Linh Khê",
       "texture": "res://assets/tileset/Art/Props/BulletinBoard_1.png",
       "position": [
         420,
@@ -911,7 +928,8 @@
       "door_offset": [
         0,
         -18
-      ]
+      ],
+      "flavor_text": "Bảng tin thôn ghi các địa điểm: sân đình, chợ phiên, ao làng và bến nước. Chưa có nhiệm vụ."
     },
     {
       "id": "village_lamp",
@@ -942,7 +960,7 @@
     {
       "id": "farm_crate",
       "kind": "crate",
-      "name": "Thùng đồ vườn",
+      "name": "Thùng dụng cụ nhà vườn",
       "texture": "res://assets/tileset/Art/Props/Crate_Medium_Closed.png",
       "position": [
         346,
@@ -2001,7 +2019,7 @@
     {
       "id": "village_well",
       "kind": "well",
-      "name": "Giếng làng trung tâm",
+      "name": "Giếng làng Linh Khê",
       "texture": "res://assets/tileset/Art/Buildings/Well_Hay_1.png",
       "position": [
         534,
@@ -2013,7 +2031,7 @@
         0,
         -6
       ],
-      "action": "notice",
+      "action": "well",
       "radius": 53,
       "interaction_offset": [
         0,
@@ -2022,7 +2040,10 @@
       "door_offset": [
         0,
         -14
-      ]
+      ],
+      "art_role": "vietnamese_village_well",
+      "art_status": "source_placeholder",
+      "flavor_text": "Giếng nước chung ở sân làng; mô phỏng múc nước tại chỗ, chưa có vật phẩm."
     },
     {
       "id": "orchard_rock",
@@ -2105,7 +2126,7 @@
     {
       "id": "market_table",
       "kind": "table",
-      "name": "Bàn phiên chợ",
+      "name": "Bàn chợ phiên",
       "texture": "res://assets/tileset/Art/Props/Table_Medium_1.png",
       "position": [
         629,
@@ -2117,16 +2138,19 @@
         0,
         -4
       ],
-      "action": "",
-      "radius": 0,
+      "action": "market",
+      "radius": 52,
       "interaction_offset": [
         0,
-        14
+        18
       ],
       "door_offset": [
         0,
         -12
-      ]
+      ],
+      "art_role": "vietnamese_rural_market_table",
+      "art_status": "source_placeholder",
+      "flavor_text": "Chợ phiên Linh Khê: quầy hàng mẫu, chưa có mua bán hoặc kinh tế server."
     },
     {
       "id": "market_basket",
@@ -2241,7 +2265,7 @@
     {
       "id": "market_notice",
       "kind": "notice",
-      "name": "Bảng chợ",
+      "name": "Bảng chợ phiên",
       "texture": "res://assets/tileset/Art/Props/Sign_1.png",
       "position": [
         677,
@@ -2253,7 +2277,7 @@
         0,
         -3
       ],
-      "action": "notice",
+      "action": "market",
       "radius": 45,
       "interaction_offset": [
         0,
@@ -2262,7 +2286,8 @@
       "door_offset": [
         0,
         -12
-      ]
+      ],
+      "flavor_text": "Đây là khu chợ phiên. Các quầy hiện chỉ phục vụ khám phá; giao dịch sẽ phát triển sau."
     },
     {
       "id": "grove_north_01",
@@ -2471,6 +2496,167 @@
         0,
         -18
       ]
+    },
+    {
+      "id": "western_village_sign",
+      "kind": "notice",
+      "name": "Biển đầu thôn",
+      "texture": "res://assets/tileset/Art/Props/Sign_2.png",
+      "position": [
+        128,
+        445
+      ],
+      "solid": [
+        12,
+        6,
+        0,
+        -3
+      ],
+      "action": "place_info",
+      "radius": 46,
+      "interaction_offset": [
+        0,
+        18
+      ],
+      "door_offset": [
+        0,
+        -12
+      ],
+      "flavor_text": "Từ đây đi về phía đông là sân đình, giếng làng và đường ra sông.",
+      "art_role": "vietnamese_village_sign",
+      "art_status": "source_placeholder"
+    },
+    {
+      "id": "pond_village_sign",
+      "kind": "notice",
+      "name": "Biển chỉ ao làng",
+      "texture": "res://assets/tileset/Art/Props/Sign_1.png",
+      "position": [
+        225,
+        630
+      ],
+      "solid": [
+        12,
+        6,
+        0,
+        -3
+      ],
+      "action": "place_info",
+      "radius": 48,
+      "interaction_offset": [
+        0,
+        18
+      ],
+      "door_offset": [
+        0,
+        -12
+      ],
+      "flavor_text": "Ao làng Linh Khê ở phía tây nam. Vùng nước là cảnh quan; chưa có hoạt động hái sen.",
+      "art_role": "vietnamese_pond_sign",
+      "art_status": "source_placeholder"
+    },
+    {
+      "id": "west_rice_haystack",
+      "kind": "haystack",
+      "name": "Đống rơm xóm Tây",
+      "texture": "res://assets/tileset/Art/Props/HayStack_2.png",
+      "position": [
+        173,
+        375
+      ],
+      "solid": [
+        24,
+        10,
+        0,
+        -5
+      ],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        -12
+      ],
+      "art_role": "vietnamese_rice_straw_stack",
+      "art_status": "source_placeholder"
+    },
+    {
+      "id": "south_rice_haystack",
+      "kind": "haystack",
+      "name": "Rơm phơi cạnh vườn",
+      "texture": "res://assets/tileset/Art/Props/HayStack_2.png",
+      "position": [
+        465,
+        681
+      ],
+      "solid": [
+        24,
+        10,
+        0,
+        -5
+      ],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        -12
+      ],
+      "art_role": "vietnamese_rice_straw_stack",
+      "art_status": "source_placeholder"
+    },
+    {
+      "id": "market_woven_basket",
+      "kind": "basket",
+      "name": "Giỏ hàng chợ phiên",
+      "texture": "res://assets/tileset/Art/Props/Basket_Empty.png",
+      "position": [
+        661,
+        609
+      ],
+      "solid": [],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        -12
+      ]
+    },
+    {
+      "id": "well_water_crate",
+      "kind": "crate",
+      "name": "Thùng nước giếng",
+      "texture": "res://assets/tileset/Art/Props/Crate_Water_1.png",
+      "position": [
+        583,
+        586
+      ],
+      "solid": [
+        12,
+        8,
+        0,
+        -4
+      ],
+      "action": "",
+      "radius": 0,
+      "interaction_offset": [
+        0,
+        0
+      ],
+      "door_offset": [
+        0,
+        -12
+      ]
     }
   ],
   "activity_slots": [
@@ -2505,7 +2691,7 @@
       ]
     }
   ],
-  "art_revision": "m1-8-authored-path-profiles-and-grove-composition",
+  "art_revision": "m1-9-village-vietnam-cultural-zones",
   "terrain_patches": [
     {
       "id": "north_house_yard",
@@ -3026,6 +3212,193 @@
         "wild_bush_17",
         "wild_bush_30"
       ]
+    }
+  ],
+  "cultural_direction": {
+    "region": "Làng Việt giả tưởng",
+    "principle": "Đình - sân làng - giếng - ngõ - vườn - ao - bến nước là các cảnh có tương tác và dữ liệu riêng",
+    "scope": "M1.9 culture/placement prototype; existing fantasy house and tree sprites remain temporary until authentic art passes visual QA",
+    "deferred": [
+      "quests",
+      "npcs",
+      "platform activity RPC",
+      "banyan specific sprite",
+      "bamboo gate sprite",
+      "Vietnamese roof sprite"
+    ]
+  },
+  "cultural_zones": [
+    {
+      "id": "communal_house_court",
+      "name": "Sân đình",
+      "name_en": "Communal hall courtyard",
+      "kind": "civic",
+      "center": [
+        530,
+        389
+      ],
+      "radii": [
+        133,
+        80
+      ],
+      "landmark_id": "communal_hall",
+      "description": "Không gian sinh hoạt chung cạnh đình"
+    },
+    {
+      "id": "village_common",
+      "name": "Sân làng",
+      "name_en": "Village square",
+      "kind": "civic",
+      "center": [
+        531,
+        501
+      ],
+      "radii": [
+        125,
+        66
+      ],
+      "landmark_id": "village_well",
+      "description": "Giếng chung, ghế nghỉ và bảng tin"
+    },
+    {
+      "id": "weekly_market",
+      "name": "Chợ phiên",
+      "name_en": "Village market",
+      "kind": "market",
+      "center": [
+        634,
+        575
+      ],
+      "radii": [
+        76,
+        52
+      ],
+      "landmark_id": "market_table",
+      "description": "Bàn hàng, giỏ tre và thùng hàng"
+    },
+    {
+      "id": "western_hamlet",
+      "name": "Xóm Tây",
+      "name_en": "Western hamlet",
+      "kind": "homes",
+      "center": [
+        237,
+        404
+      ],
+      "radii": [
+        117,
+        82
+      ],
+      "landmark_id": "west_cottage",
+      "description": "Nhà vườn và sân rơm"
+    },
+    {
+      "id": "east_hamlet",
+      "name": "Xóm Đông",
+      "name_en": "Eastern hamlet",
+      "kind": "homes",
+      "center": [
+        765,
+        378
+      ],
+      "radii": [
+        97,
+        87
+      ],
+      "landmark_id": "east_cottage",
+      "description": "Ngõ nhà ven đường ra bờ sông"
+    },
+    {
+      "id": "south_gardens",
+      "name": "Vườn phía Nam",
+      "name_en": "Southern gardens",
+      "kind": "garden",
+      "center": [
+        342,
+        688
+      ],
+      "radii": [
+        128,
+        92
+      ],
+      "landmark_id": "garden_home",
+      "description": "Vườn nhỏ, luống rau và sân phơi"
+    },
+    {
+      "id": "village_pond",
+      "name": "Ao làng",
+      "name_en": "Village pond",
+      "kind": "waterfront",
+      "center": [
+        150,
+        674
+      ],
+      "radii": [
+        104,
+        84
+      ],
+      "landmark_id": "pond_village_sign",
+      "description": "Ao và lối đất ven mép nước"
+    },
+    {
+      "id": "riverside",
+      "name": "Bến nước",
+      "name_en": "Riverside landing",
+      "kind": "waterfront",
+      "center": [
+        896,
+        498
+      ],
+      "radii": [
+        94,
+        80
+      ],
+      "landmark_id": "fishing_bank",
+      "description": "Bến câu cá và đường qua cầu"
+    }
+  ],
+  "cultural_landmarks": [
+    {
+      "id": "landmark_community",
+      "zone_id": "communal_house_court",
+      "object_id": "communal_hall",
+      "visual_role": "vietnamese_community_hall",
+      "state": "source_placeholder"
+    },
+    {
+      "id": "landmark_well",
+      "zone_id": "village_common",
+      "object_id": "village_well",
+      "visual_role": "vietnamese_village_well",
+      "state": "source_placeholder"
+    },
+    {
+      "id": "landmark_market",
+      "zone_id": "weekly_market",
+      "object_id": "market_table",
+      "visual_role": "vietnamese_market_stall",
+      "state": "source_placeholder"
+    },
+    {
+      "id": "landmark_pond",
+      "zone_id": "village_pond",
+      "object_id": "pond_village_sign",
+      "visual_role": "vietnamese_lotus_pond",
+      "state": "source_placeholder"
+    },
+    {
+      "id": "landmark_river",
+      "zone_id": "riverside",
+      "object_id": "fishing_bank",
+      "visual_role": "vietnamese_river_jetty",
+      "state": "source_placeholder"
+    },
+    {
+      "id": "landmark_banyan",
+      "zone_id": "village_common",
+      "object_id": "tree_square",
+      "visual_role": "vietnamese_banyan_tree",
+      "state": "source_placeholder"
     }
   ]
 }

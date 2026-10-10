@@ -55,6 +55,33 @@ for (const road of map.roads) {
  assert.ok(road.width_profile.every(v=>v>=0.8 && v<=1.25), "Road too narrow/wide: "+road.id);
  assert.ok(Number.isFinite(road.edge_seed), "Road missing edge phase");
 }
+assert.ok(Array.isArray(map.cultural_zones) && map.cultural_zones.length >= 8,
+ "M1.9 missing Vietnamese village districts");
+const cultureIds=new Set();
+const cultureKinds=new Set();
+for(const zone of map.cultural_zones) {
+ assert.ok(!cultureIds.has(zone.id),"duplicate zone "+zone.id);
+ cultureIds.add(zone.id); cultureKinds.add(zone.kind);
+ assert.ok(inside(zone.center) && zone.radii.every(n=>n>30),"invalid culture area");
+ const refObj=map.objects.find(o=>o.id===zone.landmark_id);
+ assert.ok(refObj,"missing landmark "+zone.landmark_id);
+ assert.ok(zone.name.length>=3 && zone.name_en.length>=3,"culture localization missing");
+}
+for(const kind of ["civic","market","homes","garden","waterfront"])
+ assert.ok(cultureKinds.has(kind),"missing village identity "+kind);
+assert.ok(Array.isArray(map.cultural_landmarks) && map.cultural_landmarks.length>=6,
+ "Cultural landmark references are missing");
+for(const landmark of map.cultural_landmarks) {
+ assert.ok(cultureIds.has(landmark.zone_id),"landmark zone missing");
+ assert.ok(map.objects.some(o=>o.id===landmark.object_id),"landmark prop missing");
+}
+const hall=map.objects.find(o=>o.id==="communal_hall");
+assert.ok(hall?.action==="communal" && hall.art_status==="source_placeholder",
+ "Source artwork must not be represented as finished Vietnamese communal hall");
+assert.ok(map.objects.find(o=>o.id==="village_well")?.action==="well","well interaction missing");
+assert.ok(map.objects.find(o=>o.id==="market_table")?.action==="market","market interaction missing");
+assert.ok(map.cultural_direction?.deferred.includes("quests"),
+ "Do not silently move quest work into map phase");
 assert.ok(Array.isArray(map.landscape_clusters) && map.landscape_clusters.length>=3,
  "Missing organized village foliage clusters");
 const foliageIds=new Set(map.objects.map(o=>o.id));
@@ -154,7 +181,7 @@ for (const p of [
   "scenes/main.tscn", "scenes/layered_village_m1.tscn", "scenes/legacy_linh_khe.tscn",
   "scripts/layered_village.gd", "scripts/layered_prop.gd", "scripts/layered_player.gd",
   "scripts/layered_minimap.gd", "scripts/layered_landforms.gd", "scripts/layered_ground_raster.gd", "scripts/layered_water_fx.gd",
-  "scripts/layered_cliff_details.gd", "shaders/layered_surface.gdshader"
+  "scripts/layered_cliff_details.gd", "scripts/village_culture_zones.gd", "shaders/layered_surface.gdshader"
 ]) assert.ok(fs.existsSync(file(p)), "Missing M1 resource: " + p);
 const scene = load("scenes/layered_village_m1.tscn");
 const mapScript = load("scripts/layered_village.gd");

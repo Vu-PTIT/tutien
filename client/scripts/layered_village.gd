@@ -11,6 +11,7 @@ const RASTER_SCRIPT := preload("res://scripts/layered_raster_chunks.gd")
 const LANDFORM_SCRIPT := preload("res://scripts/layered_landforms.gd")
 const WATER_FX_SCRIPT := preload("res://scripts/layered_water_fx.gd")
 const CLIFF_DETAIL_SCRIPT := preload("res://scripts/layered_cliff_details.gd")
+const CULTURE_SCRIPT := preload("res://scripts/village_culture_zones.gd")
 const SURFACE_SHADER := preload("res://shaders/layered_surface.gdshader")
 const FONT := preload("res://assets/fonts/BeVietnamPro-Regular.ttf")
 
@@ -25,6 +26,7 @@ var world_extent := Vector2(1120.0, 800.0)
 var water_polygons: Dictionary = {}
 var _terrain_art_data: Dictionary = {}
 var _terrain_art_textures: Dictionary = {}
+var _culture_root: Node2D
 
 
 func _ready() -> void:
@@ -41,6 +43,7 @@ func _ready() -> void:
     _build_ambient_environment()
     _build_raster_details()
     _build_props_and_player()
+    _build_cultural_zones()
     _build_water_collision()
     _build_hud()
 
@@ -312,6 +315,14 @@ func _build_props_and_player() -> void:
     player.call("set_world_bounds", world_extent)
 
 
+func _build_cultural_zones() -> void:
+    _culture_root = Node2D.new()
+    _culture_root.name = "L4_CulturalPlaces"
+    _culture_root.set_script(CULTURE_SCRIPT)
+    add_child(_culture_root)
+    _culture_root.call("configure", layout)
+
+
 func _build_water_collision() -> void:
     var collision_root := Node2D.new()
     collision_root.name = "L2_WaterCollision"
@@ -383,6 +394,8 @@ func _build_hud() -> void:
     label.mouse_filter = Control.MOUSE_FILTER_IGNORE
     label.add_theme_font_override("font", FONT)
     label.add_theme_font_size_override("font_size", 15)
+    label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    label.custom_minimum_size = Vector2(432, 0)
     label.add_theme_color_override("font_color", Color(0.97, 0.94, 0.82))
     label.text = "LÀNG LINH KHÊ · BẢN THỬ PIXEL\nWASD: đi lại · E: tương tác · Cuộn chuột: zoom"
     panel.add_child(label)
@@ -420,10 +433,15 @@ func _process(delta: float) -> void:
         if d < distance:
             closest = prop
             distance = d
+    var title := "LÀNG LINH KHÊ · ĐƯỜNG LÀNG"
+    if _culture_root != null:
+        var zone: Dictionary = _culture_root.call("zone_at", player.global_position)
+        var area_name: String = _culture_root.call("localized_name", zone)
+        title = "LÀNG LINH KHÊ · " + area_name.to_upper()
     if closest != null:
-        label.text = "LÀNG LINH KHÊ · KHÁM PHÁ\n[E] %s" % str(closest.get("display_name"))
+        label.text = title + "\n[E] " + str(closest.get("display_name"))
     else:
-        label.text = "LÀNG LINH KHÊ · BẢN THỬ PIXEL\nWASD: đi lại · E: tương tác · Cuộn chuột: zoom"
+        label.text = title + "\nWASD: đi lại · E: tương tác · Cuộn chuột: zoom"
 
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -6,6 +6,9 @@ var object_id: String = ""
 var display_name: String = ""
 var kind: String = ""
 var action: String = ""
+var flavor_text: String = ""
+var art_role: String = ""
+var art_status: String = ""
 var access_offset := Vector2.ZERO
 var interaction_radius := 48.0
 var opened := false
@@ -23,6 +26,9 @@ func configure(info: Dictionary) -> void:
     display_name = str(info.get("name", object_id))
     kind = str(info.get("kind", ""))
     action = str(info.get("action", ""))
+    flavor_text = str(info.get("flavor_text", ""))
+    art_role = str(info.get("art_role", ""))
+    art_status = str(info.get("art_status", ""))
     position = _vec(info.get("position", [0, 0]))
     access_offset = _vec(info.get("interaction_offset", [0, 16]))
     interaction_radius = float(info.get("radius", 48.0))
@@ -61,7 +67,7 @@ func _create_visual(resource_path: String) -> void:
 
 
 func _create_contact_shadow(texture: Texture2D) -> void:
-    if kind not in ["house", "tree", "bush", "rock", "well", "bench", "crate"]:
+    if kind not in ["house", "tree", "bush", "rock", "well", "bench", "crate", "haystack"]:
         return
     # Anchored to the ground footprint, independent from the tree canopy sway.
     # Three pixel-step silhouettes give depth without baked shadows in terrain.
@@ -143,7 +149,24 @@ func interact() -> Dictionary:
         "door":
             opened = not opened
             _open_door.visible = opened
-            return {"message": display_name + (": cửa đã mở (demo offline)." if opened else ": cửa đã đóng.")}
+            var message := display_name + (": cửa đã mở (demo offline)." if opened else ": cửa đã đóng.")
+            if opened and not flavor_text.is_empty():
+                message = flavor_text + " (Cửa mẫu vừa mở; chưa có nội thất.)"
+            return {"message": message}
+        "communal":
+            # The physical building remains a separate scene with its own
+            # footprint. No fake interior, quest or platform RPC is triggered.
+            return {"message": flavor_text if not flavor_text.is_empty() else display_name + ": điểm sinh hoạt cộng đồng."}
+        "well":
+            changed = true
+            var glint := create_tween()
+            glint.tween_property(_visual, "modulate", Color(0.72, 0.88, 1.0), 0.17)
+            glint.tween_property(_visual, "modulate", Color.WHITE, 0.3)
+            return {"message": flavor_text if not flavor_text.is_empty() else "Giếng làng; chưa có vật phẩm nước."}
+        "market":
+            return {"message": flavor_text if not flavor_text.is_empty() else "Chợ phiên mẫu, chưa có giao dịch."}
+        "place_info":
+            return {"message": flavor_text if not flavor_text.is_empty() else display_name}
         "bench":
             return {"message": "Đang ngồi ở " + display_name + ". Nhấn E để đứng dậy.", "sit": true}
         "tree":
@@ -159,9 +182,10 @@ func interact() -> Dictionary:
             _visual.modulate = Color(0.69, 0.91, 0.55) if changed else Color.WHITE
             return {"message": display_name + " đã đổi trạng thái trong bản demo offline."}
         "fishing":
-            return {"message": "Đây là slot câu cá mẫu; chưa có auto hoặc phần thưởng server."}
+            var text_message := flavor_text if not flavor_text.is_empty() else "Điểm câu cá mẫu."
+            return {"message": text_message + " Chưa có auto hoặc phần thưởng server."}
         "notice":
-            return {"message": "Bảng tin thử nghiệm: hoạt động platform sẽ kết nối sau."}
+            return {"message": flavor_text if not flavor_text.is_empty() else "Bảng tin thử nghiệm: kết nối nền tảng sẽ thực hiện sau."}
         _:
             return {"message": "Chưa có hành động cho " + display_name + "."}
 
