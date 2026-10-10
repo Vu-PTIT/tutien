@@ -1,5 +1,17 @@
 # Tu Tiên
 
+## Sảnh platform — PC/mobile, web/app, Việt–Anh
+
+Nhánh này đã có frontend React/TypeScript ở [`platform/`](platform/README.md): lịch cá nhân/bạn bè, chi tiết hoạt động, nhật ký, góc nhân vật và giao diện PC/mobile riêng. Web có thể cài dạng PWA; **chưa có bản native hoặc đồng bộ backend sảnh**. Dữ liệu bạn bè/tương tác là mẫu, hoạt động của mình lưu trên thiết bị. Xem [thiết kế và phạm vi](docs/platform-lobby.md).
+
+```sh
+cd platform
+npm ci
+npm run dev -- --host 127.0.0.1
+```
+
+Phần frontend mới không thay backend Nakama hoặc client Godot bên dưới. Lịch, trạng thái ngoài đời và hoạt động avatar được tách riêng.
+
 ## Thiết kế map — 08/10/2026
 
 Map mới theo hướng **nền vẽ phân lớp + nước riêng + vật thể tương tác độc lập + dữ liệu va chạm/đi lại riêng**. Giữ phong cách pixel nhưng không bắt toàn bộ làng ghép từ tileset. Tile vẫn dùng được ở luống trồng, sàn hoặc chi tiết lặp. Cây, ghế, cửa và đồ vật có ID, action và state riêng; không bake vào một ảnh nền phẳng.
