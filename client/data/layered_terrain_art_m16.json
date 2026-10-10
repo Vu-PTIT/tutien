@@ -10,7 +10,7 @@
       20,
       20
     ],
-    "blend": 0.38
+    "blend": 0.12
   },
   "road": {
     "texture": "res://assets/tileset/Art/Ground Tileset/Tileset_Road.png",
@@ -41,18 +41,6 @@
         28
       ],
       [
-        24,
-        7,
-        30,
-        29
-      ],
-      [
-        63,
-        8,
-        30,
-        27
-      ],
-      [
         101,
         7,
         26,
@@ -63,18 +51,6 @@
         5,
         22,
         30
-      ],
-      [
-        24,
-        50,
-        24,
-        27
-      ],
-      [
-        67,
-        48,
-        24,
-        29
       ],
       [
         95,
@@ -93,10 +69,22 @@
         51,
         21,
         27
+      ],
+      [
+        67,
+        48,
+        24,
+        29
+      ],
+      [
+        24,
+        50,
+        24,
+        27
       ]
     ],
     "chunk_size": 256,
-    "meadow_density_per_chunk": 94,
+    "meadow_density_per_chunk": 22,
     "seed": 131024
   },
   "acceptance": {
