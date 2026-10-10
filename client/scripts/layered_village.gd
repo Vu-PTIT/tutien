@@ -163,6 +163,17 @@ func _water_polygon(region: Dictionary, extra_radius: float = 0.0) -> PackedVect
 
 
 func _build_surfaces() -> void:
+    var transitions: Dictionary = _terrain_art_data.get("transitions", {})
+    # Visual-only world continuation makes camera transitions natural, even at
+    # unusual desktop zoom or while capturing a wide editor overview.
+    # The active world bounds, activity slots and physics stay unchanged.
+    var margin := 230.0
+    var scenic := PackedVector2Array([
+        Vector2(-margin, -margin),
+        Vector2(world_extent.x + margin, -margin),
+        world_extent + Vector2(margin, margin),
+        Vector2(-margin, world_extent.y + margin)])
+    _surface("Lminus1_ScenicBackdrop", scenic, 0, -18)
     var ground := PackedVector2Array([
         Vector2.ZERO, Vector2(world_extent.x, 0.0), world_extent, Vector2(0.0, world_extent.y)])
     _surface("L0_Ground", ground, 0, -15)
@@ -183,7 +194,11 @@ func _build_surfaces() -> void:
     water_polygons.clear()
     for water in layout.get("waters", []):
         var key := str(water.get("id", "water"))
-        _surface(key + "_bank", _water_polygon(water, 10.0), 2, -12)
+        # A grass/moss shelf, drier pebbled sand, 3px shallow margin, then the
+        # collidable water body. All layers use ONE source water geometry.
+        _surface(key + "_meadow_fringe", _water_polygon(water, float(transitions.get("water_meadow_fringe_px", 18.0))), 12, -14)
+        _surface(key + "_bank", _water_polygon(water, float(transitions.get("water_sandy_bank_px", 10.0))), 2, -13)
+        _surface(key + "_shallows", _water_polygon(water, float(transitions.get("water_shallow_margin_px", 2.5))), 13, -12)
         var body := _water_polygon(water)
         water_polygons[key] = body
         _surface(key + "_water", body, 3, -11)
@@ -192,7 +207,8 @@ func _build_surfaces() -> void:
         var key := str(road.get("id", "road"))
         var radius := float(road.get("radius", 13))
         var points: Array = road.get("points", [])
-        _surface(key + "_verge", _ribbon(points, radius + 4.0, 1.25), 6, -9)
+        _surface(key + "_meadow_fringe", _ribbon(points, radius + float(transitions.get("road_meadow_fringe_px", 10.0)), 1.65), 12, -10)
+        _surface(key + "_verge", _ribbon(points, radius + float(transitions.get("road_dust_verge_px", 4.0)), 1.25), 6, -9)
         _surface(key, _ribbon(points, radius, 1.0), 1, -8)
 
     # M1.4: a central gathering place and two smaller yards.
@@ -205,6 +221,8 @@ func _build_surfaces() -> void:
         var radii := _v(court.get("radii", [60, 35]))
         var seed := float(court.get("seed", 0.0))
         var kind := 9 if str(court.get("kind", "")) == "cobblestone" else 10
+        var extra: Array = transitions.get("courtyard_meadow_fringe_px", [18.0, 16.0])
+        _surface(key + "_meadow_fringe", _ellipse(center, radii + _v(extra), seed), 12, -8)
         _surface(key + "_grass_fringe", _ellipse(center, radii + Vector2(9, 7), seed), 11, -7)
         _surface(key + "_paving", _ellipse(center, radii, seed), kind, -6)
 

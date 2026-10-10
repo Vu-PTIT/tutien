@@ -200,6 +200,23 @@ void fragment() {
         if (tiny_leaf(p) > 0.5) {
             color_rgb = vec3(0.48, 0.67, 0.37);
         }
+    } else if (surface_kind == 12) {
+        // A thin, earthy, grass-dominant contact zone, backed by real atlas
+        // pixels. Shapes are authored as separate coastline/path polygons.
+        color_rgb = mix(vec3(0.53, 0.68, 0.39), vec3(0.67, 0.73, 0.45), fields);
+        if (coarse > 0.79) {
+            color_rgb = mix(color_rgb, vec3(0.77, 0.71, 0.49), 0.33);
+        }
+        if (tiny_leaf(p) > 0.5) {
+            color_rgb = vec3(0.43, 0.65, 0.34);
+        }
+    } else if (surface_kind == 13) {
+        // Shallow margin, only a few pixels wide between the bank and the
+        // separately collidable river. Rendered with the source water atlas.
+        color_rgb = mix(vec3(0.54, 0.74, 0.70), vec3(0.59, 0.77, 0.74), fields);
+        if (coarse > 0.86) {
+            color_rgb = mix(color_rgb, vec3(0.78, 0.86, 0.71), 0.22);
+        }
     } else {
         // Irregular sandy verge under the lane's main footprint.
         color_rgb = mix(vec3(0.65, 0.72, 0.45), vec3(0.74, 0.73, 0.48), fields);
@@ -208,13 +225,26 @@ void fragment() {
         }
     }
     if (source_art_enabled) {
-        if (surface_kind == 0 || surface_kind == 4 || surface_kind == 7) {
+        if (surface_kind == 0 || surface_kind == 4 || surface_kind == 7 || surface_kind == 12) {
             vec2 pixel_uv = (grass_region.xy +
                 mod(floor(p), grass_region.zw) + vec2(0.5)) / grass_atlas_size;
             vec4 source_pixel = texture(source_grass, pixel_uv);
+            // The atlas also contains bare dirt and pinkish decor pixels.
+            // Sample only real green foliage so the grass has no pink grids.
+            float vegetation = smoothstep(0.012, 0.10,
+                source_pixel.g - max(source_pixel.r, source_pixel.b));
             float opacity = grass_art_blend * (surface_kind == 4 ? 0.30 : 1.0);
+            if (surface_kind == 12) {
+                opacity *= 0.66;
+            }
             color_rgb = mix(color_rgb, source_pixel.rgb,
-                clamp(source_pixel.a * opacity, 0.0, 0.82));
+                clamp(source_pixel.a * vegetation * opacity, 0.0, 0.72));
+        } else if (surface_kind == 13) {
+            vec2 pixel_uv = (water_region.xy +
+                mod(floor(p), water_region.zw) + vec2(0.5)) / water_atlas_size;
+            vec4 source_pixel = texture(source_water, pixel_uv);
+            color_rgb = mix(color_rgb, source_pixel.rgb,
+                clamp(source_pixel.a * water_art_blend * 0.40, 0.0, 0.55));
         } else if (surface_kind == 1 || surface_kind == 5 ||
                 surface_kind == 9 || surface_kind == 10 || surface_kind == 11) {
             vec2 pixel_uv = (road_region.xy +

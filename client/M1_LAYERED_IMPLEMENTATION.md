@@ -59,3 +59,14 @@
 - `layered_cliff_details.gd`: static moss, segmented cracks, and pebble accents follow the existing ridge splines. No new tile grids, gameplay obstacles, or world-scale PNG required.
 - The water-specific density and flow parameters are defined in `water_fx` within `layered_village_m1.json` and validated in static and Godot smoke checks.
 - **Limits:** M1.5 is an art pass, not weather, a full lighting simulation, new navigation, or runtime world streaming. Requires actual Godot visual quality review and device FPS measurements before art acceptance.
+
+## M1.7 — Natural terrain transitions and cropped source-art chunks (2026-10-10)
+
+- Reviewed **actual Godot 4.6.1** M1.6 PNG: mixed-source grass fragments still carry non-green pixels; outer 256px raster chunks can extend past the 1120×800 playable rectangle; outside the static map the renderer shows gray empty space.
+- Reuse the original licensed atlas with **green-only alpha filtering** for decorative grass stamps and shader sampling; do not recolor entire maps or flatten individual gameplay objects.
+- Crop outermost grass raster chunks to their actual rectangle, including 96px rightmost and 32px bottom strips. Their coordinates, z-layer and deterministic placement stay stable.
+- Add editable, independent terrain layers: grass fringe → sandy shore → shallow water → independent water body; similarly grass fringe → dust verge → dirt lane, plus soft lawn fringes around authored village yards. The exact band widths are stored in `client/data/layered_terrain_art_m16.json`.
+- Expand **visual-only** meadow behind the 1120×800 game bounds for wide art-review cameras, without modifying world physics, camera limits, activity slots or minimap.
+- Art-review screenshot now hides the HUD (gameplay screenshot keeps it), and asserts the reference camera no longer exposes gray canvas along its left margin.
+- Preserve all independent props, Y-sort, bridges, village entrance route tests and the original legacy scene.
+- This remains a reusable **source-asset layered scene**, not a fully hand-painted custom base image. Scene import/CI and the resulting screenshots must be reviewed before accepting the visual change.

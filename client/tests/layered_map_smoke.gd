@@ -51,10 +51,31 @@ func _run_checks() -> void:
     _check(ground_art != null, "M1.6 layered foundation raster missing")
     if ground_art != null:
         _check(int(ground_art.get("chunk_count")) >= 12, "Ground art did not compose raster chunks")
-        _check(int(ground_art.get("stamp_count")) >= 300, "Ground art atlas fragments missing")
+        _check(int(ground_art.get("stamp_count")) >= 160, "Ground art atlas fragments missing")
+        # Sprite coverage must stop EXACTLY at the runtime world border,
+        # otherwise the last 256px texture leaks random stamps into emptiness.
+        var edge_x := ground_art.get_node_or_null("GrassRaster_4_0") as Sprite2D
+        _check(edge_x != null, "Last grass chunk column is missing")
+        if edge_x != null:
+            _check(edge_x.texture.get_width() == 96, "Rightmost grass chunk exceeds 1120px world")
+        var edge_y := ground_art.get_node_or_null("GrassRaster_0_3") as Sprite2D
+        _check(edge_y != null, "Last grass chunk row is missing")
+        if edge_y != null:
+            _check(edge_y.texture.get_height() == 32, "Bottom grass chunk exceeds 800px world")
     _check(stage.get_node_or_null("river_east_water") is Polygon2D, "Missing real water polygon")
     _check(stage.get_node_or_null("road_west_east") is Polygon2D, "Missing freeform road")
     _check(stage.get_node_or_null("garden_bed_a") is Polygon2D, "Missing independent garden soil")
+    _check(stage.get_node_or_null("Lminus1_ScenicBackdrop") is Polygon2D, "Map ends abruptly outside world bounds")
+    var backdrop := stage.get_node_or_null("Lminus1_ScenicBackdrop") as Polygon2D
+    if backdrop != null:
+        _check(backdrop.polygon[0].x < 0.0, "Scenic boundary fails to extend to the left")
+        _check(backdrop.polygon[2].x > 1120.0, "Scenic boundary fails to extend beyond river")
+    _check(stage.get_node_or_null("road_west_east_meadow_fringe") is Polygon2D,
+        "Road-to-grass natural transition missing")
+    _check(stage.get_node_or_null("river_east_meadow_fringe") is Polygon2D,
+        "River-to-grass natural transition missing")
+    _check(stage.get_node_or_null("river_east_shallows") is Polygon2D,
+        "Shallow river margin missing")
     _check(stage.get_node_or_null("village_heart_paving") is Polygon2D, "Village center lacks shared cobblestone plaza")
     _check(stage.get_node_or_null("market_terrace_paving") is Polygon2D, "Missing outdoor market yard")
     var world_data: Dictionary = stage.get("layout")

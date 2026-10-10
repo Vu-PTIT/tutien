@@ -24,6 +24,15 @@ for (const key of ["ground","road","water"]) {
   assert.ok(entry.blend>0 && entry.blend<=1, "Art opacity out of range");
 }
 assert.ok(art.overlays.chunk_size === 256, "Ground raster chunk resolution changed");
+const t=art.transitions;
+assert.ok(t && t.water_meadow_fringe_px > t.water_sandy_bank_px &&
+  t.water_sandy_bank_px > t.water_shallow_margin_px && t.water_shallow_margin_px > 0,
+  "Water shore layering must taper smoothly from meadow to shallow water");
+assert.ok(t.road_meadow_fringe_px > t.road_dust_verge_px && t.road_dust_verge_px > 0,
+  "Road-to-grass bands are ordered incorrectly");
+assert.ok(Array.isArray(t.courtyard_meadow_fringe_px) &&
+  t.courtyard_meadow_fringe_px.length===2 && t.courtyard_meadow_fringe_px.every(x=>x>8),
+  "Courtyard blending band must cover both axes");
 assert.ok(art.overlays.seed>=1 && art.overlays.grass_regions.length>=8,
   "Insufficient licensed pixel grass art source patches");
 const grassPng=fs.readFileSync(file(art.ground.texture.slice(6)));
@@ -145,6 +154,13 @@ assert.ok(surface.includes("source_grass") && surface.includes("source_road") &&
  surface.includes("source_water"), "Source atlas pixels not sampled in shader");
 assert.ok(load("scripts/layered_ground_raster.gd").includes("canvas.blend_rect"),
  "M1.6 ground art is not composited from the original pixel artwork");
+const rasterScript=load("scripts/layered_ground_raster.gd");
+assert.ok(rasterScript.includes("real_size") && rasterScript.includes("pixel.g < pixel.r"),
+  "World-edge art crops or green-only atlas cleanup are missing");
+assert.ok(mapScript.includes("Lminus1_ScenicBackdrop"),
+  "Preview lacks visual continuation beyond the physical world");
+assert.ok(mapScript.includes('_meadow_fringe') && mapScript.includes('_shallows'),
+  "Layered water/soil/grass transition scene nodes missing");
 assert.ok(mapScript.includes('layout.get("courtyards"'), "Missing non-tile village square");
 assert.ok(load("scripts/layered_minimap.gd").includes('layout.get("courtyards"'),
   "Minimap does not show the village square");

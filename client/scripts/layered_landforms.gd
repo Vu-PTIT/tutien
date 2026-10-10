@@ -29,6 +29,10 @@ func _surface(name: String, outline: PackedVector2Array, kind: int, order: int) 
     var material := ShaderMaterial.new()
     material.shader = SURFACE_SHADER
     material.set_shader_parameter("surface_kind", kind)
+    # Share the same authored PNG material palette as the main village, even
+    # though each ridge has its own independent scene and collision footprint.
+    if _geometry != null and _geometry.has_method("_bind_source_art"):
+        _geometry.call("_bind_source_art", material)
     node.material = material
     add_child(node)
 
@@ -102,8 +106,8 @@ func _build_shoreline_contours(water_polygons: Dictionary) -> void:
         var polygon: PackedVector2Array = water_polygons[id]
         # Sand verge already sits behind water; these 1-3px boundaries add
         # bank depth without jagged autotiles. The same outline is used for physics.
-        _outline(str(id) + "_wet_sand", polygon, Color(0.79, 0.79, 0.56), 5.0, -10, true)
-        _outline(str(id) + "_deep_water_edge", polygon, Color(0.25, 0.57, 0.66, 0.83), 2.0, -9, true)
+        _outline(str(id) + "_wet_sand", polygon, Color(0.77, 0.81, 0.62, 0.76), 2.0, -10, true)
+        _outline(str(id) + "_deep_water_edge", polygon, Color(0.34, 0.64, 0.71, 0.67), 1.0, -9, true)
         shoreline_count += 1
 
 

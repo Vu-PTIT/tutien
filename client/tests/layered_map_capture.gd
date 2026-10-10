@@ -34,6 +34,11 @@ func _capture_scene() -> void:
         return
     print("PASS viewport screenshot captured to: " + path)
 
+    # Hide HUD only for the layout QA shot. The desktop gameplay shot above
+    # remains unchanged. This exposes riverbanks, roads and the grass boundary.
+    var hud := village.get_node_or_null("LayeredMapHUD") as CanvasLayer
+    if hud != null:
+        hud.visible = false
     # Actual full-map art review shot (camera-only). Both images are rendered
     # by Godot, not decorative PNG mockups.
     var camera := Camera2D.new()
@@ -50,6 +55,13 @@ func _capture_scene() -> void:
     var output_path := "/tmp/tutien-previews/layered_m1_overview.png"
     if overview == null or overview.is_empty() or overview.save_png(output_path) != OK:
         push_error("Full-map art review capture failed")
+        quit(1)
+        return
+    # The full-map preview deliberately zooms beyond the playable border.
+    # Its margins must be scenic pixel terrain, not Godot's empty gray canvas.
+    var border_color := overview.get_pixel(12, roundi(float(overview.get_height()) * 0.5))
+    if absf(border_color.r - 0.302) < 0.015 and absf(border_color.g - 0.302) < 0.015 and absf(border_color.b - 0.302) < 0.015:
+        push_error("Overview still shows empty gray canvas at village boundary.")
         quit(1)
         return
     print("PASS village overview captured to: " + output_path)

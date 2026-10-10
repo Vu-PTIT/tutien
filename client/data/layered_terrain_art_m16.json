@@ -91,6 +91,20 @@
     "no_tilemap": true,
     "independently_editable_props": true,
     "static_raster_decoration": true,
-    "source_licensing": "Original supplied pixel art retained; redistributing individual source sprites outside the game is not part of this update."
+    "source_licensing": "Original supplied pixel art retained; redistributing individual source sprites outside the game is not part of this update.",
+    "no_visual_chunks_outside_world": true,
+    "art_preview_without_hud": true
+  },
+  "revision": "m1-7-shoreline-and-path-blends",
+  "transitions": {
+    "water_meadow_fringe_px": 18,
+    "water_sandy_bank_px": 10,
+    "water_shallow_margin_px": 2.5,
+    "road_meadow_fringe_px": 10,
+    "road_dust_verge_px": 4,
+    "courtyard_meadow_fringe_px": [
+      18,
+      16
+    ]
   }
 }
