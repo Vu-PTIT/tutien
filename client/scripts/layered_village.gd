@@ -2,6 +2,8 @@ extends Node2D
 
 # M1 non-TileMap playable slice. Legacy village_demo.gd is kept intact.
 const DATA_PATH := "res://data/layered_village_m1.json"
+const TERRAIN_ART_DATA_PATH := "res://data/layered_terrain_art_m16.json"
+const GROUND_ART_SCRIPT := preload("res://scripts/layered_ground_raster.gd")
 const PROP_SCRIPT := preload("res://scripts/layered_prop.gd")
 const PLAYER_SCRIPT := preload("res://scripts/layered_player.gd")
 const MINI_SCRIPT := preload("res://scripts/layered_minimap.gd")
@@ -21,6 +23,8 @@ var _tick := 0.0
 var _status_until_ms := 0
 var world_extent := Vector2(1120.0, 800.0)
 var water_polygons: Dictionary = {}
+var _terrain_art_data: Dictionary = {}
+var _terrain_art_textures: Dictionary = {}
 
 
 func _ready() -> void:
@@ -31,6 +35,7 @@ func _ready() -> void:
         return
     layout = parsed
     world_extent = _v(layout.get("size", [1120, 800]))
+    _load_terrain_art()
     _build_surfaces()
     _build_landforms()
     _build_ambient_environment()
@@ -38,6 +43,44 @@ func _ready() -> void:
     _build_props_and_player()
     _build_water_collision()
     _build_hud()
+
+
+func _load_terrain_art() -> void:
+    var data := FileAccess.get_file_as_string(TERRAIN_ART_DATA_PATH)
+    var parsed: Variant = JSON.parse_string(data)
+    if typeof(parsed) != TYPE_DICTIONARY:
+        push_error("M1.6 missing terrain source art manifest.")
+        return
+    _terrain_art_data = parsed
+    for key in ["ground", "road", "water"]:
+        var info: Dictionary = _terrain_art_data.get(key, {})
+        var resource_path := str(info.get("texture", ""))
+        var image := load(resource_path) as Texture2D
+        if image == null:
+            push_error("M1.6 missing source artwork: " + resource_path)
+            continue
+        var region: Array = info.get("region", [])
+        if region.size() != 4:
+            push_error("M1.6 invalid source art region: " + key)
+            continue
+        _terrain_art_textures[key] = image
+
+
+func _bind_source_art(material: ShaderMaterial) -> void:
+    var available := _terrain_art_textures.size() == 3
+    material.set_shader_parameter("source_art_enabled", available)
+    if not available:
+        return
+    for key in ["ground", "road", "water"]:
+        var entry: Dictionary = _terrain_art_data[key]
+        var texture: Texture2D = _terrain_art_textures[key]
+        var raw: Array = entry["region"]
+        var shader_key := "grass" if key == "ground" else key
+        material.set_shader_parameter("source_" + shader_key, texture)
+        material.set_shader_parameter(shader_key + "_region",
+            Vector4(float(raw[0]), float(raw[1]), float(raw[2]), float(raw[3])))
+        material.set_shader_parameter(shader_key + "_atlas_size", Vector2(texture.get_size()))
+        material.set_shader_parameter(shader_key + "_art_blend", float(entry.get("blend", 0.6)))
 
 
 func _surface(name: String, points: PackedVector2Array, kind: int, order: int) -> void:
@@ -51,6 +94,7 @@ func _surface(name: String, points: PackedVector2Array, kind: int, order: int) -
     var material := ShaderMaterial.new()
     material.shader = SURFACE_SHADER
     material.set_shader_parameter("surface_kind", kind)
+    _bind_source_art(material)
     polygon.material = material
     add_child(polygon)
 
@@ -122,6 +166,7 @@ func _build_surfaces() -> void:
     var ground := PackedVector2Array([
         Vector2.ZERO, Vector2(world_extent.x, 0.0), world_extent, Vector2(0.0, world_extent.y)])
     _surface("L0_Ground", ground, 0, -15)
+    _build_ground_raster_art()
 
     # Author-selected grass clearings and plantable soil; no repeating TileMap.
     for patch in layout.get("terrain_patches", []):
@@ -162,6 +207,18 @@ func _build_surfaces() -> void:
         var kind := 9 if str(court.get("kind", "")) == "cobblestone" else 10
         _surface(key + "_grass_fringe", _ellipse(center, radii + Vector2(9, 7), seed), 11, -7)
         _surface(key + "_paving", _ellipse(center, radii, seed), kind, -6)
+
+
+func _build_ground_raster_art() -> void:
+    var overlays: Dictionary = _terrain_art_data.get("overlays", {})
+    if overlays.is_empty():
+        return
+    var layer := Node2D.new()
+    layer.name = "L0_GroundArtRaster"
+    layer.z_index = -15
+    layer.set_script(GROUND_ART_SCRIPT)
+    add_child(layer)
+    layer.call("configure", world_extent, overlays)
 
 
 func _build_landforms() -> void:

@@ -1,0 +1,108 @@
+{
+  "schema": "tutien.layered-terrain-art.v1",
+  "visual_asset_source": "existing_assets",
+  "authoring": "Existing Fan-tasy source PNG regions sampled in continuous world coordinates; independent props and physics unchanged.",
+  "ground": {
+    "texture": "res://assets/tileset/Art/Ground Tileset/Tileset_Ground.png",
+    "region": [
+      84,
+      54,
+      20,
+      20
+    ],
+    "blend": 0.38
+  },
+  "road": {
+    "texture": "res://assets/tileset/Art/Ground Tileset/Tileset_Road.png",
+    "region": [
+      24,
+      16,
+      24,
+      24
+    ],
+    "blend": 0.88
+  },
+  "water": {
+    "texture": "res://assets/tileset/Art/Water and Sand/Tileset_Water.png",
+    "region": [
+      10,
+      106,
+      24,
+      24
+    ],
+    "blend": 0.7
+  },
+  "overlays": {
+    "grass_regions": [
+      [
+        2,
+        4,
+        14,
+        28
+      ],
+      [
+        24,
+        7,
+        30,
+        29
+      ],
+      [
+        63,
+        8,
+        30,
+        27
+      ],
+      [
+        101,
+        7,
+        26,
+        31
+      ],
+      [
+        141,
+        5,
+        22,
+        30
+      ],
+      [
+        24,
+        50,
+        24,
+        27
+      ],
+      [
+        67,
+        48,
+        24,
+        29
+      ],
+      [
+        95,
+        51,
+        22,
+        26
+      ],
+      [
+        122,
+        52,
+        23,
+        25
+      ],
+      [
+        149,
+        51,
+        21,
+        27
+      ]
+    ],
+    "chunk_size": 256,
+    "meadow_density_per_chunk": 94,
+    "seed": 131024
+  },
+  "acceptance": {
+    "no_tilemap": true,
+    "independently_editable_props": true,
+    "static_raster_decoration": true,
+    "source_licensing": "Original supplied pixel art retained; redistributing individual source sprites outside the game is not part of this update."
+  }
+}

@@ -7,6 +7,24 @@ varying vec2 world_pixel;
 uniform int surface_kind = 0;
 uniform float ripple_strength : hint_range(0.0, 1.0) = 0.7;
 
+// M1.6 art-directed source material sampling. Existing authored PNG sprites
+// supply terrain pixels, while the polygons still own terrain silhouettes.
+// Nearest-neighbor atlas sampling does not create gameplay TileMap cells.
+uniform bool source_art_enabled = true;
+uniform sampler2D source_grass : source_color, filter_nearest;
+uniform sampler2D source_road : source_color, filter_nearest;
+uniform sampler2D source_water : source_color, filter_nearest;
+uniform vec4 grass_region = vec4(84.0, 54.0, 20.0, 20.0);
+uniform vec4 road_region = vec4(24.0, 16.0, 24.0, 24.0);
+uniform vec4 water_region = vec4(10.0, 106.0, 24.0, 24.0);
+uniform vec2 grass_atlas_size = vec2(192.0, 224.0);
+uniform vec2 road_atlas_size = vec2(96.0, 224.0);
+uniform vec2 water_atlas_size = vec2(384.0, 208.0);
+uniform float grass_art_blend : hint_range(0.0, 1.0) = 0.38;
+uniform float road_art_blend : hint_range(0.0, 1.0) = 0.88;
+uniform float water_art_blend : hint_range(0.0, 1.0) = 0.70;
+
+
 void vertex() {
     // All generated polygons sit at the world origin; their authored vertices
     // already are world coordinates. Grass/soil/water share one texel lattice.
@@ -81,6 +99,15 @@ void fragment() {
     } else if (surface_kind == 3) {
         // Water ripples are clipped naturally to the independent river polygon.
         color_rgb = mix(vec3(0.38, 0.67, 0.79), vec3(0.47, 0.75, 0.84), fields);
+        if (source_art_enabled && water_art_blend > 0.0) {
+            // UVs address a curated source-art fragment, not the whole animation
+            // sheet. Water highlights below remain animated at game runtime.
+            vec2 pixel_uv = (water_region.xy +
+                mod(floor(p), water_region.zw) + vec2(0.5)) / water_atlas_size;
+            vec4 sampled = texture(source_water, pixel_uv);
+            color_rgb = mix(color_rgb, sampled.rgb,
+                clamp(sampled.a * water_art_blend, 0.0, 0.91));
+        }
         float wave = sin(p.x * 0.105 - p.y * 0.05 + TIME * 1.02);
         float back_wave = sin(p.y * 0.13 + p.x * 0.045 - TIME * 0.71);
         float crest = step(0.85, wave) * step(-0.26, back_wave) * step(0.19, coarse);
@@ -178,6 +205,32 @@ void fragment() {
         color_rgb = mix(vec3(0.65, 0.72, 0.45), vec3(0.74, 0.73, 0.48), fields);
         if (coarse > 0.83) {
             color_rgb = mix(color_rgb, vec3(0.83, 0.71, 0.52), 0.42);
+        }
+    }
+    if (source_art_enabled) {
+        if (surface_kind == 0 || surface_kind == 4 || surface_kind == 7) {
+            vec2 pixel_uv = (grass_region.xy +
+                mod(floor(p), grass_region.zw) + vec2(0.5)) / grass_atlas_size;
+            vec4 source_pixel = texture(source_grass, pixel_uv);
+            float opacity = grass_art_blend * (surface_kind == 4 ? 0.30 : 1.0);
+            color_rgb = mix(color_rgb, source_pixel.rgb,
+                clamp(source_pixel.a * opacity, 0.0, 0.82));
+        } else if (surface_kind == 1 || surface_kind == 5 ||
+                surface_kind == 9 || surface_kind == 10 || surface_kind == 11) {
+            vec2 pixel_uv = (road_region.xy +
+                mod(floor(p), road_region.zw) + vec2(0.5)) / road_atlas_size;
+            vec4 source_pixel = texture(source_road, pixel_uv);
+            float opacity = road_art_blend;
+            if (surface_kind == 5) {
+                opacity *= 0.32;
+                source_pixel.rgb *= vec3(0.83, 0.66, 0.57);
+            } else if (surface_kind == 9) {
+                opacity *= 0.34;
+            } else if (surface_kind == 10 || surface_kind == 11) {
+                opacity *= 0.47;
+            }
+            color_rgb = mix(color_rgb, source_pixel.rgb,
+                clamp(source_pixel.a * opacity, 0.0, 0.95));
         }
     }
     COLOR = vec4(color_rgb, 1.0);

@@ -6,6 +6,32 @@ const base = path.resolve(__dirname, "../client");
 const file = (p) => path.join(base, p);
 const load = (p) => fs.readFileSync(file(p), "utf8");
 const map = JSON.parse(load("data/layered_village_m1.json"));
+const art = JSON.parse(load("data/layered_terrain_art_m16.json"));
+assert.equal(art.schema, "tutien.layered-terrain-art.v1");
+assert.equal(art.visual_asset_source, "existing_assets");
+for (const key of ["ground","road","water"]) {
+  const entry = art[key];
+  assert.ok(entry.texture.startsWith("res://assets/tileset/"), "Art must come from existing source assets: "+key);
+  const sourceFile = file(entry.texture.slice(6));
+  assert.ok(fs.existsSync(sourceFile), "Missing source atlas: "+entry.texture);
+  const png = fs.readFileSync(sourceFile);
+  assert.equal(png.toString("hex",0,8),"89504e470d0a1a0a", "Bad source PNG signature");
+  const width=png.readUInt32BE(16), height=png.readUInt32BE(20);
+  const [left,top,w,h] = entry.region;
+  assert.ok([left,top,w,h].every(Number.isInteger) && left>=0 && top>=0 && w>=8 && h>=8,
+    "Non-pixel aligned art crop: "+key);
+  assert.ok(left+w<=width && top+h<=height,"Source pixel crop outside atlas: "+key);
+  assert.ok(entry.blend>0 && entry.blend<=1, "Art opacity out of range");
+}
+assert.ok(art.overlays.chunk_size === 256, "Ground raster chunk resolution changed");
+assert.ok(art.overlays.seed>=1 && art.overlays.grass_regions.length>=8,
+  "Insufficient licensed pixel grass art source patches");
+const grassPng=fs.readFileSync(file(art.ground.texture.slice(6)));
+const grassWidth=grassPng.readUInt32BE(16),grassHeight=grassPng.readUInt32BE(20);
+for (const [x,y,w,h] of art.overlays.grass_regions) {
+  assert.ok(x>=0 && y>=0 && w>=4 && h>=4 && x+w<=grassWidth && y+h<=grassHeight,
+    "Grass raster crop outside licensed source image");
+}
 
 assert.equal(map.schema_version, 1, "Data schema version");
 assert.ok(Array.isArray(map.size) && map.size.length === 2);
@@ -103,7 +129,7 @@ for (const slot of map.activity_slots) {
 for (const p of [
   "scenes/main.tscn", "scenes/layered_village_m1.tscn", "scenes/legacy_linh_khe.tscn",
   "scripts/layered_village.gd", "scripts/layered_prop.gd", "scripts/layered_player.gd",
-  "scripts/layered_minimap.gd", "scripts/layered_landforms.gd", "scripts/layered_water_fx.gd",
+  "scripts/layered_minimap.gd", "scripts/layered_landforms.gd", "scripts/layered_ground_raster.gd", "scripts/layered_water_fx.gd",
   "scripts/layered_cliff_details.gd", "shaders/layered_surface.gdshader"
 ]) assert.ok(fs.existsSync(file(p)), "Missing M1 resource: " + p);
 const scene = load("scenes/layered_village_m1.tscn");
@@ -112,6 +138,13 @@ assert.ok(!scene.includes("TileMapLayer"), "New runtime scene uses TileMapLayer"
 assert.ok(!mapScript.includes("TileMapLayer.new"), "New renderer constructs TileMapLayer");
 assert.ok(mapScript.includes("CollisionPolygon2D.new"), "Water collider is not freeform");
 assert.ok(mapScript.includes("terrain_patches"), "Map ignores authored terrain details");
+assert.ok(mapScript.includes("_bind_source_art"), "Native source terrain art not integrated in runtime map");
+assert.ok(mapScript.includes("_build_ground_raster_art"), "Missing real source-art ground chunks");
+const surface = load("shaders/layered_surface.gdshader");
+assert.ok(surface.includes("source_grass") && surface.includes("source_road") &&
+ surface.includes("source_water"), "Source atlas pixels not sampled in shader");
+assert.ok(load("scripts/layered_ground_raster.gd").includes("canvas.blend_rect"),
+ "M1.6 ground art is not composited from the original pixel artwork");
 assert.ok(mapScript.includes('layout.get("courtyards"'), "Missing non-tile village square");
 assert.ok(load("scripts/layered_minimap.gd").includes('layout.get("courtyards"'),
   "Minimap does not show the village square");

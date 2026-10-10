@@ -31,6 +31,27 @@ func _run_checks() -> void:
     _check(ground != null, "Missing ground polygon")
     if ground != null:
         _check(ground.material is ShaderMaterial, "Ground does not use pixel shader")
+        var material := ground.material as ShaderMaterial
+        if material != null:
+            _check(bool(material.get_shader_parameter("source_art_enabled")), "M1.6 source materials are inactive")
+            _check(material.get_shader_parameter("source_grass") is Texture2D, "Missing ground pixel-art atlas")
+    var road_surface := stage.get_node_or_null("road_west_east") as Polygon2D
+    if road_surface != null:
+        var road_mat := road_surface.material as ShaderMaterial
+        _check(road_mat != null, "Road shader material missing")
+        if road_mat != null:
+            _check(road_mat.get_shader_parameter("source_road") is Texture2D, "Road no longer has source pixel art")
+    var water_surface := stage.get_node_or_null("river_east_water") as Polygon2D
+    if water_surface != null:
+        var water_mat := water_surface.material as ShaderMaterial
+        _check(water_mat != null, "Water shader material missing")
+        if water_mat != null:
+            _check(water_mat.get_shader_parameter("source_water") is Texture2D, "Water no longer has source pixel art")
+    var ground_art := stage.get_node_or_null("L0_GroundArtRaster")
+    _check(ground_art != null, "M1.6 layered foundation raster missing")
+    if ground_art != null:
+        _check(int(ground_art.get("chunk_count")) >= 12, "Ground art did not compose raster chunks")
+        _check(int(ground_art.get("stamp_count")) >= 300, "Ground art atlas fragments missing")
     _check(stage.get_node_or_null("river_east_water") is Polygon2D, "Missing real water polygon")
     _check(stage.get_node_or_null("road_west_east") is Polygon2D, "Missing freeform road")
     _check(stage.get_node_or_null("garden_bed_a") is Polygon2D, "Missing independent garden soil")
