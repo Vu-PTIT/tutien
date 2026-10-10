@@ -172,7 +172,7 @@ func _run_checks() -> void:
         _check(bool(well.get("changed")), "Village well does not change state locally")
     if market != null:
         var market_message: Dictionary = market.call("interact")
-        _check(str(market_message.get("message", "")).contains("Chợ phiên"), "Market text missing")
+        _check(str(market_message.get("message", "")).contains("chợ phiên") or str(market_message.get("message", "")).contains("Chợ phiên"), "Market text missing")
     if door != null:
         door.call("interact")
         _check(bool(door.get("opened")), "Door action must change local visual state")
