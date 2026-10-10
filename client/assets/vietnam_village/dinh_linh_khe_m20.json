@@ -1,0 +1,17 @@
+{
+  "version": "m2.0",
+  "type": "individual_scene_prop",
+  "name": "Đình Linh Khê",
+  "file": "res://assets/vietnam_village/dinh_linh_khe_m20.png",
+  "pixel_size": [
+    176,
+    103
+  ],
+  "reference": "Vietnamese-inspired red terracotta tiled communal wooden hall; top-down 3/4, centered transparent source image; sprite only, no terrain or characters.",
+  "transparent": true,
+  "fit": "feet_center",
+  "collision_authority": "data/layered_village_m1.json",
+  "usage": "communal_hall",
+  "status": "generated_v1",
+  "notes": "M2.0 art prototype; visual style and Vietnamese architectural authenticity require further review."
+}

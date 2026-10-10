@@ -501,7 +501,7 @@
       "id": "communal_hall",
       "kind": "house",
       "name": "Đình Linh Khê",
-      "texture": "res://assets/tileset/Art/Buildings/House_Hay_3.png",
+      "texture": "res://assets/vietnam_village/dinh_linh_khe_m20.png",
       "position": [
         529,
         370
@@ -523,8 +523,14 @@
         -16
       ],
       "art_role": "vietnamese_community_hall",
-      "art_status": "source_placeholder",
-      "flavor_text": "Đình Linh Khê là nơi sinh hoạt chung của dân làng. Bên trong sẽ được mở ở giai đoạn sau."
+      "art_status": "generated_v1",
+      "flavor_text": "Đình Linh Khê là nơi sinh hoạt chung của dân làng. Bên trong sẽ được mở ở giai đoạn sau.",
+      "visual_size": [
+        176,
+        103
+      ],
+      "visual_anchor": "feet_center",
+      "art_source": "image_gen"
     },
     {
       "id": "west_cottage",
@@ -2691,7 +2697,7 @@
       ]
     }
   ],
-  "art_revision": "m1-9-village-vietnam-cultural-zones",
+  "art_revision": "m2-0-vietnamese-communal-hall-sprite",
   "terrain_patches": [
     {
       "id": "north_house_yard",
@@ -3363,7 +3369,7 @@
       "zone_id": "communal_house_court",
       "object_id": "communal_hall",
       "visual_role": "vietnamese_community_hall",
-      "state": "source_placeholder"
+      "state": "generated_v1"
     },
     {
       "id": "landmark_well",

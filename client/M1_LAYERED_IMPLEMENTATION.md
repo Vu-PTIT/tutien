@@ -89,3 +89,10 @@
 - New source: `client/scripts/village_culture_zones.gd`; the script uses independent trigger objects, and map JSON remains the source of truth. Future authentic Vietnamese sprites can be swapped per object without replacing terrain or collision architecture.
 - Does NOT introduce NPC schedules, missions, autonomous movement, platform syncing or economy.
 - Required QA: Godot 4.6.1 import, scene smoke, route test, and screenshot; review artwork/identity before claiming visual acceptance.
+
+## M2.0 — First independently rendered Vietnamese communal hall sprite
+
+- Produced `assets/vietnam_village/dinh_linh_khe_m20.png` (176x103 px, indexed transparent PNG), sourced from a newly generated Vietnamese-inspired tiled-roof communal hall concept. Asset metadata lives in `dinh_linh_khe_m20.json`.
+- Swapped **only** the existing `communal_hall` object's sprite reference. Preserved its ground anchor, 140x18 physics footprint, access point, cultural action and path endpoint. Nothing is baked into the terrain image.
+- This is a **first-pass art prototype** requiring visual scale check and architectural style review. Other houses, banyan and props remain source-pack placeholders. No false claim of fully replaced Vietnamese assets.
+- Test checks that the asset imports in Godot and matches expected pixel dimensions. CI visual capture and route smoke remain required.

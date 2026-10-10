@@ -82,6 +82,19 @@ func _run_checks() -> void:
     _check(world_data.get("districts", []).size() >= 5, "Named village districts are missing")
     _check(world_data.get("door_routes", []).size() >= 5, "Homes lack connected access routes")
     _check(world_data.get("landscape_clusters", []).size() >= 3, "No organized grove areas")
+    var hall_data: Dictionary = {}
+    for entry in world_data.get("objects", []):
+        if str(entry.get("id", "")) == "communal_hall":
+            hall_data = entry
+            break
+    _check(not hall_data.is_empty(), "M2.0 communal hall data missing")
+    if not hall_data.is_empty():
+        _check(str(hall_data.get("art_status", "")) == "generated_v1", "M2.0 communal hall not using generated art")
+        var sprite_tex := load(str(hall_data.get("texture", ""))) as Texture2D
+        _check(sprite_tex != null, "M2.0 Vietnamese hall texture missing")
+        if sprite_tex != null:
+            _check(sprite_tex.get_size() == Vector2(176, 103), "Hall sprite texture dimensions have drifted")
+
     var main_road: Dictionary = world_data.get("roads", [])[0]
     _check(main_road.get("width_profile", []).size() == main_road.get("points", []).size(),
         "Road width variations are missing")
