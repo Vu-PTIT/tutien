@@ -49,6 +49,21 @@ assert.ok(w >= 320 && h >= 240);
 const inside = ([x,y]) => Number.isFinite(x) && Number.isFinite(y) && x >= 0 && x <= w && y >= 0 && y <= h;
 assert.ok(inside(map.spawn), "Player spawn outside map");
 assert.ok(map.roads.length >= 4, "Missing authored road paths");
+for (const road of map.roads) {
+ assert.ok(Array.isArray(road.width_profile) && road.width_profile.length===road.points.length,
+  "Road width keys must match hand-authored centerline points: "+road.id);
+ assert.ok(road.width_profile.every(v=>v>=0.8 && v<=1.25), "Road too narrow/wide: "+road.id);
+ assert.ok(Number.isFinite(road.edge_seed), "Road missing edge phase");
+}
+assert.ok(Array.isArray(map.landscape_clusters) && map.landscape_clusters.length>=3,
+ "Missing organized village foliage clusters");
+const foliageIds=new Set(map.objects.map(o=>o.id));
+for (const cluster of map.landscape_clusters) {
+ assert.ok(cluster.object_ids.length >= 3,"Sparse cluster "+cluster.id);
+ for (const objid of cluster.object_ids) assert.ok(foliageIds.has(objid),
+  "Cluster references missing prop "+objid);
+}
+
 assert.ok(map.waters.length >= 2, "Missing separate water bodies");
 assert.ok(map.terrain_patches.length >= 3, "No authored grass/soil clearings");
 assert.ok(map.terraces.length >= 2, "Expected two irregular terrain ridges");

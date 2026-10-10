@@ -81,6 +81,11 @@ func _run_checks() -> void:
     var world_data: Dictionary = stage.get("layout")
     _check(world_data.get("districts", []).size() >= 5, "Named village districts are missing")
     _check(world_data.get("door_routes", []).size() >= 5, "Homes lack connected access routes")
+    _check(world_data.get("landscape_clusters", []).size() >= 3, "No organized grove areas")
+    var main_road: Dictionary = world_data.get("roads", [])[0]
+    _check(main_road.get("width_profile", []).size() == main_road.get("points", []).size(),
+        "Road width variations are missing")
+
     _check(stage.get_node_or_null("LayeredMapHUD/MapOverview") != null, "Missing shared-data minimap")
 
     var decals := stage.get_node_or_null("L1_RasterBrushChunks")

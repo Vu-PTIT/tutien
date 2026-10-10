@@ -55,7 +55,21 @@
           902,
           503
         ]
-      ]
+      ],
+      "width_profile": [
+        1.04,
+        0.94,
+        1.18,
+        0.96,
+        1.09,
+        1.13,
+        0.96,
+        1.14,
+        0.91,
+        0.99
+      ],
+      "edge_seed": 0.5,
+      "roughness": 1.12
     },
     {
       "id": "road_north",
@@ -93,7 +107,18 @@
           404,
           -24
         ]
-      ]
+      ],
+      "width_profile": [
+        0.98,
+        1.07,
+        0.91,
+        1.06,
+        0.89,
+        1.12,
+        0.99
+      ],
+      "edge_seed": 2.7,
+      "roughness": 1.12
     },
     {
       "id": "road_garden",
@@ -127,7 +152,17 @@
           303,
           827
         ]
-      ]
+      ],
+      "width_profile": [
+        1.1,
+        0.93,
+        1.06,
+        0.87,
+        1.17,
+        0.95
+      ],
+      "edge_seed": 5.1,
+      "roughness": 1.12
     },
     {
       "id": "road_east",
@@ -157,7 +192,17 @@
           811,
           206
         ]
-      ]
+      ],
+      "width_profile": [
+        1.05,
+        0.88,
+        1.1,
+        0.92,
+        1.08,
+        0.95
+      ],
+      "edge_seed": 1.2,
+      "roughness": 1.12
     },
     {
       "id": "road_fishing",
@@ -179,7 +224,15 @@
           901,
           503
         ]
-      ]
+      ],
+      "width_profile": [
+        1.04,
+        0.92,
+        1.09,
+        0.9
+      ],
+      "edge_seed": 3.7,
+      "roughness": 1.12
     },
     {
       "id": "bridge_west_approach",
@@ -197,7 +250,14 @@
           903,
           350
         ]
-      ]
+      ],
+      "width_profile": [
+        1.04,
+        0.94,
+        1
+      ],
+      "edge_seed": 0.9,
+      "roughness": 0.64
     },
     {
       "id": "bridge_east_approach",
@@ -215,7 +275,14 @@
           1128,
           323
         ]
-      ]
+      ],
+      "width_profile": [
+        1,
+        0.9,
+        1.04
+      ],
+      "edge_seed": 1.8,
+      "roughness": 0.64
     },
     {
       "id": "lane_communal_hall",
@@ -237,7 +304,15 @@
           531,
           402
         ]
-      ]
+      ],
+      "width_profile": [
+        1.06,
+        0.9,
+        0.94,
+        0.88
+      ],
+      "edge_seed": 4.5,
+      "roughness": 0.79
     },
     {
       "id": "lane_west_cottage",
@@ -255,7 +330,14 @@
           242,
           430
         ]
-      ]
+      ],
+      "width_profile": [
+        1.05,
+        0.88,
+        0.9
+      ],
+      "edge_seed": 2,
+      "roughness": 0.79
     },
     {
       "id": "lane_east_cottage",
@@ -273,7 +355,14 @@
           766,
           393
         ]
-      ]
+      ],
+      "width_profile": [
+        1.04,
+        0.89,
+        0.91
+      ],
+      "edge_seed": 5.4,
+      "roughness": 0.79
     },
     {
       "id": "lane_garden_home",
@@ -295,7 +384,15 @@
           381,
           710
         ]
-      ]
+      ],
+      "width_profile": [
+        1.09,
+        1.03,
+        0.92,
+        0.89
+      ],
+      "edge_seed": 4.2,
+      "roughness": 0.79
     },
     {
       "id": "lane_garden_beds",
@@ -313,7 +410,14 @@
           300,
           618
         ]
-      ]
+      ],
+      "width_profile": [
+        1.04,
+        0.97,
+        0.9
+      ],
+      "edge_seed": 3.1,
+      "roughness": 0.79
     },
     {
       "id": "lane_village_market",
@@ -331,7 +435,14 @@
           634,
           567
         ]
-      ]
+      ],
+      "width_profile": [
+        1.12,
+        0.94,
+        1.06
+      ],
+      "edge_seed": 1.5,
+      "roughness": 0.79
     }
   ],
   "waters": [
@@ -2150,6 +2261,214 @@
         0,
         -12
       ]
+    },
+    {
+      "id": "grove_north_01",
+      "kind": "tree",
+      "name": "Cây tán phía bắc",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Tree_Emerald_2.png",
+      "position": [
+        601,
+        154
+      ],
+      "solid": [
+        16,
+        12,
+        0,
+        -6
+      ],
+      "action": "tree",
+      "radius": 50,
+      "interaction_offset": [
+        0,
+        16
+      ],
+      "door_offset": [
+        0,
+        -18
+      ]
+    },
+    {
+      "id": "grove_north_02",
+      "kind": "tree",
+      "name": "Cây bóng mát phía bắc",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Tree_Emerald_4.png",
+      "position": [
+        679,
+        123
+      ],
+      "solid": [
+        16,
+        12,
+        0,
+        -6
+      ],
+      "action": "tree",
+      "radius": 50,
+      "interaction_offset": [
+        0,
+        16
+      ],
+      "door_offset": [
+        0,
+        -18
+      ]
+    },
+    {
+      "id": "grove_north_03",
+      "kind": "tree",
+      "name": "Cây ven vườn thượng",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Tree_Emerald_1.png",
+      "position": [
+        703,
+        230
+      ],
+      "solid": [
+        16,
+        12,
+        0,
+        -6
+      ],
+      "action": "tree",
+      "radius": 50,
+      "interaction_offset": [
+        0,
+        16
+      ],
+      "door_offset": [
+        0,
+        -18
+      ]
+    },
+    {
+      "id": "grove_west_01",
+      "kind": "tree",
+      "name": "Cây xóm Tây",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Tree_Emerald_3.png",
+      "position": [
+        180,
+        310
+      ],
+      "solid": [
+        16,
+        12,
+        0,
+        -6
+      ],
+      "action": "tree",
+      "radius": 50,
+      "interaction_offset": [
+        0,
+        16
+      ],
+      "door_offset": [
+        0,
+        -18
+      ]
+    },
+    {
+      "id": "grove_west_02",
+      "kind": "tree",
+      "name": "Cây xóm Tây",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Tree_Emerald_2.png",
+      "position": [
+        82,
+        378
+      ],
+      "solid": [
+        16,
+        12,
+        0,
+        -6
+      ],
+      "action": "tree",
+      "radius": 50,
+      "interaction_offset": [
+        0,
+        16
+      ],
+      "door_offset": [
+        0,
+        -18
+      ]
+    },
+    {
+      "id": "grove_pond_01",
+      "kind": "tree",
+      "name": "Cây ven ao",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Tree_Emerald_4.png",
+      "position": [
+        91,
+        610
+      ],
+      "solid": [
+        16,
+        12,
+        0,
+        -6
+      ],
+      "action": "tree",
+      "radius": 50,
+      "interaction_offset": [
+        0,
+        16
+      ],
+      "door_offset": [
+        0,
+        -18
+      ]
+    },
+    {
+      "id": "grove_pond_02",
+      "kind": "tree",
+      "name": "Cây ở bờ ruộng",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Tree_Emerald_1.png",
+      "position": [
+        217,
+        748
+      ],
+      "solid": [
+        16,
+        12,
+        0,
+        -6
+      ],
+      "action": "tree",
+      "radius": 50,
+      "interaction_offset": [
+        0,
+        16
+      ],
+      "door_offset": [
+        0,
+        -18
+      ]
+    },
+    {
+      "id": "grove_west_03",
+      "kind": "tree",
+      "name": "Cây ở triền cao",
+      "texture": "res://assets/tileset/Art/Trees and Bushes/Tree_Emerald_3.png",
+      "position": [
+        279,
+        203
+      ],
+      "solid": [
+        16,
+        12,
+        0,
+        -6
+      ],
+      "action": "tree",
+      "radius": 50,
+      "interaction_offset": [
+        0,
+        16
+      ],
+      "door_offset": [
+        0,
+        -18
+      ]
     }
   ],
   "activity_slots": [
@@ -2184,7 +2503,7 @@
       ]
     }
   ],
-  "art_revision": "m1-5-water-cliff-environment",
+  "art_revision": "m1-8-authored-path-profiles-and-grove-composition",
   "terrain_patches": [
     {
       "id": "north_house_yard",
@@ -2388,38 +2707,63 @@
     {
       "id": "northwest_hillside",
       "side": "north",
-      "depth": 17,
+      "depth": 19,
       "edge": [
         [
           0,
-          269
+          267
         ],
         [
-          65,
+          27,
+          276
+        ],
+        [
+          57,
+          273
+        ],
+        [
+          83,
+          283
+        ],
+        [
+          114,
+          271
+        ],
+        [
+          146,
           279
         ],
         [
-          122,
-          268
+          172,
+          265
         ],
         [
-          179,
-          277
+          198,
+          272
         ],
         [
-          246,
-          262
+          238,
+          257
         ],
         [
-          318,
-          276
+          266,
+          271
+        ],
+        [
+          303,
+          269
+        ],
+        [
+          331,
+          278
         ],
         [
           364,
           266
         ]
       ],
-      "collision": true
+      "collision": true,
+      "edge_style": "broken_moss_ledge"
     },
     {
       "id": "southern_rock_garden",
@@ -2428,30 +2772,55 @@
       "edge": [
         [
           771,
-          733
+          730
         ],
         [
-          824,
-          709
+          803,
+          725
         ],
         [
-          902,
-          718
+          823,
+          707
+        ],
+        [
+          855,
+          716
+        ],
+        [
+          887,
+          711
+        ],
+        [
+          922,
+          719
+        ],
+        [
+          954,
+          704
         ],
         [
           980,
-          705
+          708
         ],
         [
-          1043,
-          717
+          1012,
+          702
+        ],
+        [
+          1045,
+          712
+        ],
+        [
+          1084,
+          702
         ],
         [
           1118,
           701
         ]
       ],
-      "collision": true
+      "collision": true,
+      "edge_style": "weathered_stone"
     }
   ],
   "bridges": [
@@ -2616,6 +2985,45 @@
       "ripple_count": 25,
       "foam_stride": 6,
       "flow_speed": 0.18
+    }
+  ],
+  "landscape_clusters": [
+    {
+      "id": "north_grove",
+      "name": "Lùm cây phía bắc",
+      "theme": "shade_grove",
+      "object_ids": [
+        "grove_north_01",
+        "grove_north_02",
+        "grove_north_03",
+        "tree_east",
+        "wild_bush_07",
+        "wild_bush_25"
+      ]
+    },
+    {
+      "id": "western_woodland",
+      "name": "Rìa rừng xóm Tây",
+      "theme": "village_edge",
+      "object_ids": [
+        "grove_west_01",
+        "grove_west_02",
+        "grove_west_03",
+        "tree_west",
+        "tree_north",
+        "wild_bush_04"
+      ]
+    },
+    {
+      "id": "pond_orchard",
+      "name": "Vườn ven ao",
+      "theme": "pondside",
+      "object_ids": [
+        "grove_pond_01",
+        "grove_pond_02",
+        "wild_bush_17",
+        "wild_bush_30"
+      ]
     }
   ]
 }

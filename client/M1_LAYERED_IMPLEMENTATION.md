@@ -70,3 +70,12 @@
 - Art-review screenshot now hides the HUD (gameplay screenshot keeps it), and asserts the reference camera no longer exposes gray canvas along its left margin.
 - Preserve all independent props, Y-sort, bridges, village entrance route tests and the original legacy scene.
 - This remains a reusable **source-asset layered scene**, not a fully hand-painted custom base image. Scene import/CI and the resulting screenshots must be reviewed before accepting the visual change.
+
+## M1.8 — Authored lane widths and organic cliff edges (2026-10-10)
+
+- Maintains **scene_mode** + independent PNG props, collision, and Y-sorting. No tileset-only world or flattened game screenshot.
+- Dirt lanes now have individual hand-selected `width_profile` control points (13 roads) and edge phases. Distances between anchor points determine smooth width interpolation; their endpoints and mapped doorway access stay unchanged.
+- Minimap renders the same variable-width paths instead of a misleading fixed-width line.
+- Both cliff ridges have short, broken, irregularly positioned anchor points and thinner, tapered stone faces. Collision uses the same face polygon, keeping render/physics aligned.
+- Eight extra existing-asset tree props organized into three named grove clusters, independent from their foot collisions; no generated filler art.
+- Navigation route and scene smoke tests remain required. CI screenshot review is required before visual acceptance; changes are a further art pass, not final world graphics.

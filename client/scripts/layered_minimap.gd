@@ -56,8 +56,9 @@ func _draw() -> void:
     for road in layout.get("roads", []):
         var points: Array = road.get("points", [])
         var radius := float(road.get("radius", 13.0))
-        _draw_stroke(points, radius + 3.0, Color(0.67, 0.72, 0.45), frame, extent)
-        _draw_stroke(points, radius, Color(0.86, 0.73, 0.53), frame, extent)
+        var profile: Array = road.get("width_profile", [])
+        _draw_profile_stroke(points, radius + 3.0, profile, Color(0.67, 0.72, 0.45), frame, extent)
+        _draw_profile_stroke(points, radius, profile, Color(0.86, 0.73, 0.53), frame, extent)
     # Central village courtyard and two smaller gathering yards share world coordinates.
     for court in layout.get("courtyards", []):
         var center := _v(court.get("center", []))
@@ -90,6 +91,24 @@ func _draw() -> void:
         var safe := Vector2(clampf(p.x, 0.0, extent.x), clampf(p.y, 0.0, extent.y))
         draw_circle(_pin(safe, frame, extent), 3.5, Color(0.97, 0.26, 0.19))
     draw_rect(frame, Color(0.96, 0.89, 0.74), false, 2.0)
+
+
+func _draw_profile_stroke(raw: Array, radius_world: float, profile: Array, paint: Color, frame: Rect2, extent: Vector2) -> void:
+    var smooth: PackedVector2Array = geometry_provider.call("_smooth_path", raw)
+    if smooth.size() < 2:
+        return
+    var total := 0.0
+    for i in range(smooth.size() - 1):
+        total += smooth[i].distance_to(smooth[i + 1])
+    var travelled := 0.0
+    for i in range(smooth.size() - 1):
+        var a := smooth[i]
+        var b := smooth[i + 1]
+        var progress := travelled / maxf(total, 1.0)
+        var scale: float = geometry_provider.call("_width_scale", profile, progress)
+        var width := maxf(1.0, radius_world * 2.0 * scale * frame.size.x / extent.x)
+        draw_line(_pin(a, frame, extent), _pin(b, frame, extent), paint, width, false)
+        travelled += a.distance_to(b)
 
 
 func _draw_stroke(raw: Array, radius_world: float, paint: Color, frame: Rect2, extent: Vector2) -> void:

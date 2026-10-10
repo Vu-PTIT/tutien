@@ -121,10 +121,28 @@ func _smooth_path(raw: Array) -> PackedVector2Array:
     return smoothed
 
 
-func _ribbon(raw: Array, radius: float, roughness: float = 1.0) -> PackedVector2Array:
+func _width_scale(profile: Array, progress: float) -> float:
+    if profile.size() < 2:
+        return 1.0
+    # Authored, eased width keys rather than one uniform pipe. Keys represent
+    # fractions of accumulated *distance*, never count of spline points.
+    var position_on_profile := clampf(progress, 0.0, 1.0) * float(profile.size() - 1)
+    var segment: int = mini(floori(position_on_profile), profile.size() - 2)
+    var blend: float = position_on_profile - float(segment)
+    blend = blend * blend * (3.0 - 2.0 * blend)
+    return lerpf(float(profile[segment]), float(profile[segment + 1]), blend)
+
+
+func _ribbon(raw: Array, radius: float, roughness: float = 1.0, width_profile: Array = [], edge_seed: float = 0.0) -> PackedVector2Array:
     var points := _smooth_path(raw)
     if points.size() < 2:
         return PackedVector2Array()
+    var cumulative := PackedFloat32Array()
+    var length_total := 0.0
+    for i in range(points.size()):
+        if i > 0:
+            length_total += points[i].distance_to(points[i - 1])
+        cumulative.append(length_total)
     var left := PackedVector2Array()
     var right := PackedVector2Array()
     for i in range(points.size()):
@@ -133,12 +151,14 @@ func _ribbon(raw: Array, radius: float, roughness: float = 1.0) -> PackedVector2
         var next := points[mini(i + 1, points.size() - 1)]
         var direction := (next - prev).normalized()
         var n := Vector2(-direction.y, direction.x)
-        # Bends are continuously interpolated; small irregular shore/road edges
-        # are baked as world-pixel vertices, not as rectangular Wang cells.
-        var a := roughness * (2.0 * sin(float(i) * 0.63) + sin(float(i) * 0.21))
-        var b := roughness * (2.0 * sin(float(i) * 0.72 + 2.1) + sin(float(i) * 0.31 + 1.2))
-        left.append((p + n * maxf(3.0, radius + a)).round())
-        right.append((p - n * maxf(3.0, radius + b)).round())
+        var u := float(cumulative[i]) / maxf(1.0, length_total)
+        var local_radius := radius * _width_scale(width_profile, u)
+        # Independent, seeded bank edges create natural width changes while
+        # preserving every waypoint and navigation/interaction destination.
+        var a := roughness * (2.0 * sin(float(i) * 0.63 + edge_seed) + sin(float(i) * 0.21 + edge_seed * 1.3))
+        var b := roughness * (2.0 * sin(float(i) * 0.72 + 2.1 + edge_seed) + sin(float(i) * 0.31 + 1.2 + edge_seed * 0.7))
+        left.append((p + n * maxf(3.0, local_radius + a)).round())
+        right.append((p - n * maxf(3.0, local_radius + b)).round())
     var polygon := PackedVector2Array()
     for p in left:
         polygon.append(p)
@@ -207,9 +227,12 @@ func _build_surfaces() -> void:
         var key := str(road.get("id", "road"))
         var radius := float(road.get("radius", 13))
         var points: Array = road.get("points", [])
-        _surface(key + "_meadow_fringe", _ribbon(points, radius + float(transitions.get("road_meadow_fringe_px", 10.0)), 1.65), 12, -10)
-        _surface(key + "_verge", _ribbon(points, radius + float(transitions.get("road_dust_verge_px", 4.0)), 1.25), 6, -9)
-        _surface(key, _ribbon(points, radius, 1.0), 1, -8)
+        var profile: Array = road.get("width_profile", [])
+        var phase := float(road.get("edge_seed", 0.0))
+        var variation := float(road.get("roughness", 1.0))
+        _surface(key + "_meadow_fringe", _ribbon(points, radius + float(transitions.get("road_meadow_fringe_px", 10.0)), variation * 1.3, profile, phase), 12, -10)
+        _surface(key + "_verge", _ribbon(points, radius + float(transitions.get("road_dust_verge_px", 4.0)), variation * 1.1, profile, phase), 6, -9)
+        _surface(key, _ribbon(points, radius, variation, profile, phase), 1, -8)
 
     # M1.4: a central gathering place and two smaller yards.
     # Edges use freeform ellipses (not rectangular pasted map snippets).

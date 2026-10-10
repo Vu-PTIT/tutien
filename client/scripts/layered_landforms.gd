@@ -73,21 +73,29 @@ func _build_terraces() -> void:
                 upper.append(edge[i])
         _surface(key + "_grass", upper, 7, -14)
 
-        # The vertical cut is measured from the exact top ridge points; physics
-        # blocks only this narrow rock face, never the entire plateau polygon.
+        # A near-vertical exposed ledge with natural depth variation. The
+        # original fixed-depth slab plus a 4px black outline resembled a railway
+        # sleeper; taper each extremity and follow authored broken ridge heights.
+        # Physics blocks ONLY the visible thin face, not the large plateau.
+        var count := edge.size()
+        var lower := PackedVector2Array()
+        var lip := PackedVector2Array()
+        for i in range(count):
+            var p := edge[i]
+            var t := float(i) / float(maxi(1, count - 1))
+            var taper := clampf(minf(t, 1.0 - t) * 12.0, 0.0, 1.0)
+            var natural := 0.93 + 0.11 * sin(p.x * 0.083 + 1.1) + 0.04 * sin(p.x * 0.22)
+            var local_depth := maxf(1.5, depth * taper * natural)
+            lower.append((p + Vector2(0.0, local_depth)).round())
+            lip.append((p + Vector2(0.0, -1.0)).round())
         var face := PackedVector2Array()
         for p in edge:
             face.append(p)
-        for i in range(edge.size() - 1, -1, -1):
-            face.append(edge[i] + Vector2(0.0, depth))
+        for i in range(lower.size() - 1, -1, -1):
+            face.append(lower[i])
         _surface(key + "_stone_face", face, 8, -13)
-        var lip := PackedVector2Array()
-        var lower := PackedVector2Array()
-        for p in edge:
-            lip.append(p + Vector2(0.0, -1.0))
-            lower.append(p + Vector2(0.0, depth + 1.0))
-        _outline(key + "_grass_lip", lip, Color(0.37, 0.55, 0.32), 3.0, -12)
-        _outline(key + "_face_shadow", lower, Color(0.29, 0.36, 0.27, 0.87), 4.0, -12)
+        _outline(key + "_grass_lip", lip, Color(0.41, 0.59, 0.34, 0.82), 2.0, -12)
+        _outline(key + "_face_shadow", lower, Color(0.35, 0.37, 0.28, 0.60), 2.0, -12)
         if bool(terrace.get("collision", false)):
             var wall := StaticBody2D.new()
             wall.name = "TerraceWall_" + key
