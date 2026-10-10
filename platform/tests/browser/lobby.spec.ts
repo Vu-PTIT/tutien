@@ -17,6 +17,8 @@ test("language switch persists and calendar friend actions are explicitly sample
   await expect(
     page.getByText("Real life: Studying", { exact: true }),
   ).toBeVisible();
+  await expect(page.getByRole("dialog").locator(".pixel-scene")).toHaveCount(0);
+  await expect(page.getByRole("dialog")).not.toContainText("Fishing");
   await page
     .getByRole("button", { name: "Send encouragement", exact: true })
     .click();
@@ -132,5 +134,31 @@ test("PWA keeps the local lobby available after going offline", async ({
   await dialog.getByRole("button", { name: "Save", exact: true }).click();
   await expect(
     page.locator(".fc-event").filter({ hasText: "Offline plan" }).first(),
+  ).toBeVisible();
+});
+
+test("lobby characters represent real-life status and do not expose game controls", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByLabel("Ngôn ngữ").selectOption("en");
+  await expect(page.locator(".pixel-scene")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Fishing", exact: true }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Studying", exact: true }).click();
+  await expect(page.locator(".life-summary:visible .life-badge")).toHaveText(
+    "Studying",
+  );
+  await page.goto("/#/friends");
+  const linh = page.locator(".friend-card").filter({ hasText: "Linh" });
+  await expect(linh.locator(".life-portrait")).toContainText("Studying");
+  await expect(linh).not.toContainText("Fishing");
+  await linh.getByRole("button", { name: "View calendar" }).click();
+  await expect(
+    page
+      .locator(".fc-event")
+      .filter({ hasText: "Study at the library" })
+      .first(),
   ).toBeVisible();
 });

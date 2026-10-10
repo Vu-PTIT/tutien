@@ -34,14 +34,13 @@ import {
   Download,
   WifiOff,
   ArrowUpRight,
-  Fish,
   Sprout,
   Coffee,
   GraduationCap,
   BriefcaseBusiness,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
-import { PixelScene } from "./components/PixelScene";
+import { LifePortrait } from "./components/LifePortrait";
 import { useMedia, useInstall } from "./hooks";
 import {
   dateKey,
@@ -57,7 +56,6 @@ import {
   type Entry,
   type EntryState,
   type Locale,
-  type AvatarActivity,
   type LifeStatus,
 } from "./domain";
 
@@ -177,10 +175,6 @@ export default function App() {
     setState((s) => ({ ...s, life: value }));
     setToast(t("statusSet"));
   }
-  function chooseAvatar(value: AvatarActivity) {
-    setState((s) => ({ ...s, avatar: value }));
-    setToast(t("gameSet"));
-  }
   function interact(kind: "support" | "invite") {
     if (!selected) return;
     setState((s) => ({
@@ -241,8 +235,6 @@ export default function App() {
             <span>
               <LifeIcon value={f.life} />
               {t(f.life)}
-              <span className="middle-dot">·</span>
-              {t(f.avatar)}
             </span>
           </span>
           <ChevronRight size={16} aria-hidden="true" />
@@ -250,43 +242,38 @@ export default function App() {
       ))}
     </div>
   );
-  const world = (
-    <section className="world-card">
+  const todayEntries = own.filter(
+    (e) => dateKey(new Date(e.start)) === dateKey(new Date()),
+  );
+  const completedToday = todayEntries.filter((e) => e.state === "completed");
+  const recordedMinutes = Math.round(
+    completedToday.reduce(
+      (sum, e) =>
+        sum + (new Date(e.end).getTime() - new Date(e.start).getTime()) / 60000,
+      0,
+    ),
+  );
+  const lifeSummary = (
+    <section className="life-summary card" data-testid="life-summary">
       <div className="section-heading">
-        <h2>{t("world")}</h2>
-        <span className="sample-dot" aria-label={t("demo")} />
+        <h2>{t("dailySummary")}</h2>
       </div>
-      <PixelScene activity={state.avatar} friend={scope === "shared"} />
-      <div className="world-caption">
-        <span className="person-avatar self-avatar">Y</span>
+      <LifePortrait name="Yến" life={state.life} />
+      <div className="life-metrics">
         <div>
-          <strong>Yến</strong>
-          <span>
-            {t("inGame")}: {t(state.avatar)}
-          </span>
+          <strong>{todayEntries.length}</strong>
+          <span>{t("plannedCount")}</span>
+        </div>
+        <div>
+          <strong>{completedToday.length}</strong>
+          <span>{t("completedCount")}</span>
+        </div>
+        <div>
+          <strong>{recordedMinutes}</strong>
+          <span>{t("recordedMinutes")}</span>
         </div>
       </div>
-      <p className="hint">{t("gamePreview")}</p>
-      <div className="activity-buttons" aria-label={t("chooseGame")}>
-        {(
-          [
-            { key: "fishing", icon: Fish },
-            { key: "gardening", icon: Sprout },
-            { key: "idle", icon: Coffee },
-          ] as const
-        ).map((a) => (
-          <Button
-            key={a.key}
-            size="sm"
-            variant={state.avatar === a.key ? "default" : "outline"}
-            aria-pressed={state.avatar === a.key}
-            onClick={() => chooseAvatar(a.key)}
-          >
-            <a.icon size={14} />
-            {t(a.key)}
-          </Button>
-        ))}
-      </div>
+      <p className="hint">{t("summaryHelp")}</p>
     </section>
   );
 
@@ -672,7 +659,7 @@ export default function App() {
                     </div>
                   </section>
                   {mobile && page === "today" && (
-                    <div className="mobile-world">{world}</div>
+                    <div className="mobile-summary">{lifeSummary}</div>
                   )}
                   {mobile && (
                     <section className="mobile-friends card">
@@ -738,11 +725,20 @@ export default function App() {
                           </span>
                         </div>
                       </div>
-                      <PixelScene activity={f.avatar} />
+                      <LifePortrait
+                        name={f.name}
+                        life={f.life}
+                        color={f.color}
+                      />
                       <div className="friend-card-bottom">
                         <div>
-                          <small>{t("inGame")}</small>
-                          <strong>{t(f.avatar)}</strong>
+                          <small>{t("sharedActivities")}</small>
+                          <strong>
+                            {
+                              visibleEntries(state.entries, "shared", f.id)
+                                .length
+                            }
+                          </strong>
                         </div>
                         <Button
                           variant="outline"
@@ -817,6 +813,10 @@ export default function App() {
                       </p>
                     )}
                   </section>
+                  <details className="card settings-card game-bridge">
+                    <summary>{t("gameBridge")}</summary>
+                    <p>{t("gameBridgeHelp")}</p>
+                  </details>
                   <section className="card settings-card">
                     <h2>{t("demo")}</h2>
                     <p>{t("demoDetail")}</p>
@@ -828,7 +828,7 @@ export default function App() {
           </main>
           {(page === "today" || page === "calendar") && (
             <aside className="right-rail">
-              <div className="desktop-world">{world}</div>
+              <div className="desktop-summary">{lifeSummary}</div>
               <section className="friends-panel card">
                 <div className="section-heading">
                   <h2>{t("friendsNow")}</h2>
@@ -1017,14 +1017,6 @@ export default function App() {
                       )}
                     </div>
                   )}
-                  <PixelScene
-                    activity={selectedFriend?.avatar ?? state.avatar}
-                  />
-                  <p className="detail-avatar-status">
-                    {t("inGame")}:{" "}
-                    <strong>{t(selectedFriend?.avatar ?? state.avatar)}</strong>
-                  </p>
-                  <p className="hint">{t("gamePreview")}</p>
                   {noteOf(selected) && (
                     <div className="detail-note">
                       <BookOpen size={16} />

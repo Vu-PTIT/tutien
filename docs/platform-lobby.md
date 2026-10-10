@@ -2,7 +2,7 @@
 
 ## Quyết định triển khai
 
-`platform/` là frontend React + TypeScript + Vite. Bố cục lấy lịch sinh hoạt làm trung tâm, với góc nhân vật pixel và lịch bạn bè. Việt–Anh được làm ngay trong bản đầu. Web và app PWA dùng một frontend với shell thích ứng, không tạo bốn bản sao mã nguồn.
+`platform/` là frontend React + TypeScript + Vite. Sảnh là nền tảng cuộc sống ngoài đời: lịch học/làm/nghỉ, kế hoạch, nhật ký, thống kê và lịch bạn bè. Nhân vật chỉ là đại diện hồ sơ với trạng thái đời thật tự khai báo; không dựng cảnh game ở sảnh. Việt–Anh được làm ngay trong bản đầu. Web và app PWA dùng một frontend với shell thích ứng, không tạo bốn bản sao mã nguồn.
 
 | Surface | Điều hướng | Lịch | Chi tiết hoạt động |
 |---|---|---|---|
@@ -11,17 +11,17 @@
 | PC PWA | Như PC, cửa sổ app riêng | Như PC | Dialog |
 | Mobile PWA | Safe area trên/dưới, shell app | Như mobile | Bảng trượt dưới |
 
-Mốc chuyển mobile 768px. 768–1230px gộp rail nhân vật/bạn bè xuống dưới. Ngôn ngữ là một trục độc lập với thiết bị/surface. Màn Hôm nay, Lịch, Nhật ký, Bạn bè và Cài đặt đều có nhãn Việt–Anh. Native app cần một giai đoạn đóng gói và kiểm thử riêng, chưa triển khai.
+Mốc chuyển mobile 768px. 768–1230px gộp rail tóm tắt sinh hoạt/bạn bè xuống dưới. Ngôn ngữ là một trục độc lập với thiết bị/surface. Màn Hôm nay, Lịch, Nhật ký, Bạn bè và Cài đặt đều có nhãn Việt–Anh. Native app cần một giai đoạn đóng gói và kiểm thử riêng, chưa triển khai.
 
 ## Luồng lịch xã hội
 
 1. Chọn lịch của mình hoặc cùng bạn bè.
 2. Từ danh sách bạn bè, xem lịch đã chia sẻ của một người.
-3. Bấm hoạt động để xem kế hoạch/trạng thái, ghi chú được phép xem và activity avatar.
+3. Bấm hoạt động để xem kế hoạch/trạng thái đời thật và ghi chú được phép xem.
 4. Gửi động viên hoặc lời mời. Trong bản đầu đây chỉ là phản hồi mẫu trên thiết bị; chưa gửi server.
-5. Việc tham gia thật phải qua server xác nhận quyền, sức chứa, vị trí/slot và lời mời. Không tự chuyển nhân vật của người khác.
+5. Lời mời cùng hoạt động ngoài đời phải qua server và người nhận chấp thuận. Nó không phải lệnh tham gia game và không thay đổi avatar.
 
-`planned`, `active`, `completed`, `cancelled` là state của mục lịch. Bắt đầu một mục lịch chỉ đổi state của mục đó, không tự bật activity game hoặc cấp thưởng. Trạng thái đời thật do người dùng tự chọn. Mẫu “Linh đang học / avatar đang câu cá” minh họa hai trạng thái riêng.
+`planned`, `active`, `completed`, `cancelled` là state của mục lịch. Bắt đầu một mục lịch chỉ đổi state của mục đó, không tự bật activity game hoặc cấp thưởng. Trạng thái đời thật do người dùng tự chọn. Thẻ Linh “Đi học” chỉ thể hiện trạng thái đời thật do Linh chọn, không phải hành động game.
 
 ## Hợp đồng backend tiếp theo (đề xuất, chưa tồn tại)
 
@@ -49,7 +49,21 @@ Build TypeScript/Vite/PWA và unit tests là bắt buộc. Bộ Playwright có c
 ## Kết quả kiểm tra tại mốc bàn giao
 
 - Build TypeScript/Vite/PWA đạt.
-- 10 kiểm thử trình duyệt đạt trên hai cấu hình PC/mobile (Chromium).
+- 12 kiểm thử trình duyệt đạt trên hai cấu hình PC/mobile (Chromium).
 - 6 unit test đạt: quyền lọc mẫu, ownership, thời gian, dữ liệu lưu lỗi và bản dịch.
 - Các luồng trình duyệt PC/mobile đã kiểm tra: đổi ngôn ngữ, tương tác bạn bè mẫu, thêm/hoàn thành/khôi phục nhật ký, bố cục 320–1440px, nhận diện standalone và tải lại/ghi kế hoạch ngoại tuyến.
 - Chưa kiểm thử cài đặt trên thiết bị iPhone/Android thật; chưa kết nối backend sảnh hoặc nhận thưởng thật.
+
+## Sửa ranh giới sản phẩm — 10/10/2026
+
+Đối chiếu tài liệu 01, 08 và 09: **platform = cuộc sống người dùng; game = cuộc sống nhân vật; backend = cầu nối**. Tài liệu 08 ngày 05/10 còn đề xuất ánh xạ học/làm vào vị trí game; tài liệu 01/09 cập nhật 09/10 xác định trạng thái đời thật và activity game độc lập. Không dùng mô tả cũ để tự ánh xạ hoặc giả lập game trong sảnh.
+
+- Gỡ cảnh sông/nhà/vườn và nút câu cá/chăm vườn; không có map minh họa hoặc mô phỏng hoạt động trong platform.
+- Nhân vật trong thẻ hồ sơ là hình đại diện tĩnh kèm icon trạng thái học/làm/nghỉ. Đổi trạng thái không giả vờ có animation tương ứng.
+- Lịch và nhật ký chỉ chứa `real_life_entry`; chi tiết lịch không chèn `avatar_activity`.
+- Tóm tắt ngày đếm mục lịch, mục đã ghi nhận và phút của các mục đã ghi nhận bắt đầu hôm nay theo múi giờ thiết bị. Không đo hoặc xác minh hành vi thực tế, không tính phần thưởng game.
+- Bạn bè có trạng thái mẫu tự khai báo và lịch đã chia sẻ; động viên/lời mời dành cho hoạt động ngoài đời.
+- Game bridge là phần tùy chọn riêng, được nêu trong Cài đặt. UI gửi activity command và chuyển sang game thuộc giai đoạn tiếp theo; không dựng runtime game trong sảnh.
+- Sảnh dùng độc lập; chưa có tài khoản xã hội thật, chat, lịch lặp hoặc đồng bộ backend. Các mục này vẫn là kế hoạch sản phẩm.
+
+Kiểm tra bổ sung PC/mobile: thẻ đại diện thể hiện trạng thái học, mở lịch Linh đúng; sảnh và chi tiết lịch không có cảnh map hoặc nút câu cá. Bộ kiểm tra hiện có 12 ca trình duyệt và 6 unit test.

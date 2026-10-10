@@ -29,12 +29,12 @@ describe("calendar sharing and ownership", () => {
       visibleEntries(state.entries, "self").every((e) => e.ownerId === "self"),
     ).toBe(true);
   });
-  it("cannot change a friend entry or mark real-life work done from an avatar change", () => {
+  it("cannot change a friend entry or mark work done from a profile status change", () => {
     const state = seedState();
     const next = transitionEntry(state.entries, "sample-linh", "completed");
     expect(next.find((e) => e.id === "sample-linh")?.state).toBe("active");
-    const avatarOnly = { ...state, avatar: "fishing" };
-    expect(avatarOnly.entries).toEqual(state.entries);
+    const statusOnly = { ...state, life: "rest" };
+    expect(statusOnly.entries).toEqual(state.entries);
   });
   it("rejects blank titles, invalid dates and inverted intervals", () => {
     expect(validateEntry(" ", "2026-10-10T12:00", "2026-10-10T13:00")).toBe(

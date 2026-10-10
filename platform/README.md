@@ -30,12 +30,12 @@ HashRouter cho phép đặt app ở thư mục con của static host mà không 
 
 | Môi trường          | Hiện có                                                                      |
 | ------------------- | ---------------------------------------------------------------------------- |
-| PC web              | Thanh bên, lịch ngày/tuần/tháng, góc nhân vật và danh sách bạn bè            |
+| PC web              | Thanh bên, lịch ngày/tuần/tháng, tóm tắt sinh hoạt và danh sách bạn bè            |
 | Mobile web (<768px) | Thanh dưới, lịch danh sách theo ngày, bộ chọn ngày, chi tiết dạng bảng trượt |
 | PC app              | Cùng app được cài dạng PWA, chạy cửa sổ riêng; giao diện PC                  |
 | Mobile app          | PWA trên màn hình chính, safe area và thanh dưới; giao diện mobile           |
 
-768–1230px dùng bố cục PC gọn: góc nhân vật/bạn bè xuống dưới lịch. Đây chưa phải bản native Android/iOS/Windows. PWA không cần tải Godot để xem lịch. App và web cùng origin dùng chung localStorage; khác origin hoặc thiết bị chưa đồng bộ. Sau khi cài và cache thành công, shell và dữ liệu mẫu sử dụng được offline; mạng không đồng nghĩa với đã kết nối backend.
+768–1230px dùng bố cục PC gọn: tóm tắt sinh hoạt/bạn bè xuống dưới lịch. Đây chưa phải bản native Android/iOS/Windows. PWA không cần tải Godot để xem lịch. App và web cùng origin dùng chung localStorage; khác origin hoặc thiết bị chưa đồng bộ. Sau khi cài và cache thành công, shell và dữ liệu mẫu sử dụng được offline; mạng không đồng nghĩa với đã kết nối backend.
 
 ## Ngôn ngữ
 
@@ -47,12 +47,13 @@ Thêm ngôn ngữ: thêm file JSON, khai báo resources/selector và mở rộng
 
 - Lịch của mình và lịch chia sẻ của bạn bè; xem lịch một người từ thẻ bạn bè.
 - Thêm kế hoạch/ghi nhận, ghi chú, quyền riêng tư mặc định riêng; bắt đầu, hoàn thành, dừng hoặc xóa hoạt động của mình.
-- Đổi trạng thái ngoài đời và tư thế nhân vật độc lập.
+- Đổi trạng thái ngoài đời tự khai báo; nhân vật đại diện hồ sơ hiển thị icon trạng thái.
+- Tóm tắt các mục lịch hôm nay: số mục, số đã ghi nhận và phút ghi nhận; không đo hoạt động thực tế.
 - Gửi động viên/lời mời trong bản mẫu, có thông báo rõ chưa gửi tới người thật.
 - Nhật ký, cài đặt, chọn ngôn ngữ, trạng thái mạng, cài/cập nhật PWA.
-- Dùng lại sprite `client/assets/pixel/cultivator.png`; cảnh sảnh là minh họa CSS, không phải map gameplay.
+- Dùng lại sprite `client/assets/pixel/cultivator.png` làm hình đại diện tĩnh; không dựng map hoặc mô phỏng hoạt động game.
 
-Chưa có đăng nhập sảnh, API lịch, dữ liệu bạn bè thật, bot chạy offline, tiến trình hoạt động, phần thưởng hoặc thông báo đẩy. Không tự cấp thưởng và không điều khiển nhân vật bạn bè. Bộ lọc riêng tư client chỉ phục vụ bản mẫu; server phải thực thi quyền khi kết nối thật.
+Chưa có đăng nhập sảnh, API lịch, dữ liệu bạn bè thật, bot chạy offline, tiến trình hoạt động, phần thưởng hoặc thông báo đẩy. Không tự cấp thưởng và không điều khiển nhân vật bạn bè. Kết nối activity game ở giai đoạn sau, tách khỏi mục lịch đời thật. Bộ lọc riêng tư client chỉ phục vụ bản mẫu; server phải thực thi quyền khi kết nối thật.
 
 ## Công nghệ
 

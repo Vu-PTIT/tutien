@@ -616,31 +616,6 @@ button:disabled {
   gap: 10px;
   margin-bottom: 16px;
 }
-.world-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 18px;
-  border-radius: 18px;
-}
-.world-card .hint {
-  font-size: 10px;
-  margin: 10px 0 13px;
-}
-.world-caption {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 14px;
-}
-.world-caption strong {
-  display: block;
-  font-size: 13px;
-}
-.world-caption div > span {
-  display: block;
-  font-size: 11px;
-  color: var(--secondary-text);
-}
 .person-avatar {
   display: inline-flex;
   align-items: center;
@@ -661,22 +636,6 @@ button:disabled {
 .person-avatar.lavender {
   color: #756186;
   background: var(--lavender);
-}
-.self-avatar {
-  background: #e9ddc8;
-  color: #775d35;
-}
-.activity-buttons {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.activity-buttons .ui-button {
-  height: 34px;
-  font-size: 10px;
-  padding: 0 9px;
-  gap: 4px;
-  border-radius: 8px;
 }
 .card {
   background: var(--card);
@@ -724,9 +683,6 @@ button:disabled {
   width: 12px;
   height: 12px;
 }
-.middle-dot {
-  padding: 0 1px;
-}
 .friend-row > svg {
   color: #8e9d80;
 }
@@ -757,256 +713,10 @@ button:disabled {
   top: 3px;
   color: #8c9d79;
 }
-.mobile-world,
+.mobile-summary,
 .mobile-friends,
 .mobile-bottom-nav {
   display: none;
-}
-.pixel-scene {
-  position: relative;
-  height: 188px;
-  background: #afc8a1;
-  border-radius: 11px;
-  overflow: hidden;
-  isolation: isolate;
-  image-rendering: pixelated;
-}
-.scene-sky {
-  position: absolute;
-  inset: 0 0 50%;
-  background: #c4d8c0;
-}
-.scene-hill {
-  position: absolute;
-  width: 90%;
-  height: 100px;
-  top: 12px;
-  background: #a6bf96;
-  clip-path: polygon(
-    0 100%,
-    12% 50%,
-    30% 45%,
-    43% 9%,
-    60% 24%,
-    83% 66%,
-    100% 60%,
-    100% 100%
-  );
-}
-.hill-back {
-  left: -20%;
-  opacity: 0.6;
-}
-.hill-front {
-  right: -10%;
-  top: 29px;
-  background: #a3bc8c;
-}
-.scene-river {
-  position: absolute;
-  top: 57%;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #83b2ae;
-  border-top: 5px solid #d4d5a4;
-  background-image: repeating-linear-gradient(
-    0deg,
-    transparent 0 18px,
-    #93bdb430 18px 20px
-  );
-}
-.scene-bank {
-  position: absolute;
-  left: -10%;
-  top: 38%;
-  width: 78%;
-  height: 65%;
-  background: #abbf82;
-  clip-path: polygon(
-    0 0,
-    65% 0,
-    67% 20%,
-    100% 42%,
-    86% 72%,
-    55% 64%,
-    40% 100%,
-    0 100%
-  );
-  border-top: 6px solid #9aaf72;
-}
-.scene-path {
-  position: absolute;
-  width: 36%;
-  height: 85px;
-  left: 15%;
-  top: 42%;
-  background: #ccbc8b;
-  clip-path: polygon(0 0, 42% 0, 43% 36%, 100% 58%, 95% 82%, 21% 56%);
-}
-.pixel-tree {
-  position: absolute;
-  width: 35px;
-  height: 37px;
-  background: #527945;
-  box-shadow:
-    -7px 7px 0 #668c4c,
-    7px 7px 0 #486d3e,
-    0 30px 0 -12px #806c44,
-    -9px 35px 0 -10px #90a86b;
-  z-index: 2;
-}
-.pixel-tree:before {
-  content: "";
-  position: absolute;
-  inset: -8px 7px 15px;
-  background: #749454;
-  box-shadow: -8px 8px 0 #638349;
-}
-.tree-one {
-  left: 5%;
-  top: 28%;
-}
-.tree-two {
-  left: 36%;
-  top: 18%;
-  transform: scale(0.8);
-}
-.tree-three {
-  right: 3%;
-  top: 28%;
-}
-.scene-house {
-  position: absolute;
-  left: 49%;
-  top: 24%;
-  width: 54px;
-  height: 40px;
-  background: #e1d4a9;
-  box-shadow: 0 5px 0 #baaa80;
-  z-index: 2;
-}
-.house-roof {
-  position: absolute;
-  left: -8px;
-  right: -8px;
-  height: 24px;
-  top: -19px;
-  background: #986f54;
-  clip-path: polygon(18% 0, 80% 0, 100% 100%, 0 100%);
-  border-bottom: 4px solid #7c5c45;
-}
-.house-door {
-  position: absolute;
-  bottom: 0;
-  left: 22px;
-  width: 13px;
-  height: 23px;
-  background: #8f8060;
-}
-.house-window {
-  position: absolute;
-  left: 7px;
-  top: 8px;
-  width: 10px;
-  height: 12px;
-  background: #6f9390;
-  border: 2px solid #b6a581;
-}
-.scene-dock {
-  position: absolute;
-  left: 42%;
-  top: 68%;
-  width: 64px;
-  height: 17px;
-  background: #b69b68;
-  border-bottom: 4px solid #8a734c;
-  box-shadow: 10px 5px 0 -4px #786b4b;
-  transform: rotate(-3deg);
-  z-index: 2;
-}
-.scene-garden {
-  position: absolute;
-  left: 8%;
-  top: 67%;
-  width: 34px;
-  height: 24px;
-  background: repeating-linear-gradient(0deg, #8e7350 0 6px, #739050 6px 9px);
-  transform: skew(-14deg);
-  z-index: 3;
-}
-.scene-bench {
-  position: absolute;
-  left: 23%;
-  top: 59%;
-  height: 8px;
-  width: 24px;
-  background: #8b7354;
-  box-shadow: 0 10px 0 -2px #8b7354;
-  z-index: 2;
-}
-.pixel-actor {
-  position: absolute;
-  display: block;
-  width: 64px;
-  height: 64px;
-  background: url("/assets/cultivator.png") 0 0/256px 256px no-repeat;
-  image-rendering: pixelated;
-  z-index: 4;
-  transform: scale(0.7);
-  transform-origin: bottom center;
-}
-.actor-main {
-  top: calc(64% - 46px);
-  left: 40%;
-}
-.actor-main.gardening {
-  left: 3%;
-  top: calc(73% - 45px);
-  background-position: 0 -64px;
-}
-.actor-main.reading,
-.actor-main.idle {
-  left: 18%;
-  top: calc(59% - 44px);
-}
-.actor-friend {
-  top: calc(63% - 46px);
-  left: 28%;
-  background-position: -64px 0;
-  filter: hue-rotate(30deg);
-}
-.fishing-rod {
-  position: absolute;
-  top: 67%;
-  left: calc(40% + 41px);
-  width: 36px;
-  height: 2px;
-  transform: rotate(25deg);
-  transform-origin: left;
-  background: #5f6340;
-  z-index: 5;
-}
-.fishing-rod:after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 28px;
-  width: 1px;
-  background: #e4ecd1;
-}
-.scene-badge {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  font-size: 9px;
-  letter-spacing: 0.03em;
-  color: #f6fff1;
-  background: #3d62554f;
-  padding: 3px 7px;
-  border-radius: 5px;
-  z-index: 6;
 }
 .friend-grid {
   display: grid;
@@ -1032,10 +742,6 @@ button:disabled {
   color: var(--secondary-text);
   font-size: 11px;
   margin-top: 3px;
-}
-.friend-card .pixel-scene {
-  border-radius: 0;
-  height: 200px;
 }
 .friend-card-bottom {
   display: flex;
@@ -1238,14 +944,6 @@ button:disabled {
   font-size: 11px;
   color: var(--secondary-text);
 }
-.activity-detail > .pixel-scene {
-  height: 220px;
-  margin-top: 16px;
-}
-.detail-avatar-status {
-  margin: 13px 0 4px;
-  font-size: 13px;
-}
 .detail-note {
   display: flex;
   gap: 10px;
@@ -1344,9 +1042,6 @@ button:disabled {
   .content-layout.with-rail {
     grid-template-columns: minmax(0, 1fr) 330px;
   }
-  .pixel-scene {
-    height: 210px;
-  }
 }
 @media (max-width: 767px) {
   body {
@@ -1439,29 +1134,12 @@ button:disabled {
     height: 42px;
     font-size: 11px;
   }
-  .mobile-world {
+  .mobile-summary {
     display: block;
     margin: 18px 0;
   }
-  .mobile-world .world-card {
-    padding: 16px;
-  }
-  .mobile-world .section-heading {
+  .mobile-summary .section-heading {
     margin-bottom: 12px;
-  }
-  .mobile-world .pixel-scene {
-    height: 155px;
-  }
-  .mobile-world .world-caption {
-    margin-top: 12px;
-  }
-  .mobile-world .world-card .hint {
-    margin: 7px 0 10px;
-  }
-  .mobile-world .activity-buttons .ui-button {
-    flex: 1;
-    height: 38px;
-    font-size: 11px;
   }
   .calendar-card {
     border-radius: 15px;
@@ -1604,9 +1282,6 @@ button:disabled {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  .friend-card .pixel-scene {
-    height: 190px;
-  }
   .settings-list {
     grid-template-columns: 1fr;
   }
@@ -1655,9 +1330,6 @@ button:disabled {
   .activity-form textarea {
     font-size: 16px;
     min-height: 46px;
-  }
-  .activity-detail > .pixel-scene {
-    height: 185px;
   }
   .detail-actions .ui-button {
     flex: 1;
@@ -1711,4 +1383,81 @@ button:disabled {
 }
 .fc .fc-timegrid-event-short .event-owner {
   display: none;
+}
+
+.life-summary {
+  padding: 20px;
+}
+.life-portrait {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #eef2e7;
+}
+.life-portrait.clay {
+  background: #f4e9e1;
+}
+.life-portrait.lavender {
+  background: #eeeaf4;
+}
+.profile-character {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  background: url("/assets/cultivator.png") 0 0/256px 256px no-repeat;
+  image-rendering: pixelated;
+}
+.portrait-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.portrait-copy strong {
+  font-size: 15px;
+}
+.portrait-copy > span {
+  font-size: 10px;
+  color: var(--secondary-text);
+}
+.life-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  font-size: 12px;
+  color: #365945;
+}
+.life-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 18px 0 12px;
+}
+.life-metrics > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.life-metrics strong {
+  font-size: 23px;
+  font-weight: 600;
+}
+.life-metrics span {
+  font-size: 10px;
+  color: var(--secondary-text);
+}
+.game-bridge summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+@media (max-width: 767px) {
+  .life-summary {
+    padding: 16px;
+  }
+  .life-portrait {
+    padding: 12px;
+  }
 }

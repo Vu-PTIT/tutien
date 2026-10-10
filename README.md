@@ -2,7 +2,7 @@
 
 ## Sảnh platform — PC/mobile, web/app, Việt–Anh
 
-Nhánh này đã có frontend React/TypeScript ở [`platform/`](platform/README.md): lịch cá nhân/bạn bè, chi tiết hoạt động, nhật ký, góc nhân vật và giao diện PC/mobile riêng. Web có thể cài dạng PWA; **chưa có bản native hoặc đồng bộ backend sảnh**. Dữ liệu bạn bè/tương tác là mẫu, hoạt động của mình lưu trên thiết bị. Xem [thiết kế và phạm vi](docs/platform-lobby.md).
+Nhánh này đã có frontend React/TypeScript ở [`platform/`](platform/README.md): lịch cá nhân/bạn bè, chi tiết hoạt động, nhật ký, tóm tắt sinh hoạt và giao diện PC/mobile riêng. Web có thể cài dạng PWA; **chưa có bản native hoặc đồng bộ backend sảnh**. Dữ liệu bạn bè/tương tác là mẫu, hoạt động của mình lưu trên thiết bị. Xem [thiết kế và phạm vi](docs/platform-lobby.md).
 
 ```sh
 cd platform
@@ -10,7 +10,7 @@ npm ci
 npm run dev -- --host 127.0.0.1
 ```
 
-Phần frontend mới không thay backend Nakama hoặc client Godot bên dưới. Lịch, trạng thái ngoài đời và hoạt động avatar được tách riêng.
+Phần frontend mới không thay backend Nakama hoặc client Godot bên dưới. Sảnh quản lý cuộc sống ngoài đời; nhân vật ở sảnh là đại diện hồ sơ. Game bridge là tính năng phụ riêng, chưa kết nối trong bản này.
 
 ## Thiết kế map — 08/10/2026
 

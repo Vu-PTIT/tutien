@@ -1,6 +1,5 @@
 export type Locale = "vi" | "en";
 export type LifeStatus = "study" | "work" | "rest";
-export type AvatarActivity = "idle" | "fishing" | "gardening" | "reading";
 export type EntryState = "planned" | "active" | "completed" | "cancelled";
 export interface Entry {
   id: string;
@@ -18,26 +17,23 @@ export interface Friend {
   id: string;
   name: string;
   life: LifeStatus;
-  avatar: AvatarActivity;
   color: string;
 }
 export interface LobbyState {
   version: 1;
   entries: Entry[];
   life: LifeStatus | null;
-  avatar: AvatarActivity;
   reactions: Record<string, number>;
 }
 export const friends: Friend[] = [
-  { id: "linh", name: "Linh", life: "study", avatar: "fishing", color: "sage" },
+  { id: "linh", name: "Linh", life: "study", color: "sage" },
   {
     id: "minh",
     name: "Minh",
     life: "work",
-    avatar: "gardening",
     color: "clay",
   },
-  { id: "an", name: "An", life: "rest", avatar: "reading", color: "lavender" },
+  { id: "an", name: "An", life: "rest", color: "lavender" },
 ];
 export function dateKey(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -51,7 +47,6 @@ export function seedState(now = new Date()): LobbyState {
   return {
     version: 1,
     life: null,
-    avatar: "idle",
     reactions: {},
     entries: [
       {
@@ -153,7 +148,6 @@ export function isLobbyState(value: unknown): value is LobbyState {
   return (
     v.version === 1 &&
     [null, "study", "work", "rest"].includes(v.life) &&
-    ["idle", "fishing", "gardening", "reading"].includes(v.avatar) &&
     Array.isArray(v.entries) &&
     v.entries.every(
       (e) =>
