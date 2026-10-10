@@ -76,8 +76,15 @@ for(const landmark of map.cultural_landmarks) {
  assert.ok(map.objects.some(o=>o.id===landmark.object_id),"landmark prop missing");
 }
 const hall=map.objects.find(o=>o.id==="communal_hall");
-assert.ok(hall?.action==="communal" && hall.art_status==="source_placeholder",
- "Source artwork must not be represented as finished Vietnamese communal hall");
+assert.ok(hall?.action==="communal" && hall.art_status==="generated_v1" &&
+ hall.texture==="res://assets/vietnam_village/dinh_linh_khe_m20.png",
+ "M2.0 standalone generated communal hall sprite not wired into scene");
+assert.ok(fs.existsSync(file(hall.texture.slice(6))),"Generated communal hall PNG missing");
+const hallPng=fs.readFileSync(file(hall.texture.slice(6)));
+assert.equal(hallPng.readUInt32BE(16),176,"Unexpected communal hall sprite width");
+assert.equal(hallPng.readUInt32BE(20),103,"Unexpected communal hall sprite height");
+assert.ok(map.objects.filter(o=>o.art_status==="source_placeholder").length>=3,
+ "Other cultural placeholder sprites must remain clearly identified");
 assert.ok(map.objects.find(o=>o.id==="village_well")?.action==="well","well interaction missing");
 assert.ok(map.objects.find(o=>o.id==="market_table")?.action==="market","market interaction missing");
 assert.ok(map.cultural_direction?.deferred.includes("quests"),
