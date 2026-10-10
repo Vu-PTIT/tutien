@@ -111,5 +111,13 @@
   "profileRepresentation": "Nhân vật đại diện",
   "sharedActivities": "Hoạt động đã chia sẻ",
   "gameBridge": "Kết nối với game · tùy chọn",
-  "gameBridgeHelp": "Sảnh quản lý cuộc sống ngoài đời và có thể dùng độc lập. Giao việc cho avatar, xem tiến trình và chuyển vào game là kết nối riêng ở giai đoạn sau; bản này chưa gửi lệnh game."
+  "gameBridgeHelp": "Sảnh quản lý cuộc sống ngoài đời và có thể dùng độc lập. Ô góc nhìn nhân vật hiển thị snapshot activity game riêng. Giao activity, xem tiến trình thật và chuyển vào game cần backend ở giai đoạn sau; bản này chưa gửi lệnh game.",
+  "characterView": "Góc nhìn nhân vật",
+  "characterSceneLabel": "Nhân vật {{name}}, hoạt động trong game: {{activity}}",
+  "gameSnapshotSample": "Hoạt động game mẫu, tách biệt với lịch đời thật. Chưa kết nối server.",
+  "gameSnapshotFriend": "Trạng thái game mẫu của bạn bè, độc lập với hoạt động ngoài đời.",
+  "idle": "Đang nghỉ trong game",
+  "fishing": "Đang câu cá",
+  "gardening": "Đang chăm vườn",
+  "meditating": "Đang ngồi thiền"
 }

@@ -1461,3 +1461,25 @@ button:disabled {
     padding: 12px;
   }
 }
+
+/* A compact in-game snapshot stays separate from the real-life calendar. */
+.mobile-character, .desktop-character { display: none; }
+.character-view { padding: 18px; }
+.character-view .section-heading { margin-bottom: 12px; }
+.character-view .section-heading h2 { font-size: 15px; }
+.game-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #96a27c; box-shadow: 0 0 0 4px #edf1e6; }
+.character-stage { position: relative; height: 148px; overflow: hidden; border-radius: 12px; background: linear-gradient(180deg,#dce8d6 0 52%,#bacb9e 52% 100%); isolation: isolate; }
+.character-stage::before { content: ""; position: absolute; left: 0; right: 0; bottom: 18px; height: 37px; background: repeating-linear-gradient(90deg,#a9bc8c 0 24px,#b5c697 24px 48px); clip-path: polygon(0 35%,12% 0,25% 40%,42% 5%,55% 48%,68% 8%,84% 42%,100% 0,100% 100%,0 100%); }
+.character-stage::after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 24px; background: #d2c198; border-top: 3px solid #b6aa7e; }
+.character-sprite { position: absolute; z-index: 2; width: 64px; height: 64px; left: calc(50% - 32px); bottom: 20px; background: url('/assets/cultivator.png') 0 0/256px 256px no-repeat; image-rendering: pixelated; transform: scale(1.35); transform-origin: bottom center; }
+.character-sprite.gardening { background-position: 0 -64px; }
+.character-sprite.meditating { background-position: 0 -128px; }
+.character-sprite.idle { background-position: 0 -192px; }
+.activity-glyph { position: absolute; z-index: 3; left: calc(50% + 26px); bottom: 65px; display: grid; place-items: center; width: 31px; height: 31px; border-radius: 50%; color: #416449; background: #fffdf3; box-shadow: 0 2px 8px #475b3825; }
+.stage-spark { position: absolute; z-index: 2; width: 5px; height: 5px; border-radius: 50%; background: #fff8d4; }
+.spark-one { left: 24%; top: 31%; }.spark-two { right: 23%; top: 22%; }
+.character-caption { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 13px; font-size: 12px; }
+.character-activity { display: flex; align-items: center; gap: 5px; color: #496b4d; }
+.character-view > .hint { font-size: 10px; margin: 9px 0 0; }
+@media (min-width:768px) { .desktop-character { display: block; } }
+@media (max-width:767px) { .mobile-character { display: block; margin: 0 0 18px; } .character-view { padding: 16px; } .character-stage { height: 160px; } }

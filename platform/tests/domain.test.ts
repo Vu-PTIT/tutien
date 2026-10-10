@@ -35,6 +35,10 @@ describe("calendar sharing and ownership", () => {
     expect(next.find((e) => e.id === "sample-linh")?.state).toBe("active");
     const statusOnly = { ...state, life: "rest" };
     expect(statusOnly.entries).toEqual(state.entries);
+    const gameOnly = { ...state, gameActivity: "gardening" as const };
+    expect(gameOnly.entries).toEqual(state.entries);
+    expect(gameOnly.life).toBe(state.life);
+    expect(isLobbyState({ ...state, gameActivity: "teleporting" })).toBe(false);
   });
   it("rejects blank titles, invalid dates and inverted intervals", () => {
     expect(validateEntry(" ", "2026-10-10T12:00", "2026-10-10T13:00")).toBe(
@@ -52,6 +56,10 @@ describe("calendar sharing and ownership", () => {
   });
   it("rejects malformed persisted data instead of crashing the lobby", () => {
     expect(isLobbyState(seedState())).toBe(true);
+    // Keep user calendar data readable while upgrading older local storage.
+    const legacy = { ...seedState() } as Record<string, unknown>;
+    delete legacy.gameActivity;
+    expect(isLobbyState(legacy)).toBe(true);
     expect(isLobbyState({ version: 1, entries: [] })).toBe(false);
     expect(isLobbyState({ ...seedState(), entries: [{ id: "bad" }] })).toBe(
       false,

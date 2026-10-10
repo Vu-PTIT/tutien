@@ -41,6 +41,7 @@ import {
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { LifePortrait } from "./components/LifePortrait";
+import { CharacterView } from "./components/CharacterView";
 import { useMedia, useInstall } from "./hooks";
 import {
   dateKey,
@@ -253,6 +254,8 @@ export default function App() {
       0,
     ),
   );
+  const displayedCharacter = friend ?? { name: "Yến", gameActivity: state.gameActivity ?? "fishing" };
+  const characterView = <CharacterView name={displayedCharacter.name} activity={displayedCharacter.gameActivity} sample={!friend} />;
   const lifeSummary = (
     <section className="life-summary card" data-testid="life-summary">
       <div className="section-heading">
@@ -658,8 +661,11 @@ export default function App() {
                       {t(scope === "self" ? "privacyHelp" : "friendPrivacy")}
                     </div>
                   </section>
-                  {mobile && page === "today" && (
-                    <div className="mobile-summary">{lifeSummary}</div>
+                  {mobile && (page === "today" || page === "calendar") && (
+                    <>
+                      <div className="mobile-summary">{lifeSummary}</div>
+                      <div className="mobile-character">{characterView}</div>
+                    </>
                   )}
                   {mobile && (
                     <section className="mobile-friends card">
@@ -829,6 +835,7 @@ export default function App() {
           {(page === "today" || page === "calendar") && (
             <aside className="right-rail">
               <div className="desktop-summary">{lifeSummary}</div>
+              <div className="desktop-character">{characterView}</div>
               <section className="friends-panel card">
                 <div className="section-heading">
                   <h2>{t("friendsNow")}</h2>

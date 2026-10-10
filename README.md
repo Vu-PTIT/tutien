@@ -10,7 +10,7 @@ npm ci
 npm run dev -- --host 127.0.0.1
 ```
 
-Phần frontend mới không thay backend Nakama hoặc client Godot bên dưới. Sảnh quản lý cuộc sống ngoài đời; nhân vật ở sảnh là đại diện hồ sơ. Game bridge là tính năng phụ riêng, chưa kết nối trong bản này.
+Phần frontend mới không thay backend Nakama hoặc client Godot bên dưới. Sảnh quản lý cuộc sống ngoài đời; nhân vật là đại diện hồ sơ. Một ô riêng hiển thị snapshot hoạt động nhân vật trong game, tách khỏi lịch đời thật.
 
 ## Thiết kế map — 08/10/2026
 

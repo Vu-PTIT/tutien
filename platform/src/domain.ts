@@ -1,5 +1,6 @@
 export type Locale = "vi" | "en";
 export type LifeStatus = "study" | "work" | "rest";
+export type AvatarActivity = "idle" | "fishing" | "gardening" | "meditating";
 export type EntryState = "planned" | "active" | "completed" | "cancelled";
 export interface Entry {
   id: string;
@@ -18,22 +19,26 @@ export interface Friend {
   name: string;
   life: LifeStatus;
   color: string;
+  gameActivity: AvatarActivity;
 }
 export interface LobbyState {
   version: 1;
   entries: Entry[];
   life: LifeStatus | null;
+  // Game-world snapshot, intentionally separate from life status and calendar entries.
+  gameActivity?: AvatarActivity;
   reactions: Record<string, number>;
 }
 export const friends: Friend[] = [
-  { id: "linh", name: "Linh", life: "study", color: "sage" },
+  { id: "linh", name: "Linh", life: "study", color: "sage", gameActivity: "fishing" },
   {
     id: "minh",
     name: "Minh",
     life: "work",
     color: "clay",
+    gameActivity: "gardening",
   },
-  { id: "an", name: "An", life: "rest", color: "lavender" },
+  { id: "an", name: "An", life: "rest", color: "lavender", gameActivity: "meditating" },
 ];
 export function dateKey(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -47,6 +52,7 @@ export function seedState(now = new Date()): LobbyState {
   return {
     version: 1,
     life: null,
+    gameActivity: "fishing",
     reactions: {},
     entries: [
       {
@@ -148,6 +154,8 @@ export function isLobbyState(value: unknown): value is LobbyState {
   return (
     v.version === 1 &&
     [null, "study", "work", "rest"].includes(v.life) &&
+    (v.gameActivity === undefined ||
+      ["idle", "fishing", "gardening", "meditating"].includes(v.gameActivity)) &&
     Array.isArray(v.entries) &&
     v.entries.every(
       (e) =>

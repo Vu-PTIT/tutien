@@ -162,3 +162,21 @@ test("lobby characters represent real-life status and do not expose game control
       .first(),
   ).toBeVisible();
 });
+
+
+test("character view shows a separate game snapshot for self and selected friend", async ({ page }) => {
+  await page.goto("/");
+  await page.getByLabel("Ngôn ngữ").selectOption("en");
+  const character = page.locator('[data-testid="character-view"]:visible');
+  await expect(character).toBeVisible();
+  await expect(character).toContainText("Character view");
+  await expect(character).toContainText("Fishing");
+  await page.getByRole("button", { name: "Studying", exact: true }).click();
+  await expect(page.locator(".life-summary:visible .life-badge")).toContainText("Studying");
+  await expect(character).toContainText("Fishing");
+  await page.getByRole("link", { name: "Friends", exact: true }).click();
+  const linh = page.locator(".friend-card").filter({ hasText: "Linh" });
+  await linh.getByRole("button", { name: "View calendar" }).click();
+  await expect(page.locator('[data-testid="character-view"]:visible')).toContainText("Linh");
+  await expect(page.locator('[data-testid="character-view"]:visible')).toContainText("Fishing");
+});

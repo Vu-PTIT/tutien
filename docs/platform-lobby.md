@@ -2,12 +2,12 @@
 
 ## Quyết định triển khai
 
-`platform/` là frontend React + TypeScript + Vite. Sảnh là nền tảng cuộc sống ngoài đời: lịch học/làm/nghỉ, kế hoạch, nhật ký, thống kê và lịch bạn bè. Nhân vật chỉ là đại diện hồ sơ với trạng thái đời thật tự khai báo; không dựng cảnh game ở sảnh. Việt–Anh được làm ngay trong bản đầu. Web và app PWA dùng một frontend với shell thích ứng, không tạo bốn bản sao mã nguồn.
+`platform/` là frontend React + TypeScript + Vite. Sảnh là nền tảng cuộc sống ngoài đời: lịch học/làm/nghỉ, kế hoạch, nhật ký, thống kê và lịch bạn bè. Có một ô riêng hiển thị góc nhìn nhân vật và `avatar_activity` snapshot. Ô này không tham gia vào lịch đời thật; ở bản mẫu, cả snapshot nhân vật và bạn bè đều là dữ liệu minh họa. Việt–Anh được làm ngay trong bản đầu. Web và app PWA dùng một frontend với shell thích ứng, không tạo bốn bản sao mã nguồn.
 
 | Surface | Điều hướng | Lịch | Chi tiết hoạt động |
 |---|---|---|---|
-| PC web | Thanh bên | Ngày/tuần/tháng | Dialog giữa màn hình |
-| Mobile web | Thanh dưới + cài đặt trên đầu | Danh sách ngày + chọn ngày | Bảng trượt dưới |
+| PC web | Thanh bên + ô góc nhìn nhân vật | Ngày/tuần/tháng | Dialog giữa màn hình |
+| Mobile web | Thanh dưới + ô góc nhìn nhân vật | Danh sách ngày + chọn ngày | Bảng trượt dưới |
 | PC PWA | Như PC, cửa sổ app riêng | Như PC | Dialog |
 | Mobile PWA | Safe area trên/dưới, shell app | Như mobile | Bảng trượt dưới |
 
@@ -49,7 +49,7 @@ Build TypeScript/Vite/PWA và unit tests là bắt buộc. Bộ Playwright có c
 ## Kết quả kiểm tra tại mốc bàn giao
 
 - Build TypeScript/Vite/PWA đạt.
-- 12 kiểm thử trình duyệt đạt trên hai cấu hình PC/mobile (Chromium).
+- 14 kiểm thử trình duyệt đạt trên hai cấu hình PC/mobile (Chromium).
 - 6 unit test đạt: quyền lọc mẫu, ownership, thời gian, dữ liệu lưu lỗi và bản dịch.
 - Các luồng trình duyệt PC/mobile đã kiểm tra: đổi ngôn ngữ, tương tác bạn bè mẫu, thêm/hoàn thành/khôi phục nhật ký, bố cục 320–1440px, nhận diện standalone và tải lại/ghi kế hoạch ngoại tuyến.
 - Chưa kiểm thử cài đặt trên thiết bị iPhone/Android thật; chưa kết nối backend sảnh hoặc nhận thưởng thật.
@@ -58,12 +58,13 @@ Build TypeScript/Vite/PWA và unit tests là bắt buộc. Bộ Playwright có c
 
 Đối chiếu tài liệu 01, 08 và 09: **platform = cuộc sống người dùng; game = cuộc sống nhân vật; backend = cầu nối**. Tài liệu 08 ngày 05/10 còn đề xuất ánh xạ học/làm vào vị trí game; tài liệu 01/09 cập nhật 09/10 xác định trạng thái đời thật và activity game độc lập. Không dùng mô tả cũ để tự ánh xạ hoặc giả lập game trong sảnh.
 
-- Gỡ cảnh sông/nhà/vườn và nút câu cá/chăm vườn; không có map minh họa hoặc mô phỏng hoạt động trong platform.
-- Nhân vật trong thẻ hồ sơ là hình đại diện tĩnh kèm icon trạng thái học/làm/nghỉ. Đổi trạng thái không giả vờ có animation tương ứng.
+- Gỡ cảnh map lớn và nút điều khiển activity khỏi luồng sảnh/lịch; giữ duy nhất ô snapshot nhân vật riêng, không có map tương tác hoặc tiến trình game giả.
+- Thẻ hồ sơ và trạng thái học/làm/nghỉ là cuộc sống ngoài đời. Đổi trạng thái không điều khiển avatar.
+- Giữ một ô riêng “Góc nhìn nhân vật” trong rail PC và sau nội dung lịch trên mobile. Ô này hiển thị snapshot `avatar_activity` (ví dụ câu cá/nghỉ) tách biệt với hoạt động đời thật; ảnh nền chỉ là khung minh họa nhỏ, không phải gameplay.
 - Lịch và nhật ký chỉ chứa `real_life_entry`; chi tiết lịch không chèn `avatar_activity`.
 - Tóm tắt ngày đếm mục lịch, mục đã ghi nhận và phút của các mục đã ghi nhận bắt đầu hôm nay theo múi giờ thiết bị. Không đo hoặc xác minh hành vi thực tế, không tính phần thưởng game.
 - Bạn bè có trạng thái mẫu tự khai báo và lịch đã chia sẻ; động viên/lời mời dành cho hoạt động ngoài đời.
 - Game bridge là phần tùy chọn riêng, được nêu trong Cài đặt. UI gửi activity command và chuyển sang game thuộc giai đoạn tiếp theo; không dựng runtime game trong sảnh.
 - Sảnh dùng độc lập; chưa có tài khoản xã hội thật, chat, lịch lặp hoặc đồng bộ backend. Các mục này vẫn là kế hoạch sản phẩm.
 
-Kiểm tra bổ sung PC/mobile: thẻ đại diện thể hiện trạng thái học, mở lịch Linh đúng; sảnh và chi tiết lịch không có cảnh map hoặc nút câu cá. Bộ kiểm tra hiện có 12 ca trình duyệt và 6 unit test.
+Kiểm tra bổ sung PC/mobile: thẻ đại diện thể hiện trạng thái học, mở lịch Linh đúng; ô nhân vật riêng hiện activity game mẫu; lịch và chi tiết lịch không có map hoặc nút điều khiển game. Bộ kiểm tra hiện có 14 ca trình duyệt và 6 unit test.

@@ -111,5 +111,13 @@
   "profileRepresentation": "Profile character",
   "sharedActivities": "Shared activities",
   "gameBridge": "Game connection · optional",
-  "gameBridgeHelp": "The lobby manages real-life activities and works independently. Assigning avatar activities, viewing game progress and entering the game belong to a separate future connection; this preview sends no game commands."
+  "gameBridgeHelp": "The lobby manages real life and works independently. The character view shows a separate game activity snapshot. Assigning activities, seeing live progress and entering the game need a backend connection later; this preview sends no game commands.",
+  "characterView": "Character view",
+  "characterSceneLabel": "{{name}}’s character, in-game activity: {{activity}}",
+  "gameSnapshotSample": "Sample game activity, separate from your real-life calendar. Server is not connected.",
+  "gameSnapshotFriend": "Sample friend game status, independent from their real-life activity.",
+  "idle": "Resting in game",
+  "fishing": "Fishing",
+  "gardening": "Gardening",
+  "meditating": "Meditating"
 }
