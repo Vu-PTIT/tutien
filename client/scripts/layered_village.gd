@@ -75,7 +75,7 @@ func _bind_source_art(material: ShaderMaterial) -> void:
         var entry: Dictionary = _terrain_art_data[key]
         var texture: Texture2D = _terrain_art_textures[key]
         var raw: Array = entry["region"]
-        var shader_key := "grass" if key == "ground" else key
+        var shader_key: String = "grass" if key == "ground" else str(key)
         material.set_shader_parameter("source_" + shader_key, texture)
         material.set_shader_parameter(shader_key + "_region",
             Vector4(float(raw[0]), float(raw[1]), float(raw[2]), float(raw[3])))
