@@ -1,0 +1,14 @@
+{
+  "name":"tutien-platform",
+  "version":"0.1.0",
+  "private":true,
+  "type":"module",
+  "description":"TuTien Mystic Life — bilingual responsive journal, planner and insights platform",
+  "scripts":{
+    "dev":"node server.mjs",
+    "start":"node server.mjs",
+    "test":"node --test tests/*.test.mjs",
+    "check":"node --check src/core.mjs && node --check src/app.mjs && node --check server.mjs"
+  },
+  "engines":{"node":">=20"}
+}
