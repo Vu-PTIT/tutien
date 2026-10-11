@@ -2,18 +2,18 @@
  * No account or Nakama synchronization is implied by this module.
  */
 export const ACTIVITY_CATALOG = [
-  { id: 'read', icon: 'book', color: 'lilac', category: 'learning', kind: 'duration', vi: 'Đọc sách', en: 'Reading' },
-  { id: 'run', icon: 'run', color: 'aqua', category: 'movement', kind: 'duration', vi: 'Chạy bộ', en: 'Running' },
-  { id: 'eat', icon: 'bowl', color: 'apricot', category: 'daily', kind: 'event', vi: 'Ăn uống', en: 'Eating' },
-  { id: 'study', icon: 'school', color: 'sky', category: 'learning', kind: 'duration', vi: 'Đi học', en: 'Studying' },
-  { id: 'work', icon: 'briefcase', color: 'sand', category: 'work', kind: 'duration', vi: 'Đi làm', en: 'Working' },
-  { id: 'rest', icon: 'moon', color: 'violet', category: 'rest', kind: 'duration', vi: 'Nghỉ ngơi', en: 'Resting' },
+  { id: 'read', icon: 'book', color: 'lilac', category: 'learning', kind: 'count', vi: 'Đọc sách', en: 'Reading' },
+  { id: 'run', icon: 'run', color: 'aqua', category: 'movement', kind: 'count', vi: 'Chạy bộ', en: 'Running' },
+  { id: 'eat', icon: 'bowl', color: 'apricot', category: 'daily', kind: 'count', vi: 'Ăn uống', en: 'Eating' },
+  { id: 'study', icon: 'school', color: 'sky', category: 'learning', kind: 'count', vi: 'Đi học', en: 'Studying' },
+  { id: 'work', icon: 'briefcase', color: 'sand', category: 'work', kind: 'count', vi: 'Đi làm', en: 'Working' },
+  { id: 'rest', icon: 'moon', color: 'violet', category: 'rest', kind: 'count', vi: 'Nghỉ ngơi', en: 'Resting' },
   { id: 'water', icon: 'drop', color: 'sky', category: 'daily', kind: 'count', vi: 'Uống nước', en: 'Drinking water' },
-  { id: 'wc', icon: 'spark', color: 'pink', category: 'private', kind: 'event', sensitive: true, vi: 'Đi vệ sinh', en: 'Bathroom' },
-  { id: 'sleep', icon: 'bed', color: 'violet', category: 'rest', kind: 'duration', vi: 'Ngủ', en: 'Sleeping' },
-  { id: 'meditate', icon: 'lotus', color: 'lilac', category: 'rest', kind: 'duration', vi: 'Thiền', en: 'Meditation' },
-  { id: 'walk', icon: 'footprints', color: 'aqua', category: 'movement', kind: 'duration', vi: 'Đi bộ', en: 'Walking' },
-  { id: 'game', icon: 'gamepad', color: 'apricot', category: 'leisure', kind: 'duration', vi: 'Giải trí', en: 'Leisure' },
+  { id: 'wc', icon: 'spark', color: 'pink', category: 'private', kind: 'count', sensitive: true, vi: 'Đi vệ sinh', en: 'Bathroom' },
+  { id: 'sleep', icon: 'bed', color: 'violet', category: 'rest', kind: 'count', vi: 'Ngủ', en: 'Sleeping' },
+  { id: 'meditate', icon: 'lotus', color: 'lilac', category: 'rest', kind: 'count', vi: 'Thiền', en: 'Meditation' },
+  { id: 'walk', icon: 'footprints', color: 'aqua', category: 'movement', kind: 'count', vi: 'Đi bộ', en: 'Walking' },
+  { id: 'game', icon: 'gamepad', color: 'apricot', category: 'leisure', kind: 'count', vi: 'Giải trí', en: 'Leisure' },
 ];
 export const DEFAULT_SETTINGS = {
   locale: 'vi', theme: 'light', timezone: 'Asia/Ho_Chi_Minh', showLunar: true,
@@ -74,7 +74,7 @@ export function addLifeEntry(state, { activityId, kind, time = new Date().toISOS
 export function entriesForDay(state, iso) { return state.entries.filter(e=>zonedDate(new Date(e.startedAt),state.settings.timezone)===iso).sort((a,b)=>Date.parse(b.startedAt)-Date.parse(a.startedAt)); }
 export function startTimer(state, activityId, now = Date.now()) {
   if (state.timer) return false;
-  const def = getActivity(activityId, state); if (!def || def.kind !== 'duration') return false;
+  const def = getActivity(activityId, state); if (!def) return false;
   state.timer = { activityId, startedAt: new Date(now).toISOString(), accumulatedMs: 0, pausedAt: null, runningSince: now };
   return true;
 }
@@ -105,13 +105,15 @@ export function planOccurs(plan, iso) {
 }
 export function plansForDay(state, iso) {return state.plans.filter(p=>planOccurs(p,iso)).sort((a,b)=>(a.time||'').localeCompare(b.time||''));}
 export function sumByCategory(entries, state) { const sums={}; for(const e of entries){ const a=getActivity(e.activityId,state);if(!a || e.kind !== 'duration')continue;sums[a.category]=(sums[a.category]||0)+(e.durationSec||0); }return sums; }
+export function countByCategory(entries, state) { const sums={}; for(const e of entries){ const a=getActivity(e.activityId,state);if(!a)continue;sums[a.category]=(sums[a.category]||0)+(Number(e.quantity)||1); }return sums; }
 export function totalDuration(entries) {return entries.reduce((n,e)=>n+(e.kind === 'duration' ? (e.durationSec||0) : 0),0);}
 export function weeklySummary(state, day) {
   const start=startWeek(day), days=dateRange(start,7);
   const byDay=days.map(iso=>entriesForDay(state,iso));
-  const all=byDay.flat(); const byCategory=sumByCategory(all,state);
-  const byActivity={}; for(const entry of all){const a=entry.activityId;const old=byActivity[a]||{count:0,seconds:0,quantity:0};old.count++;old.seconds+=entry.kind==='duration'?entry.durationSec:0;old.quantity+=entry.kind==='count'?entry.quantity:1;byActivity[a]=old;}
-  return { start, days, byDay, entries:all, byActivity, byCategory, totalSeconds:totalDuration(all), activeDays:byDay.filter(v=>v.length).length };
+  const all=byDay.flat(); const byCategory=countByCategory(all,state);
+  const byActivity={}; for(const entry of all){const a=entry.activityId;const old=byActivity[a]||{count:0,seconds:0,quantity:0};const qty=Number(entry.quantity)||1;old.count+=qty;old.quantity+=qty;old.seconds+=entry.kind==='duration'?entry.durationSec:0;byActivity[a]=old;}
+  const totalActions=all.reduce((n,e)=>n+(Number(e.quantity)||1),0);
+  return { start, days, byDay, entries:all, byActivity, byCategory, totalActions, totalSeconds:totalDuration(all), activeDays:byDay.filter(v=>v.length).length };
 }
 
 // Vietnamese lunar calendar: astronomical Meeus-based algorithm, Vietnam time zone +7.

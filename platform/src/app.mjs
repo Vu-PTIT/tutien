@@ -72,8 +72,8 @@ const D = {
   all:'Tất cả', selectDate:'Chọn ngày', chooseActivity:'Chọn một hoạt động', recorded:'Đã ghi nhận hoạt động', undone:'Đã hoàn tác', undo:'Hoàn tác',
   localNotice:'Bản dùng thử lưu trên thiết bị này. Chưa đồng bộ với tài khoản hoặc game.',
   emptyStats:'Hãy check-in để thấy nhịp sống của bạn hiện lên tại đây.',
-  totalTime:'Tổng thời gian', moments:'Khoảnh khắc', activeDays:'Ngày có ghi nhận', activities:'Hoạt động',
-  categoriesTime:'Thời gian theo lĩnh vực', rhythm:'Nhịp sống trong tuần', thisWeek:'7 ngày vừa qua', thisMonth:'Tháng này',
+  totalTime:'Tổng thời gian', totalActions:'Tổng lượt thực hiện', actionsCount:'lượt', moments:'Khoảnh khắc', activeDays:'Ngày có ghi nhận', activities:'Hoạt động',
+  categoriesTime:'Thời gian theo lĩnh vực', categoriesActions:'Phân bổ theo nhóm', rhythm:'Nhịp sống trong tuần', thisWeek:'7 ngày vừa qua', thisMonth:'Tháng này',
   calendarCulture:'Thông tin lịch truyền thống', culturalNote:'Các thông tin âm lịch/Can Chi mang tính văn hóa tham khảo, không dự báo vận mệnh.',
   solar:'Dương lịch', lunar:'Âm lịch', canChi:'Can Chi', moonPhase:'Pha trăng', planForDay:'Kế hoạch trong ngày', realLog:'Nhật ký đã ghi',
   planRepeat:'Lặp lại', never:'Không lặp', daily:'Hằng ngày', weekly:'Hằng tuần', status:'Trạng thái',
@@ -106,8 +106,8 @@ const D = {
   all:'All',selectDate:'Choose date',chooseActivity:'Select an activity',recorded:'Activity logged',undone:'Undone',undo:'Undo',
   localNotice:'Preview mode: data lives on this device only, not synchronized with an account or the game.',
   emptyStats:'Check in to reveal the rhythm of your week here.',
-  totalTime:'Total time',moments:'Moments',activeDays:'Active days',activities:'Activities',
-  categoriesTime:'Time by activity type',rhythm:'Your weekly rhythm',thisWeek:'Past 7 days',thisMonth:'This month',
+  totalTime:'Total time',totalActions:'Total actions',actionsCount:'actions',moments:'Moments',activeDays:'Active days',activities:'Activities',
+  categoriesTime:'Time by activity type',categoriesActions:'Actions by category',rhythm:'Your weekly rhythm',thisWeek:'Past 7 days',thisMonth:'This month',
   calendarCulture:'Traditional calendar details',culturalNote:'Lunar/Can Chi details are provided as cultural references, not predictions.',
   solar:'Solar date',lunar:'Lunar date',canChi:'Heavenly stems & branches',moonPhase:'Moon phase',planForDay:'Plans for the day',realLog:'Logged moments',
   planRepeat:'Repeat',never:'Never',daily:'Daily',weekly:'Weekly',status:'Status',
@@ -144,11 +144,9 @@ function renderSidebar(){return `<aside class="sidebar" aria-label="${safeText(l
  <nav class="side-nav" aria-label="${safeText(loc('Điều hướng','Navigation'))}">
  ${renderNavLink('app','home',t('home'))}${renderNavLink('app/calendar','calendar',t('calendar'))}
  ${renderNavLink('app/journal','book',t('journal'))}${renderNavLink('app/insights','chart',t('insights'))}
- <span class="side-divider"></span>
  ${renderNavLink('app/world','mountain',t('world'))}${renderNavLink('app/community','people',t('community'))}
  </nav><div class="side-bottom"><a class="side-paint" href="/app/world" data-nav="app/world"><span class="side-paint-caption">${loc('Mỗi ngày tốt hơn một chút.','A little better every day.')}<small>${loc('Hành trình tu dưỡng','A cultivation journey')}</small></span></a>
- <div class="side-language"><button data-action="lang" data-value="vi" class="${state.settings.locale==='vi'?'active':''}">VI</button><button data-action="lang" data-value="en" class="${state.settings.locale==='en'?'active':''}">EN</button></div>
- ${renderNavLink('app/settings','settings',t('settings'))}<a href="/app/settings" data-nav="app/settings" class="side-profile" aria-label="${safeText(loc('Hồ sơ Hành giả','Traveler profile'))}"><img src="/assets/avatar-portrait.webp" alt=""/><span><strong>${loc('Hành giả','Traveler')}</strong><small>${loc('Chưa liên kết tài khoản','Local profile')}</small></span></a></div></aside>`;}
+ <a href="/app/settings" data-nav="app/settings" class="side-profile" aria-label="${safeText(loc('Hồ sơ Hành giả','Traveler profile'))}"><img src="/assets/avatar-portrait.webp" alt=""/><span><strong>${loc('Hành giả','Traveler')}</strong><small>${loc('Chưa liên kết tài khoản','Local profile')}</small></span></a></div></aside>`;}
 function renderMobileNav(){let current=ui.route;return `<nav class="mobile-nav" aria-label="${safeText(loc('Điều hướng dưới','Bottom navigation'))}">
  ${renderMobileItem('app','home',t('homeShort'))}${renderMobileItem('app/calendar','calendar',t('calendarShort'))}
  <button class="mobile-add" type="button" data-action="show-quick" aria-label="${safeText(t('addActivity'))}">${icon('plus',24)}</button>
@@ -157,7 +155,6 @@ function renderMobileNav(){let current=ui.route;return `<nav class="mobile-nav" 
 function renderMobileItem(route,icoName,txt){return `<a class="mobile-item ${ui.route===route?'is-active':''}" href="${href(route)}" data-nav="${route}">${icon(icoName,20)}<small>${safeText(txt)}</small></a>`;}
 function renderTopbar(){const today=zonedDate(new Date(),tz());return `<header class="topbar"><a class="topbar-mobile-brand" href="/app" data-nav="app">${logo('header')}<strong>TuTien</strong></a><div class="crumb"><span>${icon('sun',14)} ${safeText(formatDate(today,state.settings.locale,{weekday:'long',day:'numeric',month:'long'}))}</span></div>
  <div class="top-actions"><button type="button" class="top-search" data-action="show-quick">${icon('search',18)} <span>${loc('Tìm hoạt động nhanh...','Find an activity...')}</span><kbd>Ctrl K</kbd></button>
- <button class="lang-quick" data-action="toggle-lang" title="${safeText(t('chooseLang'))}">${state.settings.locale.toUpperCase()} ${icon('refresh',13)}</button>
  <span class="top-notifications" title="${loc('Thông báo chưa kết nối','Notifications are not connected')}">${icon('bell',19)}</span>
  <a href="/app/settings" data-nav="app/settings" class="top-avatar" aria-label="${safeText(t('settings'))}"><img src="/assets/avatar-portrait.webp" alt=""/></a></div></header>`;}
 function hero(title,subtitle,{eyebrow='',compact=false,quote=''}={}){
@@ -182,7 +179,12 @@ function phaseGlyph(day,size=16){
  };
  return '<svg class="moon-phase-icon" width="'+size+'" height="'+size+'" viewBox="0 0 24 24" aria-hidden="true">'+shapes[phase]+'<circle cx="12" cy="12" r="8.75" fill="none" stroke="#e3bf80" stroke-width=".65"/></svg>';
 }
-function activityCard(a,opts={}){const pinned=state.pinnedIds.includes(a.id);return `<button type="button" class="activity-tile color-${safeText(a.color)}${opts.compact?' compact':''}" data-checkin="${safeText(a.id)}" title="${safeText(label(a))}"><span class="activity-icon">${activityIllustration(a,37)}</span><span class="activity-name">${safeText(label(a))}</span>${opts.manage?`<span class="tiny-pin" aria-hidden="true">${pinned?'◆':'◇'}</span>`:''}</button>`;}
+function activityCard(a,opts={}){
+ const pinned=state.pinnedIds.includes(a.id);
+ const targetDate=ui.selectedDate||zonedDate(new Date(),tz());
+ const dayCount=entriesForDay(state,targetDate).filter(e=>e.activityId===a.id).reduce((sum,e)=>sum+(Number(e.quantity)||1),0);
+ return `<button type="button" class="activity-tile color-${safeText(a.color)}${opts.compact?' compact':''}" data-checkin="${safeText(a.id)}" title="${safeText(label(a))}${dayCount?` (${dayCount} ${loc('lần hôm nay','times today')})`:''}">${dayCount?`<span class="activity-badge" aria-label="${dayCount} ${loc('lần','times')}">${dayCount}</span>`:''}<span class="activity-icon">${activityIllustration(a,37)}</span><span class="activity-name">${safeText(label(a))}</span>${opts.manage?`<span class="tiny-pin" aria-hidden="true">${pinned?'◆':'◇'}</span>`:''}</button>`;
+}
 function activitiesForGrid(max=8){const pool=[...ACTIVITY_CATALOG,...state.customActivities];const sorted=[...state.pinnedIds.map(id=>pool.find(a=>a.id===id)).filter(Boolean),...pool.filter(a=>!state.pinnedIds.includes(a.id))];return sorted.slice(0,max);}
 function quickCheckin(isHome=false){let selected = ui.filter;
  let activities = isHome?activitiesForGrid(8):[...ACTIVITY_CATALOG,...state.customActivities].filter(a=>selected==='all'||a.category===selected);
@@ -190,11 +192,18 @@ function quickCheckin(isHome=false){let selected = ui.filter;
  return `<section class="card quick-card ${isHome?'quick-home':''}">${panelTitle(t('quick'),`<span class="section-sub">${icon('spark',14)} ${safeText(t('quickSub'))}</span>`)}
  ${!isHome?`<div class="category-filter" role="group" aria-label="${safeText(t('categories'))}">${filters.map(c=>`<button class="chip ${selected===c?'selected':''}" data-action="filter-category" data-value="${c}">${safeText(c==='all'?t('all'):(CATEGORY_NAMES[c]?.[state.settings.locale]||c))}</button>`).join('')}</div>`:''}
  <div class="activity-grid">${activities.map(a=>activityCard(a,{compact:isHome})).join('')}<button class="activity-tile add-tile" type="button" data-action="new-activity"><span class="activity-icon">${icon('plus',24)}</span><span class="activity-name">${safeText(t('addActivity'))}</span></button></div></section>`;}
-function timerCard({small=false}={}){
- const a=state.timer?getActivity(state.timer.activityId,state):null;
- return `<section class="card timer-card ${small?'small':''}">${panelTitle(t('current'),`<span class="quiet-tag">${icon('clock',14)} ${a?loc('Đang tính giờ','Timer active'):loc('Chưa có phiên','No active session')}</span>`)}
- ${a?`<div class="timer-active"><div class="timer-description"><span class="mini-activity color-${a.color}">${activityIllustration(a,36)}</span><div><strong>${safeText(label(a))}</strong><small>${safeText(CATEGORY_NAMES[a.category]?.[state.settings.locale]||'')}</small></div></div><div class="timer-clock" data-timer-display>${clockText(timerElapsed(state.timer))}</div><p>${loc('Khoảnh khắc đang được ghi lại trong nhật ký cá nhân.','This moment is being recorded in your private journal.')}</p><div class="timer-actions"><button class="soft-btn" type="button" data-action="toggle-timer">${icon(state.timer.runningSince===null?'play':'pause',16)} ${t(state.timer.runningSince===null?'resume':'pause')}</button><button class="primary-btn" data-action="stop-timer" type="button">${icon('check',16)} ${t('finish')}</button></div></div>`
- :`<div class="timer-idle"><div class="lotus-mark">${icon('lotus',42)}</div><p>${loc('Một cuốn sách, một buổi chạy, hay một khoảng nghỉ... hãy chọn biểu tượng để bắt đầu.','A book, a run, or a moment of rest... choose an icon to begin.')}</p><button class="text-link" type="button" data-action="show-quick">${t('chooseActivity')} ${icon('arrow',16)}</button></div>`}</section>`;
+function todayActionCard({small=false}={}){
+ const today=entriesForDay(state,ui.selectedDate);
+ const activityCounts={};
+ for(const e of today){
+  const id=e.activityId;
+  activityCounts[id]=(activityCounts[id]||0)+(Number(e.quantity)||1);
+ }
+ const entries=Object.entries(activityCounts).sort((a,b)=>b[1]-a[1]);
+ const totalCount=entries.reduce((sum,[,c])=>sum+c,0);
+ return `<section class="card today-action-card ${small?'small':''}">${panelTitle(loc('Điểm danh hôm nay','Today’s actions'),`<span class="quiet-tag">${icon('spark',14)} ${totalCount} ${loc('lượt','actions')}</span>`)}
+ ${entries.length?`<div class="today-action-list">${entries.map(([id,count])=>{const a=getActivity(id,state);if(!a)return '';return `<div class="today-action-row"><div class="today-action-left"><span class="mini-activity color-${a.color}">${activityIllustration(a,28)}</span><div><strong>${safeText(label(a))}</strong><small>${safeText(CATEGORY_NAMES[a.category]?.[state.settings.locale]||'')}</small></div></div><div class="today-action-right"><span class="action-count-pill">${count} ${loc('lần','times')}</span><button type="button" class="action-add-btn" data-checkin="${safeText(a.id)}" title="${loc('Điểm danh thêm 1 lần','Log +1')}">${icon('plus',13)} 1</button></div></div>`;}).join('')}</div><p class="today-action-hint">${loc('Chạm biểu tượng để tiếp tục tích lũy.','Tap any icon below to log another action.')}</p>`
+ :`<div class="today-action-empty"><div class="lotus-mark">${icon('lotus',42)}</div><p>${loc('Chưa có việc nào được ghi nhận hôm nay. Chạm vào một biểu tượng để bắt đầu.','No activity recorded today yet. Tap an icon to start.')}</p><button class="text-link" type="button" data-action="show-quick">${t('chooseActivity')} ${icon('arrow',16)}</button></div>`}</section>`;
 }
 function clockText(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return `${h?String(h).padStart(2,'0')+':':''}${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;}
 function timeline({compact=false,day=ui.selectedDate,limit=0}={}){
@@ -215,10 +224,10 @@ function miniCalendar(){const today=zonedDate(new Date(),tz());const parts=dateP
 }
 function weekdayHeaders(){return state.settings.locale==='vi'?['T2','T3','T4','T5','T6','T7','CN']:['M','T','W','T','F','S','S'];}
 function statsMini(){const s=weeklySummary(state,ui.selectedDate);return `<section class="card stats-mini">${panelTitle(t('insightsQuick'),`<a class="text-link" data-nav="app/insights" href="/app/insights">${t('viewAll')} ${icon('right',14)}</a>`)}
- <div class="stats-mini-value"><strong>${safeText(formatDuration(s.totalSeconds,state.settings.locale))}</strong><small>${safeText(t('totalTime'))}</small></div>
- ${bars(s.byDay,s.days,true)}<div class="stats-mini-bottom"><span>${icon('feather',15)} ${s.entries.length} ${safeText(t('moments').toLowerCase())}</span><span>${icon('sun',15)} ${s.activeDays}/7 ${safeText(t('activeDays').toLowerCase())}</span></div></section>`;}
-function bars(byDay,days,mini=false){const heights=byDay.map(arr=>totalDuration(arr)),max=Math.max(...heights,3600);
- return `<div class="bars ${mini?'bars-mini':''}" role="img" aria-label="${safeText(loc('Biểu đồ thời lượng trong tuần','Weekly activity duration chart'))}">${heights.map((s,i)=>`<div class="bar-slot" title="${safeText(formatDate(days[i],state.settings.locale,{weekday:'long',day:'numeric'}))}: ${safeText(formatDuration(s,state.settings.locale))}"><div class="bar-track"><div class="bar-fill" style="height:${Math.max(s?5:2,s/max*100)}%;background:${['#a7c9e3','#76bfb5','#c8b0e8','#e6c68a','#8ebfab','#edbfae','#aec9e6'][i]}"></div></div><small>${safeText(formatDate(days[i],state.settings.locale,{weekday:'short'}))}</small></div>`).join('')}</div>`;}
+ <div class="stats-mini-value"><strong>${s.totalActions}</strong><small>${safeText(t('totalActions'))}</small></div>
+ ${bars(s.byDay,s.days,true)}<div class="stats-mini-bottom"><span>${icon('feather',15)} ${s.totalActions} ${safeText(t('actionsCount').toLowerCase())}</span><span>${icon('sun',15)} ${s.activeDays}/7 ${safeText(t('activeDays').toLowerCase())}</span></div></section>`;}
+function bars(byDay,days,mini=false){const heights=byDay.map(arr=>arr.reduce((sum,e)=>sum+(Number(e.quantity)||1),0)),max=Math.max(...heights,5);
+ return `<div class="bars ${mini?'bars-mini':''}" role="img" aria-label="${safeText(loc('Biểu đồ hoạt động trong tuần','Weekly activity count chart'))}">${heights.map((count,i)=>`<div class="bar-slot" title="${safeText(formatDate(days[i],state.settings.locale,{weekday:'long',day:'numeric'}))}: ${count} ${safeText(t('actionsCount'))}"><div class="bar-track"><div class="bar-fill" style="height:${Math.max(count?5:2,count/max*100)}%;background:${['#a7c9e3','#76bfb5','#c8b0e8','#e6c68a','#8ebfab','#edbfae','#aec9e6'][i]}"></div></div><small>${safeText(formatDate(days[i],state.settings.locale,{weekday:'short'}))}</small></div>`).join('')}</div>`;}
 function worldTeaser(){return `<section class="card world-teaser"><div class="world-teaser-art"><span>${icon('mountain',15)} ${safeText(t('yourWorld'))}</span></div><div class="world-teaser-body"><div><strong>${safeText(t('worldUnavailable'))}</strong><p>${loc('Một thế giới bình yên chờ bạn trở về.','A peaceful world waiting for your return.')}</p></div><a class="round-arrow" href="/app/world" data-nav="app/world" aria-label="${safeText(t('world'))}">${icon('arrow',18)}</a></div></section>`;}
 
 function mysticDayPreview(){const selected=ui.selectedDate,lunar=lunarForISO(selected);return `<section class="card day-preview">
@@ -231,19 +240,19 @@ function journalMood(){const value=state.moods?.[ui.selectedDate]||''; const ite
  return `<section class="card mood-panel">${panelTitle(loc('Tâm trạng hôm nay','Today’s mood'),`<span class="quiet-tag">${loc('Riêng tư','Private')}</span>`)}<div class="mood-grid">${items.map(([k,emoji,name])=>`<button class="mood-choice ${value===k?'selected':''}" type="button" data-action="choose-mood" data-value="${k}" aria-pressed="${value===k}"><span>${moodArtwork(k)}</span><small>${safeText(name)}</small></button>`).join('')}</div></section>`;
 }
 function journalRitual(){const today=entriesForDay(state,ui.selectedDate);const types=[['learning','book',loc('Tri thức','Knowledge')],['movement','run',loc('Luyện thể','Movement')],['rest','moon',loc('Dưỡng thần','Rest')],['work','briefcase',loc('Công việc','Work')]];
- const values=types.map(([category,iconName,label])=>{const sec=today.filter(e=>getActivity(e.activityId,state)?.category===category).reduce((sum,e)=>sum+(e.kind==='duration'?e.durationSec:0),0);return {category,iconName,label,sec};});const max=Math.max(1,...values.map(v=>v.sec));
- return `<section class="card cultivation-panel">${panelTitle(loc('Nhịp tu dưỡng trong ngày','Today’s cultivation rhythm'))}<p class="culture-caption">${loc('Từ nhật ký đời sống, không phải chỉ số sức mạnh trong game.','Based on real-life logs, not game power stats.')}</p><div class="ritual-bars">${values.map(v=>`<div class="ritual-row"><span>${icon(v.iconName,19)}</span><div><strong>${safeText(v.label)}</strong><small>${safeText(formatDuration(v.sec,state.settings.locale))}</small><i style="--progress:${Math.round(v.sec/max*100)}%"></i></div></div>`).join('')}</div></section>`;
+ const values=types.map(([category,iconName,label])=>{const count=today.filter(e=>getActivity(e.activityId,state)?.category===category).reduce((sum,e)=>sum+(Number(e.quantity)||1),0);return {category,iconName,label,count};});const max=Math.max(1,...values.map(v=>v.count));
+ return `<section class="card cultivation-panel">${panelTitle(loc('Nhịp tu dưỡng trong ngày','Today’s cultivation rhythm'))}<p class="culture-caption">${loc('Từ số lần làm việc thực tế, không phải chỉ số sức mạnh trong game.','Based on real-life action counts, not game power stats.')}</p><div class="ritual-bars">${values.map(v=>`<div class="ritual-row"><span>${icon(v.iconName,19)}</span><div><strong>${safeText(v.label)}</strong><small>${v.count} ${loc('lần','times')}</small><i style="--progress:${Math.round(v.count/max*100)}%"></i></div></div>`).join('')}</div></section>`;
 }
 function homePage(){const iso=zonedDate(new Date(),tz());ui.selectedDate ||=iso;return `${hero(t('greet'),t('greetSub'),{eyebrow:loc('TU TIEN · NHẬT KÝ ĐỜI SỐNG','TU TIEN · LIVING JOURNAL'),quote:loc('Tích tiểu thành đại, mỗi ngày đều là một bước tu hành.','Small steps, steady cultivation.')})}
  <div class="date-ribbon"><div>${icon('moon',18)} <strong>${safeText(formatDate(ui.selectedDate,state.settings.locale,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</strong><span class="ribbon-separator"></span><span>${loc('Âm lịch','Lunar')} ${lunarForISO(ui.selectedDate).day}/${lunarForISO(ui.selectedDate).month} · ${canChiYear(lunarForISO(ui.selectedDate).year)}</span></div><span class="ribbon-note">${icon('shield',14)} ${loc('Riêng tư theo mặc định','Private by default')}</span></div>
  ${quickCheckin(true)}
- <div class="home-grid"><div class="home-left">${miniCalendar()}${worldTeaser()}</div><div class="home-middle">${mysticDayPreview()}${timerCard({small:true})}</div><div class="home-right">${timeline({compact:true,day:iso,limit:5})}${statsMini()}</div></div>`;}
+ <div class="home-grid"><div class="home-left">${miniCalendar()}${worldTeaser()}</div><div class="home-middle">${mysticDayPreview()}${todayActionCard({small:true})}</div><div class="home-right">${timeline({compact:true,day:iso,limit:5})}${statsMini()}</div></div>`;}
 function daySwitch(){return `<div class="day-switch"><button data-action="shift-day" data-delta="-1" aria-label="Previous day">${icon('left',17)}</button><strong>${safeText(formatDate(ui.selectedDate,state.settings.locale))}</strong><button data-action="shift-day" data-delta="1" aria-label="Next day">${icon('right',17)}</button><button class="today-chip" data-action="goto-today">${safeText(t('today'))}</button></div>`;}
 function journalPage(){const entries=entriesForDay(state,ui.selectedDate);
  return `${hero(loc('Ghi lại hôm nay, nuôi dưỡng chính mình.','Log today, nurture a better you.'),loc('Đời sống thực là hành trình tu dưỡng mỗi ngày.','Your real life is your cultivation journey.'),{compact:true,eyebrow:'LIFE JOURNAL / NHẬT KÝ'})}
  <div class="page-overline">${daySwitch()}<span class="ghost-counter">${entries.length} ${t('moments').toLowerCase()} · ${icon('shield',14)} ${t('private')}</span></div>
  ${quickCheckin(true)}
- <div class="journal-grid"><div class="journal-quick">${timerCard()}</div><div class="journal-entries">${timeline({day:ui.selectedDate})}</div><div class="journal-aside">${journalMood()}${journalRitual()}</div></div>`;}
+ <div class="journal-grid"><div class="journal-quick">${todayActionCard()}</div><div class="journal-entries">${timeline({day:ui.selectedDate})}</div><div class="journal-aside">${journalMood()}${journalRitual()}</div></div>`;}
 function planList(iso){const plans=plansForDay(state,iso);return `<div class="plan-list">${plans.length?plans.map(p=>`<div class="plan-row"><span class="plan-time">${safeText(p.time||'--:--')}</span><span class="plan-dot ${p.status==='done'?'plan-done':''}"></span><div class="plan-info"><strong>${safeText(p.title)}</strong><small>${p.repeat==='weekly'?loc('Lặp lại mỗi tuần','Weekly repeat'):p.repeat==='daily'?loc('Mỗi ngày','Daily'):safeText(p.durationMinutes)+' '+loc('phút','min')}${p.status==='done'?` · ${t('done')}`:''}</small></div><button type="button" class="plan-edit-btn" data-action="edit-plan" data-id="${safeText(p.id)}" aria-label="${safeText(t('edit'))}">${icon('edit',17)}</button></div>`).join(''):`<p class="empty-slim">${safeText(t('noPlans'))}</p>`}</div>`;}
 function calendarPage(){const [y,m]=ui.monthAnchor.split('-').map(Number);const first=`${y}-${String(m).padStart(2,'0')}-01`;const end=new Date(y,m,0).getDate();const offset=(dayFromISO(first).getDay()+6)%7;const size=Math.ceil((end+offset)/7)*7;const days=Array.from({length:size},(_,i)=>shiftDate(first,i-offset));const selected=ui.selectedDate;const selectedLunar=lunarForISO(selected);const sDate=dateParts(selected);
  return `${hero(t('calendar'),loc('Thiên thời · Địa lợi · Nhân hòa — và những kế hoạch của bạn.','Heaven, earth and your own plans — in harmony.'),{compact:true,eyebrow:loc('LỊCH ÂM DƯƠNG · MYSTIC CALENDAR','MYSTIC CALENDAR · SOLAR & LUNAR')})}
@@ -265,24 +274,38 @@ function moonLabel(day){if(day<=3)return loc('Trăng non','New moon');if(day<=8)
 function insightsPage(){let summary,days;const selected=ui.selectedDate;
  if(ui.insightsPeriod==='month'){
   const date=dateParts(selected),daysCount=new Date(date.y,date.m,0).getDate();days=dateRange(`${date.y}-${String(date.m).padStart(2,'0')}-01`,daysCount);
-  summary={days,byDay:days.map(d=>entriesForDay(state,d))};summary.entries=summary.byDay.flat();summary.totalSeconds=totalDuration(summary.entries);summary.activeDays=summary.byDay.filter(a=>a.length).length;
+  summary={days,byDay:days.map(d=>entriesForDay(state,d))};summary.entries=summary.byDay.flat();
+  summary.totalActions=summary.entries.reduce((sum,e)=>sum+(Number(e.quantity)||1),0);
+  summary.totalSeconds=totalDuration(summary.entries);
+  summary.activeDays=summary.byDay.filter(a=>a.length).length;
  }else{summary=weeklySummary(state,selected);days=summary.days;}
- const byCategory={};const byActivity={};for(const entry of summary.entries){const a=getActivity(entry.activityId,state);if(!a)continue;const c=a.category;if(entry.kind==='duration')byCategory[c]=(byCategory[c]||0)+entry.durationSec;const v=byActivity[entry.activityId]||{count:0,sec:0};v.count++;if(entry.kind==='duration')v.sec+=entry.durationSec;byActivity[entry.activityId]=v;}
- const catSorted=Object.entries(byCategory).sort((a,b)=>b[1]-a[1]);const actSorted=Object.entries(byActivity).sort((a,b)=>b[1].count-a[1].count);
- const maxSec=Math.max(1,...catSorted.map(c=>c[1]));const gridDays=ui.insightsPeriod==='month'?summary.byDay.reduce((chunks,day,i)=>{const bucket=Math.floor(i/7);if(!chunks[bucket])chunks[bucket]=[];chunks[bucket].push(day);return chunks;},[]):null;
+ const byCategory={};const byActivity={};
+ for(const entry of summary.entries){
+  const a=getActivity(entry.activityId,state);if(!a)continue;
+  const c=a.category;
+  const qty=Number(entry.quantity)||1;
+  byCategory[c]=(byCategory[c]||0)+qty;
+  const v=byActivity[entry.activityId]||{count:0};
+  v.count+=qty;
+  byActivity[entry.activityId]=v;
+ }
+ const catSorted=Object.entries(byCategory).sort((a,b)=>b[1]-a[1]);
+ const actSorted=Object.entries(byActivity).sort((a,b)=>b[1].count-a[1].count);
+ const maxCount=Math.max(1,...catSorted.map(c=>c[1]));
+ const gridDays=ui.insightsPeriod==='month'?summary.byDay.reduce((chunks,day,i)=>{const bucket=Math.floor(i/7);if(!chunks[bucket])chunks[bucket]=[];chunks[bucket].push(day);return chunks;},[]):null;
  return `${hero(loc('Thống kê & thấu hiểu','Insights & self-discovery'),loc('Nhìn lại mỗi ngày. Mỗi con số đều là một câu chuyện nhỏ.','See your days clearly. Every number tells a little story.'),{compact:true,eyebrow:loc('NHỊP SỐNG · WEEKLY RHYTHM','LIFE RHYTHM · GENTLE INSIGHTS')})}
  <div class="insights-controls"><h2>${t('summary')}</h2><div class="segmented"><button data-action="period" data-value="week" class="${ui.insightsPeriod==='week'?'current':''}">${t('week')}</button><button data-action="period" data-value="month" class="${ui.insightsPeriod==='month'?'current':''}">${t('month')}</button></div></div>
- <div class="metrics-row"><div class="metric-card">${icon('clock',24)}<strong>${safeText(formatDuration(summary.totalSeconds,state.settings.locale))}</strong><span>${t('totalTime')}</span></div>
- <div class="metric-card">${icon('feather',24)}<strong>${summary.entries.length}</strong><span>${t('moments')}</span></div>
+ <div class="metrics-row"><div class="metric-card">${icon('feather',24)}<strong>${summary.totalActions}</strong><span>${t('totalActions')}</span></div>
+ <div class="metric-card">${icon('calendar',24)}<strong>${summary.entries.length}</strong><span>${t('moments')}</span></div>
  <div class="metric-card">${icon('sun',24)}<strong>${summary.activeDays}<small>/${days.length}</small></strong><span>${t('activeDays')}</span></div>
  <div class="metric-card">${icon('lotus',24)}<strong>${actSorted.length}</strong><span>${t('activities')}</span></div></div>
- <div class="insights-grid"><section class="card insights-chart">${panelTitle(t('rhythm'),`<span class="quiet-tag">${ui.insightsPeriod==='month'?t('thisMonth'):t('thisWeek')}</span>`)}${summary.entries.length?(ui.insightsPeriod==='month'?`<div class="month-bars">${gridDays.map((week,i)=>`<div class="month-bar"><span>${loc('Tuần','Week')} ${i+1}</span><strong>${formatDuration(totalDuration(week.flat()),state.settings.locale)}</strong><div class="month-bar-track"><i style="width:${Math.max(1,totalDuration(week.flat())/Math.max(1,summary.totalSeconds)*100)}%"></i></div></div>`).join('')}</div>`:bars(summary.byDay,days)):`<div class="empty-visual">${icon('chart',44)}<p>${t('emptyStats')}</p></div>`}</section>
- <section class="card insights-categories">${panelTitle(t('categoriesTime'))}${catSorted.length?catSorted.map(([cat,seconds])=>`<div class="category-bar-row"><div class="category-bar-label"><strong>${safeText(CATEGORY_NAMES[cat]?.[state.settings.locale]||cat)}</strong><span>${safeText(formatDuration(seconds,state.settings.locale))}</span></div><div class="category-line"><span style="width:${Math.max(3,seconds/maxSec*100)}%;background:${CATEGORY_COLORS[cat]||'#abc'}"></span></div></div>`).join(''):`<p class="empty-slim">${t('emptyStats')}</p>`}</section>
+ <div class="insights-grid"><section class="card insights-chart">${panelTitle(t('rhythm'),`<span class="quiet-tag">${ui.insightsPeriod==='month'?t('thisMonth'):t('thisWeek')}</span>`)}${summary.entries.length?(ui.insightsPeriod==='month'?`<div class="month-bars">${gridDays.map((week,i)=>{const wkCount=week.flat().reduce((sum,e)=>sum+(Number(e.quantity)||1),0);return `<div class="month-bar"><span>${loc('Tuần','Week')} ${i+1}</span><strong>${wkCount} ${safeText(t('actionsCount'))}</strong><div class="month-bar-track"><i style="width:${Math.max(1,wkCount/Math.max(1,summary.totalActions)*100)}%"></i></div></div>`;}).join('')}</div>`:bars(summary.byDay,days)):`<div class="empty-visual">${icon('chart',44)}<p>${t('emptyStats')}</p></div>`}</section>
+ <section class="card insights-categories">${panelTitle(t('categoriesActions'))}${catSorted.length?catSorted.map(([cat,count])=>`<div class="category-bar-row"><div class="category-bar-label"><strong>${safeText(CATEGORY_NAMES[cat]?.[state.settings.locale]||cat)}</strong><span>${count} ${safeText(t('actionsCount'))}</span></div><div class="category-line"><span style="width:${Math.max(3,count/maxCount*100)}%;background:${CATEGORY_COLORS[cat]||'#abc'}"></span></div></div>`).join(''):`<p class="empty-slim">${t('emptyStats')}</p>`}</section>
  <section class="card insights-story">${panelTitle(loc('Những khoảnh khắc nổi bật','Moments that matter'))}<span class="story-graphic">${icon('feather',35)}</span>${actSorted.length?`<h3>${loc('Tuần này, bạn đã...','During this period, you...')}</h3><p>${loc('Ghi nhận','Logged')} <strong>${actSorted[0][1].count}</strong> ${loc('lần','times')} <strong>${safeText(label(getActivity(actSorted[0][0],state)))}</strong>. ${loc('Những thói quen nhỏ tạo nên bức tranh của riêng bạn.','Your little moments make up a picture that is uniquely yours.')}</p>`:`<h3>${loc('Hành trình bắt đầu từ một dấu mốc.','A journey begins with one moment.')}</h3><p>${t('emptyStats')}</p>`}</section>
- </div>${renderInsightCultureCards(summary,byCategory,actSorted)}<section class="card insight-table">${panelTitle(loc('Chi tiết hoạt động','Activity breakdown'))}<div class="table-wrap"><table><thead><tr><th>${t('activities')}</th><th>${loc('Số lần','Times')}</th><th>${t('totalTime')}</th></tr></thead><tbody>${actSorted.length?actSorted.map(([id,o])=>`<tr><td>${safeText(label(getActivity(id,state)))}</td><td>${o.count}</td><td>${safeText(o.sec?formatDuration(o.sec,state.settings.locale):'—')}</td></tr>`).join(''):`<tr><td colspan="3">${t('emptyStats')}</td></tr>`}</tbody></table></div></section>`;}
+ </div>${renderInsightCultureCards(summary,byCategory,actSorted)}<section class="card insight-table">${panelTitle(loc('Chi tiết hoạt động','Activity breakdown'))}<div class="table-wrap"><table><thead><tr><th>${t('activities')}</th><th>${loc('Danh mục','Category')}</th><th>${loc('Số lần','Times')}</th><th>${loc('Tỷ trọng','Share')}</th></tr></thead><tbody>${actSorted.length?actSorted.map(([id,o])=>{const a=getActivity(id,state);const pct=summary.totalActions?Math.round(o.count/summary.totalActions*100):0;return `<tr><td>${safeText(label(a))}</td><td>${safeText(CATEGORY_NAMES[a?.category]?.[state.settings.locale]||a?.category||'—')}</td><td><strong>${o.count}</strong> ${safeText(t('actionsCount'))}</td><td>${pct}%</td></tr>`;}).join(''):`<tr><td colspan="4">${t('emptyStats')}</td></tr>`}</tbody></table></div></section>`;}
 // Charts use the owner's actual local journal data. Blank history is always 0.
 function renderInsightCultureCards(summary,byCategory,actSorted){
- const all=Math.max(0,summary.totalSeconds);const keys=['learning','movement','rest','work'];
+ const all=Math.max(0,summary.totalActions);const keys=['learning','movement','rest','work'];
  const palette=['#76bda5','#8a89ca','#b7c5e9','#e5bd7c','#c9c0b2'];
  const values=keys.map(k=>byCategory[k]||0);values.push(Math.max(0,all-values.reduce((n,v)=>n+v,0)));
  let start=0;const bands=values.map((v,i)=>{const a=start;start+=all?100*v/all:0;return `${palette[i]} ${a.toFixed(2)}% ${start.toFixed(2)}%`;});
@@ -290,7 +313,7 @@ function renderInsightCultureCards(summary,byCategory,actSorted){
  let anchor=zonedDate(new Date(),tz());if(!entriesForDay(state,anchor).length)anchor=shiftDate(anchor,-1);
  let streak=0;while(streak<3650 && entriesForDay(state,anchor).length){streak++;anchor=shiftDate(anchor,-1);}
  const selected=summary.days.slice(-7),hits=selected.map(day=>entriesForDay(state,day).length>0);
- return `<div class="insight-extra"><section class="card balance-card">${panelTitle(loc('Cân bằng hoạt động','Activity balance'))}<div class="balance-visual"><div class="balance-ring ${all?'':'empty'}" style="background:${paint}"><span>${all?Math.round((values[0]+values[1])/all*100):0}%<small>${loc('Học & vận động','Learn & move')}</small></span></div><div class="balance-captions">${keys.map((k,i)=>`<span><i style="background:${palette[i]}"></i><strong>${safeText(CATEGORY_NAMES[k]?.[state.settings.locale]||k)}</strong><em>${safeText(formatDuration(values[i],state.settings.locale))}</em></span>`).join('')}</div></div><p class="culture-caption">${loc('Tổng hợp từ thời lượng đã ghi, không phải đánh giá sức khỏe.','Only logged durations; not a health score.')}</p></section>
+ return `<div class="insight-extra"><section class="card balance-card">${panelTitle(loc('Cân bằng hoạt động','Activity balance'))}<div class="balance-visual"><div class="balance-ring ${all?'':'empty'}" style="background:${paint}"><span>${all?Math.round((values[0]+values[1])/all*100):0}%<small>${loc('Học & vận động','Learn & move')}</small></span></div><div class="balance-captions">${keys.map((k,i)=>`<span><i style="background:${palette[i]}"></i><strong>${safeText(CATEGORY_NAMES[k]?.[state.settings.locale]||k)}</strong><em>${values[i]} ${safeText(t('actionsCount'))}</em></span>`).join('')}</div></div><p class="culture-caption">${loc('Tổng hợp từ số lần thực hiện đã ghi nhận.','Aggregated from logged action counts.')}</p></section>
  <section class="card streak-card">${panelTitle(loc('Chuỗi ngày ghi nhật ký','Journal streak'))}<div class="streak-sun" aria-hidden="true">☀</div><strong>${streak} <small>${loc('ngày liên tiếp','consecutive days')}</small></strong><p>${loc('Không cần hoàn hảo. Mỗi hoạt động thật đều đáng ghi lại.','No need for perfection. Your real moments matter.')}</p><div class="streak-dots">${hits.map((v,i)=>`<i class="${v?'on':''}" title="${safeText(formatDate(selected[i],state.settings.locale))}">${v?'✓':'·'}</i>`).join('')}</div></section></div>`;
 }
 function worldPage(){const places=[['sect-library','book',loc('Thư Phòng','Library Pavilion')],['sect-training','run',loc('Luyện Thể','Training Yard')],['sect-garden','lotus',loc('Linh Điền','Spirit Field')],['sidebar-illustration','moon',loc('Động Phủ','Resting Chamber')]];
@@ -366,17 +389,20 @@ function openModal(html){const dialog=document.getElementById('app-dialog');if(!
 function closeModal(){const dialog=document.getElementById('app-dialog');if(dialog?.open)dialog.close();}
 function modalHeader(title,sub=''){return `<div class="dialog-header"><div><small>${icon('spark',15)} TU TIEN</small><h2>${safeText(title)}</h2>${sub?`<p>${safeText(sub)}</p>`:''}</div><button type="button" data-action="close-modal" class="icon-button" aria-label="${t('cancel')}">${icon('close',21)}</button></div>`;}
 function formButtons(extra=''){return `<div class="form-actions">${extra}<button class="outline-btn" type="button" data-action="close-modal">${t('cancel')}</button><button class="primary-btn" type="submit">${icon('check',16)} ${t('save')}</button></div>`;}
-let lastInstantCheckin={activityId:null,at:0};
-function checkin(activityId){const a=getActivity(activityId,state);if(!a)return;
- if(a.kind==='event'||a.kind==='count'){
-  if(a.kind==='event' && lastInstantCheckin.activityId===activityId && Date.now()-lastInstantCheckin.at<600)return;
-  lastInstantCheckin={activityId,at:Date.now()};
-  const entry=addLifeEntry(state,{activityId,kind:a.kind});saveRender();notify(t('recorded')+': '+label(a),()=>{state.entries=state.entries.filter(e=>e.id!==entry.id);saveRender();notify(t('undone'));});return;
- }
- ui.pendingActivity=activityId;
- openModal(`${modalHeader(label(a),loc('Ghi lại việc đang làm theo cách phù hợp.','Choose how to log this moment.'))}<div class="modal-activity"><span class="mini-activity color-${a.color}">${icon(a.icon,28)}</span><strong>${safeText(label(a))}</strong></div>
- <div class="modal-choices"><button type="button" class="choice-btn" data-action="begin-duration" data-id="${a.id}" ${state.timer?'disabled':''}>${icon('play',22)} <span><strong>${t('startTimer')}</strong><small>${state.timer?loc('Đang có một phiên khác chạy','Another timer is active'):loc('Ghi thời gian tự động','Automatically track your time')}</small></span>${icon('right',16)}</button>
- <button type="button" class="choice-btn" data-action="duration-manual" data-id="${a.id}">${icon('clock',22)}<span><strong>${t('logManual')}</strong><small>${loc('Nhập số phút hoặc ghi lại việc vừa hoàn thành','Enter minutes for a completed session')}</small></span>${icon('right',16)}</button></div>`);
+function checkin(activityId){
+ const a=getActivity(activityId,state);if(!a)return;
+ const targetDate=ui.selectedDate||zonedDate(new Date(),tz());
+ const isCurrentDay=targetDate===zonedDate(new Date(),tz());
+ const entryTime=isCurrentDay?new Date().toISOString():`${targetDate}T12:00:00.000Z`;
+ const entry=addLifeEntry(state,{activityId,kind:'count',quantity:1,time:entryTime});
+ const dayCount=entriesForDay(state,targetDate).filter(e=>e.activityId===activityId).reduce((sum,e)=>sum+(Number(e.quantity)||1),0);
+ saveRender();
+ const countSuffix=dayCount>1?` (${loc(`Lần ${dayCount} trong ngày`,`${dayCount} times today`)})`:'';
+ notify(`${t('recorded')}: ${label(a)}${countSuffix}`,()=>{
+  state.entries=state.entries.filter(e=>e.id!==entry.id);
+  saveRender();
+  notify(t('undone'));
+ });
 }
 function manualDuration(activityId){const a=getActivity(activityId,state);if(!a)return;
  openModal(`${modalHeader(t('logManual'),label(a))}<form data-form="manual-duration"><input type="hidden" name="activityId" value="${safeText(activityId)}"/><label class="field">${t('minutes')}<input type="number" name="minutes" min="1" max="1440" value="25" required autofocus/></label><label class="field">${t('notes')} <span>(${loc('tùy chọn','optional')})</span><textarea name="note" maxlength="500" rows="3" placeholder="${safeText(loc('Một dòng cho hôm nay...','A note for today...'))}"></textarea></label>${formButtons()}</form>`);

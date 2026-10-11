@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { initialState } from '../src/core.mjs';
+import { initialState, addLifeEntry, zonedDate } from '../src/core.mjs';
 // The UI renderer is templated HTML and should function on all seven routes even without records.
 globalThis.location={pathname:'/app'};
 globalThis.document={readyState:'loading',addEventListener:()=>{}};
@@ -27,4 +27,35 @@ test('home uses crisp vector activity and moon icons instead of tiny raster asse
  assert.match(out,/class="icon activity-picto"/);
  assert.match(out,/class="moon-phase-icon"/);
  assert.doesNotMatch(out,/assets\/icon-(?:book|run|bowl|school|briefcase|moon|drop|spark)\.webp|🌑|🌒|🌓|🌕|🌖|🌗|🌘/);
+});
+test('activity tile displays tally badge when user has logged actions for that day',()=>{
+ const state=initialState();
+ const today=zonedDate(new Date(),state.settings.timezone);
+ state.entries.push({id:'e1',activityId:'read',kind:'count',quantity:1,startedAt:`${today}T08:00:00+07:00`,createdAt:`${today}T08:00:00+07:00`});
+ state.entries.push({id:'e2',activityId:'read',kind:'count',quantity:1,startedAt:`${today}T10:00:00+07:00`,createdAt:`${today}T10:00:00+07:00`});
+ const out=renderPageForTests('app',state);
+ assert.match(out,/class="activity-badge"[^>]*>2</);
+});
+test('home and journal render today action tracker instead of running clock timer',()=>{
+ const state=initialState();
+ const out=renderPageForTests('app',state);
+ assert.ok(!out.includes('timer-clock'));
+ assert.ok(!out.includes('Đang tính giờ'));
+ assert.match(out,/today-action-card/);
+});
+test('insights and stats-mini display action counts instead of time duration',()=>{
+ const state=initialState();
+ const today=zonedDate(new Date(),state.settings.timezone);
+ addLifeEntry(state,{activityId:'work',time:`${today}T08:00:00+07:00`});
+ addLifeEntry(state,{activityId:'work',time:`${today}T10:00:00+07:00`});
+ addLifeEntry(state,{activityId:'read',time:`${today}T14:00:00+07:00`});
+
+ const homeOut=renderPageForTests('app',state);
+ assert.match(homeOut,/<strong>3<\/strong><small>Tổng lượt thực hiện<\/small>/);
+ assert.match(homeOut,/3\s+lượt/);
+
+ const insightsOut=renderPageForTests('app/insights',state);
+ assert.ok(!insightsOut.includes('Tổng thời gian'));
+ assert.match(insightsOut,/Tổng lượt thực hiện|Total actions/);
+ assert.match(insightsOut,/Phân bổ theo nhóm|Actions by category/);
 });

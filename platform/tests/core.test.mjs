@@ -18,14 +18,22 @@ test('every meal is an independent event, and bathroom entries are private',()=>
  assert.equal(s.entries.filter(e=>e.activityId==='eat').length,3);
  assert.equal(wc.visibility,'private');
 });
-test('count events do not accrue duration, statistics count only duration sessions',()=>{
+test('activities default to count tally; weeklySummary aggregates action counts without requiring duration',()=>{
  const s=initialState();
- addLifeEntry(s,{activityId:'water',quantity:1,time:'2026-10-11T01:00:00.000Z'});
- addLifeEntry(s,{activityId:'read',durationSec:1500,time:'2026-10-11T02:00:00.000Z'});
+ addLifeEntry(s,{activityId:'read',time:'2026-10-11T01:00:00.000Z'});
+ addLifeEntry(s,{activityId:'read',time:'2026-10-11T04:00:00.000Z'});
+ addLifeEntry(s,{activityId:'eat',time:'2026-10-11T02:00:00.000Z'});
+ addLifeEntry(s,{activityId:'eat',time:'2026-10-11T06:00:00.000Z'});
+ addLifeEntry(s,{activityId:'eat',time:'2026-10-11T12:00:00.000Z'});
+ addLifeEntry(s,{activityId:'run',time:'2026-10-11T03:00:00.000Z'});
  const sum=weeklySummary(s,'2026-10-11');
- assert.equal(sum.totalSeconds,1500); assert.equal(sum.byActivity.water.count,1);
- assert.equal(sum.byActivity.read.seconds,1500);
- assert.equal(formatDuration(sum.totalSeconds),'25 phút');
+ assert.equal(sum.totalActions,6);
+ assert.equal(sum.byActivity.read.count,2);
+ assert.equal(sum.byActivity.eat.count,3);
+ assert.equal(sum.byActivity.run.count,1);
+ assert.equal(sum.byCategory.learning,2);
+ assert.equal(sum.byCategory.daily,3);
+ assert.equal(sum.byCategory.movement,1);
 });
 test('timer resumes across reload and ignores paused time',()=>{
  const s=initialState();assert.equal(startTimer(s,'read',100000),true);
