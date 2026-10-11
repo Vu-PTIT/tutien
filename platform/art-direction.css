@@ -1,0 +1,221 @@
+/* Mystic Life v3 — purpose-made artwork, paper, ink, and fine brass rules. */
+@font-face{font-family:'Be Vietnam Pro';src:url('/assets/fonts/BeVietnamPro-Regular.woff') format('woff');font-weight:400 500;font-style:normal;font-display:swap}
+@font-face{font-family:'Be Vietnam Pro';src:url('/assets/fonts/BeVietnamPro-SemiBold.woff') format('woff');font-weight:600 900;font-style:normal;font-display:swap}
+@font-face{font-family:'Sriracha';src:url('/assets/fonts/Sriracha-Latin.woff') format('woff');font-weight:400;font-style:normal;font-display:swap}
+:root{--paper:#f7f3e9;--paper-lite:#fffdf7;--paper-mid:#f4ecdb;--ink:#213746;--deep:#10232f;--gold:#a6844e;--line:#dfd2b9;--line-strong:#c4aa7b;--sidebar-width:190px;font-size:calc(14px * var(--user-font-scale))}
+body{background:#0d202c;font-family:'Be Vietnam Pro',sans-serif}
+.main-shell{background-color:var(--paper);background-image:radial-gradient(ellipse at 40% 0,#fffdf7 0,transparent 65%),repeating-linear-gradient(0deg,transparent 0 3px,#95743b03 3px 4px)}
+#main-content{padding:16px 20px 24px;max-width:1530px}
+.sidebar{background:linear-gradient(155deg,#102630,#0b1c28 80%);border-right:1px solid #ac8d54;box-shadow:inset -3px 0 0 #1e3742,3px 0 16px #0c1d2920}
+.sidebar:before{opacity:.07;background:repeating-radial-gradient(ellipse at 0 65%,transparent 0 30px,#eddbad 31px,transparent 32px 53px)}
+.sidebar-top{padding:23px 15px 20px}
+.brand{font-size:1.68rem}.brand-mark,.brand-mark svg{width:33px;height:33px}
+.brand>span:last-child small{font-size:.5rem}
+.side-nav{padding:15px 10px;gap:5px}
+.nav-item{padding:10px 12px;min-height:44px;border-radius:5px;font-size:.79rem;gap:10px}
+.nav-item.is-active{background:linear-gradient(90deg,#bfaa7633,#bfaa760c);border-color:#c4a66f91;box-shadow:inset 2px 0 0 #e5c889}
+.nav-mark{box-shadow:none}
+.side-bottom{padding:0 10px 14px;gap:8px}
+.side-paint{min-height:195px;margin:0 2px 5px;border-radius:5px;padding:12px;border-color:#b29562;background-image:linear-gradient(0deg,#0a1c29ed,#0a1c2910 75%),url('/assets/landscape-world-v3.webp');background-size:100% 100%,auto 100%;background-position:center,48% center;box-shadow:0 0 0 3px #0b1e29,inset 0 0 0 1px #d3b27545}
+.side-paint-caption{font-family:'Sriracha',cursive;font-size:1.2rem;font-style:normal;font-weight:400;line-height:1.3;color:#f4e2bd;text-shadow:0 1px 4px #061621}
+.side-paint-caption small{margin-top:6px;font-size:.54rem}
+.side-profile img{width:37px;height:37px}
+.topbar{height:53px;padding:0 21px;background:#fbf8efee;border-bottom:1px solid #d5c5a6;box-shadow:none}
+.topbar .crumb{font-size:.73rem;font-weight:600;color:#5a655f;gap:8px}
+.topbar .top-actions{gap:9px}
+.top-search{padding:7px 12px;min-width:215px;border-radius:5px;background:#fffdf7;font-size:.68rem;box-shadow:none;border-color:#ded0b8}
+.top-search kbd{font-family:inherit;font-size:.51rem;border:0;background:#f2ecdf;padding:3px 5px}
+.top-avatar{width:32px;height:32px;box-shadow:none;border:1px solid #c4a879}
+.top-notifications{width:32px;height:32px;border-radius:5px;background:transparent;border-color:#ded0b8}
+.lang-quick{font-size:.66rem;padding:7px 9px;border-radius:5px;background:transparent;border-color:#ded0b8}
+.hero.hero-page-home,.hero.hero-page-journal,.hero.hero-page-calendar,.hero.hero-page-insights,.hero.hero-page-world,.hero.hero-page-community,.hero.hero-page-settings{background-image:url('/assets/landscape-reading-v3.webp')}
+.hero{height:207px;border:1px solid #b99b69;border-radius:6px;background-size:cover;background-position:center 53%;box-shadow:0 0 0 3px #eee3cc80;position:relative;margin-bottom:0}
+.hero-compact{height:182px}
+.hero:before,.hero:after{width:17px;height:17px;border-color:#a68750;opacity:.7;pointer-events:none}
+.hero-content{left:26px;top:50%;max-width:54%;z-index:2;pointer-events:auto}
+.hero-eyebrow{font-family:'Be Vietnam Pro',sans-serif;color:#8f774e;font-size:.59rem;letter-spacing:.13em;font-weight:600;gap:6px;margin:0 0 6px}
+.hero h1,.hero-compact h1{font-family:'Sriracha',cursive;font-size:clamp(2rem,3vw,3.15rem);font-weight:400;line-height:1.12;letter-spacing:-.035em;transform:rotate(-1deg);text-shadow:none;color:#193342;max-width:530px;margin:0 0 9px;text-wrap:balance}
+.hero-compact h1{font-size:clamp(1.9rem,2.65vw,2.85rem)}
+.hero p{font-size:.74rem;font-family:'Be Vietnam Pro',sans-serif;font-style:normal;line-height:1.7;max-width:465px;color:#52616a;margin:0 0 7px}
+.hero-chips{font-size:.6rem;color:#756347;gap:12px;margin-top:0}
+.hero-chips span{background:transparent;backdrop-filter:none;border:0;padding:0;gap:5px}
+.hero-quote{top:auto;right:13px;bottom:12px;height:auto;width:auto;max-width:155px;font-size:.6rem;border-radius:3px;line-height:1.65;padding:8px 10px;background:#112a37eb;box-shadow:none;border-color:#bf9d659c}
+.date-ribbon{margin:0 5px 12px;border-radius:0 0 5px 5px;padding:10px 13px;font-size:.68rem;background:linear-gradient(90deg,#fbf8ee,#f5ecd9);border-color:#d2bb92;box-shadow:none}
+.date-ribbon strong{font-weight:600}.ribbon-note{font-size:.6rem}
+.card{border-radius:6px;border-color:#d8c5a0;background:#fffdf7;box-shadow:0 2px 4px #78654708;position:relative}
+.card:before,.card:after{width:14px;height:14px;opacity:.62;border-color:#b29460;pointer-events:none}
+.section-heading{margin-bottom:12px;gap:7px}
+.section-heading h2{font-family:'Be Vietnam Pro',sans-serif;font-size:.89rem;line-height:1.45;letter-spacing:-.015em;font-weight:700;color:#243e4e}
+.section-sub{font-size:.62rem}.quiet-tag{font-size:.57rem;color:#938065;background:transparent}
+.text-link{color:#997745}
+.quick-card{padding:12px 15px 7px;border-color:#c5a776;margin-bottom:12px;background:linear-gradient(90deg,#fffdf7,#fffbf0)}
+.quick-card .section-heading{margin-bottom:5px}
+.quick-home .activity-grid{gap:4px}
+.activity-tile,.activity-tile.compact{background:transparent!important;border:1px solid transparent;border-radius:5px;box-shadow:none;min-height:83px;gap:2px;padding:5px 3px 3px}
+.activity-tile:hover{background:#f6efdf!important;box-shadow:none;border-color:#d8c4a1;transform:translateY(-2px)}
+.activity-tile:focus-visible{outline:2px solid #a58a53;outline-offset:2px}
+.activity-icon,.activity-tile.compact .activity-icon{background:radial-gradient(circle,#eee5cf82,transparent 72%);width:46px;height:42px;flex-basis:42px;border-radius:0;overflow:visible}
+.activity-icon .activity-picto{width:33px;height:33px;stroke-width:1.05;filter:drop-shadow(0 2px 1px #6f63441a)}
+.activity-name,.activity-tile.compact .activity-name{font-size:.69rem;font-weight:600;min-height:2.35em;line-height:1.3;color:#3e5260;overflow-wrap:normal}
+.add-tile{border-left:1px dashed #d6c5a1;background:transparent!important}.add-tile .activity-icon{background:none}
+.home-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr) minmax(0,1fr);gap:12px}
+.home-grid .card{padding:15px}
+.home-left,.home-middle,.home-right{gap:12px}
+.home-grid .mini-calendar{min-height:367px;background:radial-gradient(ellipse at 80% 0,#35515b 0,transparent 65%),linear-gradient(135deg,#19313e,#0e2331);border-color:#b79a64}
+.home-grid .mini-calendar .section-heading{border-bottom:1px solid #c5aa7859;padding-bottom:10px}
+.home-grid .mini-calendar .section-heading h2{font-weight:500;color:#f3e4c5;font-size:.84rem}
+.home-grid .mini-calendar .cal-head-inline strong{font-family:'Sriracha',cursive;font-weight:400;font-size:1.2rem}
+.home-grid .mini-calendar .cal-arrows button{background:transparent;border-color:#af986967;box-shadow:none;width:23px;height:23px}
+.home-grid .mini-calendar .mini-day{height:39px;min-height:39px;aspect-ratio:auto;border-radius:5px;font-size:.69rem}
+.home-grid .mini-calendar .mini-day.is-selected{background:#b58c4d;color:#fff9df;box-shadow:0 0 0 1px #e9d2a0,0 0 10px #dabb7840}
+.moon-cycle-strip{padding-top:7px;margin-top:7px}
+.moon-cycle-strip small{font-size:.52rem;letter-spacing:.02em}
+.home-grid .day-preview{min-height:367px;background:linear-gradient(0deg,#fdf9efd9,#fffdf7 25%),url('/assets/landscape-reading-v3.webp') left bottom/180% auto no-repeat!important}
+.day-preview-head{gap:12px;padding:4px 0 13px}
+.day-preview-head strong{font-family:'Be Vietnam Pro',sans-serif;font-size:1rem;font-weight:600}
+.day-preview-head small{font-size:.64rem}.day-preview-head span{font-size:.65rem}
+.day-preview-moon,.calendar-aside .moon-disc{width:94px;height:94px;flex-shrink:0;border:0;background:transparent;box-shadow:none;border-radius:0}
+.lunar-seal{display:grid;place-items:center;position:relative;width:100%;height:100%;isolation:isolate}
+.lunar-seal-ring{width:100%;height:100%;position:absolute;inset:0;stroke-width:1;filter:drop-shadow(0 1px 1px #a8895930)}
+.lunar-seal-phase{width:65%;height:65%;border-radius:50%;background:#142b3b;box-shadow:0 2px 10px #3b442825;display:grid;place-items:center}
+.lunar-seal-phase .moon-phase-icon{width:100%;height:100%;filter:none}
+.day-preview-facts{font-size:.64rem;color:#876f4e;gap:5px;padding:10px 0}
+.day-preview-suggestions>strong{font-size:.72rem;color:#6d6c50}
+.day-preview-suggestions>div span{border-radius:4px;padding:9px 6px;background:#f8f5ec94;font-size:.66rem;font-weight:500}
+.day-preview-legal{font-size:.57rem;line-height:1.65;margin-top:13px}
+.home-grid .timer-card.small .timer-idle{background:linear-gradient(90deg,#fffdf3ee,#fffdf3cc 65%,#fffdf344),url('/assets/landscape-reading-v3.webp') 94% 62%/auto 235% no-repeat;min-height:120px;border-radius:4px}
+.home-grid .world-teaser{padding:0;display:block}
+.home-grid .world-teaser .world-teaser-art{height:118px;background:linear-gradient(90deg,#0b213646,transparent),url('/assets/landscape-world-v3.webp') 50% 32%/cover no-repeat}
+.world-teaser-art span{border-radius:3px;top:10px;left:10px;font-size:.6rem;padding:4px 7px}
+.world-teaser-body{padding:11px 13px;min-height:76px}.world-teaser-body strong{font-weight:600}
+.sample-entry{opacity:1;grid-template-columns:45px 30px 1fr;gap:5px;padding:10px 0}
+.sample-entry i{background:#f3eddf;border-radius:4px;color:#b39459}
+.sample-entry strong{font-size:.74rem;font-weight:500}
+.sample-journal-tag{font-size:.5rem;line-height:1.5;border-bottom:1px dashed #ddd0b5}
+.sample-action{font-size:.63rem;margin-top:11px;font-weight:600}
+.home-grid .timeline-card .timeline{min-height:200px}
+.home-grid .stats-mini{min-height:185px}
+.stats-mini-value strong{font-family:'Sriracha',cursive;font-size:1.95rem;font-weight:400;color:#263e4b}
+.bars-mini{min-height:78px}.bars .bar-track{background:#f2ecdf}.bars .bar-fill{border-radius:2px 2px 0 0}
+.content-footer{font-size:.57rem;padding:13px 0;margin-top:17px;color:#998b70}
+.page-overline{margin:12px 0}.day-switch strong{font-size:.77rem}
+.journal-grid{gap:12px;grid-template-columns:1fr 1.1fr 1fr}
+.journal-grid .timer-card .timer-idle{background:linear-gradient(0deg,#fffaf295,#fffdf3e0 70%),url('/assets/landscape-reading-v3.webp') 93% center/auto 140% no-repeat}
+.mood-artwork{width:28px;height:28px;display:block}.mood-choice{border-radius:4px;background:#fbf8f0}.mood-choice>span{display:grid;place-items:center}
+.cultivation-panel{background:#fffdf7 url('/assets/landscape-reading-v3.webp') left bottom/250% auto no-repeat}
+.calendar-controls{margin-top:14px}.calendar-title-bar h2{font-family:'Sriracha',cursive;font-weight:400;font-size:1.65rem}
+.calendar-cell{border-radius:4px;border-color:#e5dac6;background:#fffdf8;min-height:95px}
+.calendar-cell.selected{background:#173645;color:#f9ecd1;border-color:#ad8d54;box-shadow:inset 0 0 0 1px #d3b779}
+.calendar-cell.selected small,.calendar-cell.selected .cal-lunar-label{color:#d6c59e}
+.calendar-surface{background:linear-gradient(0deg,#fdf9efee,#fffdf7 20%),url('/assets/landscape-reading-v3.webp') left bottom/100% auto no-repeat}
+.calendar-aside .moon-date{gap:10px}.calendar-aside .moon-disc{width:92px;height:92px;background:transparent}
+.metric-card{border-radius:6px;box-shadow:none;border-color:#d6c19b;background:#fffdf7}
+.metric-card>strong{font-family:'Sriracha',cursive;font-weight:400;font-size:2rem}
+.insights-story{background:linear-gradient(0deg,#fffaf0d4,#fffdf7 35%),url('/assets/landscape-reading-v3.webp') left bottom/190% auto no-repeat}
+.streak-card{background:linear-gradient(0deg,#fffaf0ce,#fffdf7 45%),url('/assets/landscape-reading-v3.webp') left bottom/170% auto no-repeat}
+.world-portrait{border-radius:6px;box-shadow:none;border:1px solid #b69a68}
+.world-showcase-art{width:100%;min-width:0;height:auto;min-height:0;aspect-ratio:2;background:#153343 url('/assets/landscape-world-v3.webp') center/cover no-repeat;border-bottom:1px solid #c7ae80}
+.world-art-title{top:12px;left:12px;font-size:.65rem;padding:6px 9px;border-radius:3px;background:#142d3bec;border:1px solid #b99966;color:#f4e7c7;max-width:calc(100% - 24px)}
+.world-art-title span{font:600 .78rem/1.45 'Be Vietnam Pro',sans-serif;min-width:0;white-space:normal;overflow-wrap:anywhere}
+.world-showcase-info>div{min-width:0}
+.world-area{background-image:linear-gradient(0deg,#092232db,transparent 65%),var(--area);background-size:100% 100%,260% auto;background-position:center,var(--scene-position,center);border-radius:5px}
+.world-area strong{font-size:.74rem}.world-area small{font-size:.53rem}
+.game-offline-symbol{border:1px solid #b8955f;background:#1a3948}
+.social-banner>div{border-radius:5px;box-shadow:none;background:#fcf9f1;border-color:#d7c6a7;padding:10px 14px}
+.social-banner strong{font-family:'Sriracha',cursive;font-size:1.15rem;font-weight:400}
+.social-banner span{font-size:.61rem}
+.community-tabs button{border-radius:4px;font-size:.71rem;padding:8px 12px}
+.sect-card{border-radius:5px}.sect-card>div{border-radius:4px;background-size:230% auto;background-position:var(--scene-position,center)}
+.sect-card>div>span{border-radius:4px;display:grid;place-items:center;width:32px;height:32px;background:#fbf3df;border:1px solid #b99760}
+.sect-card strong{font-size:.73rem;font-weight:600}
+.cultivate-scene{border-radius:4px;background:url('/assets/landscape-world-v3.webp') 8% 22%/230% auto no-repeat}
+.feed-illustration{border-radius:4px;width:100%;height:140px;object-fit:cover;object-position:20% 25%}
+.sync-scene{background:url('/assets/landscape-world-v3.webp') center/cover no-repeat;border-radius:4px}
+.settings-gallery{gap:12px;align-items:start}.settings-column{display:flex;flex-direction:column;gap:12px;min-width:0}
+.settings-gallery .card{border-radius:6px;padding:14px 16px;min-width:0}.settings-gallery-card{min-height:0}
+.settings-profile{background:linear-gradient(0deg,#fffdf3bd,#fffdf7 70%),url('/assets/landscape-reading-v3.webp') left bottom/200% auto no-repeat}
+.settings-section-head h2{font-family:'Be Vietnam Pro',sans-serif;font-size:1rem;line-height:1.5}
+.settings-profile>img{border-radius:50%;box-shadow:none;border:2px solid #cbae73}
+.theme-choice{border-radius:5px;box-shadow:none;background:#fcf9ef}
+.toggle-switch{box-shadow:none}
+/* Preserve the paper composition without losing contrast in night mode. */
+[data-theme='dark'] .main-shell{background:#142b35}
+[data-theme='dark'] .topbar{background:#152c36ee;border-color:#716950}
+[data-theme='dark'] .hero h1,[data-theme='dark'] .hero p,[data-theme='dark'] .hero-chips{color:#213746}
+[data-theme='dark'] .hero-eyebrow{color:#806842}
+[data-theme='dark'] .card,[data-theme='dark'] .metric-card,[data-theme='dark'] .quick-card{background-color:#1c3540;background-image:none;border-color:#716d59}
+[data-theme='dark'] .section-heading h2,[data-theme='dark'] .activity-name,[data-theme='dark'] .activity-tile.compact .activity-name,[data-theme='dark'] .day-preview-head strong,[data-theme='dark'] .settings-section-head h2{color:#ede3cb}
+[data-theme='dark'] .home-grid .day-preview{background:#1c3540!important}
+[data-theme='dark'] .hero-chips span{background:#fff5df9e;color:#5f563f}
+[data-theme='dark'] .sample-entry strong,[data-theme='dark'] .stats-mini-value strong{color:#e2d8c0}
+[data-theme='dark'] .settings-profile-top,[data-theme='dark'] .settings-profile>strong{color:#ede3cb}
+[data-theme='dark'] .setting-label,[data-theme='dark'] .setting-copy small,[data-theme='dark'] .settings-profile>p,[data-theme='dark'] .culture-caption{color:#c4bda8}
+[data-theme='dark'] .activity-tile:hover{background:#37505a!important}
+[data-theme='dark'] .calendar-cell{background:#1c3540;border-color:#455861}
+[data-theme='dark'] .calendar-cell.selected{background:#41595a;border-color:#ccb57e}
+[data-theme='dark'] .social-banner>div{background:#1c3540;border-color:#716d59}
+@media(min-width:1650px){.hero{height:226px}.hero-compact{height:195px}.hero-content{max-width:51%}}
+@media(max-width:1200px) and (min-width:791px){
+ :root{--sidebar-width:170px}#main-content{padding:14px}.topbar{padding:0 15px}
+ .brand{font-size:1.5rem}.brand>span:last-child small{font-size:.44rem}.nav-item{font-size:.7rem;padding:10px}
+ .hero{height:200px}.hero-content{left:20px;max-width:60%}.hero h1{font-size:2.5rem}.hero-compact h1{font-size:2.1rem}.hero p{font-size:.69rem}.hero-quote{display:none}
+ .home-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.home-grid .card{padding:12px}
+ .day-preview-head{flex-direction:column;gap:8px;text-align:center}.day-preview-moon{width:80px;height:80px}
+ .day-preview-facts{flex-wrap:wrap;justify-content:center}.day-preview-suggestions>div{gap:4px}.day-preview-suggestions>div span{font-size:.6rem;padding:8px 4px}
+ .sample-entry{grid-template-columns:36px 24px 1fr;font-size:.63rem}.sample-entry strong{font-size:.68rem}
+ .quick-home .activity-grid{gap:0}.activity-name,.activity-tile.compact .activity-name{font-size:.62rem}
+}
+@media(max-width:1130px) and (min-width:791px){:root{--sidebar-width:76px}}
+@media(max-width:790px){
+ :root{font-size:calc(14px * var(--user-font-scale))}
+ .topbar{height:55px;padding:0 12px;background:#fbf8f3f2}.topbar-mobile-brand{gap:6px}
+ .topbar-mobile-brand .brand-mark,.topbar-mobile-brand .brand-mark svg{width:30px;height:30px}
+ .topbar-mobile-brand strong{font-family:'Sriracha',cursive;font-size:1.5rem;font-weight:400}
+ .top-search{width:32px;height:32px;min-width:0;padding:0;border-radius:4px}.top-avatar{width:30px;height:30px}.topbar .top-actions{gap:7px}
+ #main-content{padding:11px 11px 22px}
+ .hero,.hero-compact{height:174px;border-radius:5px;background-size:auto 100%;background-position:66% center}
+ .hero:before{background:linear-gradient(90deg,#faf4e5f0,#faf4e5ce 54%,#faf4e510);border:0;inset:0;width:100%;height:100%;opacity:1;z-index:1}
+ .hero:after{width:13px;height:13px}
+ .hero-content{left:17px;top:50%;max-width:78%;z-index:2}
+ .hero h1,.hero-compact h1{font-size:2.05rem;line-height:1.13;max-width:275px;margin-bottom:8px}
+ .hero p{font-size:.64rem;line-height:1.65;max-width:245px;margin-bottom:4px}.hero-eyebrow{font-size:.47rem;margin-bottom:6px;letter-spacing:.09em}
+ .hero-chips{display:none}.hero-quote{display:none}
+ .date-ribbon{font-size:.6rem;margin:0 3px 10px;padding:8px 9px}.date-ribbon strong{font-size:.62rem}
+ .quick-card{padding:10px 8px 5px}.quick-card .section-sub{display:none}.quick-card .section-heading h2{font-size:.87rem}
+ .quick-home .activity-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
+ .activity-tile,.activity-tile.compact{min-height:78px;padding:3px 2px}.activity-name,.activity-tile.compact .activity-name{font-size:.65rem}
+ .activity-icon .activity-picto{width:31px;height:31px}.add-tile{border:1px dashed #cbbb9b}
+ .home-grid,.journal-grid,.home-left,.home-middle,.home-right,.journal-aside{display:flex;flex-direction:column;gap:11px;align-items:stretch}
+ .home-left,.home-middle,.home-right{display:contents}
+ .home-grid .mini-calendar{min-height:354px;order:1}.home-grid .day-preview{min-height:0;order:0}
+ .home-grid .timeline-card{order:2}.home-grid .timer-card{order:3}.home-grid .stats-mini{order:4}.home-grid .world-teaser{order:5}
+ .day-preview-head{gap:13px}.day-preview-moon{width:92px;height:92px}.day-preview-head strong{font-size:1.02rem}
+ .day-preview-suggestions>div span{font-size:.69rem;padding:10px}
+ .home-grid .timeline-card .timeline{min-height:0}.sample-entry{padding:11px 0}
+ .home-grid .world-teaser .world-teaser-art{height:150px}
+ .mobile-nav{background:#fcf9f0f5;border-top:1px solid #bba375;box-shadow:0 -2px 10px #182c3d0d}
+ .mobile-add{width:48px;height:48px;border:1px solid #c9a660;box-shadow:0 3px 7px #9a7a4726;background:#eacb8f}
+ .calendar-cell{min-height:69px;border-radius:3px}.calendar-title-bar h2{font-size:1.45rem}
+ .calendar-aside .moon-disc{width:86px;height:86px}.calendar-aside .moon-date{gap:12px}
+ .world-showcase-art{height:auto;aspect-ratio:1.55;background-position:center;min-height:190px}
+ .world-art-title{font-size:.58rem;gap:4px;padding:5px 7px}.world-art-title svg{width:16px}
+ .world-art-title span{font-size:.65rem}
+ .world-showcase-info{flex-direction:column;align-items:stretch;gap:9px;padding:13px 4px}
+ .world-showcase-info h2{font-size:1rem;margin-bottom:6px}
+ .world-showcase-info .disabled-action{align-self:flex-end}
+ .world-area{background-size:100% 100%,230% auto}
+ .social-banner{gap:5px}.social-banner>div{padding:9px 6px}.social-banner strong{font-size:.78rem;line-height:1.45}.social-banner span{font-size:.53rem}
+ .sect-card>div{height:115px}.sect-card strong{font-size:.72rem}.cultivate-scene{height:185px}
+ .content-footer{font-size:.55rem;line-height:1.75;gap:5px;flex-direction:column}
+ .settings-mobile .settings-content{padding:16px 13px}.setting-row{gap:8px}.setting-copy small{font-size:.62rem}
+ [data-theme='dark'] .topbar{background:#152c36f2}
+}
+@media(max-width:370px){
+ #main-content{padding:9px}.hero,.hero-compact{height:177px}.hero-content{left:14px;max-width:86%}
+ .hero h1,.hero-compact h1{font-size:1.91rem;max-width:230px}.hero p{font-size:.62rem;max-width:220px}
+ .topbar .top-actions{gap:5px}.lang-quick{padding:6px}.top-notifications{display:none}
+ .activity-name,.activity-tile.compact .activity-name{font-size:.6rem}.activity-icon{width:42px}
+ .day-preview-head{gap:9px}.day-preview-head strong{font-size:.89rem}.day-preview-moon{width:84px;height:84px}
+ .day-preview-suggestions>div span{font-size:.65rem;padding:9px 7px}
+}
+@media(prefers-reduced-motion:reduce){.activity-tile:hover{transform:none}}

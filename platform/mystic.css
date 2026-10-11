@@ -3,7 +3,6 @@
  * The illustration files were cropped from the user's approved concept images.
  * Interactive content stays HTML and date/mood/plan data comes from real local state.
  */
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Serif:wght@500;600;700;800&display=swap');
 :root{--paper:#f5f0e6;--paper-lite:#fffdf6;--paper-mid:#f9f1e1;--deep:#111f2a;--ink:#162d3b;--gold:#b98546;--line:#e1ceb0;--line-strong:#cbb181;--sidebar-width:211px;font-size:calc(14px * var(--user-font-scale));font-family:'Be Vietnam Pro','Noto Sans',sans-serif}
 body{background:#e9dfce}
 .skip-link{position:fixed!important;left:8px!important;top:-100px!important;background:#fff;color:#142936;z-index:999;border-radius:4px;padding:8px 14px}

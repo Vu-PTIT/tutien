@@ -30,3 +30,14 @@ The first frontend commit shipped functional interaction but did not approximate
 - Local HTTP server served HTML, CSS and WebP images successfully. Browser policy prohibited direct navigation to localhost in the automated Chromium runner, so we used the exact source DOM/CSS/JS in a security-compliant, offline headless browser context for layout and interaction checks. This is not a claim of full live-site E2E verification.
 
 The visual assets are a starting brand language, **not complete production art**. The large original mockup images are illustrative, not fully specified CSS layouts, and could contain fictional labels, data or character identities. The live app remains a working responsive UI, with actual user-entered records only, private-by-default, and server/game controls disabled pending authoritative integration.
+## Follow-up — production artwork and live browser verification
+
+The v3 visual pass replaces mockup crops with dedicated painted landscapes,
+serves Vietnamese handwriting/UI fonts locally, and adds colored SVG objects,
+mood faces and a lunar seal. All seven routes were now tested on the actual HTTP
+server in Chromium at six viewport widths (42 layouts), including journal/timer
+persistence and calendar/settings/mobile interactions. Final renders have no
+horizontal overflow, clipped cards, failed local resources or runtime errors.
+All 12 Node tests and syntax checks pass. See
+[the v3 implementation report](ART-DIRECTION-V3-2026-10-11.md) and the
+[live browser QA protocol](../../platform/tests/visual-qa.md).
