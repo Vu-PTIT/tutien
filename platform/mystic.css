@@ -83,7 +83,7 @@ body{background:#e9dfce}
 .activity-name,.activity-tile.compact .activity-name{font-weight:800;color:#253442;font-size:.72rem;text-align:center}
 .activity-tile.color-lilac{background:#fcf8ff}.activity-tile.color-aqua{background:#f8fffd}.activity-tile.color-apricot{background:#fff9f1}.activity-tile.color-violet{background:#fdf9ff}
 .add-tile{border:1px dashed #c5aa80;background:#f9f0db}.add-tile .activity-icon{background:transparent;color:#a47843}
-.home-grid{grid-template-columns:minmax(0,.99fr) minmax(0,1.02fr) minmax(0,.97fr);gap:12px;align-items:start}
+.home-grid{grid-template-columns:minmax(0,.99fr) minmax(0,1.02fr) minmax(0,.97fr);gap:12px;align-items:stretch}
 .home-left,.home-middle,.home-right{gap:12px;min-width:0}
 .home-grid .card{padding:16px}
 .home-grid .mini-calendar{padding:14px;background:radial-gradient(circle at 83% 5%,#244656 0%,transparent 54%),linear-gradient(165deg,#142939,#0c1d2d);border:1px solid #b38e59;min-height:375px;color:#e9dfca}

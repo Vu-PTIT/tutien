@@ -5,7 +5,7 @@
 :root{--paper:#f7f3e9;--paper-lite:#fffdf7;--paper-mid:#f4ecdb;--ink:#213746;--deep:#10232f;--gold:#a6844e;--line:#dfd2b9;--line-strong:#c4aa7b;--sidebar-width:190px;font-size:calc(14px * var(--user-font-scale))}
 body{background:#0d202c;font-family:'Be Vietnam Pro',sans-serif}
 .main-shell{background-color:var(--paper);background-image:radial-gradient(ellipse at 40% 0,#fffdf7 0,transparent 65%),repeating-linear-gradient(0deg,transparent 0 3px,#95743b03 3px 4px)}
-#main-content{padding:16px 20px 24px;max-width:1530px}
+#main-content{display:flex;flex-direction:column;min-height:calc(100vh - 69px);padding:16px 20px 14px;max-width:1530px;margin:0 auto;box-sizing:border-box}
 .sidebar{background:linear-gradient(155deg,#102630,#0b1c28 80%);border-right:1px solid #ac8d54;box-shadow:inset -3px 0 0 #1e3742,3px 0 16px #0c1d2920}
 .sidebar:before{opacity:.07;background:repeating-radial-gradient(ellipse at 0 65%,transparent 0 30px,#eddbad 31px,transparent 32px 53px)}
 .sidebar-top{padding:23px 15px 20px}
@@ -62,10 +62,22 @@ body{background:#0d202c;font-family:'Be Vietnam Pro',sans-serif}
 .activity-icon .activity-picto{width:33px;height:33px;stroke-width:1.05;filter:drop-shadow(0 2px 1px #6f63441a)}
 .activity-name,.activity-tile.compact .activity-name{font-size:.69rem;font-weight:600;min-height:2.35em;line-height:1.3;color:#3e5260;overflow-wrap:normal}
 .add-tile{border-left:1px dashed #d6c5a1;background:transparent!important}.add-tile .activity-icon{background:none}
-.home-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr) minmax(0,1fr);gap:12px}
+.home-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr) minmax(0,1fr);gap:12px;align-items:stretch;flex:1 0 auto}
 .home-grid .card{padding:15px}
-.home-left,.home-middle,.home-right{gap:12px}
-.home-grid .mini-calendar{min-height:367px;background:radial-gradient(ellipse at 80% 0,#35515b 0,transparent 65%),linear-gradient(135deg,#19313e,#0e2331);border-color:#b79a64}
+.home-left,.home-middle,.home-right{display:flex;flex-direction:column;gap:12px;height:100%;min-width:0}
+.home-left .mini-calendar{flex:0 0 auto;min-height:367px;background:radial-gradient(ellipse at 80% 0,#35515b 0,transparent 65%),linear-gradient(135deg,#19313e,#0e2331);border-color:#b79a64}
+.home-left .world-teaser{flex:1 0 auto;min-height:0;display:flex;flex-direction:column}
+.home-left .world-teaser .world-teaser-art{flex:1 0 110px;min-height:110px}
+.home-left .world-teaser .world-teaser-body{margin-top:auto}
+.home-middle .day-preview{flex:0 0 auto}
+.home-middle .today-action-card{flex:1 0 auto;min-height:0;display:flex;flex-direction:column}
+.home-middle .today-action-card .today-action-list,.home-middle .today-action-card .today-action-empty{flex:1;display:flex;flex-direction:column;justify-content:center}
+.home-middle .today-action-card .today-action-hint{margin-top:auto}
+.home-right .timeline-card{flex:0 0 auto;display:flex;flex-direction:column}
+.home-right .timeline-card .timeline{min-height:200px}
+.home-right .stats-mini{flex:1 0 auto;min-height:0;display:flex;flex-direction:column}
+.home-right .stats-mini .bars,.home-right .stats-mini .bars-mini{flex:1;min-height:78px;display:flex;align-items:flex-end}
+.home-right .stats-mini .stats-mini-bottom{margin-top:auto}
 .home-grid .mini-calendar .section-heading{border-bottom:1px solid #c5aa7859;padding-bottom:10px}
 .home-grid .mini-calendar .section-heading h2{font-weight:500;color:#f3e4c5;font-size:.84rem}
 .home-grid .mini-calendar .cal-head-inline strong{font-family:'Sriracha',cursive;font-weight:400;font-size:1.2rem}
@@ -97,21 +109,48 @@ body{background:#0d202c;font-family:'Be Vietnam Pro',sans-serif}
 .sample-entry strong{font-size:.74rem;font-weight:500}
 .sample-journal-tag{font-size:.5rem;line-height:1.5;border-bottom:1px dashed #ddd0b5}
 .sample-action{font-size:.63rem;margin-top:11px;font-weight:600}
-.home-grid .timeline-card .timeline{min-height:200px}
-.home-grid .stats-mini{min-height:185px}
 .stats-mini-value strong{font-family:'Sriracha',cursive;font-size:1.95rem;font-weight:400;color:#263e4b}
 .bars-mini{min-height:78px}.bars .bar-track{background:#f2ecdf}.bars .bar-fill{border-radius:2px 2px 0 0}
-.content-footer{font-size:.57rem;padding:13px 0;margin-top:17px;color:#998b70}
+.content-footer{font-size:.62rem;padding:14px 2px 6px;margin-top:auto;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;color:#998b70;width:100%}
 .page-overline{margin:12px 0}.day-switch strong{font-size:.77rem}
-.journal-grid{gap:12px;grid-template-columns:1fr 1.1fr 1fr}
+.journal-grid{gap:12px;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr);align-items:stretch;flex:1 0 auto}
+.journal-quick,.journal-entries,.journal-aside{display:flex;flex-direction:column;gap:12px;height:100%;min-width:0}
+.journal-quick .today-action-card{flex:1;height:100%;display:flex;flex-direction:column}
+.journal-quick .today-action-list,.journal-quick .today-action-empty{flex:1;display:flex;flex-direction:column;justify-content:center}
+.journal-quick .today-action-hint{margin-top:auto}
+.journal-entries .timeline-card{flex:1;height:100%;display:flex;flex-direction:column}
+.journal-entries .timeline{flex:1;min-height:260px}
+.journal-aside{display:flex;flex-direction:column;gap:12px}
+.journal-aside .mood-panel{flex:0 0 auto}
+.journal-aside .cultivation-panel{flex:1;display:flex;flex-direction:column}
+.journal-aside .cultivation-panel .ritual-bars{flex:1;display:flex;flex-direction:column;justify-content:space-around}
 .journal-grid .timer-card .timer-idle{background:linear-gradient(0deg,#fffaf295,#fffdf3e0 70%),url('/assets/landscape-reading-v3.webp') 93% center/auto 140% no-repeat}
 .mood-artwork{width:28px;height:28px;display:block}.mood-choice{border-radius:4px;background:#fbf8f0}.mood-choice>span{display:grid;place-items:center}
 .cultivation-panel{background:#fffdf7 url('/assets/landscape-reading-v3.webp') left bottom/250% auto no-repeat}
 .calendar-controls{margin-top:14px}.calendar-title-bar h2{font-family:'Sriracha',cursive;font-weight:400;font-size:1.65rem}
+.calendar-layout{display:grid;gap:12px;grid-template-columns:minmax(0,1fr) 330px;align-items:stretch;flex:1 0 auto}
+.calendar-surface{height:100%;display:flex;flex-direction:column;background:linear-gradient(0deg,#fdf9efee,#fffdf7 20%),url('/assets/landscape-reading-v3.webp') left bottom/100% auto no-repeat}
+.calendar-month-grid{flex:1}
+.calendar-legend{margin-top:auto}
+.calendar-aside{height:100%;display:flex;flex-direction:column;gap:12px}
+.calendar-aside .logged-panel{flex:1;display:flex;flex-direction:column}
+.insights-grid{display:grid;align-items:stretch;gap:12px}
+.insights-chart,.insights-categories,.insights-story{height:100%;display:flex;flex-direction:column}
+.insights-chart .month-bars,.insights-chart .bars{flex:1;display:flex;align-items:flex-end}
+.insights-categories .category-bar-row:last-child{margin-bottom:0}
+.insight-extra{display:grid;align-items:stretch;gap:12px}
+.balance-card,.streak-card{height:100%;display:flex;flex-direction:column}
+.balance-visual{flex:1}
+.world-layout{display:grid;align-items:stretch;gap:12px;flex:1 0 auto}
+.profile-card,.world-showcase,.world-side{height:100%;display:flex;flex-direction:column}
+.world-area-grid{flex:1}
+.community-showcase{display:grid;align-items:stretch;gap:12px;flex:1 0 auto}
+.social-friends,.social-sects,.cultivate-together{height:100%;display:flex;flex-direction:column}
+.settings-layout{display:grid;align-items:stretch;gap:12px;flex:1 0 auto}
+.settings-nav,.settings-content{height:100%;display:flex;flex-direction:column}
 .calendar-cell{border-radius:4px;border-color:#e5dac6;background:#fffdf8;min-height:95px}
 .calendar-cell.selected{background:#173645;color:#f9ecd1;border-color:#ad8d54;box-shadow:inset 0 0 0 1px #d3b779}
 .calendar-cell.selected small,.calendar-cell.selected .cal-lunar-label{color:#d6c59e}
-.calendar-surface{background:linear-gradient(0deg,#fdf9efee,#fffdf7 20%),url('/assets/landscape-reading-v3.webp') left bottom/100% auto no-repeat}
 .calendar-aside .moon-date{gap:10px}.calendar-aside .moon-disc{width:92px;height:92px;background:transparent}
 .metric-card{border-radius:6px;box-shadow:none;border-color:#d6c19b;background:#fffdf7}
 .metric-card>strong{font-family:'Sriracha',cursive;font-weight:400;font-size:2rem}
