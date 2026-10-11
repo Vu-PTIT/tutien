@@ -57,7 +57,7 @@ See `docs/game-design/09-dual-experience-platform.md` for established branch own
 
 This follow-up replaces the generic appearance of the first HTML prototype with an illustrated UI closely **inspired by the seven approved concept mockups**. `platform/mystic.css` is the visual layer above the original reusable `styles.css`; 26 optimized `.webp` assets use **only decorative crops** of the approved generated references. Titles, icons, navigation, lunar dates, forms, buttons, journal records, timers, and statistics remain live browser elements, not a flattened screenshot.
 
-- Distinct illustrated hero per route; rice-paper and blue-ink surfaces, dark gold-lined sidebar, a painted world vignette, script headers and pictogram check-in buttons.
+- Distinct illustrated hero per route; rice-paper and blue-ink surfaces, dark gold-lined sidebar, a clean painted world vignette, readable serif page titles and consistent vector check-in icons.
 - Desktop's Home presents check-in / moon calendar / day detail / real local journal / live local statistics / optional game teaser; mobile rearranges this into a readable single column with a fixed, accessible bottom navigation.
 - The original concept included **imaginary accounts, friend statuses, achievements, metrics, auspicious predictions, avatar activity and map screens**. This functional implementation does **not invent those data**. Statistics start at zero, sample feed entries are explicitly labeled illustrations, game/network interactions remain disabled until backed by authenticated APIs.
 - Images painted by generative mockup tooling are design references rather than final game art or interactive maps. Do not bake mockup labels/text into new art exports; editable translated UI must remain DOM elements.

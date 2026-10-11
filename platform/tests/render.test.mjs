@@ -22,3 +22,9 @@ test('the calendar switches off the cultural layer in preferences',()=>{
 test('manual wall times resolve to accurate zoned instants',()=>{
  assert.equal(utcISOForWall('2026-10-11','09:00','Asia/Ho_Chi_Minh'),'2026-10-11T02:00:00.000Z');
 });
+test('home uses crisp vector activity and moon icons instead of tiny raster assets or emoji phases',()=>{
+ const out=renderPageForTests('app',initialState());
+ assert.match(out,/class="icon activity-picto"/);
+ assert.match(out,/class="moon-phase-icon"/);
+ assert.doesNotMatch(out,/assets\/icon-(?:book|run|bowl|school|briefcase|moon|drop|spark)\.webp|🌑|🌒|🌓|🌕|🌖|🌗|🌘/);
+});

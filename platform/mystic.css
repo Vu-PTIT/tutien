@@ -3,7 +3,7 @@
  * The illustration files were cropped from the user's approved concept images.
  * Interactive content stays HTML and date/mood/plan data comes from real local state.
  */
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Patrick+Hand&family=Sriracha&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Serif:wght@500;600;700;800&display=swap');
 :root{--paper:#f5f0e6;--paper-lite:#fffdf6;--paper-mid:#f9f1e1;--deep:#111f2a;--ink:#162d3b;--gold:#b98546;--line:#e1ceb0;--line-strong:#cbb181;--sidebar-width:211px;font-size:calc(14px * var(--user-font-scale));font-family:'Be Vietnam Pro','Noto Sans',sans-serif}
 body{background:#e9dfce}
 .skip-link{position:fixed!important;left:8px!important;top:-100px!important;background:#fff;color:#142936;z-index:999;border-radius:4px;padding:8px 14px}
@@ -121,7 +121,7 @@ body{background:#e9dfce}
 .home-grid .timer-card.small .lotus-mark svg{width:29px;height:29px}
 .home-grid .timer-card.small .timer-idle p{font-size:.7rem;max-width:260px}
 .home-grid .world-teaser{padding:0}
-.home-grid .world-teaser .world-teaser-art{height:87px;background:linear-gradient(to bottom,#0922350a,#0b1b2b9b),url('/assets/world-village.webp') center 52%/cover no-repeat}
+.home-grid .world-teaser .world-teaser-art{height:112px;background-image:linear-gradient(90deg,rgba(10,27,39,.64) 0%,rgba(10,27,39,.34) 53%,rgba(10,27,39,.08) 100%),url('/assets/hero-world.webp');background-size:100% 100%,cover;background-position:center,70% 50%;background-repeat:no-repeat}
 .world-teaser-art:before,.world-teaser-art:after{display:none}
 .world-teaser-art span{color:#ffebc6;text-shadow:0 2px 5px #091a20}
 .world-teaser-body{padding:12px 14px}
@@ -455,3 +455,87 @@ body{background:#e9dfce}
 .streak-card>strong small{font:600 .8rem 'Be Vietnam Pro',sans-serif;color:#776b57}
 .streak-card .streak-dots{justify-content:center}
 @media(max-width:790px){.moon-cycle-strip b{font-size:1.45rem}.balance-card .balance-visual{gap:15px}.balance-ring{flex-basis:122px;width:122px;height:122px}.balance-captions strong{font-size:.62rem}.balance-captions em{font-size:.56rem}}
+
+/* 11 Oct visual QA: crisp iconography, a legible header, and artwork cropped for its card. */
+.topbar{
+ position:sticky;top:0;left:0;right:0;height:64px;padding:0 25px;z-index:14;
+ background:rgba(255,251,243,.97);border:0;border-bottom:1px solid #d8c6a8;
+ box-shadow:0 3px 12px rgba(19,39,48,.07);backdrop-filter:blur(12px);
+}
+.topbar .crumb{display:flex;align-items:center;color:#233d4b;font-size:.82rem;font-weight:700;letter-spacing:.01em}
+.topbar .crumb .icon{width:17px;height:17px;color:#a9783b;stroke-width:1.9}
+.topbar .top-actions{gap:10px}
+.top-search{min-width:238px;max-width:300px;padding:9px 13px;color:#3f515d;background:#fffdf8;border-color:#c9b590;font-size:.73rem;box-shadow:0 2px 5px rgba(24,44,51,.06)}
+.top-search kbd{color:#6e5b3b;border-color:#d3c4a8;background:#f8f1e4}
+.lang-quick{color:#263d4b;background:#fffaf0;border-color:#c9b590;font-size:.7rem}
+.top-notifications{color:#263d4b;background:#fffaf0;border-color:#c9b590}
+.hero h1,.hero-compact h1{
+ font-family:'Noto Serif',Georgia,serif;font-weight:700;letter-spacing:-.035em;
+ transform:none;text-shadow:0 1px 0 rgba(255,255,255,.7);
+}
+.hero p{font-family:'Be Vietnam Pro','Noto Sans',sans-serif;font-style:normal;color:#3f515a}
+.side-paint-caption{font-family:'Noto Serif',Georgia,serif;font-style:italic;font-weight:600;letter-spacing:-.02em}
+.activity-tile,.activity-tile.compact{align-items:center;text-align:center}
+.activity-icon,.activity-tile.compact .activity-icon{
+ width:46px;height:46px;aspect-ratio:1;flex:0 0 46px;border-radius:13px;
+}
+.activity-icon .activity-picto{display:block;width:23px;height:23px;stroke-width:1.8}
+.activity-name,.activity-tile.compact .activity-name{
+ min-height:2.45em;display:flex;align-items:center;justify-content:center;
+ max-width:100%;text-wrap:balance;overflow-wrap:anywhere;
+}
+.moon-phase-icon{display:block;flex:0 0 auto;filter:drop-shadow(0 1px 2px rgba(215,177,105,.26))}
+.home-grid .mini-calendar .mini-day .mini-moon{
+ display:grid;place-items:center;width:15px;height:15px;margin-top:3px;
+ color:#f0d293;font-size:0;line-height:0;filter:none;
+}
+.home-grid .mini-calendar .mini-day.is-selected .mini-moon{color:#fff3d7}
+.home-grid .mini-calendar .mini-moon .moon-phase-icon{width:14px;height:14px}
+.moon-cycle-strip b{
+ display:grid;place-items:center;width:34px;height:34px;font-size:0;line-height:1;
+ filter:none;color:#f0d293;
+}
+.moon-cycle-strip .moon-phase-icon{width:28px;height:28px}
+.moon-cycle-strip small{font-size:.56rem;line-height:1.35}
+.day-preview-moon{
+ display:grid;place-items:center;
+ background:radial-gradient(circle at 36% 30%,#fff1c7 0%,#d8b36e 52%,#89623a 100%);
+}
+.day-preview-moon .moon-phase-icon{width:68px;height:68px;filter:drop-shadow(0 2px 4px rgba(75,48,20,.24))}
+.world-teaser-art span{
+ top:12px;left:13px;padding:5px 9px;border:1px solid rgba(235,205,145,.78);
+ border-radius:999px;background:rgba(12,30,42,.84);color:#fff0ce;
+ font-size:.68rem;font-weight:800;letter-spacing:.02em;text-shadow:none;
+ box-shadow:0 2px 8px rgba(6,19,28,.2);
+}
+.world-teaser-body{min-height:70px;align-items:center}
+.world-teaser-body p{max-width:340px;font-size:.67rem;line-height:1.5}
+[data-theme='dark'] .topbar{background:rgba(22,39,48,.98);border-color:#46555a;box-shadow:0 3px 12px rgba(0,0,0,.16)}
+[data-theme='dark'] .topbar .crumb{color:#f0e8d8}
+[data-theme='dark'] .topbar .crumb .icon{color:#dfbd7f}
+[data-theme='dark'] .top-search,[data-theme='dark'] .lang-quick,[data-theme='dark'] .top-notifications{background:#263b46;border-color:#58676a;color:#f0eadd}
+[data-theme='dark'] .top-search kbd{background:#1d3039;border-color:#58676a;color:#d8c69f}
+@media(max-width:1130px) and (min-width:791px){
+ .topbar{height:60px;padding:0 17px}
+ .top-search{min-width:195px}
+}
+@media(max-width:790px){
+ .topbar{position:sticky;height:61px;padding:0 13px}
+ .topbar .crumb{display:none}
+ .topbar-mobile-brand{color:#173646}
+ .top-actions{gap:8px}
+ .top-search{min-width:0;width:36px;height:36px;padding:0}
+ .top-search span,.top-search kbd{display:none}
+}
+@media(max-width:560px){
+ .home-grid .world-teaser .world-teaser-art{height:105px}
+ .moon-cycle-strip{gap:3px}
+ .moon-cycle-strip b{width:31px;height:31px}
+ .moon-cycle-strip .moon-phase-icon{width:26px;height:26px}
+ .moon-cycle-strip small{font-size:.54rem}
+ .topbar-mobile-brand strong{font-size:1.12rem}
+}
+@media(max-width:370px){
+ .topbar-mobile-brand .brand-mark{width:27px;height:27px}
+ .top-actions{gap:5px}
+}

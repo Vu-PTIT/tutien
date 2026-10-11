@@ -167,11 +167,20 @@ function hero(title,subtitle,{eyebrow='',compact=false,quote=''}={}){
 }
 function panelTitle(title,extra=''){return `<div class="section-heading"><h2>${safeText(title)}</h2>${extra}</div>`;}
 function pillAction(action,text,icoName='plus',extra=''){return `<button class="pill-btn ${extra}" data-action="${action}" type="button">${icon(icoName,16)}<span>${safeText(text)}</span></button>`;}
-function activityIllustration(activity,size=31){ const pictograms=['book','run','bowl','school','briefcase','moon','drop','spark'];
- if(pictograms.includes(activity?.icon))return `<img class="illustrated-icon" src="/assets/icon-${activity.icon}.webp" width="${size}" height="${size}" alt="" loading="lazy"/>`;
- return icon(activity?.icon||'lotus',size);
+function activityIllustration(activity,size=31){ return icon(activity?.icon||'lotus',size,'activity-picto'); }
+function phaseGlyph(day,size=16){
+ const phase=day<=3?'new':day<=7?'waxing':day<=11?'first':day<=17?'full':day<=21?'waning':day<=26?'last':'waning-crescent';
+ const shapes={
+  new:'<circle cx="12" cy="12" r="8.6" fill="#304755"/>',
+  waxing:'<circle cx="12" cy="12" r="8.6" fill="#304755"/><path d="M12 3.4a8.6 8.6 0 0 1 0 17.2 5.2 8.6 0 0 0 0-17.2Z" fill="#f0d293"/>',
+  first:'<circle cx="12" cy="12" r="8.6" fill="#304755"/><path d="M12 3.4a8.6 8.6 0 0 1 0 17.2V3.4Z" fill="#f0d293"/>',
+  full:'<circle cx="12" cy="12" r="8.6" fill="#f0d293"/><circle cx="9" cy="9" r="1" fill="#c49d5d" opacity=".55"/><circle cx="15.2" cy="13.5" r="1.35" fill="#c49d5d" opacity=".45"/><circle cx="9.5" cy="16" r=".7" fill="#c49d5d" opacity=".45"/>',
+  waning:'<circle cx="12" cy="12" r="8.6" fill="#f0d293"/><path d="M12 3.4a8.6 8.6 0 0 0 0 17.2 5.2 8.6 0 0 1 0-17.2Z" fill="#304755"/>',
+  last:'<circle cx="12" cy="12" r="8.6" fill="#304755"/><path d="M12 3.4a8.6 8.6 0 0 0 0 17.2V3.4Z" fill="#f0d293"/>',
+  'waning-crescent':'<circle cx="12" cy="12" r="8.6" fill="#304755"/><path d="M12 3.4a8.6 8.6 0 0 0 0 17.2 5.2 8.6 0 0 1 0-17.2Z" fill="#f0d293"/>'
+ };
+ return '<svg class="moon-phase-icon" width="'+size+'" height="'+size+'" viewBox="0 0 24 24" aria-hidden="true">'+shapes[phase]+'<circle cx="12" cy="12" r="8.75" fill="none" stroke="#e3bf80" stroke-width=".65"/></svg>';
 }
-function phaseGlyph(day){ return day<=3?'🌑':day<=7?'🌒':day<=11?'🌓':day<=17?'🌕':day<=21?'🌖':day<=26?'🌗':'🌘'; }
 function activityCard(a,opts={}){const pinned=state.pinnedIds.includes(a.id);return `<button type="button" class="activity-tile color-${safeText(a.color)}${opts.compact?' compact':''}" data-checkin="${safeText(a.id)}" title="${safeText(label(a))}"><span class="activity-icon">${activityIllustration(a,37)}</span><span class="activity-name">${safeText(label(a))}</span>${opts.manage?`<span class="tiny-pin" aria-hidden="true">${pinned?'◆':'◇'}</span>`:''}</button>`;}
 function activitiesForGrid(max=8){const pool=[...ACTIVITY_CATALOG,...state.customActivities];const sorted=[...state.pinnedIds.map(id=>pool.find(a=>a.id===id)).filter(Boolean),...pool.filter(a=>!state.pinnedIds.includes(a.id))];return sorted.slice(0,max);}
 function quickCheckin(isHome=false){let selected = ui.filter;
@@ -201,7 +210,7 @@ function miniCalendar(){const today=zonedDate(new Date(),tz());const parts=dateP
  return `<section class="card mini-calendar">${panelTitle(t('calendarQuick'),`<a class="text-link" href="/app/calendar" data-nav="app/calendar">${t('viewAll')} ${icon('right',14)}</a>`)}
  <div class="cal-head-inline"><strong>${safeText(formatDate(first,state.settings.locale,{month:'long',year:'numeric'}))}</strong><div class="cal-arrows"><button data-action="shift-month" data-delta="-1" aria-label="Previous month">${icon('left',15)}</button><button data-action="shift-month" data-delta="1" aria-label="Next month">${icon('right',15)}</button></div></div>
  <div class="mini-grid">${weekdayHeaders().map(d=>`<span class="weekday">${d}</span>`).join('')}${cells.map(iso=>{const month=dateParts(iso).m===parts.m;const any=entriesForDay(state,iso).length||plansForDay(state,iso).length;return `<button type="button" class="mini-day ${month?'':'is-faded'} ${iso===today?'is-today':''} ${iso===ui.selectedDate?'is-selected':''}" data-action="pick-day" data-date="${iso}"><span>${dateParts(iso).d}</span>${state.settings.showMoon?`<em class="mini-moon" aria-hidden="true">${phaseGlyph(lunarForISO(iso).day)}</em>`:''}${any?'<i></i>':''}</button>`;}).join('')}</div>
- <div class="mini-day-plan">${plansForDay(state,ui.selectedDate).slice(0,2).map(p=>`<div class="mini-plan"><span class="plan-dot"></span><span>${safeText(p.time)}</span><strong>${safeText(p.title)}</strong></div>`).join('')||`<p class="muted">${safeText(t('noPlans'))}</p>`}</div><div class="moon-cycle-strip" aria-label="${safeText(loc('Chu kỳ Mặt Trăng','Moon phases'))}">${[['🌑',loc('Trăng non','New moon')],['🌓',loc('Bán nguyệt','First quarter')],['🌕',loc('Trăng tròn','Full moon')],['🌗',loc('Trăng khuyết','Last quarter')]].map(([glyph,name])=>`<span><b>${glyph}</b><small>${safeText(name)}</small></span>`).join('')}</div></section>`;
+ <div class="mini-day-plan">${plansForDay(state,ui.selectedDate).slice(0,2).map(p=>`<div class="mini-plan"><span class="plan-dot"></span><span>${safeText(p.time)}</span><strong>${safeText(p.title)}</strong></div>`).join('')||`<p class="muted">${safeText(t('noPlans'))}</p>`}</div><div class="moon-cycle-strip" aria-label="${safeText(loc('Chu kỳ Mặt Trăng','Moon phases'))}">${[[phaseGlyph(1,27),loc('Trăng non','New moon')],[phaseGlyph(9,27),loc('Bán nguyệt','First quarter')],[phaseGlyph(15,27),loc('Trăng tròn','Full moon')],[phaseGlyph(23,27),loc('Trăng khuyết','Last quarter')]].map(([glyph,name])=>`<span><b>${glyph}</b><small>${safeText(name)}</small></span>`).join('')}</div></section>`;
 }
 function weekdayHeaders(){return state.settings.locale==='vi'?['T2','T3','T4','T5','T6','T7','CN']:['M','T','W','T','F','S','S'];}
 function statsMini(){const s=weeklySummary(state,ui.selectedDate);return `<section class="card stats-mini">${panelTitle(t('insightsQuick'),`<a class="text-link" data-nav="app/insights" href="/app/insights">${t('viewAll')} ${icon('right',14)}</a>`)}
@@ -213,7 +222,7 @@ function worldTeaser(){return `<section class="card world-teaser"><div class="wo
 
 function mysticDayPreview(){const selected=ui.selectedDate,lunar=lunarForISO(selected);return `<section class="card day-preview">
  ${panelTitle(loc('Chi tiết ngày','Day details'),`<a href="/app/calendar" data-nav="app/calendar" class="text-link">${t('viewAll')} ${icon('right',14)}</a>`)}
- <div class="day-preview-head"><div class="day-preview-moon" role="img" aria-label="${safeText(moonLabel(lunar.day))}"></div><div><small>${safeText(formatDate(selected,state.settings.locale))}</small><strong>${loc('Âm lịch','Lunar')} ${lunar.day}/${lunar.month}</strong><span>${state.settings.showCanChi?safeText(canChiDay(selected)+' · '+canChiYear(lunar.year)):loc('Một ngày bình an','A peaceful day')}</span></div></div>
+ <div class="day-preview-head"><div class="day-preview-moon" role="img" aria-label="${safeText(moonLabel(lunar.day))}">${phaseGlyph(lunar.day,68)}</div><div><small>${safeText(formatDate(selected,state.settings.locale))}</small><strong>${loc('Âm lịch','Lunar')} ${lunar.day}/${lunar.month}</strong><span>${state.settings.showCanChi?safeText(canChiDay(selected)+' · '+canChiYear(lunar.year)):loc('Một ngày bình an','A peaceful day')}</span></div></div>
  <div class="day-preview-facts"><span>${icon('moon',16)} ${safeText(moonLabel(lunar.day))}</span><span>${icon('spark',16)} ${loc('Tiết khí & lịch truyền thống','Traditional calendar')}</span></div>
  <div class="day-preview-suggestions"><strong>${icon('lotus',17)} ${loc('Gợi ý dành thời gian cho','Make room for')}</strong><div><span>${icon('book',17)} ${loc('Đọc sách','Reading')}</span><span>${icon('run',17)} ${loc('Vận động','Movement')}</span><span>${icon('moon',17)} ${loc('Nghỉ ngơi','Rest')}</span><span>${icon('calendar',17)} ${loc('Lên kế hoạch','Planning')}</span></div></div>
  <p class="day-preview-legal">${loc('Lịch truyền thống mang tính văn hóa, không phải lời dự đoán.','Cultural calendar details are not predictions.')}</p></section>`;}
