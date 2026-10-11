@@ -223,3 +223,64 @@ body{background:#0d202c;font-family:'Be Vietnam Pro',sans-serif}
  .day-preview-suggestions>div span{font-size:.65rem;padding:9px 7px}
 }
 @media(prefers-reduced-motion:reduce){.activity-tile:hover{transform:none}}
+
+/* Typography and frame detail pass against the approved hall reference. */
+:root{
+ --type-body:'Be Vietnam Pro',sans-serif;
+ --type-display:'Sriracha',cursive;
+ --type-serif:Georgia,serif;
+ font-size:calc(16px * var(--user-font-scale,1));
+}
+body{font-family:var(--type-body)}
+.hero .hero-content{left:clamp(28px,3vw,48px);max-width:62%}
+.hero .hero-content>h1{
+ font-family:var(--type-display);
+ font-size:clamp(2.55rem,4.4vw,4.1rem);
+ font-weight:400;line-height:1.04;letter-spacing:0;
+ color:#193342;text-shadow:0 2px 0 rgba(255,253,247,.72);
+ max-width:680px;margin:0 0 2px;transform:rotate(-.7deg);
+ text-wrap:balance;
+}
+.hero.hero-compact .hero-content>h1{font-size:clamp(2.05rem,3.2vw,3.2rem)}
+.hero .hero-translation{
+ width:max-content;max-width:100%;display:flex;align-items:center;gap:9px;
+ margin:0 0 8px 3px;color:#6c6455;
+ font:italic 1.04rem/1.35 var(--type-serif);letter-spacing:.015em;
+}
+.hero .hero-translation::before{
+ content:"";width:24px;height:1px;flex:0 0 24px;background:#a6844e;opacity:.82;
+}
+.hero .hero-translation::after{
+ content:"";width:5px;height:5px;flex:0 0 5px;border:1px solid #a6844e;transform:rotate(45deg);
+}
+.hero .hero-summary{
+ max-width:48ch;margin:0 0 7px;font:500 .86rem/1.55 var(--type-body);
+ color:#3f515a;
+}
+.hero .hero-eyebrow{font-size:.66rem;letter-spacing:.14em}
+.hero .hero-chips{font-size:.68rem}
+.section-heading h2{
+ font-family:var(--type-body);font-size:1rem;line-height:1.4;
+ font-weight:700;letter-spacing:-.02em;color:#243e4e;
+}
+.section-heading h2::after{
+ content:"";display:block;width:34px;height:1px;margin-top:4px;
+ background:linear-gradient(90deg,#a6844e 0 42%,#dfd2b9 42% 100%);
+}
+.card:before,.card:after{
+ width:18px;height:18px;opacity:.76;z-index:1;border-color:#b99a64;
+}
+@media(max-width:790px){
+ .hero .hero-content{left:17px;max-width:calc(100% - 34px)}
+ .hero .hero-content>h1{font-size:clamp(2rem,7vw,2.7rem);line-height:1.08;max-width:100%}
+ .hero.hero-compact .hero-content>h1{font-size:clamp(1.9rem,6vw,2.5rem)}
+ .hero .hero-translation{font-size:.91rem;margin-bottom:6px}
+ .hero .hero-summary{font-size:.76rem;line-height:1.5;max-width:37ch}
+ .hero .hero-eyebrow{font-size:.57rem}
+}
+@media(max-width:400px){
+ .hero .hero-content{left:14px;max-width:calc(100% - 28px)}
+ .hero .hero-content>h1{font-size:2rem;max-width:245px}
+ .hero.hero-compact .hero-content>h1{font-size:1.85rem}
+ .hero .hero-summary{font-size:.74rem;max-width:34ch}
+}

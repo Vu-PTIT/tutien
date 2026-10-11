@@ -159,8 +159,10 @@ function renderTopbar(){const today=zonedDate(new Date(),tz());return `<header c
  <a href="/app/settings" data-nav="app/settings" class="top-avatar" aria-label="${safeText(t('settings'))}"><img src="/assets/avatar-portrait.webp" alt=""/></a></div></header>`;}
 function hero(title,subtitle,{eyebrow='',compact=false,quote=''}={}){
  const page=ui.route==='app'?'home':ui.route.split('/').at(-1);
+ const translatedTitle=page==='home'?(state.settings.locale==='vi'?'What are you doing today?':'Hôm nay bạn đang làm gì?'):'';
+ const translatedLang=state.settings.locale==='vi'?'en':'vi';
  return `<section class="hero hero-page-${page} ${compact?'hero-compact':''}" aria-label="${safeText(title)}">
- <div class="hero-content">${eyebrow?`<div class="hero-eyebrow">${icon('spark',15)} ${safeText(eyebrow)}</div>`:''}<h1>${safeText(title)}</h1><p>${safeText(subtitle)}</p><div class="hero-chips"><span>${icon('sun',13)} ${safeText(formatDate(zonedDate(new Date(),tz()),state.settings.locale))}</span><span>${icon('moon',13)} ${state.settings.showLunar?`${lunarForISO(zonedDate(new Date(),tz())).day}/${lunarForISO(zonedDate(new Date(),tz())).month} ${loc('âm lịch','lunar')}`:loc('Ghi lại cuộc sống','Living journal')}</span></div></div>
+ <div class="hero-content">${eyebrow?`<div class="hero-eyebrow">${icon('spark',15)} ${safeText(eyebrow)}</div>`:''}<h1>${safeText(title)}</h1>${translatedTitle?`<p class="hero-translation" lang="${translatedLang}">${safeText(translatedTitle)}</p>`:''}<p class="hero-summary">${safeText(subtitle)}</p><div class="hero-chips"><span>${icon('sun',13)} ${safeText(formatDate(zonedDate(new Date(),tz()),state.settings.locale))}</span><span>${icon('moon',13)} ${state.settings.showLunar?`${lunarForISO(zonedDate(new Date(),tz())).day}/${lunarForISO(zonedDate(new Date(),tz())).month} ${loc('âm lịch','lunar')}`:loc('Ghi lại cuộc sống','Living journal')}</span></div></div>
  ${quote?`<div class="hero-quote">${icon('spark',15)} <span>${safeText(quote)}</span></div>`:''}</section>`;
 }
 function panelTitle(title,extra=''){return `<div class="section-heading"><h2>${safeText(title)}</h2>${extra}</div>`;}
