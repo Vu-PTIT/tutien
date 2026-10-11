@@ -30,7 +30,7 @@ export const CATEGORY_NAMES = {
 const KEY = 'tutien.platform.v1';
 export const uid = () => (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`);
 export function getActivity(id, state = null) { return (state?.customActivities || []).find(a => a.id === id) || ACTIVITY_CATALOG.find(a => a.id === id); }
-export function initialState() { return { version: 1, settings: { ...DEFAULT_SETTINGS }, entries: [], plans: [], customActivities: [], pinnedIds: ACTIVITY_CATALOG.slice(0, 8).map(a => a.id), timer: null }; }
+export function initialState() { return { version: 1, settings: { ...DEFAULT_SETTINGS }, entries: [], plans: [], customActivities: [], pinnedIds: ACTIVITY_CATALOG.slice(0, 8).map(a => a.id), timer: null, moods: {} }; }
 export function loadState(storage = globalThis.localStorage) {
   const initial = initialState();
   try {
@@ -38,6 +38,7 @@ export function loadState(storage = globalThis.localStorage) {
     if (!stored || typeof stored !== 'object' || stored.version !== 1) return initial;
     return { ...initial, ...stored, settings: { ...DEFAULT_SETTINGS, ...(stored.settings || {}) },
       entries: Array.isArray(stored.entries) ? stored.entries : [],
+      moods: stored.moods && typeof stored.moods === 'object' && !Array.isArray(stored.moods) ? stored.moods : {},
       plans: Array.isArray(stored.plans) ? stored.plans : [],
       customActivities: Array.isArray(stored.customActivities) ? stored.customActivities : [],
       pinnedIds: Array.isArray(stored.pinnedIds) ? stored.pinnedIds : initial.pinnedIds };

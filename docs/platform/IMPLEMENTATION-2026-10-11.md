@@ -19,3 +19,14 @@ Branch: `feat/dual-experience-platform` (not a separate `plat` branch). Work is 
 ## Roadmap reference
 
 Do not mark the seven product modules fully launched: this commit is **the first frontend vertical slice**. The account-isolated Nakama API, secure persistence, server-authoritative game commands and social features remain in future milestones. See `docs/game-design/09-dual-experience-platform.md` for layer boundaries and `platform/README.md` for next steps.
+
+## Follow-up — visual parity pass for the 7 approved mockups
+
+The first frontend commit shipped functional interaction but did not approximate the previously approved artwork and detailed page compositions closely enough. The visual follow-up addresses that feedback with:
+
+- Per-page panoramic illustration banners extracted from the approved reference art without rasterizing the UI text; a gold-lined ink sidebar; off-white/gold parchment component system.
+- Real, responsive pictogram check-in tiles; a navy mystical calendar with lunar icons and a moon-phase strip; day detail; journal mood and illustration; statistics with honest empty-state balance/streak panels; sect/friend/concept social view; authentic local-only settings.
+- Five viewport sizes (320, 375, 390, 1280 and 1440px) × seven routes checked by Chromium screenshot render; fixed the first mobile design's narrow-column/flex alignment bug; no JS rendering exceptions or horizontal overflow.
+- Local HTTP server served HTML, CSS and WebP images successfully. Browser policy prohibited direct navigation to localhost in the automated Chromium runner, so we used the exact source DOM/CSS/JS in a security-compliant, offline headless browser context for layout and interaction checks. This is not a claim of full live-site E2E verification.
+
+The visual assets are a starting brand language, **not complete production art**. The large original mockup images are illustrative, not fully specified CSS layouts, and could contain fictional labels, data or character identities. The live app remains a working responsive UI, with actual user-entered records only, private-by-default, and server/game controls disabled pending authoritative integration.

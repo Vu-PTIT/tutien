@@ -52,3 +52,16 @@ The app keeps distinct concepts:
 5. `PLAT-09`: Deployment, recovery/export, auth verification, performance, security review, and comprehensive visual QA.
 
 See `docs/game-design/09-dual-experience-platform.md` for established branch ownership and the separately authored UI specification `TUTIEN_PLATFORM_7_TRANG_UI_UX_VA_KE_HOACH.md` supplied with this project.
+
+## Visual redesign: approved oriental UI (11 Oct 2026)
+
+This follow-up replaces the generic appearance of the first HTML prototype with an illustrated UI closely **inspired by the seven approved concept mockups**. `platform/mystic.css` is the visual layer above the original reusable `styles.css`; 26 optimized `.webp` assets use **only decorative crops** of the approved generated references. Titles, icons, navigation, lunar dates, forms, buttons, journal records, timers, and statistics remain live browser elements, not a flattened screenshot.
+
+- Distinct illustrated hero per route; rice-paper and blue-ink surfaces, dark gold-lined sidebar, a painted world vignette, script headers and pictogram check-in buttons.
+- Desktop's Home presents check-in / moon calendar / day detail / real local journal / live local statistics / optional game teaser; mobile rearranges this into a readable single column with a fixed, accessible bottom navigation.
+- The original concept included **imaginary accounts, friend statuses, achievements, metrics, auspicious predictions, avatar activity and map screens**. This functional implementation does **not invent those data**. Statistics start at zero, sample feed entries are explicitly labeled illustrations, game/network interactions remain disabled until backed by authenticated APIs.
+- Images painted by generative mockup tooling are design references rather than final game art or interactive maps. Do not bake mockup labels/text into new art exports; editable translated UI must remain DOM elements.
+
+### Visual review
+
+Rendered all **7 route bodies** with headless Chromium from their exact HTML/CSS/JS at viewport widths **320, 375, 390, 1280 and 1440px**; each has no layout overflow, broken image, or browser script error in the offline screenshot harness. Tested changing routes, clicking check-in (`Eating`), and saving a mood. Syntax and 11 Node tests passed. Also HTTP-smoked `/app`, `/mystic.css`, and `/assets/hero-home.webp` with 200 responses and correct MIME types. This is a local visual QA pass, **not** a claim that a public web deployment, native mobile shell, or Nakama social/game integration is functional. In the authoring environment Chromium directly visiting localhost was blocked by managed browser policy, so page rendering used its already loaded exact assets in an isolated `about:blank` context. Re-run full navigation on your own Chrome/browser before release.
