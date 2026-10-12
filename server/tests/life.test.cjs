@@ -23,6 +23,18 @@ test('fresh RPC VMs have the life world without calling the separate initializer
   const scope=vm.createContext({});vm.runInContext(fs.readFileSync('build/index.js','utf8'),scope);
   assert.equal(scope.worldMapReachable('m_lang_que'),true);assert.equal(scope.worldMapReachable('m_mo_ngam'),true);
 });
+test('compiled navigation masks match movement collision checks on all eight maps',()=>{
+  const s=setup();
+  for(const [mapId,map] of Object.entries(s.scope.LIFE_WORLD_MAPS)) {
+    for(let y=1;y<map.height-1;y+=17){const row=map.navEdges[y].split(',').map(run=>{const [n,mask]=run.split(':');return mask.repeat(parseInt(n,36));}).join('');
+      assert.equal(row.length,map.width);
+      for(let x=1;x<map.width-1;x+=19){const mask=parseInt(row[x],16);
+        for(const [dx,dy,bit] of [[-1,0,1],[1,0,2],[0,-1,4],[0,1,8]])
+          assert.equal(!!(mask&bit),s.scope.worldPathWalkable(map,[x*32+16,y*32+16],[(x+dx)*32+16,(y+dy)*32+16]),`${mapId}/${x}/${y}/${bit}`);
+      }
+    }
+  }
+});
 test('life RPCs require authentication and reject forged times, yields, owners and unexpected fields',()=>{
   const s=setup();
   for(const name of ['life_get','garden_get','activity_get','life_claim_starter','activity_start','activity_claim','activity_cancel','activity_control']) rejectsCode(()=>s.rpc(name,{},''),16);
@@ -93,7 +105,10 @@ test('mining uses its own tool and timer and grants two server-picked ore units 
   assert.equal(s.state().cultivationXp,0);
 });
 test('autonomous fishing routes around blockers and reconnect reconstructs the same avatar and progress',()=>{
-  const s=life(),v=start(s,{controlMode:'autonomous',cycles:3});assert.equal(v.session.state,'travelling');
+  const s=life();let geometryCalls=0;const path=s.scope.worldPathWalkable;
+  s.scope.worldPathWalkable=(...args)=>{geometryCalls++;return path(...args);};
+  const v=start(s,{controlMode:'autonomous',cycles:3});assert.equal(v.session.state,'travelling');
+  assert.ok(geometryCalls<20,'Path search must use compiled masks, not thousands of runtime geometry scans');
   const stored=s.state().activitySession;
   for(let i=1;i<stored.route.length;i++){const a=stored.route[i-1],b=stored.route[i];if(a.mapId===b.mapId)
     assert.equal(s.scope.worldPathWalkable(s.scope.WORLD_MAPS[a.mapId],[a.x,a.y],[b.x,b.y]),true);}

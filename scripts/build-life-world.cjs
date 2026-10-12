@@ -3,6 +3,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const {createHash} = require('node:crypto');
+const {navigation} = require('./life-navigation.cjs');
 const root = path.resolve(__dirname, '..');
 const source = JSON.parse(fs.readFileSync(path.join(root, 'server/data/life_world.json'), 'utf8'));
 const {maps,sites} = source;
@@ -13,6 +14,7 @@ for (const site of sites) {
       !['fishing','gardening','mining'].includes(site.type)) throw Error('Invalid/duplicate activity anchor: '+site.id);
   ids.add(site.id);
 }
+for (const map of Object.values(maps)) map.navEdges=navigation(map);
 const digest = createHash('sha256').update(JSON.stringify({maps,sites})).digest('hex').slice(0,16);
 // Source JSON stays readable; generated objects are compact and deterministic.
 const mapEntries = Object.keys(maps).map(id=>'  '+JSON.stringify(id)+': '+JSON.stringify(maps[id]));

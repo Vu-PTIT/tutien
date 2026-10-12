@@ -29,7 +29,7 @@ Các điểm đào trong blockout là điểm làm việc an toàn để nối s
 
 `server/data/life_world.json` lưu hợp đồng backend tối thiểu: điểm đứng, mặt nước, chân vật thể, cầu và cổng, được lấy từ layout ở commit `d40ae4d` trước khi client data bị gỡ. Không chứa hình ảnh, cây mẫu hay runtime client. `scripts/build-life-world.cjs` biên dịch cấu hình này thành `server/src/life_world_generated.ts`. Chạy lại generator khi sửa JSON; CI kiểm tra manifest khớp nguồn. Khi map mới có geometry khác, cần cập nhật cùng hợp đồng này trước khi bật tương tác online. Backend mới dùng làng mới làm gốc thế giới, song song với tuyến An Khê prototype cũ. `world_get({preferredMapId:"m_lang_que"})` chọn map cho phiên đầu tiên; tài khoản đã có vị trí dùng `world_travel`.
 
-Đường đi tự động được tìm qua cổng mở và các cạnh đi được, không xuyên nước/chân nhà. Điểm đứng cuối, hướng và ID slot do server sở hữu. Thời gian đi dựa trên tốc độ server, không tính vào số lượt hoạt động.
+Đường đi tự động được tìm qua cổng mở và các cạnh đi được, không xuyên nước/chân nhà. Mask các cạnh đi được được biên dịch trước và nén theo hàng; RPC chỉ tìm trên mask, không quét hàng nghìn footprint khi nhận lệnh. Dữ liệu tĩnh được nạp khi bundle chạy trong từng VM của Nakama. Điểm đứng cuối, hướng và ID slot do server sở hữu. Thời gian đi dựa trên tốc độ server, không tính vào số lượt hoạt động.
 
 ## API
 

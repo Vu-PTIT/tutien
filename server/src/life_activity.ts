@@ -157,6 +157,15 @@ function lifePath(map:WorldMapDefinition,from:number[],to:number[]):number[][] {
   function point(id:number):number[] {return [(id%w)*32+16,Math.floor(id/w)*32+16];}
   function estimate(id:number):number {return Math.abs(id%w-goal%w)+Math.abs(Math.floor(id/w)-Math.floor(goal/w));}
   const heap:{id:number;score:number}[]=[],cost:{[id:string]:number}={},parent:{[id:string]:number}={},closed:{[id:string]:boolean}={};
+  const edgeRows:{[y:string]:string}={};
+  function edgeMask(x:number,y:number):number {
+    if(!edgeRows[y]) {
+      const runs=map.navEdges![y].split(",");let row="";
+      for(let i=0;i<runs.length;i++){const parts=runs[i].split(":");row+=new Array(parseInt(parts[0],36)+1).join(parts[1]);}
+      edgeRows[y]=row;
+    }
+    return parseInt(edgeRows[y].charAt(x),16);
+  }
   function push(node:{id:number;score:number}):void {
     let i=heap.length;heap.push(node);
     while(i>0){const p=Math.floor((i-1)/2);if(heap[p].score<=node.score)break;heap[i]=heap[p];i=p;}heap[i]=node;
@@ -174,17 +183,21 @@ function lifePath(map:WorldMapDefinition,from:number[],to:number[]):number[][] {
     const id=pop();if(closed[id])continue;closed[id]=true;if(id===goal){found=true;break;}
     const x=id%w,y=Math.floor(id/w),neighbors:number[]=[];
     if(x>0)neighbors.push(id-1);if(x<w-1)neighbors.push(id+1);if(y>0)neighbors.push(id-w);if(y<h-1)neighbors.push(id+w);
-    for(let i=0;i<neighbors.length;i++) {const n=neighbors[i];if(closed[n]||!worldPathWalkable(map,point(id),point(n)))continue;
+    const mask=map.navEdges?edgeMask(x,y):0;
+    for(let i=0;i<neighbors.length;i++) {const n=neighbors[i];if(closed[n])continue;
+      const direction=n===id-1?1:n===id+1?2:n===id-w?4:8;
+      if(map.navEdges?!(mask&direction):!worldPathWalkable(map,point(id),point(n)))continue;
       const g=cost[id]+1;if(cost[n]===undefined||g<cost[n]){cost[n]=g;parent[n]=id;push({id:n,score:g+estimate(n)});}}
   }
   if(!found) return fail(nkruntime.Codes.FAILED_PRECONDITION,"No walkable route to this activity site");
   const cells:number[][]=[];let id=goal;cells.push(point(id));
   while(id!==start){id=parent[id];cells.push(point(id));}cells.reverse();
-  const raw=[from].concat(cells,[to]),path:number[][]=[from];let anchor=0;
-  // Collapse only cardinal, collision-checked runs; route storage stays small.
+  const raw=[from].concat(cells,[to]),path:number[][]=[from];
+  // Every edge is already checked. Merge only consecutive collinear runs;
+  // repeatedly rechecking longer runs was quadratic in the path length.
   for(let i=1;i<raw.length-1;i++) {
-    const a=raw[anchor],b=raw[i+1];
-    if((a[0]!==b[0]&&a[1]!==b[1])||!worldPathWalkable(map,a,b)){path.push(raw[i]);anchor=i;}
+    const a=raw[i-1],b=raw[i],c=raw[i+1],dx=b[0]-a[0],dy=b[1]-a[1],nx=c[0]-b[0],ny=c[1]-b[1];
+    if(dx*ny!==dy*nx||dx*nx+dy*ny<=0)path.push(b);
   }
   path.push(to);return path;
 }

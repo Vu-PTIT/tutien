@@ -14,6 +14,7 @@ interface WorldMapDefinition {
   width: number; height: number; spawnX: number; spawnY: number; solids: number[][]; points: WorldPoint[];
   fieldMobs?: WorldFieldMobDefinition[];
   waters?: WorldWaterRegion[]; bridges?: number[][]; footprints?: number[][];
+  navEdges?: string[]; // RLE rows of hex cardinal masks (W=1,E=2,N=4,S=8).
 }
 interface WorldWaterRegion {
   shape: string; points?: number[][]; center_cell?: number[]; radii_cells?: number[]; width_cells?: number;
