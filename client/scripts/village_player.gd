@@ -2,6 +2,8 @@ extends CharacterBody2D
 
 const WALK_SHEET := "res://assets/tileset/Art/Characters/Main Character/Character_Walk.png"
 const IDLE_SHEET := "res://assets/tileset/Art/Characters/Main Character/Character_Idle.png"
+# Source sheet is 160x192: four 40x48 cells, not five 32px cells.
+# Alpha component centers repeat at x=20,60,100,140 in both idle and walk.
 const FRAME_WIDTH := 40
 const FRAME_HEIGHT := 48
 

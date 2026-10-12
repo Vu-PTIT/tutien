@@ -4,6 +4,8 @@
 **Vai trò trải nghiệm:** nhà, vườn, ruộng lúa, hồ câu, chợ quê và cộng đồng; nơi người chơi thấy avatar bạn bè đang làm việc đời thường. **Không** phải làng cổ tông môn; có nhà mái ngói lẫn mái tôn, xe máy, cột điện và trạm bơm hiện đại. Việt Nam sau Linh Chấn vẫn có công nghệ.
 **Xem:** [00 — portal chuẩn](00-world-topology-and-routes.md), [01 — layer](01-layer-contract-and-runtime.md), [10 — NPC/AI](10-npc-ai-monsters-and-activities.md).
 
+**Runtime v1 — 12/10/2026:** map ngoại thất đầu tiên đã được dựng tại `client/scenes/m_lang_que.tscn` và là scene mặc định F5. Có tám khu theo hồ sơ, art nhà/vật thể riêng, NPC, 12 luống, 4 slot thả câu, va chạm/navigation và hai cổng tới preview khu kế bên. [Hướng dẫn và phạm vi thực tế](../../../client/LANG_QUE_PLAYABLE.md); phần dịch vụ/kinh tế online, nội thất và AI đầy đủ bên dưới vẫn là thiết kế cho các pass sau.
+
 ## A. Lược đồ bố cục (Bắc ở trên)
 
 ```text

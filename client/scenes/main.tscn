@@ -1,7 +1,7 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/layered_village_m1.tscn" id="1_layered"]
+[ext_resource type="PackedScene" path="res://scenes/m_lang_que.tscn" id="1_layered"]
 
 [node name="Main" type="Node2D"]
 
-[node name="LinhKheLayeredVillageM1" parent="." instance=ExtResource("1_layered")]
+[node name="LangQue" parent="." instance=ExtResource("1_layered")]

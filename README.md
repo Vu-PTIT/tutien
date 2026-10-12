@@ -12,6 +12,8 @@ Quy chuẩn áp dụng trên cả `feat/map-ui-rebuild` và `feat/dual-experienc
 
 **Đã có bản thử M1** tại `client/scenes/layered_village_m1.tscn`: nền/đường/nước bằng các polygon pixel phân lớp, vật thể riêng, tương tác offline mẫu và minimap cùng dữ liệu. Giữ bản đồ cũ tại `legacy_linh_khe.tscn`. Đây chưa phải bản art hoàn chỉnh hoặc đã nghiệm thu Godot/mobile; xem `client/M1_LAYERED_IMPLEMENTATION.md` để theo dõi.
 
+**12/10/2026 — Map đầu tiên:** F5 mở `m_lang_que.tscn`, làng 8192×6144 px có tám khu sinh hoạt, sprite nhà Việt hiện đại, chợ/đình, hồ/cầu, NPC, 12 luống và minimap. Đây là runtime offline đã có kiểm tra Godot; dịch vụ/kinh tế online và map kế bên còn ở pass sau. Xem [hướng dẫn Làng quê](client/LANG_QUE_PLAYABLE.md).
+
 ## Vai trò nhánh — 09/10/2026
 
 `feat/map-ui-rebuild` là **nhánh GAME / MAP UI**. Trọng tâm là map, camera, nhân vật, animation, tương tác trực tiếp và biểu diễn các activity trong thế giới game. Lịch, kế hoạch, nhật ký, icon và thống kê đời sống thuộc `feat/dual-experience-platform`.
@@ -52,8 +54,8 @@ Client trên nhánh này tập trung demo làng. Các nền tài khoản/hồ s�
    docker compose up --build -d
    ```
 
-3. Mở `client/project.godot` trong Godot và chạy project. `main.tscn` hiện trỏ tới cảnh thử M1, còn `legacy_linh_khe.tscn` là cảnh cũ đối chiếu.
-4. Demo làng M1 hiển thị hướng dẫn di chuyển/phóng to và nhấn E để tương tác. Các phím hồ sơ/túi/cộng đồng/đấu tập của client tích hợp trước đây không phải bằng chứng các màn hình đó đang có trong demo làng.
+3. Mở `client/project.godot` trong Godot 4.6.1 và F5. `main.tscn` hiện trỏ tới **Làng quê**. Map offline này không cần backend.
+4. WASD/mũi tên để đi, Shift chạy, F tương tác, M mở map; nút EN/VI và Cảm ứng nằm trên HUD. M1 và `legacy_linh_khe.tscn` mở riêng bằng F6 để đối chiếu.
 
 Kiểm tra server:
 

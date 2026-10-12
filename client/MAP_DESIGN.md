@@ -50,6 +50,8 @@ Mốc triển khai đầu tiên nằm ở `res://scenes/layered_village_m1.tscn`
 
 ## World-map terrain blockout — 12/10/2026
 
+**Cập nhật map đầu tiên:** `main.tscn` đã chạy `m_lang_que.tscn` có sprite/actor/physics/navigation, 12 luống và tương tác offline. `lang_que_layout.json` kế thừa tọa độ từ blockout và bổ sung bố cục riêng; không thay blockout của các khu khác thành map hoàn chỉnh. Xem [LANG_QUE_PLAYABLE.md](LANG_QUE_PLAYABLE.md) và ảnh Godot tại `previews/lang_que/`.
+
 `data/world/maps/` có blockout đất, địa hình phụ, đường và nước cho tám khu theo [world topology](../docs/game-design/world-map/00-world-topology-and-routes.md). `data/world/links.json` là nguồn chung cho mười tuyến liên vùng và thang nối B1/B2. Scene `scenes/world_map_blockout_preview.tscn` dựng các polygon/spline thành layer Godot riêng; scene chính, M1 và map Tiled cũ vẫn là các scene độc lập.
 
 Mở scene blockout bằng **F6**. Dùng phím **1–8** chọn vùng, **Tab** đổi tầng Mỏ Ngầm, **WASD/mũi tên** để kéo camera, con lăn để zoom và **F** để vừa khung. Nút tuyến chỉ mô phỏng đổi khu trong client; cổng đang khóa vẫn khóa. Xem `client/WORLD_MAP_BLOCKOUT_PREVIEW.md` cho hướng dẫn và phạm vi.
