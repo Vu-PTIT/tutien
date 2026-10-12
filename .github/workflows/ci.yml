@@ -62,6 +62,7 @@ jobs:
           node scripts/check-layered-map.cjs
           node scripts/check-world-map-blockouts.cjs
           node scripts/check-lang-que.cjs
+          node scripts/check-lang-que-moi.cjs
       - name: Install Godot
         env:
           GODOT_VERSION: ${{ matrix.godot }}
@@ -88,6 +89,22 @@ jobs:
         run: |
           timeout 90 /tmp/godot/engine --headless --path client --script res://tests/lang_que_travel_smoke.gd 2>&1 | tee /tmp/lang-que-travel.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load|ERROR:' /tmp/lang-que-travel.log
+      - name: New village interaction and physical route smoke
+        run: |
+          set -o pipefail
+          timeout 90 /tmp/godot/engine --headless --path client --script res://tests/lang_que_moi_smoke.gd 2>&1 | tee /tmp/new-village-smoke.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load|ERROR:' /tmp/new-village-smoke.log
+      - name: New village neighbor round trips
+        run: |
+          set -o pipefail
+          timeout 90 /tmp/godot/engine --headless --path client --script res://tests/lang_que_moi_travel_smoke.gd 2>&1 | tee /tmp/new-village-travel.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load|ERROR:' /tmp/new-village-travel.log
+      - name: Capture new village for visual review
+        run: |
+          set -o pipefail
+          mkdir -p /tmp/tutien-previews
+          timeout 120 xvfb-run -a -s '-screen 0 4096x3072x24' /tmp/godot/engine --audio-driver Dummy --path client --script res://tests/lang_que_moi_capture.gd 2>&1 | tee /tmp/new-village-capture.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load|ERROR:' /tmp/new-village-capture.log
       - name: Capture first village for visual review
         run: |
           mkdir -p /tmp/tutien-previews

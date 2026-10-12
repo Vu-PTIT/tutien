@@ -12,7 +12,7 @@ Quy chuẩn áp dụng trên cả `feat/map-ui-rebuild` và `feat/dual-experienc
 
 **Đã có bản thử M1** tại `client/scenes/layered_village_m1.tscn`: nền/đường/nước bằng các polygon pixel phân lớp, vật thể riêng, tương tác offline mẫu và minimap cùng dữ liệu. Giữ bản đồ cũ tại `legacy_linh_khe.tscn`. Đây chưa phải bản art hoàn chỉnh hoặc đã nghiệm thu Godot/mobile; xem `client/M1_LAYERED_IMPLEMENTATION.md` để theo dõi.
 
-**12/10/2026 — Map đầu tiên:** F5 mở `m_lang_que.tscn`, làng 8192×6144 px có tám khu sinh hoạt, sprite nhà Việt hiện đại, chợ/đình, hồ/cầu, NPC, 12 luống và minimap. Đây là runtime offline đã có kiểm tra Godot; dịch vụ/kinh tế online và map kế bên còn ở pass sau. Xem [hướng dẫn Làng quê](client/LANG_QUE_PLAYABLE.md).
+**12/10/2026 — Làng quê mới:** F5 mở `m_lang_que_moi.tscn`. Bản đồ 8192×6144 px được dựng từ dữ liệu trống, với địa hình/placement mới, đình mới, tám khu, 15 NPC và 12 luống. Làng test mở riêng để đối chiếu. Đã kiểm tra đường đi, tương tác và hai cổng trên Godot 4.6.1. Xem [hướng dẫn làng mới](client/LANG_QUE_MOI.md).
 
 ## Vai trò nhánh — 09/10/2026
 

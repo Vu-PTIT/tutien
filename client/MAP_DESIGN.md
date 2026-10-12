@@ -50,7 +50,7 @@ Mốc triển khai đầu tiên nằm ở `res://scenes/layered_village_m1.tscn`
 
 ## World-map terrain blockout — 12/10/2026
 
-**Cập nhật map đầu tiên:** `main.tscn` đã chạy `m_lang_que.tscn` có sprite/actor/physics/navigation, 12 luống và tương tác offline. `lang_que_layout.json` kế thừa tọa độ từ blockout và bổ sung bố cục riêng; không thay blockout của các khu khác thành map hoàn chỉnh. Xem [LANG_QUE_PLAYABLE.md](LANG_QUE_PLAYABLE.md) và ảnh Godot tại `previews/lang_que/`.
+**Cập nhật làng mới:** `main.tscn` chạy `m_lang_que_moi.tscn`; builder và `lang_que_moi_layout.json` dựng geometry/placement từ dữ liệu trống. Runtime kế thừa trực tiếp Node2D, có đình mới, sprite/actor, physics/navigation, 12 luống và tương tác offline. Làng/blockout cũ giữ để test, không là nguồn authoring của làng mới. Xem [LANG_QUE_MOI.md](LANG_QUE_MOI.md) và ảnh Godot tại `previews/lang_que_moi/`.
 
 `data/world/maps/` có blockout đất, địa hình phụ, đường và nước cho tám khu theo [world topology](../docs/game-design/world-map/00-world-topology-and-routes.md). `data/world/links.json` là nguồn chung cho mười tuyến liên vùng và thang nối B1/B2. Scene `scenes/world_map_blockout_preview.tscn` dựng các polygon/spline thành layer Godot riêng; scene chính, M1 và map Tiled cũ vẫn là các scene độc lập.
 

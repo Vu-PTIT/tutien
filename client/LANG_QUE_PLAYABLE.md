@@ -2,7 +2,7 @@
 
 **Nhánh:** `feat/map-ui-rebuild` · **Godot:** 4.6.1 · **12/10/2026**.
 
-`main.tscn` chạy `scenes/m_lang_que.tscn`. Mở project rồi **F5**; map này chạy độc lập, không cần Docker hoặc đăng nhập. Có thể mở riêng scene bằng F6. M1 cũ vẫn mở riêng tại `scenes/layered_village_m1.tscn`.
+**Bản này giữ để đối chiếu/test.** F5 hiện mở [làng quê mới](LANG_QUE_MOI.md) ở `scenes/m_lang_que_moi.tscn`. Làng trong tài liệu này chỉ mở riêng `scenes/m_lang_que.tscn` bằng F6; M1 ở `scenes/layered_village_m1.tscn`. Không tiếp tục author làng mới trong dữ liệu của bản này.
 
 ## Bố cục đã dựng
 

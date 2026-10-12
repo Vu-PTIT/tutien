@@ -183,7 +183,9 @@ func _set_map(map_id: String) -> void:
 
 func _return_to_village() -> void:
 	get_tree().remove_meta("lq_neighbor_preview")
-	get_tree().change_scene_to_file("res://scenes/m_lang_que.tscn")
+	var return_scene := str(get_tree().get_meta("lq_return_scene", "res://scenes/m_lang_que.tscn"))
+	get_tree().remove_meta("lq_return_scene")
+	get_tree().change_scene_to_file(return_scene)
 
 
 func _build_map(map_id: String) -> void:
