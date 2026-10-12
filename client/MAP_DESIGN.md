@@ -2,6 +2,8 @@
 
 **Cập nhật:** 08/10/2026, phiên bản 2. Áp dụng trên `feat/map-ui-rebuild` và `feat/dual-experience-platform`.
 
+> **12/10/2026:** demo làng hiện tại là tech demo non-canon. Bối cảnh lấy từ [11 — World Bible](../docs/game-design/11-world-bible.md), thông số mỹ thuật (HD pixel 32 px, tỉ lệ, palette) từ [12 — Art Bible](../docs/game-design/12-art-bible.md). Asset pack 16×16 trong `assets/tileset/` chưa có license trong repo — chỉ là placeholder, không dùng cho bản phát hành.
+
 Nguồn thiết kế chuẩn: [10 — Map phân lớp và vật thể tương tác](../docs/game-design/10-layered-interactive-maps.md), đặc biệt mục 1.1–1.3 về lựa chọn cách dựng và ngoại lệ tile. Hợp đồng hoạt động từ app: [09 — Hai không gian sản phẩm](../docs/game-design/09-dual-experience-platform.md).
 
 ## Nguyên tắc bắt buộc

@@ -12,9 +12,11 @@
 2. [09 — Hai không gian sản phẩm](09-dual-experience-platform.md)
 3. [08 — Trạng thái sinh hoạt và hiện diện xã hội](08-social-presence-and-lifestyle.md)
 4. [04 — Bối cảnh Việt Nam hiện đại pha kỳ ảo](04-world-setting-vietnam-awakening.md)
-5. [10 — Map phân lớp và vật thể tương tác](10-layered-interactive-maps.md)
+5. [11 — World Bible: thế giới nhìn thấy được](11-world-bible.md)
+6. [12 — Art Bible: chuẩn mỹ thuật duy nhất](12-art-bible.md)
+7. [10 — Map phân lớp và vật thể tương tác](10-layered-interactive-maps.md)
 
-Các tài liệu 01, 09 và 08 mô tả hướng sản phẩm hiện hành. **Tài liệu 10 là nguồn chuẩn cho kiến trúc map mới:** nền vẽ phân lớp, vật thể và tương tác độc lập; tileset chỉ dùng nơi thích hợp, không bắt buộc toàn map. Nếu tài liệu cũ yêu cầu map thuần tile, ưu tiên 10 cho phần dựng map. Những phần cũ về săn quái, quest, economy hoặc cốt truyện được giữ làm tham chiếu kỹ thuật/lịch sử, không còn quyết định vòng chơi ưu tiên.
+Các tài liệu 01, 09 và 08 mô tả hướng sản phẩm hiện hành. **11 và 12 là nguồn chuẩn cho bối cảnh hình ảnh và mỹ thuật**; demo làng hiện tại chỉ là tech demo. **Tài liệu 10 là nguồn chuẩn cho kiến trúc map mới:** nền vẽ phân lớp, vật thể và tương tác độc lập; tileset chỉ dùng nơi thích hợp, không bắt buộc toàn map. Nếu tài liệu cũ yêu cầu map thuần tile, ưu tiên 10 cho phần dựng map. Những phần cũ về săn quái, quest, economy hoặc cốt truyện được giữ làm tham chiếu kỹ thuật/lịch sử, không còn quyết định vòng chơi ưu tiên.
 
 ## 2. Hai không gian
 

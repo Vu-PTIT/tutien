@@ -3,6 +3,7 @@
 **Quyết định thiết kế:** 08/10/2026, phiên bản 2.  
 **Áp dụng:** `feat/map-ui-rebuild` và `feat/dual-experience-platform`.  
 **Trạng thái:** đã chốt hướng thiết kế; tài liệu này không chứng nhận runtime, asset, hiệu ứng hay backend mới đã được triển khai.
+**Cập nhật 12/10/2026:** tài liệu này chỉ còn quyết định **kiến trúc kỹ thuật** map (lớp, tọa độ, Y-sort, hợp đồng vật thể, collision). Thông số mỹ thuật (độ phân giải, tỉ lệ, palette, nhân vật) lấy từ [12 — Art Bible](12-art-bible.md); nội dung thế giới lấy từ [11 — World Bible](11-world-bible.md). Các scene làng (`layered_village_m1`, `legacy_linh_khe`) là **tech demo non-canon**: dùng để kiểm chứng kỹ thuật, không làm chuẩn bố cục, asset hay bối cảnh. Mọi nhắc tới "góc làng" bên dưới đọc là "lát cắt hub" theo 12 §13.
 
 ## 1. Quyết định và phạm vi
 

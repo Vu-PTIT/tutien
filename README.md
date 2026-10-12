@@ -34,6 +34,10 @@ Backend/hợp đồng `activity_session` là phần giao nhau: platform gửi l�
 - [Map phân lớp và vật thể tương tác](docs/game-design/10-layered-interactive-maps.md)
 - [Mục lục và thứ tự sản xuất](docs/game-design/README.md)
 - [Bối cảnh Việt Nam hiện đại](docs/game-design/04-world-setting-vietnam-awakening.md)
+- [World Bible — thế giới nhìn thấy được](docs/game-design/11-world-bible.md)
+- [Art Bible — chuẩn mỹ thuật](docs/game-design/12-art-bible.md)
+
+> Demo làng hiện tại là tech demo, không phải chuẩn hình ảnh. Asset pack 16×16 trong `client/assets/tileset/` chưa có license trong repo; chỉ dùng làm placeholder.
 
 ## Trạng thái code hiện tại
 

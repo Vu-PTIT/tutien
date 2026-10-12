@@ -181,17 +181,14 @@ Không cho người mới vừa rời tutorial đã lái phi thuyền. Quy mô t
 
 ## 11. Art direction cho map/UI rebuild
 
-Phong cách đề xuất: **HD pixel / pixel-inspired 2D top-down**, hiện đại Việt Nam nhưng
-không photorealistic.
+**Cập nhật 12/10/2026:** phần này được thay bằng hai tài liệu chuẩn:
 
-Bộ nhận diện cần có:
+- [11 — World Bible](11-world-bible.md): khung tone thống nhất *"trong ngõ thì ấm, ngoài vành đai
+  thì lạ"*, bản sắc hình ảnh từng vùng, từ vựng prop Việt Nam hiện đại, ngôn ngữ thị giác linh năng.
+- [12 — Art Bible](12-art-bible.md): HD pixel 32 px top-down 3/4, tỉ lệ, palette, nhân vật,
+  UI thống nhất game ↔ platform, pipeline, license/AI và art test nghiệm thu.
 
-- biển hiệu tiếng Việt, số nhà, mái tôn, ban công, dây điện, cây đường phố;
-- xe máy, xe tải, chốt kiểm soát, barrier, drone và màn hình cảnh báo;
-- ruộng, đê, rừng ẩm, núi đá vôi, suối và công trình thủy lợi;
-- linh năng xuất hiện như một lớp hiện tượng môi trường, không phủ neon mọi vật;
-- khu an toàn có nhiều NPC/sinh hoạt; vùng nguy hiểm thưa người và âm thanh môi trường mạnh;
-- UI giống thiết bị tác chiến/ứng dụng hiện đại, vẫn giữ chất pixel, thay khung cổ phong nặng.
+Lore trong tài liệu này giữ nguyên. Demo làng hiện tại là tech demo, không phải canon hình ảnh.
 
 ## 12. Quy tắc để không trượt lại bối cảnh cũ
 
