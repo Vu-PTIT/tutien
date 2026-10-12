@@ -42,6 +42,8 @@ var portal_marker_count := 0
 
 func _ready() -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	if get_tree().has_meta("lq_neighbor_preview"):
+		_active_map_id = str(get_tree().get_meta("lq_neighbor_preview"))
 	_load_data()
 	_create_camera()
 	_create_overlay()
@@ -111,6 +113,12 @@ func _create_overlay() -> void:
 	_map_button_row = HBoxContainer.new()
 	_map_button_row.add_theme_constant_override("separation", 5)
 	maps_panel.add_child(_map_button_row)
+	if get_tree().has_meta("lq_neighbor_preview"):
+		var back := Button.new()
+		back.text = "← Làng quê"
+		back.add_theme_font_override("font", FONT)
+		back.pressed.connect(_return_to_village)
+		_map_button_row.add_child(back)
 	for index in range(MAP_IDS.size()):
 		var map_button := Button.new()
 		map_button.text = str(index + 1)
@@ -171,6 +179,11 @@ func _set_map(map_id: String) -> void:
 		return
 	_build_map(map_id)
 	_frame_map()
+
+
+func _return_to_village() -> void:
+	get_tree().remove_meta("lq_neighbor_preview")
+	get_tree().change_scene_to_file("res://scenes/m_lang_que.tscn")
 
 
 func _build_map(map_id: String) -> void:

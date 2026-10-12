@@ -17,7 +17,7 @@
 ## Try locally
 
 1. `git checkout feat/map-ui-rebuild && git pull origin feat/map-ui-rebuild`.
-2. Open `client/project.godot` with **Godot 4.6.1**; run the project (F5) or `layered_village_m1.tscn` (F6).
+2. Open `client/project.godot` with **Godot 4.6.1** and run `layered_village_m1.tscn` with F6. F5 now runs the first world village; see `LANG_QUE_PLAYABLE.md`.
 3. Use WASD or arrow keys to walk, mouse wheel to zoom and E near doors/trees/bench/plant/fishing point to interact.
 4. Compare the scene tree with `legacy_linh_khe.tscn`, which intentionally retains the old tile-driven renderer.
 

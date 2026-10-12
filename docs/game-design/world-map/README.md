@@ -7,6 +7,8 @@
 
 ## Cách đọc và triển khai (đọc theo thứ tự)
 
+**Runtime 12/10:** [Làng quê v1](../../../client/LANG_QUE_PLAYABLE.md) đã có map ngoại thất chơi được và chạy mặc định F5. Bảy vùng còn lại vẫn là terrain blockout. Tính năng đồng bộ platform/server trong blueprint vẫn chưa được nghiệm thu bởi runtime offline này.
+
 | Tài liệu | Nội dung |
 | --- | --- |
 | [00 — Thế giới, tuyến đi, portal](00-world-topology-and-routes.md) | Sơ đồ 8 vùng, kích thước, cặp cổng hai chiều, tuyến đường, kết nối dài, checkpoint, quy tắc bản đồ lớn. **Nguồn chuẩn duy nhất cho tọa độ portal liên vùng.** |
