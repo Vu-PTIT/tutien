@@ -1,0 +1,16 @@
+{
+  "generator": "built-in image_gen",
+  "postprocess": "generate2dsprite single_asset, size 192; trim alpha padding; binary alpha",
+  "source": "image_gen original retained separately; not published to this repository",
+  "output": "community_hall.png",
+  "native_size": [
+    172,
+    83
+  ],
+  "runtime_scale": 2,
+  "alpha_values": [
+    0,
+    255
+  ],
+  "note": "New building; no legacy village building used."
+}

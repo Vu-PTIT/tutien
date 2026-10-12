@@ -1,5 +1,12 @@
 # Lịch sử triển khai
 
+## 12/10/2026 — Dựng làng mới, tách khỏi làng test
+
+- Thêm `m_lang_que_moi.tscn`, runtime kế thừa trực tiếp Node2D và builder từ dữ liệu trống; không nhập layout/blockout/đình Linh Khê cũ.
+- Dựng lại tám khu, 47 tuyến/ngõ, hồ spline, sông/mương, 806 props, 15 NPC và đình mới; giữ hai endpoint thế giới.
+- F5 và lượt quay về qua cổng vào làng mới. Save làng mới có namespace/layout ID riêng.
+- Godot 4.6.1 kiểm tra 75 điểm tương tác, navigation/physics, ba checkpoint và cả hai lượt đi–về. Bổ sung audit/CI/ảnh render; phạm vi hoạt động vẫn offline.
+
 ## Tài khoản và cộng đồng
 
 - Tích hợp đăng nhập thiết bị và email qua Nakama.

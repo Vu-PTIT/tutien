@@ -50,5 +50,5 @@ for (const id of layout.portal_link_ids) {
   assert.ok(layout.objects.some(o => o.link_id === id));
 }
 assert.deepEqual(pngSize(layout.npc_texture), [192, 192]);
-assert.ok(fs.readFileSync(path.join(client, 'scenes/main.tscn'), 'utf8').includes('res://scenes/m_lang_que.tscn'));
+assert.ok(fs.readFileSync(path.join(client, 'scenes/m_lang_que.tscn'), 'utf8').includes('res://scripts/lang_que.gd'));
 console.log(`PASS first village data/art: ${ids.size} props, 8 districts, 15 NPCs, 12 plots, 4 fishing slots, 2 shared portals.`);
