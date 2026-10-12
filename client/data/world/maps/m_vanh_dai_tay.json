@@ -1,0 +1,482 @@
+{
+  "schema_version": 1,
+  "map_id": "m_vanh_dai_tay",
+  "name": "Vành Đai Tây · hành lang an toàn và vùng chuyển tiếp",
+  "blockout_status": "terrain_only",
+  "scene_mode": "layered_raster_vector",
+  "cell_size_px": 32,
+  "width_cells": 288,
+  "height_cells": 224,
+  "spawn_cell": [
+    154,
+    132
+  ],
+  "description": "Vùng đệm ven đô: xưởng, ruộng, trạm kiểm lâm và đường trục an toàn; nhánh phụ rời khỏi hành lang chính.",
+  "palette": {
+    "grass": [
+      "#657c4d",
+      "#87945b",
+      "#465b3d"
+    ],
+    "field": [
+      "#88834f",
+      "#b2a064",
+      "#6d7744"
+    ],
+    "earth": [
+      "#9b7c55",
+      "#b99867",
+      "#6f5940"
+    ],
+    "packed_earth": [
+      "#a58a62",
+      "#c1a477",
+      "#806c51"
+    ],
+    "road": [
+      "#7d7866",
+      "#b2a486",
+      "#605c4e"
+    ],
+    "asphalt": [
+      "#555e5d",
+      "#747b75",
+      "#3e4749"
+    ],
+    "concrete": [
+      "#76766a",
+      "#9a9b8b",
+      "#575e5d"
+    ],
+    "rock": [
+      "#686b5a",
+      "#9b9073",
+      "#454844"
+    ],
+    "gravel": [
+      "#817862",
+      "#b0a17b",
+      "#58544a"
+    ],
+    "shore": [
+      "#b0a075",
+      "#d0bd8c",
+      "#907d58"
+    ],
+    "water": [
+      "#39818b",
+      "#66a2a0",
+      "#245260"
+    ],
+    "basalt": [
+      "#42484a",
+      "#70716c",
+      "#292f34"
+    ],
+    "floor": [
+      "#66716c",
+      "#90958a",
+      "#444d4c"
+    ]
+  },
+  "ground_regions": [
+    {
+      "id": "vd_ground_xuong",
+      "surface": "concrete",
+      "points": [
+        [
+          10,
+          14
+        ],
+        [
+          101,
+          12
+        ],
+        [
+          117,
+          38
+        ],
+        [
+          111,
+          82
+        ],
+        [
+          84,
+          98
+        ],
+        [
+          14,
+          87
+        ]
+      ]
+    },
+    {
+      "id": "vd_ground_kiem_lam",
+      "surface": "packed_earth",
+      "points": [
+        [
+          113,
+          10
+        ],
+        [
+          190,
+          9
+        ],
+        [
+          202,
+          33
+        ],
+        [
+          192,
+          69
+        ],
+        [
+          177,
+          94
+        ],
+        [
+          128,
+          88
+        ],
+        [
+          109,
+          57
+        ]
+      ]
+    },
+    {
+      "id": "vd_ground_ruong_dien",
+      "surface": "field",
+      "points": [
+        [
+          198,
+          10
+        ],
+        [
+          279,
+          12
+        ],
+        [
+          285,
+          54
+        ],
+        [
+          271,
+          91
+        ],
+        [
+          220,
+          90
+        ],
+        [
+          192,
+          66
+        ]
+      ]
+    },
+    {
+      "id": "vd_ground_tap_su",
+      "surface": "grass",
+      "points": [
+        [
+          11,
+          94
+        ],
+        [
+          62,
+          85
+        ],
+        [
+          111,
+          98
+        ],
+        [
+          127,
+          128
+        ],
+        [
+          111,
+          157
+        ],
+        [
+          68,
+          164
+        ],
+        [
+          18,
+          145
+        ]
+      ]
+    },
+    {
+      "id": "vd_ground_tranh_chap",
+      "surface": "packed_earth",
+      "points": [
+        [
+          119,
+          91
+        ],
+        [
+          171,
+          84
+        ],
+        [
+          216,
+          91
+        ],
+        [
+          223,
+          125
+        ],
+        [
+          202,
+          157
+        ],
+        [
+          160,
+          166
+        ],
+        [
+          123,
+          147
+        ]
+      ]
+    },
+    {
+      "id": "vd_ground_truc_dong",
+      "surface": "concrete",
+      "points": [
+        [
+          220,
+          86
+        ],
+        [
+          281,
+          81
+        ],
+        [
+          287,
+          137
+        ],
+        [
+          263,
+          173
+        ],
+        [
+          221,
+          161
+        ],
+        [
+          211,
+          129
+        ]
+      ]
+    },
+    {
+      "id": "vd_ground_duong_de",
+      "surface": "earth",
+      "points": [
+        [
+          112,
+          169
+        ],
+        [
+          147,
+          164
+        ],
+        [
+          205,
+          170
+        ],
+        [
+          215,
+          195
+        ],
+        [
+          195,
+          220
+        ],
+        [
+          119,
+          221
+        ]
+      ]
+    }
+  ],
+  "roads": [
+    {
+      "id": "vd_r01_tay_dong",
+      "name": "Xương sống tây – đông",
+      "surface": "asphalt",
+      "width_cells": 5,
+      "points": [
+        [
+          9,
+          55
+        ],
+        [
+          76,
+          76
+        ],
+        [
+          145,
+          121
+        ],
+        [
+          213,
+          113
+        ],
+        [
+          279,
+          109
+        ]
+      ]
+    },
+    {
+      "id": "vd_r02_bac",
+      "name": "Đường lên rừng",
+      "surface": "earth",
+      "width_cells": 3.5,
+      "points": [
+        [
+          145,
+          121
+        ],
+        [
+          153,
+          73
+        ],
+        [
+          156,
+          8
+        ]
+      ]
+    },
+    {
+      "id": "vd_r03_nam",
+      "name": "Đường đê về làng",
+      "surface": "earth",
+      "width_cells": 3.5,
+      "points": [
+        [
+          145,
+          121
+        ],
+        [
+          144,
+          170
+        ],
+        [
+          143,
+          215
+        ]
+      ]
+    },
+    {
+      "id": "vd_r04_vong_tram",
+      "name": "Vòng quanh chốt",
+      "surface": "packed_earth",
+      "width_cells": 3,
+      "points": [
+        [
+          140,
+          120
+        ],
+        [
+          206,
+          138
+        ],
+        [
+          191,
+          166
+        ],
+        [
+          132,
+          159
+        ],
+        [
+          140,
+          120
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "vd_r05_bai_quai",
+      "name": "Nhánh bãi hoang",
+      "surface": "earth",
+      "width_cells": 2.5,
+      "points": [
+        [
+          114,
+          133
+        ],
+        [
+          83,
+          124
+        ],
+        [
+          57,
+          108
+        ],
+        [
+          112,
+          101
+        ],
+        [
+          114,
+          133
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "vd_r06_muong",
+      "name": "Lối mương",
+      "surface": "earth",
+      "width_cells": 2,
+      "points": [
+        [
+          130,
+          155
+        ],
+        [
+          88,
+          179
+        ],
+        [
+          56,
+          201
+        ]
+      ]
+    }
+  ],
+  "waters": [
+    {
+      "id": "vd_w01_muong_drain",
+      "name": "Mương thoát nước phía tây nam",
+      "shape": "ribbon",
+      "width_cells": 0.9,
+      "shore_width_cells": 0.25,
+      "points": [
+        [
+          17,
+          191
+        ],
+        [
+          34,
+          197
+        ],
+        [
+          56,
+          201
+        ],
+        [
+          72,
+          212
+        ]
+      ],
+      "collision": true
+    }
+  ]
+}

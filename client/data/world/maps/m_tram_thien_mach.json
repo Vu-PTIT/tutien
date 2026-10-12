@@ -1,0 +1,417 @@
+{
+  "schema_version": 1,
+  "map_id": "m_tram_thien_mach",
+  "name": "Trạm Thiên Mạch · hành lang kỹ thuật và phòng lõi",
+  "blockout_status": "terrain_only",
+  "scene_mode": "layered_raster_vector",
+  "cell_size_px": 32,
+  "width_cells": 160,
+  "height_cells": 128,
+  "spawn_cell": [
+    78,
+    112
+  ],
+  "description": "Sàn bê tông kỹ thuật với hành lang, phòng chức năng và lõi. Chỉ có một vũng rò nước nhỏ; cổng vào Trạm vẫn khóa theo thiết kế.",
+  "palette": {
+    "grass": [
+      "#566860",
+      "#77867b",
+      "#394844"
+    ],
+    "field": [
+      "#68756c",
+      "#b2a064",
+      "#6d7744"
+    ],
+    "earth": [
+      "#78715c",
+      "#b99867",
+      "#6f5940"
+    ],
+    "packed_earth": [
+      "#a58a62",
+      "#c1a477",
+      "#806c51"
+    ],
+    "road": [
+      "#83877b",
+      "#b2a486",
+      "#605c4e"
+    ],
+    "asphalt": [
+      "#555e5d",
+      "#747b75",
+      "#3e4749"
+    ],
+    "concrete": [
+      "#727e79",
+      "#9a9b8b",
+      "#575e5d"
+    ],
+    "rock": [
+      "#5b6661",
+      "#9b9073",
+      "#454844"
+    ],
+    "gravel": [
+      "#817862",
+      "#b0a17b",
+      "#58544a"
+    ],
+    "shore": [
+      "#879b91",
+      "#d0bd8c",
+      "#907d58"
+    ],
+    "water": [
+      "#326f78",
+      "#5a9997",
+      "#245260"
+    ],
+    "basalt": [
+      "#42484a",
+      "#70716c",
+      "#292f34"
+    ],
+    "floor": [
+      "#66716c",
+      "#90958a",
+      "#444d4c"
+    ]
+  },
+  "ground_regions": [
+    {
+      "id": "tm_ground_entry",
+      "surface": "concrete",
+      "points": [
+        [
+          51,
+          94
+        ],
+        [
+          108,
+          92
+        ],
+        [
+          116,
+          104
+        ],
+        [
+          110,
+          126
+        ],
+        [
+          54,
+          127
+        ],
+        [
+          47,
+          111
+        ]
+      ]
+    },
+    {
+      "id": "tm_ground_labs",
+      "surface": "floor",
+      "points": [
+        [
+          19,
+          48
+        ],
+        [
+          59,
+          43
+        ],
+        [
+          75,
+          58
+        ],
+        [
+          64,
+          94
+        ],
+        [
+          25,
+          97
+        ],
+        [
+          13,
+          73
+        ]
+      ]
+    },
+    {
+      "id": "tm_ground_control",
+      "surface": "concrete",
+      "points": [
+        [
+          104,
+          47
+        ],
+        [
+          143,
+          42
+        ],
+        [
+          151,
+          61
+        ],
+        [
+          136,
+          88
+        ],
+        [
+          103,
+          92
+        ],
+        [
+          96,
+          72
+        ]
+      ]
+    },
+    {
+      "id": "tm_ground_archive",
+      "surface": "floor",
+      "points": [
+        [
+          9,
+          8
+        ],
+        [
+          67,
+          8
+        ],
+        [
+          78,
+          23
+        ],
+        [
+          66,
+          50
+        ],
+        [
+          16,
+          54
+        ],
+        [
+          8,
+          34
+        ]
+      ]
+    },
+    {
+      "id": "tm_ground_security",
+      "surface": "basalt",
+      "points": [
+        [
+          63,
+          50
+        ],
+        [
+          111,
+          49
+        ],
+        [
+          118,
+          67
+        ],
+        [
+          104,
+          98
+        ],
+        [
+          65,
+          94
+        ],
+        [
+          56,
+          73
+        ]
+      ]
+    },
+    {
+      "id": "tm_ground_core",
+      "surface": "rock",
+      "points": [
+        [
+          62,
+          7
+        ],
+        [
+          111,
+          8
+        ],
+        [
+          116,
+          20
+        ],
+        [
+          106,
+          38
+        ],
+        [
+          81,
+          43
+        ],
+        [
+          60,
+          31
+        ]
+      ]
+    }
+  ],
+  "roads": [
+    {
+      "id": "tm_r01_main",
+      "name": "Hành lang chính",
+      "surface": "concrete",
+      "width_cells": 3.5,
+      "points": [
+        [
+          78,
+          119
+        ],
+        [
+          78,
+          101
+        ],
+        [
+          78,
+          82
+        ],
+        [
+          81,
+          59
+        ],
+        [
+          84,
+          39
+        ]
+      ]
+    },
+    {
+      "id": "tm_r02_lab",
+      "name": "Hành lang phòng thí nghiệm",
+      "surface": "concrete",
+      "width_cells": 2.5,
+      "points": [
+        [
+          78,
+          84
+        ],
+        [
+          43,
+          84
+        ],
+        [
+          35,
+          64
+        ],
+        [
+          42,
+          40
+        ]
+      ]
+    },
+    {
+      "id": "tm_r03_control",
+      "name": "Hành lang điều khiển",
+      "surface": "concrete",
+      "width_cells": 2.5,
+      "points": [
+        [
+          83,
+          78
+        ],
+        [
+          123,
+          76
+        ],
+        [
+          135,
+          43
+        ]
+      ]
+    },
+    {
+      "id": "tm_r04_safety_loop",
+      "name": "Vòng kỹ thuật",
+      "surface": "concrete",
+      "width_cells": 2.5,
+      "points": [
+        [
+          67,
+          81
+        ],
+        [
+          39,
+          92
+        ],
+        [
+          118,
+          96
+        ],
+        [
+          128,
+          79
+        ],
+        [
+          67,
+          81
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "tm_r05_core_loop",
+      "name": "Vòng lõi",
+      "surface": "concrete",
+      "width_cells": 3.5,
+      "points": [
+        [
+          84,
+          36
+        ],
+        [
+          107,
+          31
+        ],
+        [
+          105,
+          15
+        ],
+        [
+          68,
+          15
+        ],
+        [
+          63,
+          38
+        ],
+        [
+          84,
+          36
+        ]
+      ],
+      "closed": true
+    }
+  ],
+  "waters": [
+    {
+      "id": "tm_w01_ri_nuoc",
+      "name": "Vũng rò kỹ thuật",
+      "shape": "ellipse",
+      "center_cell": [
+        143,
+        108
+      ],
+      "radii_cells": [
+        2,
+        1
+      ],
+      "collision": false,
+      "shore_width_cells": 0.7
+    }
+  ]
+}

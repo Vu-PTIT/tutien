@@ -1,0 +1,524 @@
+{
+  "schema_version": 1,
+  "map_id": "m_mo_ngam",
+  "name": "Mỏ Ngầm · hai tầng khai thác",
+  "blockout_status": "terrain_only",
+  "scene_mode": "layered_raster_vector",
+  "cell_size_px": 32,
+  "width_cells": 192,
+  "height_cells": 160,
+  "spawn_cell": [
+    93,
+    150
+  ],
+  "description": "Hai scene tầng riêng B1/B2; trục ga và thang rõ ràng, B2 có hồ sâu không cắt tuyến trở về.",
+  "palette": {
+    "grass": [
+      "#4d5554",
+      "#69716a",
+      "#333b3d"
+    ],
+    "field": [
+      "#726d58",
+      "#b2a064",
+      "#6d7744"
+    ],
+    "earth": [
+      "#71624f",
+      "#b99867",
+      "#6f5940"
+    ],
+    "packed_earth": [
+      "#a58a62",
+      "#c1a477",
+      "#806c51"
+    ],
+    "road": [
+      "#8c795b",
+      "#b2a486",
+      "#605c4e"
+    ],
+    "asphalt": [
+      "#555e5d",
+      "#747b75",
+      "#3e4749"
+    ],
+    "concrete": [
+      "#636963",
+      "#9a9b8b",
+      "#575e5d"
+    ],
+    "rock": [
+      "#66675f",
+      "#9b9073",
+      "#454844"
+    ],
+    "gravel": [
+      "#817862",
+      "#b0a17b",
+      "#58544a"
+    ],
+    "shore": [
+      "#8f8c79",
+      "#d0bd8c",
+      "#907d58"
+    ],
+    "water": [
+      "#27677a",
+      "#4f9aaa",
+      "#245260"
+    ],
+    "basalt": [
+      "#42484a",
+      "#70716c",
+      "#292f34"
+    ],
+    "floor": [
+      "#66716c",
+      "#90958a",
+      "#444d4c"
+    ]
+  },
+  "floors": {
+    "b1": {
+      "ground_regions": [
+        {
+          "id": "ng_b1_ga_mo",
+          "surface": "packed_earth",
+          "points": [
+            [
+              66,
+              114
+            ],
+            [
+              130,
+              110
+            ],
+            [
+              150,
+              127
+            ],
+            [
+              146,
+              157
+            ],
+            [
+              81,
+              159
+            ],
+            [
+              65,
+              143
+            ]
+          ]
+        },
+        {
+          "id": "ng_b1_via_cap_phep",
+          "surface": "rock",
+          "points": [
+            [
+              123,
+              46
+            ],
+            [
+              166,
+              43
+            ],
+            [
+              188,
+              62
+            ],
+            [
+              178,
+              91
+            ],
+            [
+              149,
+              117
+            ],
+            [
+              119,
+              104
+            ]
+          ]
+        },
+        {
+          "id": "ng_b1_nut_thong_gio",
+          "surface": "concrete",
+          "points": [
+            [
+              42,
+              36
+            ],
+            [
+              114,
+              32
+            ],
+            [
+              131,
+              48
+            ],
+            [
+              117,
+              91
+            ],
+            [
+              53,
+              96
+            ],
+            [
+              38,
+              73
+            ]
+          ]
+        },
+        {
+          "id": "ng_b1_hanh_lang",
+          "surface": "basalt",
+          "points": [
+            [
+              83,
+              91
+            ],
+            [
+              116,
+              81
+            ],
+            [
+              143,
+              83
+            ],
+            [
+              160,
+              97
+            ],
+            [
+              141,
+              116
+            ],
+            [
+              103,
+              116
+            ]
+          ]
+        }
+      ],
+      "roads": [
+        {
+          "id": "ng_b1_r01_main",
+          "name": "Trục ga – thang B2",
+          "surface": "road",
+          "width_cells": 3.5,
+          "points": [
+            [
+              93,
+              150
+            ],
+            [
+              101,
+              116
+            ],
+            [
+              104,
+              82
+            ],
+            [
+              119,
+              44
+            ],
+            [
+              120,
+              34
+            ]
+          ]
+        },
+        {
+          "id": "ng_b1_r02_work",
+          "name": "Hành lang khai thác",
+          "surface": "road",
+          "width_cells": 3,
+          "points": [
+            [
+              104,
+              83
+            ],
+            [
+              143,
+              83
+            ],
+            [
+              172,
+              67
+            ]
+          ]
+        },
+        {
+          "id": "ng_b1_r03_loop",
+          "name": "Vòng tránh quạt",
+          "surface": "earth",
+          "width_cells": 2.5,
+          "points": [
+            [
+              103,
+              89
+            ],
+            [
+              53,
+              82
+            ],
+            [
+              47,
+              44
+            ],
+            [
+              113,
+              38
+            ],
+            [
+              103,
+              89
+            ]
+          ],
+          "closed": true
+        }
+      ],
+      "waters": [
+        {
+          "id": "ng_b1_w01_ro_rung",
+          "name": "Vũng rò nước B1",
+          "shape": "ellipse",
+          "center_cell": [
+            158,
+            128
+          ],
+          "radii_cells": [
+            4,
+            2
+          ],
+          "collision": true,
+          "shore_width_cells": 0.7
+        }
+      ]
+    },
+    "b2": {
+      "ground_regions": [
+        {
+          "id": "ng_b2_ga_thang",
+          "surface": "concrete",
+          "points": [
+            [
+              22,
+              117
+            ],
+            [
+              54,
+              112
+            ],
+            [
+              73,
+              127
+            ],
+            [
+              67,
+              151
+            ],
+            [
+              25,
+              155
+            ],
+            [
+              17,
+              137
+            ]
+          ]
+        },
+        {
+          "id": "ng_b2_nut_central",
+          "surface": "rock",
+          "points": [
+            [
+              81,
+              72
+            ],
+            [
+              117,
+              66
+            ],
+            [
+              137,
+              83
+            ],
+            [
+              126,
+              106
+            ],
+            [
+              97,
+              110
+            ],
+            [
+              76,
+              92
+            ]
+          ]
+        },
+        {
+          "id": "ng_b2_ham_cu",
+          "surface": "basalt",
+          "points": [
+            [
+              128,
+              11
+            ],
+            [
+              179,
+              8
+            ],
+            [
+              190,
+              27
+            ],
+            [
+              179,
+              60
+            ],
+            [
+              151,
+              69
+            ],
+            [
+              125,
+              47
+            ]
+          ]
+        },
+        {
+          "id": "ng_b2_ho_ngam",
+          "surface": "rock",
+          "points": [
+            [
+              97,
+              113
+            ],
+            [
+              140,
+              110
+            ],
+            [
+              169,
+              123
+            ],
+            [
+              175,
+              147
+            ],
+            [
+              129,
+              157
+            ],
+            [
+              99,
+              145
+            ]
+          ]
+        }
+      ],
+      "roads": [
+        {
+          "id": "ng_b2_r01_trunk",
+          "name": "Trục thang – hầm cũ",
+          "surface": "road",
+          "width_cells": 3,
+          "points": [
+            [
+              32,
+              132
+            ],
+            [
+              61,
+              109
+            ],
+            [
+              113,
+              81
+            ],
+            [
+              156,
+              52
+            ],
+            [
+              183,
+              41
+            ]
+          ]
+        },
+        {
+          "id": "ng_b2_r02_pve_loop",
+          "name": "Vòng ngách phía bắc",
+          "surface": "earth",
+          "width_cells": 2.5,
+          "points": [
+            [
+              105,
+              82
+            ],
+            [
+              64,
+              48
+            ],
+            [
+              117,
+              24
+            ],
+            [
+              153,
+              59
+            ],
+            [
+              105,
+              82
+            ]
+          ],
+          "closed": true
+        },
+        {
+          "id": "ng_b2_r03_lake",
+          "name": "Lối ra hồ ngầm",
+          "surface": "earth",
+          "width_cells": 2,
+          "points": [
+            [
+              98,
+              93
+            ],
+            [
+              110,
+              127
+            ],
+            [
+              140,
+              133
+            ]
+          ]
+        }
+      ],
+      "waters": [
+        {
+          "id": "ng_b2_w01_ho_ngam",
+          "name": "Hồ ngầm B2",
+          "shape": "ellipse",
+          "center_cell": [
+            153,
+            137
+          ],
+          "radii_cells": [
+            13,
+            7
+          ],
+          "collision": true,
+          "shore_width_cells": 0.7
+        }
+      ]
+    }
+  }
+}

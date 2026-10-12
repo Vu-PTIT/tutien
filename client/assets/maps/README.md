@@ -8,7 +8,9 @@ Large playable village preview built from the supplied 16×16 Tiled asset pack. 
 - Core offset: `(36, 27)` on the 112×96 map
 - Layers: original grass, narrow sandy lanes, animated water, source stone walls/bridges, animated flowers and fire, separate prop scenes, roof/tree canopies, collisions and player spawn
 
-Open `client/project.godot` in Godot 4 and press Play to walk around the map. Ground layers are built as `TileMapLayer` nodes using `TileSetAtlasSource` resources backed by the original tileset images. Standalone buildings, trees and props are instances of `client/scenes/map_sprite_object.tscn`. Use WASD or the arrow keys to move and the mouse wheel to zoom. The overview in the top-right tracks the player.
+This is the **legacy Tiled comparison map**, not the project’s main scene. Open `client/scenes/legacy_linh_khe.tscn` in Godot 4 and run it with F6 to inspect the original `TileMapLayer` implementation. The main playable layered village prototype is `client/scenes/layered_village_m1.tscn`; the eight-region ground blockout is `client/scenes/world_map_blockout_preview.tscn`. See `client/MAP_DESIGN.md` for the current map workflow.
+
+The legacy scene keeps its original `TileMapLayer` ground and path layers, `TileSetAtlasSource` references and separate `map_sprite_object.tscn` props. It is retained only for comparison and has not been converted to the new world-map layer contract.
 
 The Tiled map is editable and references the original TSX/PNG pack in `client/assets/tileset/`. Regenerate the map, JSON and preview from the repository root with:
 

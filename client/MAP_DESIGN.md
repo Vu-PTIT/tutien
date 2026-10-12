@@ -42,8 +42,16 @@ Trên platform, `scripts/main.gd` có `MapWorldScene = null` ở mốc `31080e8`
 
 Một góc làng top-down 3/4 không dựng bằng TileMapLayer phải đi được, có thao tác đổi state, hình/va chạm đúng, nhân vật đọc được, preview và minimap cùng dữ liệu. Mọi ngoại lệ tile về sau có bản giải trình theo mục 1.3 của tài liệu 10. Test online kiểm tra quyền, lệnh lặp, tranh slot và reconnect. Đo hiệu năng trên thiết bị mục tiêu, không gọi phương án mới là tối ưu hơn khi chưa có số liệu.
 
-Đợt cập nhật hiện tại chỉ chốt **thiết kế và quy chuẩn**. Không có loader mới, asset mới, hiệu ứng mới, RPC mới hay kết quả chạy Godot được tạo bởi tài liệu này.
+Phần quy chuẩn này định nghĩa yêu cầu thiết kế; các mốc runtime được ghi riêng bên dưới để phân biệt tài liệu, blockout và map có thể chơi. Không coi bản blockout terrain là nghiệm thu gameplay, mỹ thuật cuối hoặc tích hợp server.
 
 ## Runtime M1 — cập nhật 09/10/2026
 
 Mốc triển khai đầu tiên nằm ở `res://scenes/layered_village_m1.tscn`, khác với scene Tiled được lưu thành `legacy_linh_khe.tscn`. Bộ sinh hình học tự do, shader pixel theo tọa độ thế giới, vật thể sprite có anchor/collider riêng, nước có polygon collision và minimap dùng chung hình học. Đây **mới là bản thử M1**, chưa phải bản chuyển đổi toàn bộ làng hay nghiệm thu trên thiết bị. Xem `client/M1_LAYERED_IMPLEMENTATION.md` để biết giới hạn và cách test.
+
+## World-map terrain blockout — 12/10/2026
+
+`data/world/maps/` có blockout đất, địa hình phụ, đường và nước cho tám khu theo [world topology](../docs/game-design/world-map/00-world-topology-and-routes.md). `data/world/links.json` là nguồn chung cho mười tuyến liên vùng và thang nối B1/B2. Scene `scenes/world_map_blockout_preview.tscn` dựng các polygon/spline thành layer Godot riêng; scene chính, M1 và map Tiled cũ vẫn là các scene độc lập.
+
+Mở scene blockout bằng **F6**. Dùng phím **1–8** chọn vùng, **Tab** đổi tầng Mỏ Ngầm, **WASD/mũi tên** để kéo camera, con lăn để zoom và **F** để vừa khung. Nút tuyến chỉ mô phỏng đổi khu trong client; cổng đang khóa vẫn khóa. Xem `client/WORLD_MAP_BLOCKOUT_PREVIEW.md` cho hướng dẫn và phạm vi.
+
+Đây mới là pass địa hình. Chưa có nhà, cây, props, actors, NPC, quái, gameplay navigation hay server travel; màu và texture shader vẫn là vật liệu blockout. CI chạy static topology check, Godot smoke test và chụp ảnh map để duyệt tiếp.

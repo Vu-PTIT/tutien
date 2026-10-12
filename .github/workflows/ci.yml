@@ -60,6 +60,7 @@ jobs:
           node scripts/check-png-integrity.cjs
           node scripts/check-pixel-scenes.cjs
           node scripts/check-layered-map.cjs
+          node scripts/check-world-map-blockouts.cjs
       - name: Install Godot
         env:
           GODOT_VERSION: ${{ matrix.godot }}
@@ -78,6 +79,15 @@ jobs:
         run: |
           timeout 90 /tmp/godot/engine --headless --path client --script res://tests/layered_map_smoke.gd 2>&1 | tee /tmp/map-smoke.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load|ERROR:' /tmp/map-smoke.log
+      - name: World map terrain blockout smoke
+        run: |
+          timeout 90 /tmp/godot/engine --headless --path client --script res://tests/world_map_blockout_smoke.gd 2>&1 | tee /tmp/world-map-smoke.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load|ERROR:' /tmp/world-map-smoke.log
+      - name: Capture world map terrain blockouts for visual review
+        run: |
+          mkdir -p /tmp/tutien-previews
+          timeout 120 xvfb-run -a /tmp/godot/engine --audio-driver Dummy --path client --script res://tests/world_map_blockout_capture.gd 2>&1 | tee /tmp/world-map-capture.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load|ERROR:' /tmp/world-map-capture.log
       - name: Validate pedestrian routes to houses, garden and bridge
         run: |
           timeout 90 /tmp/godot/engine --headless --path client --script res://tests/layered_route_smoke.gd 2>&1 | tee /tmp/village-routes.log

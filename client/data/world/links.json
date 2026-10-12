@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "cell_size_px": 32,
+  "source": "docs/game-design/world-map/00-world-topology-and-routes.md",
+  "links": [
+    {
+      "id": "ln_lang_thang",
+      "label": "Làng Quê ↔ Thăng Long",
+      "travel_mode": "walk",
+      "status": "open",
+      "a": {
+        "map_id": "m_lang_que",
+        "cell": [
+          249,
+          105
+        ],
+        "entry_anchor_cell": [
+          245,
+          105
+        ]
+      },
+      "b": {
+        "map_id": "m_thang_long",
+        "cell": [
+          10,
+          176
+        ],
+        "entry_anchor_cell": [
+          14,
+          176
+        ]
+      }
+    },
+    {
+      "id": "ln_lang_vanh",
+      "label": "Làng Quê ↔ Vành Đai Tây",
+      "travel_mode": "walk",
+      "status": "open",
+      "a": {
+        "map_id": "m_lang_que",
+        "cell": [
+          147,
+          8
+        ],
+        "entry_anchor_cell": [
+          147,
+          12
+        ]
+      },
+      "b": {
+        "map_id": "m_vanh_dai_tay",
+        "cell": [
+          143,
+          215
+        ],
+        "entry_anchor_cell": [
+          143,
+          211
+        ]
+      }
+    },
+    {
+      "id": "ln_vanh_thang",
+      "label": "Vành Đai Tây ↔ Thăng Long",
+      "travel_mode": "walk",
+      "status": "open",
+      "a": {
+        "map_id": "m_vanh_dai_tay",
+        "cell": [
+          279,
+          109
+        ],
+        "entry_anchor_cell": [
+          275,
+          109
+        ]
+      },
+      "b": {
+        "map_id": "m_thang_long",
+        "cell": [
+          10,
+          100
+        ],
+        "entry_anchor_cell": [
+          14,
+          100
+        ]
+      }
+    },
+    {
+      "id": "ln_vanh_mo",
+      "label": "Vành Đai Tây ↔ Mỏ Lộ Thiên",
+      "travel_mode": "walk",
+      "status": "open",
+      "a": {
+        "map_id": "m_vanh_dai_tay",
+        "cell": [
+          9,
+          55
+        ],
+        "entry_anchor_cell": [
+          13,
+          55
+        ]
+      },
+      "b": {
+        "map_id": "m_mo_lo_thien",
+        "cell": [
+          215,
+          154
+        ],
+        "entry_anchor_cell": [
+          211,
+          154
+        ]
+      }
+    },
+    {
+      "id": "ln_vanh_rung",
+      "label": "Vành Đai Tây ↔ Rừng Ba Vì",
+      "travel_mode": "walk",
+      "status": "open",
+      "a": {
+        "map_id": "m_vanh_dai_tay",
+        "cell": [
+          156,
+          8
+        ],
+        "entry_anchor_cell": [
+          156,
+          12
+        ]
+      },
+      "b": {
+        "map_id": "m_ba_vi",
+        "cell": [
+          155,
+          247
+        ],
+        "entry_anchor_cell": [
+          155,
+          243
+        ]
+      }
+    },
+    {
+      "id": "ln_mo_rung",
+      "label": "Mỏ Lộ Thiên ↔ Rừng Ba Vì",
+      "travel_mode": "walk",
+      "status": "open",
+      "a": {
+        "map_id": "m_mo_lo_thien",
+        "cell": [
+          110,
+          9
+        ],
+        "entry_anchor_cell": [
+          110,
+          13
+        ]
+      },
+      "b": {
+        "map_id": "m_ba_vi",
+        "cell": [
+          9,
+          136
+        ],
+        "entry_anchor_cell": [
+          13,
+          136
+        ]
+      }
+    },
+    {
+      "id": "ln_mo_ngam",
+      "label": "Mỏ Lộ Thiên ↔ Mỏ Ngầm B1",
+      "travel_mode": "lift",
+      "status": "open",
+      "a": {
+        "map_id": "m_mo_lo_thien",
+        "cell": [
+          85,
+          80
+        ],
+        "entry_anchor_cell": [
+          88,
+          82
+        ]
+      },
+      "b": {
+        "map_id": "m_mo_ngam",
+        "floor_id": "b1",
+        "cell": [
+          93,
+          150
+        ],
+        "entry_anchor_cell": [
+          93,
+          146
+        ]
+      }
+    },
+    {
+      "id": "ln_ngam_rung",
+      "label": "Mỏ Ngầm B2 ↔ Rừng Ba Vì",
+      "travel_mode": "walk",
+      "status": "locked_initial",
+      "condition": "Mở sau giấy phép/sửa lối hầm",
+      "a": {
+        "map_id": "m_mo_ngam",
+        "floor_id": "b2",
+        "cell": [
+          183,
+          41
+        ],
+        "entry_anchor_cell": [
+          180,
+          42
+        ]
+      },
+      "b": {
+        "map_id": "m_ba_vi",
+        "cell": [
+          9,
+          213
+        ],
+        "entry_anchor_cell": [
+          13,
+          213
+        ]
+      }
+    },
+    {
+      "id": "ln_rung_tram",
+      "label": "Rừng Ba Vì ↔ Trạm Thiên Mạch",
+      "travel_mode": "gated",
+      "status": "locked_initial",
+      "condition": "Mở sau điều kiện PvE tại chốt",
+      "a": {
+        "map_id": "m_ba_vi",
+        "cell": [
+          168,
+          9
+        ],
+        "entry_anchor_cell": [
+          168,
+          13
+        ]
+      },
+      "b": {
+        "map_id": "m_tram_thien_mach",
+        "cell": [
+          78,
+          119
+        ],
+        "entry_anchor_cell": [
+          78,
+          115
+        ]
+      }
+    },
+    {
+      "id": "ln_thang_cang",
+      "label": "Thăng Long ↔ Cảng Đông Bắc",
+      "travel_mode": "transit",
+      "status": "open",
+      "a": {
+        "map_id": "m_thang_long",
+        "cell": [
+          311,
+          93
+        ],
+        "entry_anchor_cell": [
+          307,
+          93
+        ]
+      },
+      "b": {
+        "map_id": "m_cang_dong_bac",
+        "cell": [
+          9,
+          115
+        ],
+        "entry_anchor_cell": [
+          13,
+          115
+        ]
+      }
+    }
+  ],
+  "floor_links": [
+    {
+      "id": "ln_mg_b1_b2",
+      "label": "Thang mỏ B1 ↔ B2",
+      "travel_mode": "lift",
+      "status": "open",
+      "a": {
+        "map_id": "m_mo_ngam",
+        "floor_id": "b1",
+        "cell": [
+          120,
+          34
+        ],
+        "entry_anchor_cell": [
+          120,
+          38
+        ]
+      },
+      "b": {
+        "map_id": "m_mo_ngam",
+        "floor_id": "b2",
+        "cell": [
+          32,
+          132
+        ],
+        "entry_anchor_cell": [
+          36,
+          129
+        ]
+      }
+    }
+  ]
+}
