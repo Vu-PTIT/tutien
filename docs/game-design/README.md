@@ -56,3 +56,9 @@ Học/làm/nghỉ từ app ánh xạ tới địa điểm, đường đi và slo
 Ở mốc `d8565ca`, client tập trung demo làng bằng `village_demo.gd`, `village_tile_layer.gd` và `village_sprite_object.gd`; việc props đã riêng không chứng minh có đầy đủ tương tác có lưu. Backend xã hội, inventory/reward và prototype chiến đấu là nền kỹ thuật cần đánh giá tái sử dụng, không suy ra rằng chúng đã tích hợp vào scene làng hiện tại.
 
 Cập nhật 08/10 chốt thiết kế, chưa thay renderer, tạo asset hay chạy test Godot. Công cụ học/làm, hiện diện đồng bộ hai phần, farming/fishing và tiến trình thiền vẫn phải được kiểm chứng bằng code và test riêng. Không dùng tài liệu thiết kế như báo cáo tính năng đã hoàn tất.
+
+## 6. Quy hoạch 8 vùng liên thông (đặc tả, 12/10/2026)
+
+Theo yêu cầu mở rộng thế giới: [World Map Blueprint](world-map/README.md) gồm [sơ đồ & 10 cặp portal](world-map/00-world-topology-and-routes.md), [chuẩn layer/runtime](world-map/01-layer-contract-and-runtime.md), **8 hồ sơ map** (làng, thành phố, vành đai, cảng, mỏ lộ thiên, mỏ ngầm, rừng, trạm), [NPC/quái/activity](world-map/10-npc-ai-monsters-and-activities.md), [asset/production](world-map/11-assets-and-production-plan.md) và [QA](world-map/12-qa-and-acceptance.md).
+
+Đây là **bản thiết kế, chưa có 8 scene chơi được**. Bốn vùng trong `04`/`11` vẫn là trọng tâm MVP; bốn khu mới là phần mở rộng đã quy hoạch, triển khai theo milestone và art test trước khi công bố hoàn tất.

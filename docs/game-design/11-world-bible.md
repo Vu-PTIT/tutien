@@ -130,3 +130,9 @@ Quy tắc:
 - [ ] Vùng nguy hiểm giải thích được vì sao dân không sống ở đó (04 §12.4).
 - [ ] Công nghệ còn giá trị (04 §12.5): có ít nhất một thiết bị/hạ tầng hoạt động.
 - [ ] Hub có chỗ để avatar làm hoạt động tự động (slot ngồi, câu, vườn, thiền).
+
+## 11. Quy hoạch thế giới liên vùng mở rộng (12/10/2026, design-only)
+
+Theo hướng phát triển được yêu cầu, sản phẩm cần đồng thời có **làng quê**, **thành phố Thăng Long**, **cảng Đông Bắc**, **mỏ lộ thiên**, **mỏ ngầm** và các vùng dị thú. Bộ hồ sơ [World Map Blueprint](world-map/README.md) quy hoạch **8 vùng**, **10 tuyến nối hai chiều**, bố cục/đường đi/cổng/địa điểm sinh hoạt/NPC/quái, kèm layer runtime, art list và test.
+
+**Phân biệt phạm vi:** 4 map tại §4 là **bốn vùng canon MVP**; trong bản vẽ quy hoạch dài hạn có thêm 4 khu đề xuất `m_lang_que`, `m_cang_dong_bac`, `m_mo_lo_thien`, `m_mo_ngam`. Các khu mới vẫn phải theo tất cả quy tắc hình ảnh ở tài liệu này (Việt Nam hiện đại, “trong ngõ thì ấm, ngoài vành đai thì lạ”). Không suy ra rằng map mới/actor đã có trong client chỉ vì có thiết kế.
