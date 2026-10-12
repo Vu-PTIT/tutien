@@ -28,3 +28,10 @@
 ## Lát cắt client hiện tại
 
 Client Godot giữ đăng nhập, hồ sơ, túi đồ, cộng đồng và đấu trường trực tuyến. Các thao tác gameplay ngoài trận chưa được nối vào giao diện client hiện tại. Dùng [trạng thái triển khai](implementation-status.md), [luật đấu tập](combat-prototype.md) và [hợp đồng inventory/reward](inventory-and-rewards.md) để xem phạm vi đang hỗ trợ.
+
+## 12/10/2026 — Backend hoạt động đời sống trên nhánh map UI
+
+- Thêm API trồng cây/câu cá/đào khoáng, direct/autonomous, session timestamp, lease slot, command receipt, hủy/claim/refund và giữ thưởng khi túi đầy.
+- Lưu hợp đồng backend geometry/slot lấy từ mốc làng mới và blockout vào `server/data/life_world.json` khi client/layout bị gỡ; giữ migration sáu luống và 25 item ID cũ, thêm catalog v3.
+- Thêm unit tests và live Nakama smoke vào CI. Client runtime đang bị gỡ ở các commit trước; lần này chỉ dựng backend/hợp đồng map và điều chỉnh CI theo hiện trạng đó.
+- Tài liệu thao tác: `docs/life-activities-backend.md`.

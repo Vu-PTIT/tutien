@@ -8,11 +8,11 @@ Tu Tiên có **hai không gian song song, dùng chung tài khoản, avatar, bạ
 
 Map mới theo hướng **nền vẽ phân lớp + nước riêng + vật thể tương tác độc lập + dữ liệu va chạm/đi lại riêng**. Giữ phong cách pixel nhưng không bắt toàn bộ làng ghép từ tileset. Tile vẫn dùng được ở luống trồng, sàn hoặc chi tiết lặp. Cây, ghế, cửa và đồ vật có ID, action và state riêng; không bake vào một ảnh nền phẳng.
 
-Quy chuẩn áp dụng trên cả `feat/map-ui-rebuild` và `feat/dual-experience-platform`, không merge chéo toàn bộ code. Xem [10 — Thiết kế map và lộ trình nghiệm thu](docs/game-design/10-layered-interactive-maps.md) và [hướng dẫn client](client/MAP_DESIGN.md).
+Quy chuẩn áp dụng trên cả `feat/map-ui-rebuild` và `feat/dual-experience-platform`, không merge chéo toàn bộ code. Xem [10 — Thiết kế map và lộ trình nghiệm thu](docs/game-design/10-layered-interactive-maps.md). Các đường dẫn demo client phía dưới là mốc lịch sử trước khi runtime bị gỡ ngày 12/10/2026.
 
 **Đã có bản thử M1** tại `client/scenes/layered_village_m1.tscn`: nền/đường/nước bằng các polygon pixel phân lớp, vật thể riêng, tương tác offline mẫu và minimap cùng dữ liệu. Giữ bản đồ cũ tại `legacy_linh_khe.tscn`. Đây chưa phải bản art hoàn chỉnh hoặc đã nghiệm thu Godot/mobile; xem `client/M1_LAYERED_IMPLEMENTATION.md` để theo dõi.
 
-**12/10/2026 — Làng quê mới:** F5 mở `m_lang_que_moi.tscn`. Bản đồ 8192×6144 px được dựng từ dữ liệu trống, với địa hình/placement mới, đình mới, tám khu, 15 NPC và 12 luống. Làng test mở riêng để đối chiếu. Đã kiểm tra đường đi, tương tác và hai cổng trên Godot 4.6.1. Xem [hướng dẫn làng mới](client/LANG_QUE_MOI.md).
+**12/10/2026 — Làng quê mới:** F5 mở `m_lang_que_moi.tscn`. Bản đồ 8192×6144 px được dựng từ dữ liệu trống, với địa hình/placement mới, đình mới, tám khu, 15 NPC và 12 luống. Làng test mở riêng để đối chiếu. Đã kiểm tra đường đi, tương tác và hai cổng trên Godot 4.6.1. Hợp đồng backend lấy các vị trí hoạt động và va chạm của mốc làng này; xem `server/data/life_world.json`.
 
 ## Vai trò nhánh — 09/10/2026
 
@@ -41,32 +41,30 @@ Backend/hợp đồng `activity_session` là phần giao nhau: platform gửi l�
 
 > Demo làng hiện tại là tech demo, không phải chuẩn hình ảnh. Asset pack 16×16 trong `client/assets/tileset/` chưa có license trong repo; chỉ dùng làm placeholder.
 
-## Trạng thái code hiện tại
+## Trạng thái code hiện tại — 12/10/2026
 
-Client trên nhánh này tập trung demo làng. Các nền tài khoản/hồ sơ, túi đồ, cộng đồng và prototype chiến đấu trực tuyến/PvE trong lịch sử dự án cần được đối chiếu khi tích hợp lại, không mặc định đã nằm trong scene làng hiện tại. Lịch/việc cần làm/phòng tập trung, trạng thái đồng bộ giữa hai không gian, trồng trọt/câu cá và vòng chơi sinh hoạt xã hội là **định hướng cần triển khai**, chưa được mô tả như tính năng đã hoàn thành.
+Backend đã có tài khoản/hồ sơ, túi đồ, cộng đồng, prototype combat/PvE và **trồng cây, câu cá, đào khoáng**. Hoạt động có direct/autonomous, giờ server, phiên lưu bền, slot độc quyền, phần thưởng/refund chống trùng và xử lý túi đầy. Có 12 luống, 4 bến câu của làng mới và 4 điểm đào ở mỏ lộ thiên/B1. Xem [API và hướng dẫn nối client](docs/life-activities-backend.md).
 
-## Chạy thử trên Windows
+Các commit mới nhất đã gỡ runtime/asset/layout client, để `client/scenes/main.tscn` là một Node2D trống. Những demo làng ở phần lịch sử phía trên chưa có trong checkout hiện tại. Bản backend này chưa khôi phục giao diện map/game/sảnh. Tiến trình offline được suy ra theo thời gian server; vật phẩm vào túi khi gọi claim.
 
-1. Cài **Godot 4.6.1 Standard**, **Docker Desktop** (Linux containers) và Node.js **22.14.0**.
-2. Khởi động backend khi kiểm tra tính năng có dùng server:
-
-   ```sh
-   docker compose up --build -d
-   ```
-
-3. Mở `client/project.godot` trong Godot 4.6.1 và F5. `main.tscn` hiện trỏ tới **Làng quê**. Map offline này không cần backend.
-4. WASD/mũi tên để đi, Shift chạy, F tương tác, M mở map; nút EN/VI và Cảm ứng nằm trên HUD. M1 và `legacy_linh_khe.tscn` mở riêng bằng F6 để đối chiếu.
-
-Kiểm tra server:
+## Chạy backend
 
 ```sh
+docker compose up --build --wait --wait-timeout 180
+node scripts/smoke.mjs
+node scripts/life-smoke.mjs
+```
+
+Kiểm tra code:
+
+```sh
+node scripts/build-life-world.cjs --check
 cd server
 npm ci
 npm test
-node ../scripts/smoke.mjs
 ```
 
-Dừng dịch vụ bằng `docker compose down`. PostgreSQL dùng named volume và giữ dữ liệu sau khi dừng. Không dùng `down -v` nếu muốn giữ dữ liệu.
+Để đồng bộ geometry sau khi sửa `server/data/life_world.json`, chạy `node scripts/build-life-world.cjs` tại gốc repo. Dừng dịch vụ bằng `docker compose down`; dữ liệu PostgreSQL được giữ trong named volume.
 
 ## Công nghệ
 

@@ -13,6 +13,10 @@ interface WorldFieldMobState extends WorldFieldMobDefinition {
 interface WorldMapDefinition {
   width: number; height: number; spawnX: number; spawnY: number; solids: number[][]; points: WorldPoint[];
   fieldMobs?: WorldFieldMobDefinition[];
+  waters?: WorldWaterRegion[]; bridges?: number[][]; footprints?: number[][];
+}
+interface WorldWaterRegion {
+  shape: string; points?: number[][]; center_cell?: number[]; radii_cells?: number[]; width_cells?: number;
 }
 interface WorldSession {
   mapId: string; x: number; y: number; seq: number; updatedAt: number;
@@ -91,6 +95,14 @@ function worldWalkable(map: WorldMapDefinition, point: number[]): boolean {
   for (let i=0;i<offsets.length;i++) {
     const tx=Math.floor((x+offsets[i][0])/WORLD_TILE), ty=Math.floor((y+offsets[i][1])/WORLD_TILE);
     for(let j=0;j<map.solids.length;j++) { const r=map.solids[j]; if(tx>=r[0]&&tx<r[0]+r[2]&&ty>=r[1]&&ty<r[1]+r[3]) return false; }
+    const px=x+offsets[i][0],py=y+offsets[i][1];
+    const feet=map.footprints||[];
+    for(let j=0;j<feet.length;j++) { const r=feet[j]; if(px>=r[0]&&px<r[0]+r[2]&&py>=r[1]&&py<r[1]+r[3]) return false; }
+    const cx=px/WORLD_TILE,cy=py/WORLD_TILE;
+    const bridges=map.bridges||[];
+    let onBridge=false;
+    for(let j=0;j<bridges.length;j++) { const r=bridges[j]; if(cx>=r[0]&&cx<=r[0]+r[2]&&cy>=r[1]&&cy<=r[1]+r[3]) onBridge=true; }
+    if(!onBridge) for(let j=0;j<(map.waters||[]).length;j++) if(lifeWaterContains(map.waters![j],cx,cy)) return false;
   }
   return true;
 }
@@ -106,8 +118,8 @@ function worldFindPoint(map: WorldMapDefinition, id: string): WorldPoint | undef
 function worldMapReachable(targetId: string): boolean {
   const target=WORLD_MAPS[targetId];
   if (!target || !worldWalkable(target,[target.spawnX,target.spawnY])) return false;
-  const pending: string[] = ["m_an_khe"];
-  const visited: {[mapId: string]: boolean} = {"m_an_khe": true};
+  const pending: string[] = ["m_an_khe", "m_lang_que"];
+  const visited: {[mapId: string]: boolean} = {"m_an_khe": true, "m_lang_que": true};
   while (pending.length > 0) {
     const mapId = pending[0];
     pending.splice(0, 1);
@@ -212,10 +224,14 @@ function worldReadSession(nk: nkruntime.Nakama,userId: string,preferredMapId: st
   return fail(nkruntime.Codes.UNAVAILABLE,"World session is busy; retry");
 }
 function worldWrite(nk:nkruntime.Nakama,userId:string,value:WorldSession,version:string):string {
-  return nk.storageWrite([worldSessionWriteRequest(userId,value,version)])[0].version;
+  const character=loadCharacter(nk,userId);
+  lifeEnsureIdle(character.state,Date.now());
+  // The unchanged profile is a CAS witness: activity_start cannot race a move.
+  return nk.storageWrite([worldSessionWriteRequest(userId,value,version),
+    characterWrite(userId,character.state,character.version)])[0].version;
 }
 const worldGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
-  const userId=authenticated(ctx),loaded=loadCharacter(nk,userId);
+  const userId=authenticated(ctx);
   const input=objectPayload(payload);
   if(Object.keys(input).some(k=>k!=="preferredMapId")) return fail(nkruntime.Codes.INVALID_ARGUMENT,"Only preferredMapId is accepted");
   let preferredMapId="";
@@ -225,11 +241,16 @@ const worldGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     preferredMapId=input.preferredMapId;
   }
   for(let attempt=0;attempt<5;attempt++) {
+    const loaded=loadCharacter(nk,userId);
     const current=worldReadSession(nk,userId,preferredMapId),session=JSON.parse(JSON.stringify(current.session)) as WorldSession;
     const changed=worldEnsureFieldMobs(session,session.mapId,Date.now());
-    if(changed) { try { worldWrite(nk,userId,session,current.version); } catch(_error) { continue; } }
-    return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,seq:session.seq,quest:worldQuestView(loaded.state),
-      fieldMobs:worldFieldMobSnapshot(session,session.mapId)});
+    if(changed&&(!loaded.state.activitySession||loaded.state.activitySession.settlement==="settled")) {
+      try { worldWrite(nk,userId,session,current.version); } catch(_error) { continue; }
+    }
+    const activity=lifeSessionView(loaded.state.activitySession,Date.now());
+    const position=activity&&activity.state!=="cancelled"&&activity.settlement!=="settled" ? lifePosition(loaded.state.activitySession,Date.now()) : session;
+    return JSON.stringify({mapId:position.mapId,x:position.x,y:position.y,seq:session.seq,quest:worldQuestView(loaded.state),
+      fieldMobs:worldFieldMobSnapshot(session,position.mapId),activity:activity,lifeWorldRevision:LIFE_WORLD_REVISION});
   }
   return fail(nkruntime.Codes.UNAVAILABLE,"World field state is busy; retry");
 };
@@ -237,7 +258,9 @@ const worldTravelRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx),input=objectPayload(payload);
   if(Object.keys(input).length!==1||typeof input.mapId!=="string"||!WORLD_MAPS[input.mapId]||!worldMapReachable(input.mapId))
     return fail(nkruntime.Codes.INVALID_ARGUMENT,"Map is not reachable");
+  lifeGuardWorldAction(nk,userId);
   for(let attempt=0;attempt<5;attempt++) {
+    lifeGuardWorldAction(nk,userId);
     const current=worldReadSession(nk,userId),session=current.session;
     const next=JSON.parse(JSON.stringify(session)) as WorldSession;
     if(session.mapId===input.mapId) {
@@ -261,9 +284,11 @@ const worldTravelRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
 };
 const worldMoveRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx),input=objectPayload(payload);
-  if(Object.keys(input).some(k=>["x","y","seq"].indexOf(k)<0)||typeof input.x!=="number"||typeof input.y!=="number"||typeof input.seq!=="number"||input.seq%1!==0||input.seq<1)
+  if(Object.keys(input).some(k=>["x","y","seq"].indexOf(k)<0)||typeof input.x!=="number"||!isFinite(input.x)||typeof input.y!=="number"||!isFinite(input.y)||typeof input.seq!=="number"||!isFinite(input.seq)||input.seq%1!==0||input.seq<1)
     return fail(nkruntime.Codes.INVALID_ARGUMENT,"Expected x, y and positive integer seq");
+  lifeGuardWorldAction(nk,userId);
   for(let attempt=0;attempt<5;attempt++) {
+    lifeGuardWorldAction(nk,userId);
     const current=worldReadSession(nk,userId),s=current.session,map=WORLD_MAPS[s.mapId];
     if(input.seq===s.seq&&input.x===s.x&&input.y===s.y) return JSON.stringify({mapId:s.mapId,x:s.x,y:s.y,seq:s.seq,replayed:true});
     if(input.seq<=s.seq) return fail(nkruntime.Codes.ABORTED,"Stale world movement sequence");
@@ -283,15 +308,17 @@ const worldMoveRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
 const worldInteractRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx),input=objectPayload(payload);
   if(Object.keys(input).length!==1||typeof input.entityId!=="string") return fail(nkruntime.Codes.INVALID_ARGUMENT,"Only entityId is accepted");
+  lifeGuardWorldAction(nk,userId);
   const current=worldReadSession(nk,userId),session=current.session,map=WORLD_MAPS[session.mapId];
   const point=worldFindPoint(map,input.entityId);
   if(!point) return fail(nkruntime.Codes.NOT_FOUND,"This object is not interactable in the current map");
   const centerX=point.x,centerY=point.y;
   if(worldDistance(session.x,session.y,centerX,centerY)>point.radius*WORLD_TILE) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Move closer to interact");
   if(!worldPathWalkable(map,[session.x,session.y],[centerX,centerY])) return fail(nkruntime.Codes.FAILED_PRECONDITION,"A blocker is between you and this object");
-  if(point.kind==="locked") return fail(nkruntime.Codes.FAILED_PRECONDITION,"Lối sang Thạch Cạn chưa mở trong phần chơi hiện tại.");
+  if(point.kind==="locked") return fail(nkruntime.Codes.FAILED_PRECONDITION,"Lối này chưa mở trong phần chơi hiện tại.");
   if(point.kind==="gate") {
     for(let attempt=0;attempt<5;attempt++) {
+      lifeGuardWorldAction(nk,userId);
       const latest=worldReadSession(nk,userId),latestSession=latest.session,latestMap=WORLD_MAPS[latestSession.mapId];
       const gate=worldFindPoint(latestMap,input.entityId);
       if(!gate||gate.kind!=="gate") return fail(nkruntime.Codes.NOT_FOUND,"This gate is no longer on the current map");
@@ -319,12 +346,14 @@ const worldInteractRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,profile:gathered.profile,
       message:"Đã thu thập tài nguyên. Nút sẽ hồi lại sau một phút."});
   }
+  if(point.kind==="life") return JSON.stringify({site:lifeSite(point.id),actions:lifeSite(point.id).type==="gardening"?["plant","harvest"]:["start"],serverNow:Date.now()});
   const result=applyWorldQuestInteraction(nk,userId,input.entityId);
   return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,quest:result.quest,profile:result.profile,message:result.message});
 };
 
 const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx),input=objectPayload(payload);
+  lifeGuardWorldAction(nk,userId);
   if(Object.keys(input).some(function(key){return key!=="targetId"&&key!=="skillId";})||
       typeof input.targetId!=="string"||(input.skillId!==undefined&&typeof input.skillId!=="string"))
     return fail(nkruntime.Codes.INVALID_ARGUMENT,"Expected targetId and optional skillId only");

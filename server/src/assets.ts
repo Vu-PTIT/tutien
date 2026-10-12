@@ -237,6 +237,7 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
       return fail(nkruntime.Codes.ALREADY_EXISTS, "Reward source already claimed");
     }
     const loaded = loadCharacter(nk, userId);
+    if(additionalWrites.some(function(w){return w.collection==="world_sessions";})) lifeEnsureIdle(loaded.state,Date.now());
     const applied = addReward(loaded.state, bundle, nk);
     const next = applied.state;
     const granted: RewardBundle = { spiritStones: bundle.spiritStones, items: bundle.items,
@@ -273,7 +274,7 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
 const inventoryGetRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) {
   const userId = authenticated(ctx);
   return JSON.stringify({ profile: loadCharacter(nk, userId).state, capacity: BAG_SIZE,
-    catalogVersion: 2, catalog: ITEM_CATALOG, skills: SKILL_CATALOG,
+    catalogVersion: 3, catalog: ITEM_CATALOG, skills: SKILL_CATALOG,
     starterClaimed: nk.storageRead([receiptId(userId, "source:starter:v1")]).length > 0,
     pendingSettlement: getPvePendingSettlement(nk, userId) });
 };
@@ -516,9 +517,11 @@ const inventoryDiscardRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, p
 // Economy prices, recipes and crop timers are server-owned. Every action is
 // committed through the same profile revision + operation receipt as inventory.
 const SHOP_BUY: {[itemId: string]: number} = {
+  it_fishing_rod: 5, it_pickaxe: 5, it_bait: 1,
   it_heal_pill: 8, it_seed_cam_lo: 3, it_seed_tinh_tam: 3, it_seed_ich_khi: 3, it_water: 1
 };
 const SHOP_SELL: {[itemId: string]: number} = {
+  it_fish_carp: 3, it_fish_tilapia: 2, it_copper: 2,
   it_bamboo: 1, it_boar_hide: 3, it_escape_talisman: 2, it_heal_pill: 2,
   it_herb_cam_lo: 1, it_herb_ich_khi: 1, it_herb_tinh_tam: 1, it_iron: 1,
   it_qi_pill: 2, it_seed_cam_lo: 1, it_seed_tinh_tam: 1, it_seed_ich_khi: 1,
@@ -533,6 +536,7 @@ const RECIPES: {[recipeId: string]: RecipeDefinition} = {
   rc_escape: {ingredients: {it_herb_tinh_tam: 2, it_bamboo: 1}, fee: 4, output: "it_escape_talisman"}
 };
 function requireServicePosition(nk: nkruntime.Nakama, userId: string, entityId: string): void {
+  lifeGuardWorldAction(nk,userId);
   const current = worldReadSession(nk, userId).session, map = WORLD_MAPS[current.mapId];
   const point = worldFindPoint(map, entityId);
   if (!point || worldDistance(current.x, current.y, point.x, point.y) > point.radius * WORLD_TILE ||
@@ -575,6 +579,7 @@ const economyActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payl
     if (price === undefined || (action === "buy" && catalogItem(itemId).instance) || catalogItem(itemId).bound) return fail(nkruntime.Codes.FAILED_PRECONDITION, "This item is not available at the shop");
     details.price = price;
     return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "shop_" + action, details, function (next) {
+      lifeEnsureIdle(next,Date.now());requireServicePosition(nk,userId,"ak.market.village");
       const total = price * (quantity as number);
       if (action === "buy") {
         if (next.spiritStones < total) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Not enough linh thạch");
@@ -591,6 +596,7 @@ const economyActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payl
     if (typeof input.recipeId !== "string" || !RECIPES[input.recipeId]) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Unknown recipe");
     const recipe = RECIPES[input.recipeId]; details.recipeId = input.recipeId;
     return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "craft", details, function (next) {
+      lifeEnsureIdle(next,Date.now());requireServicePosition(nk,userId,"ak.service.do_khe");
       if (next.spiritStones < recipe.fee * (quantity as number)) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Not enough linh thạch for crafting");
       for (const ingredient in recipe.ingredients) economyRemove(next, ingredient, recipe.ingredients[ingredient] * (quantity as number));
       next.spiritStones -= recipe.fee * (quantity as number);
@@ -600,40 +606,7 @@ const economyActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payl
   return fail(nkruntime.Codes.INVALID_ARGUMENT, "Action must be buy, sell or craft");
 };
 const gardenActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payload) {
-  const userId = authenticated(ctx), input = objectPayload(payload);
-  if (Object.keys(input).some(function (key) { return ["operationId", "action", "plotId", "cropId"].indexOf(key) < 0; }) ||
-      typeof input.operationId !== "string" || typeof input.action !== "string" || !assetInteger(input.plotId, 0, 5)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid garden request");
-  const action = input.action, plotId = input.plotId as number, cropId = typeof input.cropId === "string" ? input.cropId : "";
-  requireServicePosition(nk, userId, "ak.garden.home");
-  if (action === "plant" && ["crop_cam_lo", "crop_tinh_tam", "crop_ich_khi"].indexOf(cropId) < 0) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Unknown crop");
-  const crops: {[key: string]: {seed: string; output: string; duration: number}} = {
-    crop_cam_lo: {seed: "it_seed_cam_lo", output: "it_herb_cam_lo", duration: 20 * 60 * 1000},
-    crop_tinh_tam: {seed: "it_seed_tinh_tam", output: "it_herb_tinh_tam", duration: 45 * 60 * 1000},
-    crop_ich_khi: {seed: "it_seed_ich_khi", output: "it_herb_ich_khi", duration: 60 * 60 * 1000}
-  };
-  return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "garden_" + action, {plotId: plotId, cropId: cropId}, function (next) {
-    const plots: {[key: string]: any}[] = Array.isArray(next.gardenPlots) ? next.gardenPlots : [];
-    if (!plots.length) for (let i = 0; i < 6; i++) plots.push({plotId: i, state: "empty", version: 0});
-    if (plots.length !== 6) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Garden state requires review");
-    for (let i = 0; i < plots.length; i++) {
-      if (!plots[i] || plots[i].plotId !== i || ["empty", "growing"].indexOf(plots[i].state) < 0 ||
-          !assetInteger(plots[i].version, 0, ASSET_LIMIT)) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Garden state requires review");
-    }
-    const plot = plots[plotId];
-    if (!plot || plot.plotId !== plotId) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Garden plot requires review");
-    if (action === "plant") {
-      if (plot.state !== "empty") return fail(nkruntime.Codes.FAILED_PRECONDITION, "This plot is occupied");
-      economyRemove(next, crops[cropId].seed, 1); economyRemove(next, "it_water", 1);
-      const now = Date.now(); plot.state = "growing"; plot.cropId = cropId; plot.plantedAt = now;
-      plot.readyAt = now + crops[cropId].duration; plot.plantingId = input.operationId;
-    } else if (action === "harvest") {
-      if (plot.state !== "growing" || !plot.cropId || Date.now() < plot.readyAt) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Crop is not ready to harvest");
-      const crop = crops[plot.cropId]; if (!crop) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Crop requires review");
-      economyAdd(next, crop.output, 4, nk); plot.state = "empty"; plot.cropId = "";
-      plot.plantedAt = 0; plot.readyAt = 0; plot.plantingId = "";
-    } else return fail(nkruntime.Codes.INVALID_ARGUMENT, "Action must be plant or harvest");
-    plot.version = (plot.version || 0) + 1; next.gardenPlots = plots;
-  }));
+  return lifeGardenAction(ctx,nk,payload);
 };
 function gatherWorldResource(nk: nkruntime.Nakama, userId: string, entityId: string): JsonObject {
   const sources: {[id: string]: {itemId: string; quantity: number}} = {

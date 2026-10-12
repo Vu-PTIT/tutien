@@ -3,6 +3,7 @@ const getProfile: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) 
 };
 
 function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkruntime.Nakama, initializer: nkruntime.Initializer): void {
+  installLifeWorldMaps();
   initializer.registerRpc("get_profile", getProfile);
   initializer.registerRpc("inventory_get", inventoryGetRpc);
   initializer.registerRpc("inventory_claim_starter", inventoryClaimStarterRpc);
@@ -12,6 +13,14 @@ function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkr
   initializer.registerRpc("inventory_discard", inventoryDiscardRpc);
   initializer.registerRpc("economy_action", economyActionRpc);
   initializer.registerRpc("garden_action", gardenActionRpc);
+  initializer.registerRpc("garden_get", gardenGetRpc);
+  initializer.registerRpc("life_get", lifeGetRpc);
+  initializer.registerRpc("life_claim_starter", lifeClaimStarterRpc);
+  initializer.registerRpc("activity_start", activityStartRpc);
+  initializer.registerRpc("activity_get", activityGetRpc);
+  initializer.registerRpc("activity_claim", activityClaimRpc);
+  initializer.registerRpc("activity_cancel", activityCancelRpc);
+  initializer.registerRpc("activity_control", activityControlRpc);
   initializer.registerRpc("pve_son_tru_create", pveSonTruCreateRpc);
   initializer.registerRpc("pve_son_tru_claim_pending", pveSonTruClaimPendingRpc);
   initializer.registerRpc("world_get", worldGetRpc);

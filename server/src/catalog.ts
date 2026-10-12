@@ -8,6 +8,10 @@ const ITEM_CATALOG: ItemDefinition[] = [
   itemDefinition("it_seed_tinh_tam", "Hạt Tĩnh Tâm"), itemDefinition("it_herb_tinh_tam", "Tĩnh Tâm"),
   itemDefinition("it_seed_ich_khi", "Hạt Ích Khí"), itemDefinition("it_herb_ich_khi", "Ích Khí"),
   itemDefinition("it_water", "Nước"), itemDefinition("it_bamboo", "Trúc"),
+  itemDefinition("it_fishing_rod", "Cần câu", false, false, {stackMax:1}),
+  itemDefinition("it_pickaxe", "Cuốc chim", false, false, {stackMax:1}),
+  itemDefinition("it_bait", "Mồi câu"), itemDefinition("it_fish_carp", "Cá chép"),
+  itemDefinition("it_fish_tilapia", "Cá rô phi"), itemDefinition("it_copper", "Đồng quặng"),
   itemDefinition("it_iron", "Thiết quặng"), itemDefinition("it_spirit_dust", "Linh sa"),
   itemDefinition("it_spider_silk", "Tơ nhện"), itemDefinition("it_boar_hide", "Da Sơn Trư"),
   itemDefinition("it_venom", "Độc dịch"), itemDefinition("it_heal_pill", "Hồi Nguyên Hoàn"),
@@ -45,6 +49,7 @@ function itemDefinition(id: string, name: string, instance: boolean = false, bou
   if (typeof stats.equipSlot === "string") definition.equipSlot = stats.equipSlot;
   if (typeof stats.attackBonus === "number") definition.attackBonus = stats.attackBonus;
   if (typeof stats.defenseBonus === "number") definition.defenseBonus = stats.defenseBonus;
+  if (typeof stats.stackMax === "number") definition.stackMax = stats.stackMax;
   if (id === "it_heal_pill") definition.healAmount = 40;
   return definition;
 }
