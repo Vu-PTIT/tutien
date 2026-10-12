@@ -432,3 +432,7 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   }
   return fail(nkruntime.Codes.UNAVAILABLE,"World combat is busy; retry");
 };
+
+// Each RPC VM evaluates the bundle independently of the initializer VM.
+// Install immutable map data in every VM before any RPC runs.
+installLifeWorldMaps();

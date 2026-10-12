@@ -3,7 +3,6 @@ const getProfile: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) 
 };
 
 function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkruntime.Nakama, initializer: nkruntime.Initializer): void {
-  installLifeWorldMaps();
   initializer.registerRpc("get_profile", getProfile);
   initializer.registerRpc("inventory_get", inventoryGetRpc);
   initializer.registerRpc("inventory_claim_starter", inventoryClaimStarterRpc);

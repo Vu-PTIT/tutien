@@ -1,6 +1,7 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
+const fs = require('node:fs');
 const {setup,clone,A,rejectsCode} = require('./helpers/assets.cjs');
 const B = '22222222-2222-4222-8222-222222222222';
 const now = 1800000000000;
@@ -18,6 +19,10 @@ function command(s,action,session,op='activity_command_0001',extra={}) {
   return s.rpc('activity_'+action,{operationId:op,sessionId:session.sessionId,stateVersion:session.stateVersion,...extra});
 }
 const quantity=(s,id)=>s.state().inventory.filter(p=>p.itemId===id).reduce((a,p)=>a+p.quantity,0);
+test('fresh RPC VMs have the life world without calling the separate initializer',()=>{
+  const scope=vm.createContext({});vm.runInContext(fs.readFileSync('build/index.js','utf8'),scope);
+  assert.equal(scope.worldMapReachable('m_lang_que'),true);assert.equal(scope.worldMapReachable('m_mo_ngam'),true);
+});
 test('life RPCs require authentication and reject forged times, yields, owners and unexpected fields',()=>{
   const s=setup();
   for(const name of ['life_get','garden_get','activity_get','life_claim_starter','activity_start','activity_claim','activity_cancel','activity_control']) rejectsCode(()=>s.rpc(name,{},''),16);
