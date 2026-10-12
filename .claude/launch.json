@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "platform",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["platform/server.mjs"],
+      "port": 4173,
+      "autoPort": true
+    }
+  ]
+}

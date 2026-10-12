@@ -1,4 +1,5 @@
-import { activityArtwork, lunarSeal, moodArtwork } from './art.mjs';
+import { activityArtwork, avatarPortrait, lunarSeal, moodArtwork, pixelMoon } from './art.mjs';
+import { mountScenes } from './pixel.mjs';
 import {
  ACTIVITY_CATALOG, CATEGORY_COLORS, CATEGORY_NAMES, DEFAULT_SETTINGS, addLifeEntry, approximateMoonAge,
  canChiDay, canChiYear, dateParts, dateRange, dayFromISO, entriesForDay, formatDate, formatDuration,
@@ -55,7 +56,7 @@ const ico = {
  eye:'<path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
 function icon(name, size=20, cls='') { return `<svg class="icon ${cls}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ico[name] || ico.star}</svg>`; }
-function logo(id='sidebar'){return `<span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 42 42" fill="none"><defs><linearGradient id="logo-grad-${id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#72E4CF"/><stop offset="1" stop-color="#1D789F"/></linearGradient></defs><path d="m2 29 11-15 7 10 9-15 11 20-1 8H3z" fill="url(#logo-grad-${id})"/><path d="m13 14 7 10 4-6 5-9 7 14-7-5-5 6-4 5-7-8-7 8" fill="#F8E6AE"/><path d="M2 31c10 6 24 7 38 0v5H2z" fill="#79B69F"/></svg></span>`}
+function logo(id='sidebar'){return `<span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 42 42" fill="none"><defs><linearGradient id="logo-grad-${id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#E6B85C"/><stop offset="1" stop-color="#C2603E"/></linearGradient></defs><path d="m2 29 11-15 7 10 9-15 11 20-1 8H3z" fill="url(#logo-grad-${id})"/><path d="m13 14 7 10 4-6 5-9 7 14-7-5-5 6-4 5-7-8-7 8" fill="#F8E6AE"/><path d="M2 31c10 6 24 7 38 0v5H2z" fill="#5E9E4A"/></svg></span>`}
 
 const D = {
  vi: {
@@ -63,7 +64,7 @@ const D = {
   homeShort:'Trang chủ', calendarShort:'Lịch', insightsShort:'Thống kê', more:'Thêm', brandTag:'Mỗi ngày, một bước tu dưỡng',
   greet:'Hôm nay bạn đang làm gì?', greetSub:'Mỗi việc nhỏ hôm nay đều đáng được ghi lại.', quick:'Check-in nhanh', quickSub:'Chạm để ghi lại một khoảnh khắc',
   current:'Đang thực hiện', journalToday:'Nhật ký hôm nay', viewAll:'Xem tất cả', add:'Thêm', addActivity:'Thêm hoạt động',
-  calendarQuick:'Lịch của bạn', insightsQuick:'Tuần này của bạn', yourWorld:'Góc tu tiên', week:'Tuần', month:'Tháng', day:'Ngày', year:'Năm',
+  calendarQuick:'Lịch của bạn', insightsQuick:'Tuần này của bạn', yourWorld:'Bờ hồ trong ngõ', week:'Tuần', month:'Tháng', day:'Ngày', year:'Năm',
   today:'Hôm nay', date:'Ngày', categories:'Danh mục', done:'Đã ghi', planned:'Kế hoạch', noEntries:'Chưa ghi nhận hoạt động nào trong ngày này.',
   noEntriesHint:'Chọn một biểu tượng để bắt đầu nhật ký của bạn.', noPlans:'Chưa có kế hoạch trong ngày này.',
   createPlan:'Tạo kế hoạch', title:'Tên hoạt động', time:'Giờ bắt đầu', duration:'Thời lượng', notes:'Ghi chú', save:'Lưu', cancel:'Hủy', delete:'Xóa', edit:'Sửa',
@@ -97,7 +98,7 @@ const D = {
   homeShort:'Home',calendarShort:'Calendar',insightsShort:'Insights',more:'More',brandTag:'A little cultivation, every day',
   greet:'What are you doing today?',greetSub:'The little moments are worth remembering.',quick:'Quick check-in',quickSub:'Tap to capture a moment',
   current:'Current activity',journalToday:"Today's journal",viewAll:'View all',add:'Add',addActivity:'Add activity',
-  calendarQuick:'Your calendar',insightsQuick:'Your week',yourWorld:'Cultivation corner',week:'Week',month:'Month',day:'Day',year:'Year',
+  calendarQuick:'Your calendar',insightsQuick:'Your week',yourWorld:'Lakeside lane',week:'Week',month:'Month',day:'Day',year:'Year',
   today:'Today',date:'Date',categories:'Categories',done:'Logged',planned:'Plans',noEntries:'Nothing logged for this day yet.',
   noEntriesHint:'Tap an icon to begin your personal journal.',noPlans:'No plans for this day yet.',
   createPlan:'Create plan',title:'Activity name',time:'Start time',duration:'Duration',notes:'Notes',save:'Save',cancel:'Cancel',delete:'Delete',edit:'Edit',
@@ -145,8 +146,8 @@ function renderSidebar(){return `<aside class="sidebar" aria-label="${safeText(l
  ${renderNavLink('app','home',t('home'))}${renderNavLink('app/calendar','calendar',t('calendar'))}
  ${renderNavLink('app/journal','book',t('journal'))}${renderNavLink('app/insights','chart',t('insights'))}
  ${renderNavLink('app/world','mountain',t('world'))}${renderNavLink('app/community','people',t('community'))}
- </nav><div class="side-bottom"><a class="side-paint" href="/app/world" data-nav="app/world"><span class="side-paint-caption">${loc('Mỗi ngày tốt hơn một chút.','A little better every day.')}<small>${loc('Hành trình tu dưỡng','A cultivation journey')}</small></span></a>
- <a href="/app/settings" data-nav="app/settings" class="side-profile" aria-label="${safeText(loc('Hồ sơ Hành giả','Traveler profile'))}"><img src="/assets/avatar-portrait.webp" alt=""/><span><strong>${loc('Hành giả','Traveler')}</strong><small>${loc('Chưa liên kết tài khoản','Local profile')}</small></span></a></div></aside>`;}
+ </nav><div class="side-bottom"><a class="side-paint" href="/app/world" data-nav="app/world"><canvas data-scene="sidebar" aria-hidden="true"></canvas><span class="side-paint-caption">${loc('Mỗi ngày tốt hơn một chút.','A little better every day.')}<small>${loc('Hành trình tu dưỡng','A cultivation journey')}</small></span></a>
+ <a href="/app/settings" data-nav="app/settings" class="side-profile" aria-label="${safeText(loc('Hồ sơ Hành giả','Traveler profile'))}">${avatarPortrait(32)}<span><strong>${loc('Hành giả','Traveler')}</strong><small>${loc('Chưa liên kết tài khoản','Local profile')}</small></span></a></div></aside>`;}
 function renderMobileNav(){let current=ui.route;return `<nav class="mobile-nav" aria-label="${safeText(loc('Điều hướng dưới','Bottom navigation'))}">
  ${renderMobileItem('app','home',t('homeShort'))}${renderMobileItem('app/calendar','calendar',t('calendarShort'))}
  <button class="mobile-add" type="button" data-action="show-quick" aria-label="${safeText(t('addActivity'))}">${icon('plus',24)}</button>
@@ -156,31 +157,19 @@ function renderMobileItem(route,icoName,txt){return `<a class="mobile-item ${ui.
 function renderTopbar(){const today=zonedDate(new Date(),tz());return `<header class="topbar"><a class="topbar-mobile-brand" href="/app" data-nav="app">${logo('header')}<strong>TuTien</strong></a><div class="crumb"><span>${icon('sun',14)} ${safeText(formatDate(today,state.settings.locale,{weekday:'long',day:'numeric',month:'long'}))}</span></div>
  <div class="top-actions"><button type="button" class="top-search" data-action="show-quick">${icon('search',18)} <span>${loc('Tìm hoạt động nhanh...','Find an activity...')}</span><kbd>Ctrl K</kbd></button>
  <span class="top-notifications" title="${loc('Thông báo chưa kết nối','Notifications are not connected')}">${icon('bell',19)}</span>
- <a href="/app/settings" data-nav="app/settings" class="top-avatar" aria-label="${safeText(t('settings'))}"><img src="/assets/avatar-portrait.webp" alt=""/></a></div></header>`;}
+ <a href="/app/settings" data-nav="app/settings" class="top-avatar" aria-label="${safeText(t('settings'))}">${avatarPortrait(32)}</a></div></header>`;}
 function hero(title,subtitle,{eyebrow='',compact=false,quote=''}={}){
  const page=ui.route==='app'?'home':ui.route.split('/').at(-1);
  const translatedTitle=page==='home'?(state.settings.locale==='vi'?'What are you doing today?':'Hôm nay bạn đang làm gì?'):'';
  const translatedLang=state.settings.locale==='vi'?'en':'vi';
  return `<section class="hero hero-page-${page} ${compact?'hero-compact':''}" aria-label="${safeText(title)}">
- <div class="hero-content">${eyebrow?`<div class="hero-eyebrow">${icon('spark',15)} ${safeText(eyebrow)}</div>`:''}<h1>${safeText(title)}</h1>${translatedTitle?`<p class="hero-translation" lang="${translatedLang}">${safeText(translatedTitle)}</p>`:''}<p class="hero-summary">${safeText(subtitle)}</p><div class="hero-chips"><span>${icon('sun',13)} ${safeText(formatDate(zonedDate(new Date(),tz()),state.settings.locale))}</span><span>${icon('moon',13)} ${state.settings.showLunar?`${lunarForISO(zonedDate(new Date(),tz())).day}/${lunarForISO(zonedDate(new Date(),tz())).month} ${loc('âm lịch','lunar')}`:loc('Ghi lại cuộc sống','Living journal')}</span></div></div>
+ <div class="hero-scene"><canvas data-scene="${page}" aria-hidden="true"></canvas></div><div class="hero-content">${eyebrow?`<div class="hero-eyebrow">${icon('spark',15)} ${safeText(eyebrow)}</div>`:''}<h1>${safeText(title)}</h1>${translatedTitle?`<p class="hero-translation" lang="${translatedLang}">${safeText(translatedTitle)}</p>`:''}<p class="hero-summary">${safeText(subtitle)}</p><div class="hero-chips"><span>${icon('sun',13)} ${safeText(formatDate(zonedDate(new Date(),tz()),state.settings.locale))}</span><span>${icon('moon',13)} ${state.settings.showLunar?`${lunarForISO(zonedDate(new Date(),tz())).day}/${lunarForISO(zonedDate(new Date(),tz())).month} ${loc('âm lịch','lunar')}`:loc('Ghi lại cuộc sống','Living journal')}</span></div></div>
  ${quote?`<div class="hero-quote">${icon('spark',15)} <span>${safeText(quote)}</span></div>`:''}</section>`;
 }
 function panelTitle(title,extra=''){return `<div class="section-heading"><h2>${safeText(title)}</h2>${extra}</div>`;}
 function pillAction(action,text,icoName='plus',extra=''){return `<button class="pill-btn ${extra}" data-action="${action}" type="button">${icon(icoName,16)}<span>${safeText(text)}</span></button>`;}
 function activityIllustration(activity,size=31){ return activityArtwork(activity?.icon||'lotus',size) || icon(activity?.icon||'lotus',size,'activity-picto'); }
-function phaseGlyph(day,size=16){
- const phase=day<=3?'new':day<=7?'waxing':day<=11?'first':day<=17?'full':day<=21?'waning':day<=26?'last':'waning-crescent';
- const shapes={
-  new:'<circle cx="12" cy="12" r="8.6" fill="#304755"/>',
-  waxing:'<circle cx="12" cy="12" r="8.6" fill="#304755"/><path d="M12 3.4a8.6 8.6 0 0 1 0 17.2 5.2 8.6 0 0 0 0-17.2Z" fill="#f0d293"/>',
-  first:'<circle cx="12" cy="12" r="8.6" fill="#304755"/><path d="M12 3.4a8.6 8.6 0 0 1 0 17.2V3.4Z" fill="#f0d293"/>',
-  full:'<circle cx="12" cy="12" r="8.6" fill="#f0d293"/><circle cx="9" cy="9" r="1" fill="#c49d5d" opacity=".55"/><circle cx="15.2" cy="13.5" r="1.35" fill="#c49d5d" opacity=".45"/><circle cx="9.5" cy="16" r=".7" fill="#c49d5d" opacity=".45"/>',
-  waning:'<circle cx="12" cy="12" r="8.6" fill="#f0d293"/><path d="M12 3.4a8.6 8.6 0 0 0 0 17.2 5.2 8.6 0 0 1 0-17.2Z" fill="#304755"/>',
-  last:'<circle cx="12" cy="12" r="8.6" fill="#304755"/><path d="M12 3.4a8.6 8.6 0 0 0 0 17.2V3.4Z" fill="#f0d293"/>',
-  'waning-crescent':'<circle cx="12" cy="12" r="8.6" fill="#304755"/><path d="M12 3.4a8.6 8.6 0 0 0 0 17.2 5.2 8.6 0 0 1 0-17.2Z" fill="#f0d293"/>'
- };
- return '<svg class="moon-phase-icon" width="'+size+'" height="'+size+'" viewBox="0 0 24 24" aria-hidden="true">'+shapes[phase]+'<circle cx="12" cy="12" r="8.75" fill="none" stroke="#e3bf80" stroke-width=".65"/></svg>';
-}
+function phaseGlyph(day,size=16){return pixelMoon(day,size);}
 function activityCard(a,opts={}){
  const pinned=state.pinnedIds.includes(a.id);
  const targetDate=ui.selectedDate||zonedDate(new Date(),tz());
@@ -230,7 +219,7 @@ function statsMini(){const s=weeklySummary(state,ui.selectedDate);return `<secti
  ${bars(s.byDay,s.days,true)}<div class="stats-mini-bottom"><span>${icon('feather',15)} ${s.totalActions} ${safeText(t('actionsCount').toLowerCase())}</span><span>${icon('sun',15)} ${s.activeDays}/7 ${safeText(t('activeDays').toLowerCase())}</span></div></section>`;}
 function bars(byDay,days,mini=false){const heights=byDay.map(arr=>arr.reduce((sum,e)=>sum+(Number(e.quantity)||1),0)),max=Math.max(...heights,5);
  return `<div class="bars ${mini?'bars-mini':''}" role="img" aria-label="${safeText(loc('Biểu đồ hoạt động trong tuần','Weekly activity count chart'))}">${heights.map((count,i)=>`<div class="bar-slot" title="${safeText(formatDate(days[i],state.settings.locale,{weekday:'long',day:'numeric'}))}: ${count} ${safeText(t('actionsCount'))}"><div class="bar-track"><div class="bar-fill" style="height:${Math.max(count?5:2,count/max*100)}%;background:${['#a7c9e3','#76bfb5','#c8b0e8','#e6c68a','#8ebfab','#edbfae','#aec9e6'][i]}"></div></div><small>${safeText(formatDate(days[i],state.settings.locale,{weekday:'short'}))}</small></div>`).join('')}</div>`;}
-function worldTeaser(){return `<section class="card world-teaser"><div class="world-teaser-art"><span>${icon('mountain',15)} ${safeText(t('yourWorld'))}</span></div><div class="world-teaser-body"><div><strong>${safeText(t('worldUnavailable'))}</strong><p>${loc('Một thế giới bình yên chờ bạn trở về.','A peaceful world waiting for your return.')}</p></div><a class="round-arrow" href="/app/world" data-nav="app/world" aria-label="${safeText(t('world'))}">${icon('arrow',18)}</a></div></section>`;}
+function worldTeaser(){return `<section class="card world-teaser"><div class="world-teaser-art"><canvas data-scene="teaser" aria-hidden="true"></canvas><span>${icon('mountain',15)} ${safeText(t('yourWorld'))}</span></div><div class="world-teaser-body"><div><strong>${safeText(t('worldUnavailable'))}</strong><p>${loc('Bến câu ở bờ hồ đang chờ avatar của bạn.','The lakeside fishing spot is waiting for your avatar.')}</p></div><a class="round-arrow" href="/app/world" data-nav="app/world" aria-label="${safeText(t('world'))}">${icon('arrow',18)}</a></div></section>`;}
 
 function mysticDayPreview(){const selected=ui.selectedDate,lunar=lunarForISO(selected);return `<section class="card day-preview">
  ${panelTitle(loc('Chi tiết ngày','Day details'),`<a href="/app/calendar" data-nav="app/calendar" class="text-link">${t('viewAll')} ${icon('right',14)}</a>`)}
@@ -245,7 +234,7 @@ function journalRitual(){const today=entriesForDay(state,ui.selectedDate);const 
  const values=types.map(([category,iconName,label])=>{const count=today.filter(e=>getActivity(e.activityId,state)?.category===category).reduce((sum,e)=>sum+(Number(e.quantity)||1),0);return {category,iconName,label,count};});const max=Math.max(1,...values.map(v=>v.count));
  return `<section class="card cultivation-panel">${panelTitle(loc('Nhịp tu dưỡng trong ngày','Today’s cultivation rhythm'))}<p class="culture-caption">${loc('Từ số lần làm việc thực tế, không phải chỉ số sức mạnh trong game.','Based on real-life action counts, not game power stats.')}</p><div class="ritual-bars">${values.map(v=>`<div class="ritual-row"><span>${icon(v.iconName,19)}</span><div><strong>${safeText(v.label)}</strong><small>${v.count} ${loc('lần','times')}</small><i style="--progress:${Math.round(v.count/max*100)}%"></i></div></div>`).join('')}</div></section>`;
 }
-function homePage(){const iso=zonedDate(new Date(),tz());ui.selectedDate ||=iso;return `${hero(t('greet'),t('greetSub'),{eyebrow:loc('TU TIEN · NHẬT KÝ ĐỜI SỐNG','TU TIEN · LIVING JOURNAL'),quote:loc('Tích tiểu thành đại, mỗi ngày đều là một bước tu hành.','Small steps, steady cultivation.')})}
+function homePage(){const iso=zonedDate(new Date(),tz());ui.selectedDate ||=iso;return `${hero(t('greet'),t('greetSub'),{eyebrow:loc('TUTIEN · NHẬT KÝ ĐỜI SỐNG','TU TIEN · LIVING JOURNAL')})}
  <div class="date-ribbon"><div>${icon('moon',18)} <strong>${safeText(formatDate(ui.selectedDate,state.settings.locale,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</strong><span class="ribbon-separator"></span><span>${loc('Âm lịch','Lunar')} ${lunarForISO(ui.selectedDate).day}/${lunarForISO(ui.selectedDate).month} · ${canChiYear(lunarForISO(ui.selectedDate).year)}</span></div><span class="ribbon-note">${icon('shield',14)} ${loc('Riêng tư theo mặc định','Private by default')}</span></div>
  ${quickCheckin(true)}
  <div class="home-grid"><div class="home-left">${miniCalendar()}${worldTeaser()}</div><div class="home-middle">${mysticDayPreview()}${todayActionCard({small:true})}</div><div class="home-right">${timeline({compact:true,day:iso,limit:5})}${statsMini()}</div></div>`;}
@@ -340,7 +329,7 @@ function settingsLink(section,name,icoName){return `<button class="settings-nav-
 function settingsPage(){
  const sections=[['appearance',t('appearance'),'sun'],['language',t('location'),'world'],['mystical',t('mystical'),'moon'],['privacy',t('privacyAndData'),'shield'],['account',t('account'),'lock']];
  const card=section=>`<section class="card settings-gallery-card settings-card-${section}">${renderSettingsSection(section)}</section>`;
- const profile=`<section class="card settings-profile"><div class="settings-profile-top"><span>${icon('people',19)} ${loc('Hồ sơ của bạn','Your profile')}</span></div><img src="/assets/avatar-portrait.webp" alt=""/><strong>${loc('Hành giả','Traveler')}</strong><p>${loc('Bản dùng thử cục bộ · chưa đăng nhập','Local preview · no account linked')}</p></section>`;
+ const profile=`<section class="card settings-profile"><div class="settings-profile-top"><span>${icon('people',19)} ${loc('Hồ sơ của bạn','Your profile')}</span></div>${avatarPortrait(32)}<strong>${loc('Hành giả','Traveler')}</strong><p>${loc('Bản dùng thử cục bộ · chưa đăng nhập','Local preview · no account linked')}</p></section>`;
  const sync=`<section class="card settings-game-settings">${panelTitle(loc('Đồng bộ thế giới game','Game world sync'))}<div class="sync-scene"></div><p>${loc('Khi liên kết tài khoản, bạn có thể quản lý hoạt động nhân vật và quyền chia sẻ với đạo hữu.','Once your account is linked, manage avatar activities and what you share with friends.')}</p><span class="connection-badge offline">${icon('lock',14)} ${loc('Chưa kết nối','Not connected')}</span></section>`;
  return `${hero(loc('Cài đặt','Settings'),loc('Tùy chỉnh trải nghiệm của bạn, hài hòa với thiên đạo.','Customize a peaceful space for your journey.'),{compact:true,eyebrow:'PREFERENCES · TU TIEN'})}
  <div class="settings-gallery"><div class="settings-column">${profile}${card('account')}${sync}</div><div class="settings-column">${card('appearance')}${card('privacy')}</div><div class="settings-column">${card('language')}${card('mystical')}</div></div>
@@ -374,9 +363,13 @@ function renderApp(){const body=({'app':homePage,'app/journal':journalPage,'app/
  const dark=state.settings.theme==='dark'||(state.settings.theme==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);
  document.documentElement.dataset.theme=dark?'dark':'light'; document.documentElement.lang=state.settings.locale;
  document.documentElement.style.setProperty('--user-font-scale',String(state.settings.fontScale));document.documentElement.classList.toggle('reduce-motion',state.settings.reducedMotion);
- root.innerHTML=`<div class="app-shell">${renderSidebar()}<div class="main-shell">${renderTopbar()}<main id="main-content" tabindex="-1">${body}<footer class="content-footer"><span>© TuTien · Mystic Life</span><span>${icon('lock',13)} ${safeText(t('localNotice'))}</span></footer></main></div>${renderMobileNav()}</div>`;
+ root.innerHTML=`<div class="app-shell">${renderSidebar()}<div class="main-shell">${renderTopbar()}<main id="main-content" tabindex="-1">${body}<footer class="content-footer"><span>© TuTien</span><span>${icon('lock',13)} ${safeText(t('localNotice'))}</span></footer></main></div>${renderMobileNav()}</div>`;
+ mountScenes(root,{hour:sceneHour(),reduced:reduced()});
  requestAnimationFrame(()=>animateRoute());
 }
+/** Local hour in the user's time zone; ?hour=20 previews other times of day. */
+function sceneHour(){const q=new URLSearchParams(location.search).get('hour');if(q!==null&&Number(q)>=0&&Number(q)<24)return Number(q);
+ const parts=new Intl.DateTimeFormat('en-GB',{hour:'numeric',minute:'numeric',hourCycle:'h23',timeZone:tz()}).formatToParts(new Date());const get=k=>Number(parts.find(p=>p.type===k)?.value||0);return get('hour')+get('minute')/60;}
 function animateRoute(){if(reduced())return;const node=document.querySelector('#main-content');if(!node)return;
  if(window.gsap){window.gsap.fromTo(node,{opacity:0,y:9},{opacity:1,y:0,duration:.32,ease:'power2.out',overwrite:'auto'});}else if(node.animate){node.animate([{opacity:.78,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}],{duration:260,easing:'ease-out'});}
 }

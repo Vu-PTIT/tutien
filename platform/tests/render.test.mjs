@@ -59,3 +59,9 @@ test('insights and stats-mini display action counts instead of time duration',()
  assert.match(insightsOut,/Tổng lượt thực hiện|Total actions/);
  assert.match(insightsOut,/Phân bổ theo nhóm|Actions by category/);
 });
+test('home hero is a live pixel scene of the hub lane, not painted raster art',()=>{
+ const out=renderPageForTests('app',initialState());
+ assert.match(out,/<canvas data-scene="app"|<canvas data-scene="home"/);
+ assert.match(out,/data-scene="teaser"/);
+ assert.doesNotMatch(out,/\.webp|Tích tiểu thành đại/);
+});

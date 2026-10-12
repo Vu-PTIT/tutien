@@ -1,0 +1,142 @@
+/* Linh Chấn UI — one design system for platform and game HUD (docs/game-design/12-art-bible.md §10).
+   Cream paper, ink, cream-yellow for interaction, cool purple shadows, small radii.
+   Teal is reserved for linh energy widgets, purple for "ngoài chuẩn" (11 §6). */
+:root{
+ --paper:#F7F1E3;--paper-lite:#FFFCF4;--paper-mid:#F1E8D4;--ink:#2B2735;--ink-soft:#5A5468;--muted:#857F92;--deep:#2B2735;
+ --accent:#FFE7A8;--accent-strong:#E6B85C;--accent-ink:#6B4A12;--signal:#D8443A;--linh:#3FD6B8;--odd:#8F6BFF;
+ --gold:#B98A3E;--gold-dark:#8A6326;--line:#E6DCC6;--line-strong:#D2C3A3;--ring:#E6B85C;
+ --shadow:0 1px 0 #2E2A4A0d,0 6px 18px #2E2A4A12;--radius:10px;
+ --sidebar-width:212px;font-family:'Be Vietnam Pro','Noto Sans',sans-serif;color:var(--ink);background:var(--paper)
+}
+[data-theme='dark']{
+ --paper:#1F1C29;--paper-lite:#2B2735;--paper-mid:#25212F;--ink:#F7F1E3;--ink-soft:#CFC8D8;--muted:#A49EB2;
+ --line:#3D3850;--line-strong:#57506E;--accent:#FFE7A8;--accent-ink:#2B2735;--shadow:0 1px 0 #0003,0 8px 22px #0004
+}
+body,[data-theme='dark'] body{background:var(--paper);color:var(--ink)}
+.main-shell,[data-theme='dark'] .main-shell{background:var(--paper);background-image:none}
+h1,.display-font{font-family:'Be Vietnam Pro',sans-serif}
+::selection{background:var(--accent);color:#2B2735}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--accent-strong);outline-offset:2px}
+
+/* ---------- sidebar: warm ink, like the phone shell of a post-Linh-Chấn resident ---------- */
+.sidebar,[data-theme='dark'] .sidebar{background:#2B2735;border-right:0;box-shadow:none;color:#F7F1E3}
+.sidebar:before{display:none}
+.sidebar-top{border-bottom:1px solid #FFFFFF14}
+.brand{font-family:'Be Vietnam Pro',sans-serif;font-weight:800;letter-spacing:-.03em;color:#F7F1E3}
+.brand small{color:#B9B1C6}
+.nav-item{color:#D9D2E2;border-radius:8px;font-weight:600}
+.nav-item .icon{color:#B9B1C6}
+.nav-item:hover{background:#FFFFFF12}
+.nav-item.is-active{background:var(--accent);border-color:transparent;color:#2B2735;box-shadow:none}
+.nav-item.is-active .icon{color:#2B2735}
+.nav-mark{display:none}
+.side-paint{position:relative;overflow:hidden;background:#2E2A4A!important;border:1px solid #FFFFFF1f;border-radius:8px;box-shadow:none!important;min-height:132px}
+.side-paint canvas{position:absolute;inset:0;image-rendering:pixelated}
+.side-paint:after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,#2B2735e6,#2B273500 70%);pointer-events:none}
+.side-paint-caption{position:relative;z-index:1;font-family:'Be Vietnam Pro',sans-serif!important;font-weight:700!important;font-size:.82rem!important;color:#F7F1E3!important;text-shadow:none!important}
+.side-paint-caption small{color:#D9D2E2!important;font-weight:500}
+.side-profile{border-top:1px solid #FFFFFF14}
+.side-profile strong{color:#F7F1E3}.side-profile small{color:#B9B1C6}
+.pixel-avatar{image-rendering:pixelated;border-radius:8px;background:#F1E8D4;flex:0 0 auto}
+.top-avatar{display:grid;place-items:center;overflow:hidden;border-radius:8px;border:1px solid var(--line)}
+
+/* ---------- top bar ---------- */
+.topbar,[data-theme='dark'] .topbar{background:color-mix(in srgb,var(--paper) 92%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+.topbar .crumb,[data-theme='dark'] .topbar .crumb{color:var(--ink-soft)}
+.top-search,.lang-quick,.top-notifications,[data-theme='dark'] .top-search,[data-theme='dark'] .lang-quick,[data-theme='dark'] .top-notifications{background:var(--paper-lite);border:1px solid var(--line);border-radius:8px;color:var(--ink-soft)}
+.top-search kbd,[data-theme='dark'] .top-search kbd{background:var(--paper-mid);color:var(--muted)}
+
+/* ---------- hero: live pixel scene + a readable paper card ---------- */
+.hero,.hero.hero-page-home,.hero.hero-page-journal,.hero.hero-page-calendar,.hero.hero-page-insights,.hero.hero-page-world,.hero.hero-page-community,.hero.hero-page-settings{
+ background:#2E2A4A!important;background-image:none!important;border:0;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;position:relative;height:300px}
+.hero-compact{height:240px}
+.hero:before,.hero:after{display:none!important}
+.hero-scene{position:absolute;inset:0;overflow:hidden}
+.hero-scene canvas{display:block;image-rendering:pixelated}
+.hero-content{position:absolute;left:20px;top:50%;transform:translateY(-50%);max-width:min(440px,46%);z-index:2;background:color-mix(in srgb,var(--paper) 94%,transparent);border-radius:var(--radius);padding:18px 20px 16px;box-shadow:0 2px 0 #2E2A4A26,0 10px 30px #2E2A4A33}
+.hero h1,.hero-compact h1{font-family:'Be Vietnam Pro',sans-serif!important;font-weight:800!important;font-size:clamp(1.55rem,2.3vw,2.25rem)!important;line-height:1.18!important;letter-spacing:-.03em!important;transform:none!important;color:var(--ink)!important;margin:0 0 8px!important}
+.hero-eyebrow{color:var(--signal)!important;font-weight:700!important;letter-spacing:.12em!important}
+.hero p,.hero-summary,.hero-translation{color:var(--ink-soft)!important}
+.hero-chips{color:var(--ink-soft)!important}
+.hero-chips span{background:var(--accent)!important;color:#2B2735!important;border-radius:999px!important;padding:3px 9px!important}
+.hero-quote{display:none}
+
+/* ---------- surfaces ---------- */
+.card,[data-theme='dark'] .card{background:var(--paper-lite);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card:before,.card:after{display:none!important}
+.section-heading h2,[data-theme='dark'] .section-heading h2{color:var(--ink);font-family:'Be Vietnam Pro',sans-serif;font-weight:800}
+.section-sub,.quiet-tag{color:var(--muted)}
+.text-link{color:var(--accent-ink);font-weight:700}
+[data-theme='dark'] .text-link{color:var(--accent)}
+.date-ribbon,[data-theme='dark'] .date-ribbon{background:var(--paper-lite);border:1px solid var(--line);border-top:0;border-radius:0 0 var(--radius) var(--radius);color:var(--ink-soft)}
+.quick-card,[data-theme='dark'] .quick-card{background:var(--paper-lite);border-color:var(--line)}
+
+/* pixel activity icons stay square; tiles become rounded "app" buttons */
+.activity-picto,.mood-artwork,.moon-phase-icon{image-rendering:pixelated;filter:none!important}
+.activity-icon,.activity-tile.compact .activity-icon,[class*='color-'] .activity-icon{background:var(--paper-mid)!important;border-radius:12px!important;width:48px!important;height:48px!important;display:grid;place-items:center;box-shadow:inset 0 -2px 0 #2E2A4A14!important}
+.activity-tile,.activity-tile.compact{background:transparent!important;border:1px solid transparent!important;border-radius:var(--radius)!important;box-shadow:none!important}
+.activity-tile:hover{background:var(--paper-mid)!important;border-color:var(--line)!important;transform:translateY(-2px)}
+.activity-name{color:var(--ink)!important;font-weight:600!important}
+.activity-badge{background:var(--signal);color:#fff}
+.mini-activity,.entry-icon{background:var(--paper-mid)!important;border-radius:8px}
+.add-tile .activity-icon{border:1px dashed var(--line-strong)}
+
+/* buttons: cream-yellow is the interaction colour */
+.primary-btn,.pill-btn,.mobile-add{background:var(--accent)!important;color:#2B2735!important;border:1px solid var(--accent-strong)!important;box-shadow:0 2px 0 #B98A3E!important}
+.outline-btn,.chip,.segmented button{border-radius:999px}
+.chip.selected,.segmented .current{background:#2B2735!important;color:#F7F1E3!important;border-color:#2B2735!important}
+[data-theme='dark'] .chip.selected,[data-theme='dark'] .segmented .current{background:var(--accent)!important;color:#2B2735!important}
+
+/* home widgets */
+.home-left .mini-calendar,[data-theme='dark'] .home-left .mini-calendar{background:var(--paper-lite)!important;border-color:var(--line)!important;color:var(--ink)}
+.mini-calendar *{color:inherit}
+.mini-day.is-today{background:var(--accent)!important;color:#2B2735!important;border-radius:8px}
+.mini-day.is-selected{outline:2px solid var(--accent-strong);border-radius:8px}
+.mini-day i{background:var(--signal)!important}
+.moon-cycle-strip span small{color:var(--muted)}
+.world-teaser-art{position:relative;overflow:hidden;background:#2E2A4A!important;background-image:none!important;border-radius:8px;min-height:120px}
+.world-teaser-art canvas{position:absolute;inset:0;image-rendering:pixelated}
+.world-teaser-art>span{position:absolute;left:8px;top:8px;z-index:1;background:var(--paper);color:var(--ink)!important;border-radius:999px;padding:3px 9px;font-size:.66rem;font-weight:700}
+.round-arrow{background:var(--accent)!important;color:#2B2735!important;border:0!important}
+.lunar-seal{display:grid;place-items:center;width:76px;height:76px;border-radius:12px;background:#2E2A4A}
+.lunar-seal-ring{display:none}
+.day-preview-suggestions span,.day-preview-facts span{background:var(--paper-mid)!important;border-color:var(--line)!important;color:var(--ink-soft)!important}
+.bar-fill{border-radius:3px 3px 0 0}
+.timeline-node{background:var(--accent-strong)!important}
+.sample-journal-tag{color:var(--muted)}
+.content-footer{color:var(--muted)}
+
+/* mobile navigation */
+.mobile-nav,[data-theme='dark'] .mobile-nav{background:#2B2735;border-top:0}
+.mobile-item,button.mobile-item{color:#B9B1C6;background:transparent!important;border:0!important;box-shadow:none!important}.mobile-item.is-active{color:#2B2735!important;background:var(--accent)!important;border-radius:10px}
+
+@media (max-width:760px){
+ .hero,.hero.hero-page-home{height:auto;min-height:0;display:flex;flex-direction:column;background:var(--paper)!important;box-shadow:none;overflow:visible}
+ .hero-compact{height:auto}
+ .hero-scene{position:relative;height:190px;border-radius:var(--radius);box-shadow:var(--shadow)}
+ .hero-content{position:relative;left:auto;top:auto;transform:none;max-width:none;margin:-26px 10px 0;padding:14px 16px}
+}
+@media (prefers-reduced-motion:reduce){.activity-tile:hover{transform:none}}
+
+/* ---------- retire Mystic Life leftovers (navy calendar, painted textures, script font) ---------- */
+.card,.day-preview,.today-action-card,.timeline-card,.stats-mini,.quick-card{background-image:none!important}
+/* until mystic.css/art-direction.css are removed: route their script font to Be Vietnam Pro */
+@font-face{font-family:'Sriracha';src:url('/assets/fonts/BeVietnamPro-SemiBold.woff') format('woff');font-weight:400;font-style:normal;font-display:swap}
+.home-grid .mini-calendar,.mini-calendar{background:var(--paper-lite)!important;color:var(--ink)!important;border:1px solid var(--line)!important}
+.mini-calendar .section-heading{border-bottom:1px solid var(--line)!important}
+.mini-calendar .section-heading h2,.home-grid .mini-calendar .text-link,.home-grid .mini-calendar .cal-head-inline strong{color:var(--ink)!important;font-family:'Be Vietnam Pro',sans-serif!important;font-weight:800!important;font-size:.9rem!important}
+.home-grid .mini-calendar .text-link{color:var(--accent-ink)!important;font-size:.7rem!important}
+[data-theme='dark'] .home-grid .mini-calendar .text-link{color:var(--accent)!important}
+.mini-calendar .cal-arrows button{background:var(--paper-mid)!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-radius:6px}
+.mini-calendar .weekday{color:var(--muted)!important;font-weight:700}
+.mini-calendar .mini-day{color:var(--ink)!important;border-radius:8px!important}
+.mini-calendar .mini-day:hover{background:var(--paper-mid)!important}
+.mini-calendar .mini-day.is-today:not(.is-selected){background:var(--paper-mid)!important;box-shadow:inset 0 0 0 1px var(--accent-strong)}
+.mini-calendar .mini-day.is-selected{background:var(--accent)!important;color:#2B2735!important;box-shadow:inset 0 0 0 1px var(--accent-strong)!important;outline:0}
+.mini-calendar .mini-day.is-faded{opacity:.38}
+.mini-calendar .mini-day-plan{border-top:1px solid var(--line)!important;color:var(--ink-soft)!important}
+.mini-calendar .mini-day-plan .muted{color:var(--muted)!important}
+.mini-calendar .mini-moon .moon-phase-icon{width:16px!important;height:16px!important}
+.hero-translation{font-family:'Be Vietnam Pro',sans-serif!important;font-style:normal!important;font-size:.8rem!important;color:var(--muted)!important}
+.hero-translation:before,.hero-translation:after{display:none!important}
+[data-theme='dark'] .card,[data-theme='dark'] .day-preview,[data-theme='dark'] .today-action-card,[data-theme='dark'] .timeline-card,[data-theme='dark'] .stats-mini,[data-theme='dark'] .world-teaser{background:var(--paper-lite)!important;border-color:var(--line)!important}
