@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 const WALK_SHEET := "res://assets/tileset/Art/Characters/Main Character/Character_Walk.png"
 const IDLE_SHEET := "res://assets/tileset/Art/Characters/Main Character/Character_Idle.png"
-const FRAME_WIDTH := 32
+const FRAME_WIDTH := 40
 const FRAME_HEIGHT := 48
 
 var move_speed := 88.0
@@ -19,13 +19,13 @@ func _ready() -> void:
 	shape.radius = 6.0
 	shape.height = 16.0
 	collider.shape = shape
-	collider.position = Vector2(0.0, -6.0)
+	collider.position = Vector2(0.0, -8.0)
 	add_child(collider)
 
 	_sprite = AnimatedSprite2D.new()
 	_sprite.name = "Character"
 	_sprite.sprite_frames = _make_sprite_frames()
-	_sprite.position = Vector2(0.0, -24.0)
+	_sprite.position = Vector2(0.0, -17.0)
 	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(_sprite)
 	_sprite.play("idle_down")
@@ -44,8 +44,12 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	var horizontal := float(Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT)) - float(Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT))
-	var vertical := float(Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN)) - float(Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP))
+	var right := Input.is_physical_key_pressed(KEY_D) or Input.is_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT) or Input.is_key_pressed(KEY_RIGHT)
+	var left := Input.is_physical_key_pressed(KEY_A) or Input.is_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT) or Input.is_key_pressed(KEY_LEFT)
+	var down := Input.is_physical_key_pressed(KEY_S) or Input.is_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN) or Input.is_key_pressed(KEY_DOWN)
+	var up := Input.is_physical_key_pressed(KEY_W) or Input.is_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP) or Input.is_key_pressed(KEY_UP)
+	var horizontal := float(right) - float(left)
+	var vertical := float(down) - float(up)
 	var direction := Vector2(horizontal, vertical)
 	if direction.length_squared() > 1.0:
 		direction = direction.normalized()
@@ -77,7 +81,13 @@ func _make_sprite_frames() -> SpriteFrames:
 		frames.remove_animation("default")
 	var walk_texture := load(WALK_SHEET) as Texture2D
 	var idle_texture := load(IDLE_SHEET) as Texture2D
-	var rows: Dictionary = {"down": 3, "side": 0, "up": 2}
+	var rows: Dictionary = {
+		"down": 3,
+		"up": 2,
+		"left": 0,
+		"right": 1,
+		"side": 0,
+	}
 	for direction: String in rows:
 		for movement: String in ["idle", "walk"]:
 			var animation_name: String = movement + "_" + direction
@@ -102,14 +112,26 @@ func _make_sprite_frames() -> SpriteFrames:
 
 
 func _update_animation(direction: Vector2) -> void:
-	if absf(direction.x) > 0.0:
-		_facing = "side"
-		_sprite.flip_h = direction.x < 0.0
+	if direction.x < 0.0:
+		_facing = "left"
+		_sprite.flip_h = false
+	elif direction.x > 0.0:
+		_facing = "right"
+		_sprite.flip_h = false
 	elif direction.y < 0.0:
 		_facing = "up"
+		_sprite.flip_h = false
 	elif direction.y > 0.0:
 		_facing = "down"
-	var movement: String = "walk" if direction.length_squared() > 0.0 else "idle"
-	var animation_name: String = movement + "_" + _facing
-	if _sprite.animation != animation_name:
-		_sprite.play(animation_name)
+		_sprite.flip_h = false
+
+	if direction.length_squared() > 0.0:
+		var animation_name: String = "walk_" + _facing
+		if _sprite.animation != animation_name or not _sprite.is_playing():
+			_sprite.play(animation_name)
+	else:
+		var animation_name: String = "idle_" + _facing
+		if _sprite.animation != animation_name:
+			_sprite.animation = animation_name
+		_sprite.stop()
+		_sprite.frame = 0

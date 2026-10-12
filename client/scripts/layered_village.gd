@@ -30,448 +30,451 @@ var _culture_root: Node2D
 
 
 func _ready() -> void:
-    var data := FileAccess.get_file_as_string(DATA_PATH)
-    var parsed: Variant = JSON.parse_string(data)
-    if typeof(parsed) != TYPE_DICTIONARY:
-        push_error("Invalid layered map: " + DATA_PATH)
-        return
-    layout = parsed
-    world_extent = _v(layout.get("size", [1120, 800]))
-    _load_terrain_art()
-    _build_surfaces()
-    _build_landforms()
-    _build_ambient_environment()
-    _build_raster_details()
-    _build_props_and_player()
-    _build_cultural_zones()
-    _build_water_collision()
-    _build_hud()
+	var data := FileAccess.get_file_as_string(DATA_PATH)
+	var parsed: Variant = JSON.parse_string(data)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		push_error("Invalid layered map: " + DATA_PATH)
+		return
+	layout = parsed
+	world_extent = _v(layout.get("size", [1120, 800]))
+	_load_terrain_art()
+	_build_surfaces()
+	_build_landforms()
+	_build_ambient_environment()
+	_build_raster_details()
+	_build_props_and_player()
+	_build_cultural_zones()
+	_build_water_collision()
+	_build_hud()
 
 
 func _load_terrain_art() -> void:
-    var data := FileAccess.get_file_as_string(TERRAIN_ART_DATA_PATH)
-    var parsed: Variant = JSON.parse_string(data)
-    if typeof(parsed) != TYPE_DICTIONARY:
-        push_error("M1.6 missing terrain source art manifest.")
-        return
-    _terrain_art_data = parsed
-    for key in ["ground", "road", "water"]:
-        var info: Dictionary = _terrain_art_data.get(key, {})
-        var resource_path := str(info.get("texture", ""))
-        var image := load(resource_path) as Texture2D
-        if image == null:
-            push_error("M1.6 missing source artwork: " + resource_path)
-            continue
-        var region: Array = info.get("region", [])
-        if region.size() != 4:
-            push_error("M1.6 invalid source art region: " + key)
-            continue
-        _terrain_art_textures[key] = image
+	var data := FileAccess.get_file_as_string(TERRAIN_ART_DATA_PATH)
+	var parsed: Variant = JSON.parse_string(data)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		push_error("M1.6 missing terrain source art manifest.")
+		return
+	_terrain_art_data = parsed
+	for key in ["ground", "road", "water"]:
+		var info: Dictionary = _terrain_art_data.get(key, {})
+		var resource_path := str(info.get("texture", ""))
+		var image := load(resource_path) as Texture2D
+		if image == null:
+			push_error("M1.6 missing source artwork: " + resource_path)
+			continue
+		var region: Array = info.get("region", [])
+		if region.size() != 4:
+			push_error("M1.6 invalid source art region: " + key)
+			continue
+		_terrain_art_textures[key] = image
 
 
 func _bind_source_art(material: ShaderMaterial) -> void:
-    var available := _terrain_art_textures.size() == 3
-    material.set_shader_parameter("source_art_enabled", available)
-    if not available:
-        return
-    for key in ["ground", "road", "water"]:
-        var entry: Dictionary = _terrain_art_data[key]
-        var texture: Texture2D = _terrain_art_textures[key]
-        var raw: Array = entry["region"]
-        var shader_key: String = "grass" if key == "ground" else str(key)
-        material.set_shader_parameter("source_" + shader_key, texture)
-        material.set_shader_parameter(shader_key + "_region",
-            Vector4(float(raw[0]), float(raw[1]), float(raw[2]), float(raw[3])))
-        material.set_shader_parameter(shader_key + "_atlas_size", Vector2(texture.get_size()))
-        material.set_shader_parameter(shader_key + "_art_blend", float(entry.get("blend", 0.6)))
+	var available := _terrain_art_textures.size() == 3
+	material.set_shader_parameter("source_art_enabled", available)
+	if not available:
+		return
+	for key in ["ground", "road", "water"]:
+		var entry: Dictionary = _terrain_art_data[key]
+		var texture: Texture2D = _terrain_art_textures[key]
+		var raw: Array = entry["region"]
+		var shader_key: String = "grass" if key == "ground" else str(key)
+		material.set_shader_parameter("source_" + shader_key, texture)
+		material.set_shader_parameter(shader_key + "_region",
+			Vector4(float(raw[0]), float(raw[1]), float(raw[2]), float(raw[3])))
+		material.set_shader_parameter(shader_key + "_atlas_size", Vector2(texture.get_size()))
+		material.set_shader_parameter(shader_key + "_art_blend", float(entry.get("blend", 0.6)))
 
 
 func _surface(name: String, points: PackedVector2Array, kind: int, order: int) -> void:
-    if points.size() < 3:
-        return
-    var polygon := Polygon2D.new()
-    polygon.name = name
-    polygon.polygon = points
-    polygon.z_index = order
-    polygon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-    var material := ShaderMaterial.new()
-    material.shader = SURFACE_SHADER
-    material.set_shader_parameter("surface_kind", kind)
-    _bind_source_art(material)
-    polygon.material = material
-    add_child(polygon)
+	if points.size() < 3:
+		return
+	var polygon := Polygon2D.new()
+	polygon.name = name
+	polygon.polygon = points
+	polygon.z_index = order
+	polygon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	var material := ShaderMaterial.new()
+	material.shader = SURFACE_SHADER
+	material.set_shader_parameter("surface_kind", kind)
+	_bind_source_art(material)
+	polygon.material = material
+	add_child(polygon)
 
 
 func _spline_point(a: Vector2, b: Vector2, c: Vector2, d: Vector2, t: float) -> Vector2:
-    var t2 := t * t
-    var t3 := t2 * t
-    return (b * 2.0 + (c - a) * t + (a * 2.0 - b * 5.0 + c * 4.0 - d) * t2 + (-a + b * 3.0 - c * 3.0 + d) * t3) * 0.5
+	var t2 := t * t
+	var t3 := t2 * t
+	return (b * 2.0 + (c - a) * t + (a * 2.0 - b * 5.0 + c * 4.0 - d) * t2 + (-a + b * 3.0 - c * 3.0 + d) * t3) * 0.5
 
 
 func _smooth_path(raw: Array) -> PackedVector2Array:
-    var smoothed := PackedVector2Array()
-    if raw.size() < 2:
-        return smoothed
-    for i in range(raw.size() - 1):
-        var a := _v(raw[maxi(0, i - 1)])
-        var b := _v(raw[i])
-        var c := _v(raw[i + 1])
-        var d := _v(raw[mini(raw.size() - 1, i + 2)])
-        var steps := maxi(2, ceili(b.distance_to(c) / 8.0))
-        for step in range(steps):
-            smoothed.append(_spline_point(a, b, c, d, float(step) / float(steps)))
-    smoothed.append(_v(raw[raw.size() - 1]))
-    return smoothed
+	var smoothed := PackedVector2Array()
+	if raw.size() < 2:
+		return smoothed
+	for i in range(raw.size() - 1):
+		var a := _v(raw[maxi(0, i - 1)])
+		var b := _v(raw[i])
+		var c := _v(raw[i + 1])
+		var d := _v(raw[mini(raw.size() - 1, i + 2)])
+		var steps := maxi(2, ceili(b.distance_to(c) / 8.0))
+		for step in range(steps):
+			smoothed.append(_spline_point(a, b, c, d, float(step) / float(steps)))
+	smoothed.append(_v(raw[raw.size() - 1]))
+	return smoothed
 
 
 func _width_scale(profile: Array, progress: float) -> float:
-    if profile.size() < 2:
-        return 1.0
-    # Authored, eased width keys rather than one uniform pipe. Keys represent
-    # fractions of accumulated *distance*, never count of spline points.
-    var position_on_profile := clampf(progress, 0.0, 1.0) * float(profile.size() - 1)
-    var segment: int = mini(floori(position_on_profile), profile.size() - 2)
-    var blend: float = position_on_profile - float(segment)
-    blend = blend * blend * (3.0 - 2.0 * blend)
-    return lerpf(float(profile[segment]), float(profile[segment + 1]), blend)
+	if profile.size() < 2:
+		return 1.0
+	# Authored, eased width keys rather than one uniform pipe. Keys represent
+	# fractions of accumulated *distance*, never count of spline points.
+	var position_on_profile := clampf(progress, 0.0, 1.0) * float(profile.size() - 1)
+	var segment: int = mini(floori(position_on_profile), profile.size() - 2)
+	var blend: float = position_on_profile - float(segment)
+	blend = blend * blend * (3.0 - 2.0 * blend)
+	return lerpf(float(profile[segment]), float(profile[segment + 1]), blend)
 
 
 func _ribbon(raw: Array, radius: float, roughness: float = 1.0, width_profile: Array = [], edge_seed: float = 0.0) -> PackedVector2Array:
-    var points := _smooth_path(raw)
-    if points.size() < 2:
-        return PackedVector2Array()
-    var cumulative := PackedFloat32Array()
-    var length_total := 0.0
-    for i in range(points.size()):
-        if i > 0:
-            length_total += points[i].distance_to(points[i - 1])
-        cumulative.append(length_total)
-    var left := PackedVector2Array()
-    var right := PackedVector2Array()
-    for i in range(points.size()):
-        var p := points[i]
-        var prev := points[maxi(0, i - 1)]
-        var next := points[mini(i + 1, points.size() - 1)]
-        var direction := (next - prev).normalized()
-        var n := Vector2(-direction.y, direction.x)
-        var u := float(cumulative[i]) / maxf(1.0, length_total)
-        var local_radius := radius * _width_scale(width_profile, u)
-        # Independent, seeded bank edges create natural width changes while
-        # preserving every waypoint and navigation/interaction destination.
-        var a := roughness * (2.0 * sin(float(i) * 0.63 + edge_seed) + sin(float(i) * 0.21 + edge_seed * 1.3))
-        var b := roughness * (2.0 * sin(float(i) * 0.72 + 2.1 + edge_seed) + sin(float(i) * 0.31 + 1.2 + edge_seed * 0.7))
-        left.append((p + n * maxf(3.0, local_radius + a)).round())
-        right.append((p - n * maxf(3.0, local_radius + b)).round())
-    var polygon := PackedVector2Array()
-    for p in left:
-        polygon.append(p)
-    for i in range(right.size() - 1, -1, -1):
-        polygon.append(right[i])
-    return polygon
+	var points := _smooth_path(raw)
+	if points.size() < 2:
+		return PackedVector2Array()
+	var cumulative := PackedFloat32Array()
+	var length_total := 0.0
+	for i in range(points.size()):
+		if i > 0:
+			length_total += points[i].distance_to(points[i - 1])
+		cumulative.append(length_total)
+	var left := PackedVector2Array()
+	var right := PackedVector2Array()
+	for i in range(points.size()):
+		var p := points[i]
+		var prev := points[maxi(0, i - 1)]
+		var next := points[mini(i + 1, points.size() - 1)]
+		var direction := (next - prev).normalized()
+		var n := Vector2(-direction.y, direction.x)
+		var u := float(cumulative[i]) / maxf(1.0, length_total)
+		var local_radius := radius * _width_scale(width_profile, u)
+		# Independent, seeded bank edges create natural width changes while
+		# preserving every waypoint and navigation/interaction destination.
+		var a := roughness * (2.0 * sin(float(i) * 0.63 + edge_seed) + sin(float(i) * 0.21 + edge_seed * 1.3))
+		var b := roughness * (2.0 * sin(float(i) * 0.72 + 2.1 + edge_seed) + sin(float(i) * 0.31 + 1.2 + edge_seed * 0.7))
+		left.append((p + n * maxf(3.0, local_radius + a)).round())
+		right.append((p - n * maxf(3.0, local_radius + b)).round())
+	var polygon := PackedVector2Array()
+	for p in left:
+		polygon.append(p)
+	for i in range(right.size() - 1, -1, -1):
+		polygon.append(right[i])
+	return polygon
 
 
 func _ellipse(center: Vector2, radii: Vector2, seed: float = 0.0) -> PackedVector2Array:
-    var points := PackedVector2Array()
-    for i in range(72):
-        var theta := TAU * float(i) / 72.0
-        var outline := 1.0 + 0.045 * sin(5.0 * theta + seed) + 0.038 * sin(9.0 * theta + 1.7 + seed)
-        points.append((center + Vector2(cos(theta) * radii.x * outline, sin(theta) * radii.y * outline)).round())
-    return points
+	var points := PackedVector2Array()
+	for i in range(72):
+		var theta := TAU * float(i) / 72.0
+		var outline := 1.0 + 0.045 * sin(5.0 * theta + seed) + 0.038 * sin(9.0 * theta + 1.7 + seed)
+		points.append((center + Vector2(cos(theta) * radii.x * outline, sin(theta) * radii.y * outline)).round())
+	return points
 
 
 func _water_polygon(region: Dictionary, extra_radius: float = 0.0) -> PackedVector2Array:
-    if str(region.get("shape", "")) == "pond":
-        return _ellipse(_v(region.get("center", [])), _v(region.get("radii", [])) + Vector2.ONE * extra_radius, 4.3)
-    return _ribbon(region.get("points", []), float(region.get("radius", 30.0)) + extra_radius, 1.2)
+	if str(region.get("shape", "")) == "pond":
+		return _ellipse(_v(region.get("center", [])), _v(region.get("radii", [])) + Vector2.ONE * extra_radius, 4.3)
+	return _ribbon(region.get("points", []), float(region.get("radius", 30.0)) + extra_radius, 1.2)
 
 
 func _build_surfaces() -> void:
-    var transitions: Dictionary = _terrain_art_data.get("transitions", {})
-    # Visual-only world continuation makes camera transitions natural, even at
-    # unusual desktop zoom or while capturing a wide editor overview.
-    # The active world bounds, activity slots and physics stay unchanged.
-    var margin := 230.0
-    var scenic := PackedVector2Array([
-        Vector2(-margin, -margin),
-        Vector2(world_extent.x + margin, -margin),
-        world_extent + Vector2(margin, margin),
-        Vector2(-margin, world_extent.y + margin)])
-    _surface("Lminus1_ScenicBackdrop", scenic, 0, -18)
-    var ground := PackedVector2Array([
-        Vector2.ZERO, Vector2(world_extent.x, 0.0), world_extent, Vector2(0.0, world_extent.y)])
-    _surface("L0_Ground", ground, 0, -15)
-    _build_ground_raster_art()
+	var transitions: Dictionary = _terrain_art_data.get("transitions", {})
+	# Visual-only world continuation makes camera transitions natural, even at
+	# unusual desktop zoom or while capturing a wide editor overview.
+	# The active world bounds, activity slots and physics stay unchanged.
+	var margin := 230.0
+	var scenic := PackedVector2Array([
+		Vector2(-margin, -margin),
+		Vector2(world_extent.x + margin, -margin),
+		world_extent + Vector2(margin, margin),
+		Vector2(-margin, world_extent.y + margin)])
+	_surface("Lminus1_ScenicBackdrop", scenic, 0, -18)
+	var ground := PackedVector2Array([
+		Vector2.ZERO, Vector2(world_extent.x, 0.0), world_extent, Vector2(0.0, world_extent.y)])
+	_surface("L0_Ground", ground, 0, -15)
+	_build_ground_raster_art()
 
-    # Author-selected grass clearings and plantable soil; no repeating TileMap.
-    for patch in layout.get("terrain_patches", []):
-        var center := _v(patch.get("center", []))
-        var radii := _v(patch.get("radii", [30, 18]))
-        var kind := str(patch.get("kind", ""))
-        var material_kind := 4
-        if kind == "soil":
-            material_kind = 5
-        elif kind == "meadow":
-            material_kind = 0
-        _surface(str(patch.get("id", "patch")), _ellipse(center, radii, float(patch.get("seed", 0))), material_kind, -14)
+	# Author-selected grass clearings and plantable soil; no repeating TileMap.
+	for patch in layout.get("terrain_patches", []):
+		var center := _v(patch.get("center", []))
+		var radii := _v(patch.get("radii", [30, 18]))
+		var kind := str(patch.get("kind", ""))
+		var material_kind := 4
+		if kind == "soil":
+			material_kind = 5
+		elif kind == "meadow":
+			material_kind = 0
+		_surface(str(patch.get("id", "patch")), _ellipse(center, radii, float(patch.get("seed", 0))), material_kind, -14)
 
-    water_polygons.clear()
-    for water in layout.get("waters", []):
-        var key := str(water.get("id", "water"))
-        # A grass/moss shelf, drier pebbled sand, 3px shallow margin, then the
-        # collidable water body. All layers use ONE source water geometry.
-        _surface(key + "_meadow_fringe", _water_polygon(water, float(transitions.get("water_meadow_fringe_px", 18.0))), 12, -14)
-        _surface(key + "_bank", _water_polygon(water, float(transitions.get("water_sandy_bank_px", 10.0))), 2, -13)
-        _surface(key + "_shallows", _water_polygon(water, float(transitions.get("water_shallow_margin_px", 2.5))), 13, -12)
-        var body := _water_polygon(water)
-        water_polygons[key] = body
-        _surface(key + "_water", body, 3, -11)
+	water_polygons.clear()
+	for water in layout.get("waters", []):
+		var key := str(water.get("id", "water"))
+		# A grass/moss shelf, drier pebbled sand, 3px shallow margin, then the
+		# collidable water body. All layers use ONE source water geometry.
+		_surface(key + "_meadow_fringe", _water_polygon(water, float(transitions.get("water_meadow_fringe_px", 18.0))), 12, -14)
+		_surface(key + "_bank", _water_polygon(water, float(transitions.get("water_sandy_bank_px", 10.0))), 2, -13)
+		_surface(key + "_shallows", _water_polygon(water, float(transitions.get("water_shallow_margin_px", 2.5))), 13, -12)
+		var body := _water_polygon(water)
+		water_polygons[key] = body
+		_surface(key + "_water", body, 3, -11)
 
-    for road in layout.get("roads", []):
-        var key := str(road.get("id", "road"))
-        var radius := float(road.get("radius", 13))
-        var points: Array = road.get("points", [])
-        var profile: Array = road.get("width_profile", [])
-        var phase := float(road.get("edge_seed", 0.0))
-        var variation := float(road.get("roughness", 1.0))
-        _surface(key + "_meadow_fringe", _ribbon(points, radius + float(transitions.get("road_meadow_fringe_px", 10.0)), variation * 1.3, profile, phase), 12, -10)
-        _surface(key + "_verge", _ribbon(points, radius + float(transitions.get("road_dust_verge_px", 4.0)), variation * 1.1, profile, phase), 6, -9)
-        _surface(key, _ribbon(points, radius, variation, profile, phase), 1, -8)
+	for road in layout.get("roads", []):
+		var key := str(road.get("id", "road"))
+		var radius := float(road.get("radius", 13))
+		var points: Array = road.get("points", [])
+		var profile: Array = road.get("width_profile", [])
+		var phase := float(road.get("edge_seed", 0.0))
+		var variation := float(road.get("roughness", 1.0))
+		_surface(key + "_meadow_fringe", _ribbon(points, radius + float(transitions.get("road_meadow_fringe_px", 10.0)), variation * 1.3, profile, phase), 12, -10)
+		_surface(key + "_verge", _ribbon(points, radius + float(transitions.get("road_dust_verge_px", 4.0)), variation * 1.1, profile, phase), 6, -9)
+		_surface(key, _ribbon(points, radius, variation, profile, phase), 1, -8)
 
-    # M1.4: a central gathering place and two smaller yards.
-    # Edges use freeform ellipses (not rectangular pasted map snippets).
-    # The courtyard ring renders over through-paths so every approach feels
-    # part of one connected hamlet instead of a boxed central starter map.
-    for court in layout.get("courtyards", []):
-        var key := str(court.get("id", "courtyard"))
-        var center := _v(court.get("center", [0, 0]))
-        var radii := _v(court.get("radii", [60, 35]))
-        var seed := float(court.get("seed", 0.0))
-        var kind := 9 if str(court.get("kind", "")) == "cobblestone" else 10
-        var extra: Array = transitions.get("courtyard_meadow_fringe_px", [18.0, 16.0])
-        _surface(key + "_meadow_fringe", _ellipse(center, radii + _v(extra), seed), 12, -8)
-        _surface(key + "_grass_fringe", _ellipse(center, radii + Vector2(9, 7), seed), 11, -7)
-        _surface(key + "_paving", _ellipse(center, radii, seed), kind, -6)
+	# M1.4: a central gathering place and two smaller yards.
+	# Edges use freeform ellipses (not rectangular pasted map snippets).
+	# The courtyard ring renders over through-paths so every approach feels
+	# part of one connected hamlet instead of a boxed central starter map.
+	for court in layout.get("courtyards", []):
+		var key := str(court.get("id", "courtyard"))
+		var center := _v(court.get("center", [0, 0]))
+		var radii := _v(court.get("radii", [60, 35]))
+		var seed := float(court.get("seed", 0.0))
+		var kind := 9 if str(court.get("kind", "")) == "cobblestone" else 10
+		var extra: Array = transitions.get("courtyard_meadow_fringe_px", [18.0, 16.0])
+		_surface(key + "_meadow_fringe", _ellipse(center, radii + _v(extra), seed), 12, -8)
+		_surface(key + "_grass_fringe", _ellipse(center, radii + Vector2(9, 7), seed), 11, -7)
+		_surface(key + "_paving", _ellipse(center, radii, seed), kind, -6)
 
 
 func _build_ground_raster_art() -> void:
-    var overlays: Dictionary = _terrain_art_data.get("overlays", {})
-    if overlays.is_empty():
-        return
-    var layer := Node2D.new()
-    layer.name = "L0_GroundArtRaster"
-    layer.z_index = -15
-    layer.set_script(GROUND_ART_SCRIPT)
-    add_child(layer)
-    layer.call("configure", world_extent, overlays)
+	var overlays: Dictionary = _terrain_art_data.get("overlays", {})
+	if overlays.is_empty():
+		return
+	var layer := Node2D.new()
+	layer.name = "L0_GroundArtRaster"
+	layer.z_index = -15
+	layer.set_script(GROUND_ART_SCRIPT)
+	add_child(layer)
+	layer.call("configure", world_extent, overlays)
 
 
 func _build_landforms() -> void:
-    var landforms := Node2D.new()
-    landforms.name = "L2_Landforms_Bridges_Shorelines"
-    landforms.set_script(LANDFORM_SCRIPT)
-    add_child(landforms)
-    landforms.call("configure", layout, self, water_polygons)
+	var landforms := Node2D.new()
+	landforms.name = "L2_Landforms_Bridges_Shorelines"
+	landforms.set_script(LANDFORM_SCRIPT)
+	add_child(landforms)
+	landforms.call("configure", layout, self, water_polygons)
 
 
 func _build_ambient_environment() -> void:
-    var cliff := Node2D.new()
-    cliff.name = "L2_CliffArtDetails"
-    cliff.set_script(CLIFF_DETAIL_SCRIPT)
-    add_child(cliff)
-    cliff.call("configure", layout, self)
-    var water := Node2D.new()
-    water.name = "L2_AnimatedWaterAccents"
-    water.set_script(WATER_FX_SCRIPT)
-    add_child(water)
-    water.call("set_bridges", layout.get("bridges", []))
-    water.call("configure", layout, water_polygons)
+	var cliff := Node2D.new()
+	cliff.name = "L2_CliffArtDetails"
+	cliff.set_script(CLIFF_DETAIL_SCRIPT)
+	add_child(cliff)
+	cliff.call("configure", layout, self)
+	var water := Node2D.new()
+	water.name = "L2_AnimatedWaterAccents"
+	water.set_script(WATER_FX_SCRIPT)
+	add_child(water)
+	water.call("set_bridges", layout.get("bridges", []))
+	water.call("configure", layout, water_polygons)
 
 
 func _build_raster_details() -> void:
-    var brush := Node2D.new()
-    brush.name = "L1_RasterBrushChunks"
-    brush.set_script(RASTER_SCRIPT)
-    brush.z_index = -7
-    add_child(brush)
-    brush.call("configure", layout, water_polygons)
+	var brush := Node2D.new()
+	brush.name = "L1_RasterBrushChunks"
+	brush.set_script(RASTER_SCRIPT)
+	brush.z_index = -7
+	add_child(brush)
+	brush.call("configure", layout, water_polygons)
 
 
 func _build_props_and_player() -> void:
-    var sorted := Node2D.new()
-    sorted.name = "L3_YSort_Props_and_Player"
-    sorted.y_sort_enabled = true
-    add_child(sorted)
-    for obj in layout.get("objects", []):
-        var prop := Node2D.new()
-        prop.set_script(PROP_SCRIPT)
-        prop.call("configure", obj)
-        sorted.add_child(prop)
-        props.append(prop)
-    player = CharacterBody2D.new()
-    player.name = "Player"
-    player.set_script(PLAYER_SCRIPT)
-    player.position = _v(layout.get("spawn", [470, 510]))
-    sorted.add_child(player)
-    player.call("set_world_bounds", world_extent)
+	var sorted := Node2D.new()
+	sorted.name = "L3_YSort_Props_and_Player"
+	sorted.y_sort_enabled = true
+	add_child(sorted)
+	for obj in layout.get("objects", []):
+		var prop := Node2D.new()
+		prop.set_script(PROP_SCRIPT)
+		prop.call("configure", obj)
+		sorted.add_child(prop)
+		props.append(prop)
+	player = CharacterBody2D.new()
+	player.name = "Player"
+	player.set_script(PLAYER_SCRIPT)
+	player.position = _v(layout.get("spawn", [470, 510]))
+	sorted.add_child(player)
+	player.call("set_world_bounds", world_extent)
 
 
 func _build_cultural_zones() -> void:
-    _culture_root = Node2D.new()
-    _culture_root.name = "L4_CulturalPlaces"
-    _culture_root.set_script(CULTURE_SCRIPT)
-    add_child(_culture_root)
-    _culture_root.call("configure", layout)
+	_culture_root = Node2D.new()
+	_culture_root.name = "L4_CulturalPlaces"
+	_culture_root.set_script(CULTURE_SCRIPT)
+	add_child(_culture_root)
+	_culture_root.call("configure", layout)
 
 
 func _build_water_collision() -> void:
-    var collision_root := Node2D.new()
-    collision_root.name = "L2_WaterCollision"
-    add_child(collision_root)
-    for key in water_polygons.keys():
-        var visible_polygon: PackedVector2Array = water_polygons[key]
-        if visible_polygon.size() < 3:
-            continue
-        var parts: Array[PackedVector2Array] = [visible_polygon]
-        # Remove ONLY the covered bridge corridor from collision. Water
-        # remains visually continuous below the independently drawn deck.
-        # Geometry2D difference returns separate upstream/downstream pieces,
-        # so no empty "walkable river" exists outside the bridge.
-        for bridge in layout.get("bridges", []):
-            if str(bridge.get("water_id", "")) != str(key):
-                continue
-            var center := _v(bridge.get("position", [0, 0]))
-            var span := _v(bridge.get("size", [110, 24]))
-            var gap := float(bridge.get("collision_gap", 23))
-            var left := center.x - span.x * 0.5
-            var right := center.x + span.x * 0.5
-            var top := center.y - gap
-            var bottom := center.y + gap
-            var cutout := PackedVector2Array([
-                Vector2(left, top), Vector2(right, top),
-                Vector2(right, bottom), Vector2(left, bottom)])
-            var remaining: Array[PackedVector2Array] = []
-            for part in parts:
-                var fragments: Array[PackedVector2Array] = Geometry2D.clip_polygons(part, cutout)
-                for shape in fragments:
-                    if shape.size() >= 3:
-                        remaining.append(shape)
-            parts = remaining
-        for i in range(parts.size()):
-            var body := StaticBody2D.new()
-            body.name = "SolidWater_%s_%d" % [str(key), i]
-            body.collision_layer = 1
-            body.collision_mask = 0
-            var collider := CollisionPolygon2D.new()
-            collider.build_mode = CollisionPolygon2D.BUILD_SOLIDS
-            collider.polygon = parts[i]
-            body.add_child(collider)
-            collision_root.add_child(body)
+	var collision_root := Node2D.new()
+	collision_root.name = "L2_WaterCollision"
+	add_child(collision_root)
+	for key in water_polygons.keys():
+		var visible_polygon: PackedVector2Array = water_polygons[key]
+		if visible_polygon.size() < 3:
+			continue
+		var parts: Array[PackedVector2Array] = [visible_polygon]
+		# Remove ONLY the covered bridge corridor from collision. Water
+		# remains visually continuous below the independently drawn deck.
+		# Geometry2D difference returns separate upstream/downstream pieces,
+		# so no empty "walkable river" exists outside the bridge.
+		for bridge in layout.get("bridges", []):
+			if str(bridge.get("water_id", "")) != str(key):
+				continue
+			var center := _v(bridge.get("position", [0, 0]))
+			var span := _v(bridge.get("size", [110, 24]))
+			var gap := float(bridge.get("collision_gap", 23))
+			var left := center.x - span.x * 0.5
+			var right := center.x + span.x * 0.5
+			var top := center.y - gap
+			var bottom := center.y + gap
+			var cutout := PackedVector2Array([
+				Vector2(left, top), Vector2(right, top),
+				Vector2(right, bottom), Vector2(left, bottom)])
+			var remaining: Array[PackedVector2Array] = []
+			for part in parts:
+				var fragments: Array[PackedVector2Array] = Geometry2D.clip_polygons(part, cutout)
+				for shape in fragments:
+					if shape.size() >= 3:
+						remaining.append(shape)
+			parts = remaining
+		for i in range(parts.size()):
+			var body := StaticBody2D.new()
+			body.name = "SolidWater_%s_%d" % [str(key), i]
+			body.collision_layer = 1
+			body.collision_mask = 0
+			var collider := CollisionPolygon2D.new()
+			collider.build_mode = CollisionPolygon2D.BUILD_SOLIDS
+			collider.polygon = parts[i]
+			body.add_child(collider)
+			collision_root.add_child(body)
 
 
 func _build_hud() -> void:
-    var canvas := CanvasLayer.new()
-    canvas.name = "LayeredMapHUD"
-    canvas.layer = 20
-    add_child(canvas)
-    var panel := PanelContainer.new()
-    panel.name = "InfoPanel"
-    panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    panel.position = Vector2(14, 14)
-    panel.custom_minimum_size = Vector2(472, 78)
-    var card := StyleBoxFlat.new()
-    card.bg_color = Color(0.095, 0.16, 0.14, 0.91)
-    card.border_color = Color(0.82, 0.75, 0.53, 0.98)
-    card.set_border_width_all(2)
-    card.set_corner_radius_all(3)
-    card.content_margin_left = 14
-    card.content_margin_right = 14
-    card.content_margin_top = 9
-    card.content_margin_bottom = 9
-    panel.add_theme_stylebox_override("panel", card)
-    canvas.add_child(panel)
-    label = Label.new()
-    label.name = "InfoLabel"
-    label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    label.add_theme_font_override("font", FONT)
-    label.add_theme_font_size_override("font_size", 15)
-    label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    label.custom_minimum_size = Vector2(432, 0)
-    label.add_theme_color_override("font_color", Color(0.97, 0.94, 0.82))
-    label.text = "LÀNG LINH KHÊ · BẢN THỬ PIXEL\nWASD: đi lại · E: tương tác · Cuộn chuột: zoom"
-    panel.add_child(label)
-    var minimap := Control.new()
-    minimap.name = "MapOverview"
-    minimap.set_script(MINI_SCRIPT)
-    minimap.call("configure", layout, player, self)
-    minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-    minimap.set_offsets_preset(Control.PRESET_TOP_RIGHT)
-    minimap.offset_left = -235
-    minimap.offset_right = -16
-    minimap.offset_top = 16
-    minimap.offset_bottom = 184
-    canvas.add_child(minimap)
+	var canvas := CanvasLayer.new()
+	canvas.name = "LayeredMapHUD"
+	canvas.layer = 20
+	add_child(canvas)
+	var panel := PanelContainer.new()
+	panel.name = "InfoPanel"
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.position = Vector2(14, 14)
+	panel.custom_minimum_size = Vector2(472, 78)
+	var card := StyleBoxFlat.new()
+	card.bg_color = Color(0.095, 0.16, 0.14, 0.91)
+	card.border_color = Color(0.82, 0.75, 0.53, 0.98)
+	card.set_border_width_all(2)
+	card.set_corner_radius_all(3)
+	card.content_margin_left = 14
+	card.content_margin_right = 14
+	card.content_margin_top = 9
+	card.content_margin_bottom = 9
+	panel.add_theme_stylebox_override("panel", card)
+	canvas.add_child(panel)
+	label = Label.new()
+	label.name = "InfoLabel"
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.add_theme_font_override("font", FONT)
+	label.add_theme_font_size_override("font_size", 15)
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.custom_minimum_size = Vector2(432, 0)
+	label.add_theme_color_override("font_color", Color(0.97, 0.94, 0.82))
+	label.text = "LÀNG LINH KHÊ · BẢN THỬ PIXEL\nWASD: đi lại · E: tương tác · Cuộn chuột: zoom"
+	panel.add_child(label)
+	var minimap := Control.new()
+	minimap.name = "MapOverview"
+	minimap.set_script(MINI_SCRIPT)
+	minimap.call("configure", layout, player, self)
+	minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	minimap.set_offsets_preset(Control.PRESET_TOP_RIGHT)
+	minimap.offset_left = -235
+	minimap.offset_right = -16
+	minimap.offset_top = 16
+	minimap.offset_bottom = 184
+	canvas.add_child(minimap)
 
 
 func _process(delta: float) -> void:
-    if player == null or label == null:
-        return
-    _tick += delta
-    if _tick < 0.15:
-        return
-    _tick = 0.0
-    if Time.get_ticks_msec() < _status_until_ms:
-        return
-    if bool(player.get("seated")):
-        label.text = "ĐANG NGỒI NGHỈ · BẢN DEMO OFFLINE\n[E] đứng dậy"
-        return
-    var closest: Node2D
-    var distance := INF
-    for prop in props:
-        if not prop.call("is_in_range", player):
-            continue
-        var d: float = player.global_position.distance_to(prop.call("action_world_point"))
-        if d < distance:
-            closest = prop
-            distance = d
-    var title := "LÀNG LINH KHÊ · ĐƯỜNG LÀNG"
-    if _culture_root != null:
-        var zone: Dictionary = _culture_root.call("zone_at", player.global_position)
-        var area_name: String = _culture_root.call("localized_name", zone)
-        title = "LÀNG LINH KHÊ · " + area_name.to_upper()
-    if closest != null:
-        label.text = title + "\n[E] " + str(closest.get("display_name"))
-    else:
-        label.text = title + "\nWASD: đi lại · E: tương tác · Cuộn chuột: zoom"
+	if player == null or label == null:
+		return
+	_tick += delta
+	if _tick < 0.15:
+		return
+	_tick = 0.0
+	if Time.get_ticks_msec() < _status_until_ms:
+		return
+	if bool(player.get("seated")):
+		label.text = "ĐANG NGỒI NGHỈ · BẢN DEMO OFFLINE\n[E] đứng dậy"
+		return
+	var closest: Node2D
+	var distance := INF
+	for prop in props:
+		if not prop.call("is_in_range", player):
+			continue
+		var d: float = player.global_position.distance_to(prop.call("action_world_point"))
+		if d < distance:
+			closest = prop
+			distance = d
+	var title := "LÀNG LINH KHÊ · ĐƯỜNG LÀNG"
+	if _culture_root != null:
+		var zone: Dictionary = _culture_root.call("zone_at", player.global_position)
+		var area_name: String = _culture_root.call("localized_name", zone)
+		title = "LÀNG LINH KHÊ · " + area_name.to_upper()
+	if closest != null:
+		label.text = title + "\n[E] " + str(closest.get("display_name"))
+	else:
+		label.text = title + "\nWASD: đi lại · E: tương tác · Cuộn chuột: zoom"
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if not event is InputEventKey or not event.pressed or event.echo or event.keycode != KEY_E:
-        return
-    if bool(player.get("seated")):
-        player.call("leave_seat")
-        label.text = "Bạn đã đứng dậy. Dữ liệu chưa lưu lên server."
-        _status_until_ms = Time.get_ticks_msec() + 2300
-        get_viewport().set_input_as_handled()
-        return
-    var nearest: Node2D
-    var distance := INF
-    for prop in props:
-        if not prop.call("is_in_range", player):
-            continue
-        var d: float = player.global_position.distance_to(prop.call("action_world_point"))
-        if d < distance:
-            nearest = prop
-            distance = d
-    if nearest != null:
-        var result: Dictionary = nearest.call("interact")
-        if bool(result.get("sit", false)):
-            player.call("sit_at", nearest.call("action_world_point") + Vector2(0, 3))
-        label.text = str(result.get("message", ""))
-        _status_until_ms = Time.get_ticks_msec() + 3000
-        get_viewport().set_input_as_handled()
+	var key_event := event as InputEventKey
+	if key_event == null or not key_event.pressed or key_event.echo:
+		return
+	if key_event.keycode != KEY_E and key_event.physical_keycode != KEY_E:
+		return
+	if bool(player.get("seated")):
+		player.call("leave_seat")
+		label.text = "Bạn đã đứng dậy. Dữ liệu chưa lưu lên server."
+		_status_until_ms = Time.get_ticks_msec() + 2300
+		get_viewport().set_input_as_handled()
+		return
+	var nearest: Node2D
+	var distance := INF
+	for prop in props:
+		if not prop.call("is_in_range", player):
+			continue
+		var d: float = player.global_position.distance_to(prop.call("action_world_point"))
+		if d < distance:
+			nearest = prop
+			distance = d
+	if nearest != null:
+		var result: Dictionary = nearest.call("interact")
+		if bool(result.get("sit", false)):
+			player.call("sit_at", nearest.call("action_world_point") + Vector2(0, 3))
+		label.text = str(result.get("message", ""))
+		_status_until_ms = Time.get_ticks_msec() + 3000
+		get_viewport().set_input_as_handled()
 
 
 func _v(raw: Array) -> Vector2:
-    if raw.size() < 2:
-        return Vector2.ZERO
-    return Vector2(float(raw[0]), float(raw[1]))
+	if raw.size() < 2:
+		return Vector2.ZERO
+	return Vector2(float(raw[0]), float(raw[1]))

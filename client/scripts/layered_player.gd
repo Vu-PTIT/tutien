@@ -23,6 +23,9 @@ func sit_at(seat_position: Vector2) -> void:
     collision_mask = 0
     velocity = Vector2.ZERO
     global_position = seat_position
+    _facing = "down"
+    if _sprite != null:
+        _sprite.flip_h = false
     _update_animation(Vector2.ZERO)
 
 
