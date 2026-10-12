@@ -31,6 +31,10 @@ interface SkillDefinition {
   equipSlot: string; hotkey?: string; powerBonus?: number; cooldownMs?: number;
 }
 const SKILL_CATALOG: SkillDefinition[] = [
+  {id:"sk_linh_tram",name:"Linh Trảm",kind:"active",description:"Tung linh lực, tăng 18 sát thương.",
+    unlockText:"Mở khi chọn nhân vật người.",equipSlot:"active_1",hotkey:"R",powerBonus:18,cooldownMs:1800},
+  {id:"sk_linh_trao",name:"Linh Trảo",kind:"active",description:"Vồ bằng linh lực, tăng 18 sát thương.",
+    unlockText:"Mở khi chọn mèo linh thú.",equipSlot:"active_1",hotkey:"R",powerBonus:18,cooldownMs:1800},
   {id:"sk_scan",name:"Mạch Bàn • Truy Dấu",kind:"utility",
     description:"Dò dấu linh mạch và ghi nhận dấu nước trong nhiệm vụ.",
     unlockText:"Mở qua nhiệm vụ khảo sát tại Trúc Âm.",equipSlot:""},

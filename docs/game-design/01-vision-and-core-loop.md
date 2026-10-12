@@ -14,6 +14,8 @@ Thế giới game là một thị trấn Việt Nam hiện đại pha kỳ ảo,
 
 Hai phần dùng chung tài khoản, nhân vật, hồ sơ, bạn bè, chat, tài sản và trạng thái. Mục tiêu là **người dùng sống cuộc sống thật; nhân vật có một cuộc sống song hành trong thế giới game**.
 
+**Bổ sung 13/10/2026:** người chơi có thể chọn nhân vật người hoặc linh thú, giữ tiến trình và quyền điều khiển riêng. Khế ước giữa hai người chơi mở trải nghiệm đồng hành và phối hợp PvE. Xem [13 — Người, linh thú và khế ước](13-player-forms-and-spirit-contracts.md) cho quyết định hiện hành và phạm vi code M1.
+
 ## 2. Hai lớp dữ liệu phải tách biệt
 
 Không đồng nhất việc người dùng đang làm ngoài đời với việc nhân vật đang làm trong game.

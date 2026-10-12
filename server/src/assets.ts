@@ -1,6 +1,7 @@
 interface InventorySlot { itemId: string; quantity: number; instanceId?: string; }
 interface CharacterState {
   [key: string]: any;
+  form: PlayerForm;
   schemaVersion: number; characterId: string; realm: string; realmStage: number;
   cultivationXp: number; hp: number; equipped: {[slot: string]: string};
   equippedSkills: {[slot: string]: string}; learnedSkills: string[];
@@ -17,7 +18,7 @@ function invalidCharacter(): never {
   return fail(nkruntime.Codes.FAILED_PRECONDITION, "Character data requires review; no assets were changed");
 }
 function validateCharacter(state: CharacterState): void {
-  if (state.schemaVersion !== 4 || typeof state.characterId !== "string" || !state.characterId ||
+  if (state.schemaVersion !== 4 || !validPlayerForm(state.form) || typeof state.characterId !== "string" || !state.characterId ||
       !((state.realm === "mortal" && state.realmStage === 0) ||
         (state.realm === "luyen_khi" && assetInteger(state.realmStage, 1, 4))) ||
       !assetInteger(state.cultivationXp, 0, ASSET_LIMIT) || !assetInteger(state.hp, 0, 100) ||
@@ -60,16 +61,21 @@ function validateCharacter(state: CharacterState): void {
   }
 }
 function initialCharacter(userId: string): CharacterState {
-  return { schemaVersion: 4, characterId: userId, realm: "mortal", realmStage: 0,
+  return { schemaVersion: 4, form:defaultPlayerForm(), characterId: userId, realm: "mortal", realmStage: 0,
     cultivationXp: 0, hp: 100, equipped: {weapon: "", armor: ""},
     equippedSkills: {active_1: ""}, learnedSkills: [],
     spiritStones: 0, revision: 0, inventory: [] };
 }
 function migrateCharacter(value: {[key: string]: any}, userId: string): CharacterState {
-  if (value.schemaVersion === 4) { validateCharacter(value as CharacterState); return value as CharacterState; }
+  if (value.schemaVersion === 4) {
+    const next=JSON.parse(JSON.stringify(value)) as CharacterState;
+    if(next.form===undefined) next.form=defaultPlayerForm();
+    validateCharacter(next); return next;
+  }
   if (value.schemaVersion === 3) {
     const next = JSON.parse(JSON.stringify(value)) as CharacterState;
     next.schemaVersion = 4;
+    next.form = defaultPlayerForm();
     next.equippedSkills = next.equippedSkills || {active_1: ""};
     next.learnedSkills = next.learnedSkills || [];
     validateCharacter(next);
@@ -78,6 +84,7 @@ function migrateCharacter(value: {[key: string]: any}, userId: string): Characte
   if (value.schemaVersion === 2) {
     const next = JSON.parse(JSON.stringify(value)) as CharacterState;
     next.schemaVersion = 4; next.cultivationXp = 0; next.hp = 100;
+    next.form = defaultPlayerForm();
     next.equipped = {weapon: "", armor: ""};
     next.equippedSkills = {active_1: ""};
     next.learnedSkills = next.learnedSkills || [];
@@ -92,6 +99,7 @@ function migrateCharacter(value: {[key: string]: any}, userId: string): Characte
         (value.realm === "luyen_khi" && assetInteger(value.level, 1, 4)))) invalidCharacter();
   const next = JSON.parse(JSON.stringify(value)) as CharacterState;
   next.schemaVersion = 4;
+  next.form = defaultPlayerForm();
   next.characterId = userId;
   next.realmStage = value.realm === "pham_nhan" ? 0 : value.level;
   next.realm = value.realm === "pham_nhan" ? "mortal" : "luyen_khi";
@@ -111,7 +119,7 @@ function loadCharacter(nk: nkruntime.Nakama, userId: string): LoadedCharacter {
   for (let attempt = 0; attempt < 5; attempt++) {
     const row = nk.storageRead([{ collection: "characters", key: "main", userId: userId }])[0];
     const state = row ? migrateCharacter(row.value, userId) : initialCharacter(userId);
-    if (row && row.value.schemaVersion === 4) return { state: state, version: row.version };
+    if (row && row.value.schemaVersion === 4 && row.value.form !== undefined) return { state: state, version: row.version };
     try {
       const ack = nk.storageWrite([characterWrite(userId, state, row ? row.version : "*")])[0];
       return { state: state, version: ack.version };

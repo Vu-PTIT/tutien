@@ -24,6 +24,8 @@ jobs:
       - run: node scripts/inventory-smoke.mjs
       - name: Life activities against Nakama and PostgreSQL
         run: node scripts/life-smoke.mjs
+      - name: Player forms and contracts against Nakama and PostgreSQL
+        run: node scripts/spirit-contract-smoke.mjs
       - name: Install Godot for live adapter test
         run: |
           curl --fail --location --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip
@@ -34,6 +36,13 @@ jobs:
         run: |
           /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --editor --quit
           timeout 120 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/social_smoke.gd
+      - name: Test spirit gameplay and Godot REST adapter
+        run: |
+          set -o pipefail
+          /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --editor --quit 2>&1 | tee /tmp/spirit-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load|ERROR:' /tmp/spirit-import.log
+          timeout 90 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/spirit_gameplay_smoke.gd
+          timeout 120 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/spirit_api_live_smoke.gd
       - name: Test inventory panel against Nakama
         if: ${{ hashFiles('client/tests/inventory_smoke.gd') != '' }}
         run: timeout 90 /tmp/godot/Godot_v4.6.1-stable_linux.x86_64 --headless --path client --script res://tests/inventory_smoke.gd

@@ -31,6 +31,7 @@ Học/làm/nghỉ từ app ánh xạ tới địa điểm, đường đi và slo
 - [00 — Rà soát và quyết định](00-review-and-decisions.md): quyết định mới ở đầu; nội dung lịch sử bên dưới.
 - [02 — Nhân vật và tu luyện](02-character-and-cultivation.md)
 - [03 — Chiến đấu, kỹ năng và vật phẩm](03-combat-skills-and-artifacts.md)
+- [13 — Người, linh thú và khế ước](13-player-forms-and-spirit-contracts.md): lựa chọn hình dạng, bạn đồng hành và săn chung M1.
 - [05 — Story bible](05-story-bible.md): tham khảo cho giai đoạn sau.
 - [06 — Nhiệm vụ và sự kiện](06-quests-and-events.md): không phải ưu tiên của lát cắt đầu.
 - [07 — Vườn, chế tạo và kinh tế](07-garden-crafting-and-economy.md): prototype cũ cần cân chỉnh theo hướng đời sống.

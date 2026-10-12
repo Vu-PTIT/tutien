@@ -4,6 +4,8 @@
 **Phụ thuộc:** inventory, quest, encounter và UI tiến trình.
 Các số trong tài liệu là cấu hình thử; runtime ở mốc nguồn chưa có tu luyện.
 
+**Bổ sung 13/10/2026:** [13 — Người, linh thú và khế ước](13-player-forms-and-spirit-contracts.md) là nguồn chuẩn cho lựa chọn hình dạng và kỹ năng đầu M1. Một tài khoản có một nhân vật người hoặc linh thú; hai loại dùng cùng tiến trình và túi đồ. Nhân vật cũ được bổ sung lựa chọn hình dạng, giữ nguyên tài sản. Nội dung quest/xuất thân bên dưới là thiết kế lịch sử cho giai đoạn sau.
+
 ## 1. Tạo nhân vật và trạng thái ban đầu
 
 Một tài khoản có một nhân vật gameplay MVP. Tài khoản Nakama, hồ sơ hiển thị và

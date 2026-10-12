@@ -255,6 +255,16 @@ const worldGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   }
   return fail(nkruntime.Codes.UNAVAILABLE,"World field state is busy; retry");
 };
+// The prototype client renders/collides against this server manifest, never a
+// second hand-maintained copy of online map geometry.
+const worldMapGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
+  const userId=authenticated(ctx),input=objectPayload(payload);
+  if(Object.keys(input).length) return fail(nkruntime.Codes.INVALID_ARGUMENT,"No input fields are accepted");
+  const session=worldReadSession(nk,userId).session,map=WORLD_MAPS[session.mapId];
+  return JSON.stringify({mapId:session.mapId,width:map.width*WORLD_TILE,height:map.height*WORLD_TILE,
+    tileSize:WORLD_TILE,radius:WORLD_RADIUS,speed:WORLD_SPEED,solids:map.solids,
+    footprints:map.footprints||[],waters:map.waters||[],bridges:map.bridges||[],points:map.points});
+};
 const worldTravelRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx),input=objectPayload(payload);
   if(Object.keys(input).length!==1||typeof input.mapId!=="string"||!WORLD_MAPS[input.mapId]||!worldMapReachable(input.mapId))

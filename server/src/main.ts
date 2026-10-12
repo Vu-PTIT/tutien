@@ -4,6 +4,16 @@ const getProfile: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) 
 
 function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkruntime.Nakama, initializer: nkruntime.Initializer): void {
   initializer.registerRpc("get_profile", getProfile);
+  initializer.registerRpc("character_forms", characterFormsRpc);
+  initializer.registerRpc("character_select_form", characterSelectFormRpc);
+  initializer.registerRpc("contract_get", contractGetRpc);
+  initializer.registerRpc("contract_invite", contractInviteRpc);
+  initializer.registerRpc("contract_respond", contractRespondRpc);
+  initializer.registerRpc("contract_release", contractReleaseRpc);
+  initializer.registerRpc("contract_hunt_start", contractHuntStartRpc);
+  initializer.registerRpc("contract_hunt_attack", contractHuntAttackRpc);
+  initializer.registerRpc("contract_hunt_leave", contractHuntLeaveRpc);
+  initializer.registerRpc("contract_hunt_claim", contractHuntClaimRpc);
   initializer.registerRpc("inventory_get", inventoryGetRpc);
   initializer.registerRpc("inventory_claim_starter", inventoryClaimStarterRpc);
   initializer.registerRpc("inventory_equip", inventoryEquipRpc);
@@ -23,6 +33,7 @@ function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkr
   initializer.registerRpc("pve_son_tru_create", pveSonTruCreateRpc);
   initializer.registerRpc("pve_son_tru_claim_pending", pveSonTruClaimPendingRpc);
   initializer.registerRpc("world_get", worldGetRpc);
+  initializer.registerRpc("world_map_get", worldMapGetRpc);
   initializer.registerRpc("world_travel", worldTravelRpc);
   initializer.registerRpc("world_move", worldMoveRpc);
   initializer.registerRpc("world_interact", worldInteractRpc);

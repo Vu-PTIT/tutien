@@ -41,11 +41,13 @@ Backend/hợp đồng `activity_session` là phần giao nhau: platform gửi l�
 
 > Demo làng hiện tại là tech demo, không phải chuẩn hình ảnh. Asset pack 16×16 trong `client/assets/tileset/` chưa có license trong repo; chỉ dùng làm placeholder.
 
-## Trạng thái code hiện tại — 12/10/2026
+## Trạng thái code hiện tại — 13/10/2026
+
+**13/10/2026 — Người/linh thú và khế ước M1:** F5 mở cảnh chơi thử mới: chọn người hoặc mèo linh thú, đi lại và đánh quái. Có đăng ký/đăng nhập, khế ước hai người xác nhận, săn Sơn Trư chung và phần thưởng riêng có lưu. Đây là cảnh gameplay với art placeholder; chưa khôi phục bản làng cũ. Xem [thiết kế đầy đủ](docs/game-design/13-player-forms-and-spirit-contracts.md) và [API](docs/spirit-contracts-backend.md).
 
 Backend đã có tài khoản/hồ sơ, túi đồ, cộng đồng, prototype combat/PvE và **trồng cây, câu cá, đào khoáng**. Hoạt động có direct/autonomous, giờ server, phiên lưu bền, slot độc quyền, phần thưởng/refund chống trùng và xử lý túi đầy. Có 12 luống, 4 bến câu của làng mới và 4 điểm đào ở mỏ lộ thiên/B1. Xem [API và hướng dẫn nối client](docs/life-activities-backend.md).
 
-Các commit mới nhất đã gỡ runtime/asset/layout client, để `client/scenes/main.tscn` là một Node2D trống. Những demo làng ở phần lịch sử phía trên chưa có trong checkout hiện tại. Bản backend này chưa khôi phục giao diện map/game/sảnh. Tiến trình offline được suy ra theo thời gian server; vật phẩm vào túi khi gọi claim.
+Trước lát cắt người/linh thú, các commit ngày 12/10 đã gỡ runtime/asset/layout client. Những demo làng ở phần lịch sử phía trên chưa có trong checkout hiện tại; cảnh F5 mới phục vụ gameplay khế ước. Tiến trình activity offline được suy ra theo thời gian server; vật phẩm vào túi khi gọi claim.
 
 ## Chạy backend
 
@@ -53,6 +55,7 @@ Các commit mới nhất đã gỡ runtime/asset/layout client, để `client/sc
 docker compose up --build --wait --wait-timeout 180
 node scripts/smoke.mjs
 node scripts/life-smoke.mjs
+node scripts/spirit-contract-smoke.mjs
 ```
 
 Kiểm tra code:
