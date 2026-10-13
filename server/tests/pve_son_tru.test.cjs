@@ -2,6 +2,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const fs = require('node:fs');
+const {contentInit} = require('./helpers/content_db.cjs');
 const {randomUUID, createHash} = require('node:crypto');
 
 const OWNER = '11111111-1111-4111-8111-111111111111';
@@ -10,7 +11,8 @@ const clone = value => JSON.parse(JSON.stringify(value));
 function harness(rows = new Map()) {
   const rpcHandlers = {}, matches = {}, scope = vm.createContext({});
   vm.runInContext(fs.readFileSync('build/index.js', 'utf8'), scope);
-  scope.InitModule({}, {}, {}, new Proxy({}, {get: (_, method) => method === 'registerRpc'
+  const content = contentInit();
+  scope.InitModule({}, content.logger, content.nk, new Proxy({}, {get: (_, method) => method === 'registerRpc'
     ? (name, fn) => { rpcHandlers[name] = fn; }
     : method === 'registerMatch' ? (name, handler) => { matches[name] = handler; } : () => {}}));
   let serial = 0, matchId = '', matchParams = null, tick = 0, seq = 0;
@@ -69,10 +71,10 @@ function harness(rows = new Map()) {
     get state() { return state; }, get tick() { return tick; }, get matchParams() { return matchParams; }};
 }
 
-function profileFor(h, realm = 'luyen_khi') {
+// Any player who has chosen a form earns loot; an unchosen profile only trains.
+function profileFor(h, chosen = true) {
   const profile = h.rpc('get_profile');
-  profile.realm = realm;
-  profile.realmStage = realm === 'luyen_khi' ? 1 : 0;
+  profile.form = {kind: 'human', speciesId: 'human', selected: chosen};
   profile.hp = 73;
   h.put(profile);
   return profile;
@@ -96,6 +98,7 @@ test('PvE creation requires consent, derives owner and combat stats from the ser
   assert.equal(h.matchParams.initialHp, 73);
   assert.equal(h.matchParams.attack, 21);
   assert.equal(h.matchParams.defense, 20);
+  assert.equal(h.matchParams.rewardEligible, true);
   assert.equal(h.rpc('pve_son_tru_create', {consent: true}).resumed, true);
 });
 
@@ -141,7 +144,7 @@ test('boar gives a readable tell, charges authoritatively, and its hit can be av
   assert.equal(state.boar.hp, 60);
 });
 
-test('verified LK victory saves one immutable reward; full bag keeps it pending across restart until claim', () => {
+test('verified victory saves one immutable reward; full bag keeps it pending across restart until claim', () => {
   const h = harness();
   const profile = profileFor(h);
   const swordId = randomUUID();
@@ -166,7 +169,8 @@ test('verified LK victory saves one immutable reward; full bag keeps it pending 
   assert.equal(state.settlementStatus, 'pending');
   const inventory = h.rpc('inventory_get');
   assert.equal(inventory.pendingSettlement.generation, 1);
-  assert.equal(inventory.pendingSettlement.reward.cultivationXp, 10);
+  assert.equal(inventory.pendingSettlement.reward.cultivationXp, undefined);
+  assert.deepEqual(inventory.pendingSettlement.reward.linhNang, [{vi: 'tho', motes: 8, turbid: 6}]);
   assert.equal(inventory.pendingSettlement.reward.items[0].itemId, 'it_boar_hide');
   assert.throws(() => h.rpc('pve_son_tru_claim_pending'), error => error.code === 8);
   assert.throws(() => h.rpc('pve_son_tru_create', {consent: true}), error => error.code === 8);
@@ -176,7 +180,9 @@ test('verified LK victory saves one immutable reward; full bag keeps it pending 
   const claim = restarted.rpc('pve_son_tru_claim_pending');
   assert.equal(claim.pending, false);
   assert.equal(claim.replayed, false);
-  assert.equal(claim.profile.cultivationXp, 10);
+  assert.equal(claim.profile.cultivationXp, 0);
+  // An untaught human lets the boar's linh năng pass through.
+  assert.equal(claim.receipt.granted.inner.ignored, true);
   assert.equal(claim.profile.inventory.at(-1).itemId, 'it_boar_hide');
   assert.equal(restarted.rpc('inventory_get').pendingSettlement, null);
   assert.equal(restarted.signals[0].value.action, 'reward_claimed');
@@ -212,9 +218,9 @@ test('pending encounter survives temporary storage-read failures and remains pen
   assert.equal(h.rpc('inventory_get').pendingSettlement.reward.items[0].itemId, 'it_boar_hide');
 });
 
-test('mortal training kill has no XP, loot, pending settlement or repeatable reward receipt', () => {
+test('a player without a chosen form trains: no XP, loot, pending settlement or repeatable reward receipt', () => {
   const h = harness();
-  const profile = profileFor(h, 'mortal');
+  const profile = profileFor(h, false);
   const state = h.init({rewardEligible: false, attack: 100});
   h.join();
   state.player.x = 635; state.player.y = 390;
@@ -230,7 +236,7 @@ test('mortal training kill has no XP, loot, pending settlement or repeatable rew
   assert.equal([...h.rows.values()].filter(row => row.collection === 'asset_receipts' && row.value.sourceId.startsWith('pve:')).length, 0);
 });
 
-test('LK victory checkpoints remaining HP in the same durable profile as XP and loot', () => {
+test('victory checkpoints remaining HP in the same durable profile as the loot', () => {
   const h = harness();
   profileFor(h);
   const state = h.init({attack: 100, initialHp: 73});
@@ -241,7 +247,7 @@ test('LK victory checkpoints remaining HP in the same durable profile as XP and 
   h.steps(3);
   const saved = h.rpc('get_profile');
   assert.equal(saved.hp, 48);
-  assert.equal(saved.cultivationXp, 10);
+  assert.equal(saved.cultivationXp, 0);
   assert.equal(saved.inventory.at(-1).itemId, 'it_boar_hide');
   assert.equal(state.phase, 'victory');
 });

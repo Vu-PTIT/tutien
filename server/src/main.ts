@@ -1,8 +1,13 @@
-const getProfile: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) {
-  return JSON.stringify(loadCharacter(nk, authenticated(ctx)).state);
+// Opening the profile (once per login) also sweeps expired receipts, at most every few hours.
+const getProfile: nkruntime.RpcFunction = function (ctx, logger, nk, _payload) {
+  const userId = authenticated(ctx), profile = loadCharacter(nk, userId).state;
+  maintainStorage(nk, logger, userId);
+  return JSON.stringify(profile);
 };
 
-function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkruntime.Nakama, initializer: nkruntime.Initializer): void {
+function InitModule(_ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, initializer: nkruntime.Initializer): void {
+  contentMigrate(nk);
+  logger.info("Game content tables ready: revision %s", contentEnsure(nk).revision);
   initializer.registerRpc("get_profile", getProfile);
   initializer.registerRpc("character_forms", characterFormsRpc);
   initializer.registerRpc("character_select_form", characterSelectFormRpc);
@@ -35,6 +40,7 @@ function InitModule(_ctx: nkruntime.Context, _logger: nkruntime.Logger, _nk: nkr
   initializer.registerRpc("inner_world_get", innerWorldGetRpc);
   initializer.registerRpc("inner_world_learn", innerWorldLearnRpc);
   initializer.registerRpc("inner_world_arrange", innerWorldArrangeRpc);
+  initializer.registerRpc("inner_world_absorb_item", innerWorldAbsorbItemRpc);
   initializer.registerRpc("world_get", worldGetRpc);
   initializer.registerRpc("world_map_get", worldMapGetRpc);
   initializer.registerRpc("world_travel", worldTravelRpc);

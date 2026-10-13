@@ -47,7 +47,8 @@ func _run() -> void:
 	assert(won)
 	for actor in [a, b]:
 		var claim := _ok(await actor.request_rpc("contract_hunt_claim"))
-		assert(claim.profile.cultivationXp == 10)
+		assert(int(claim.profile.cultivationXp) == 0)
+		assert(claim.receipt.granted.linhNang.size() == 1)
 		assert(_ok(await actor.request_rpc("contract_hunt_claim")).replayed)
 	_ok(await a.request_rpc("contract_release", {"contractId": contract_id}))
 	assert(_ok(await b.request_rpc("contract_get")).active == null)

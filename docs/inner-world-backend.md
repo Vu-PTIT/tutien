@@ -2,7 +2,7 @@
 
 Ngày: 13/10/2026. Runtime: Nakama TypeScript ES5, file `server/src/inner_world.ts`. Thiết kế: [07 — Hệ thống sức mạnh](game-design/07-power-system.md).
 
-Nội Giới là thế giới nhỏ bên trong nhân vật. Server sở hữu toàn bộ: client không gửi thửa, vị, số linh năng hay hình dạng. Nội Giới nằm trong hồ sơ `characters/main` (trường `innerWorld`), nên lớn lên trong **cùng một lần ghi** với vật phẩm hay phiên hoạt động sinh ra nó.
+Nội Giới là thế giới nhỏ bên trong nhân vật. Server sở hữu toàn bộ: client không gửi thửa, vị, số linh năng hay hình dạng. Nội Giới lưu ở row riêng `inner_worlds/main` (chủ sở hữu đọc được, client không ghi). Server ghép nó vào hồ sơ thành trường `innerWorld` khi đọc, nên API không đổi. Nội Giới lớn lên trong **cùng một batch CAS** với hồ sơ và vật phẩm hay phiên hoạt động sinh ra nó. Row này chỉ được ghi khi Nội Giới thực sự thay đổi, nên di chuyển, lưu HP hay đổi túi đồ không ghi lại tới 1600 thửa. Xem [Lưu trữ backend](storage-backend.md).
 
 ## Ai dùng được
 
@@ -99,15 +99,18 @@ Bước nhảy tự xảy ra khi đủ thửa và đủ chất: Hạt → Đảo
 
 ## Tương thích
 
-- `realm`, `cultivationXp` và XP thưởng vẫn được ghi như trước để không vỡ hồ sơ, receipt và nhiệm vụ mở đầu cũ. Chúng **không còn là nguồn sức mạnh**; sẽ gỡ khi client dùng Nội Giới.
+- Cảnh giới đã bỏ. `realm`, `realmStage`, `cultivationXp` chỉ còn là trường cũ bị đóng băng: không nguồn thưởng nào cộng XP hay nâng cảnh giới (kể cả nhiệm vụ mở đầu). Phần thưởng cũ đang chờ còn ghi XP vẫn nhận được, nhưng XP thực nhận là 0.
+- Vì vậy chỉ hồ sơ **đã phát hành** ở Luyện Khí mới được chuyển thành `teacher: "legacy"`. Trước 13/10/2026, Người chưa học có thể tự biết Hấp Linh khi đánh quái đủ 100 XP hoặc làm xong nhiệm vụ mở đầu; lỗi này đã được chặn và có test.
 - Hồ sơ cũ không có `innerWorld`: đọc thì suy ra (không ghi), lần ghi đầu tiên có Nội Giới mới lưu.
+- `innerWorld` còn nhúng trong `characters/main` (bản trước khi tách) được chuyển sang `inner_worlds/main` ở lần đọc kế tiếp; bản nhúng thắng nếu cả hai cùng tồn tại.
 - `innerWorld` hỏng bị khóa thao tác để kiểm tra, không reset.
 - Fingerprint receipt của phần thưởng có linh năng bao gồm `linhNang`. Một lần retry kéo dài qua lúc deploy của một lượt hạ quái cũ sẽ bị coi là operation khác.
+
+Mọi lần hạ quái (ngoài map, trận Sơn Trư riêng, săn chung khế ước) đều cho `innerMobEssence`: 8 linh năng theo vị của loài, trong đó 6 đục.
 
 ## Chưa làm
 
 - Vị Ẩn, map Ẩn Giới, vết nứt tím (§6 của thiết kế).
-- Linh năng từ trận Sơn Trư và săn chung (hiện vẫn chỉ XP + đồ).
 - Dùng máu/linh lực/hồi máu/tốc độ trong chiến đấu; dạy Hình Thái giữa người chơi.
 - UI Godot và sảnh cho Nội Giới.
 
@@ -118,4 +121,8 @@ node scripts/build-life-world.cjs --check
 cd server && npm test
 ```
 
-`server/tests/inner_world.test.cjs` gồm: Người chưa học không giữ linh năng và không Hấp Linh được; linh thú có hạt Ẩn; Bé Mơ dạy một lần; học qua khế ước linh thú (không học được từ Người); Hấp Linh mọc thửa xác định và replay không mọc thêm; bước nhảy Đảo; linh năng đục từ quái và lọc; câu cá/thu hoạch; xếp lại không làm tách; núi tăng sát thương; Nội Giới lệch không nhảy; dữ liệu hỏng được giữ, Luyện Khí cũ được chuyển. Toàn bộ 156 test đạt. Smoke live trên Nakama/PostgreSQL chưa chạy ở môi trường này.
+`server/tests/inner_world.test.cjs` gồm: Người chưa học không giữ linh năng và không Hấp Linh được; linh thú có hạt Ẩn; Bé Mơ dạy một lần; học qua khế ước linh thú (không học được từ Người); Hấp Linh mọc thửa xác định và replay không mọc thêm; bước nhảy Đảo; linh năng đục từ quái và lọc; câu cá/thu hoạch; xếp lại không làm tách; núi tăng sát thương; Nội Giới lệch không nhảy; dữ liệu hỏng được giữ, Luyện Khí cũ được chuyển. Toàn bộ test server đạt (168 test ngày 13/10/2026).
+
+`scripts/inner-world-smoke.mjs` chạy trên Nakama/PostgreSQL thật (đã thêm vào CI): Người học Hấp Linh qua khế ước linh thú, linh thú Hấp Linh tự động 2 lượt ở bờ hồ theo giờ server, nhận kết quả mọc 1 thửa Thủy, replay không mọc thêm, xếp lại thửa. Ngày 13/10/2026 cả 6 smoke backend đều đạt trên image mới.
+
+Bộ giả lập storage trong unit test (`tests/helpers/assets.cjs`) mô phỏng cách Nakama sao chép giá trị khi gán vào dữ liệu đọc từ storage, để bắt lỗi "sửa sau khi gán" từng làm mất lượt tham gia săn chung đầu tiên.

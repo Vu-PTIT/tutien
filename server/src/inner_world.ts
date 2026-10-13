@@ -23,6 +23,11 @@ const INNER_MOTES_PER_CELL = 4;
 const INNER_MAX_HEIGHT = 4;
 const INNER_STAGE_CAP = 3; // Chapter 1 ends at Quần đảo.
 const INNER_MOB_ESSENCE: {[enemyId: string]: string} = {en_boar: "tho", en_spider: "moc"};
+// Every monster kill (field, solo encounter or contract hunt) releases plenty of
+// linh năng, mostly turbid, carrying the species' vị.
+function innerMobEssence(enemyId: string): InnerEssence[] {
+  return [{vi: INNER_MOB_ESSENCE[enemyId] || "tho", motes: 8, turbid: 6}];
+}
 const INNER_STAGES = [
   {id: "hat", name: "Hạt", cells: 1, need: ""},
   {id: "dao", name: "Đảo", cells: 20, need: "Có Thổ và Thủy sạch"},
@@ -349,8 +354,8 @@ const innerWorldLearnRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, pa
       typeof input.operationId !== "string" || typeof input.contractId !== "string")
     return fail(nkruntime.Codes.INVALID_ARGUMENT, "Expected operationId and contractId only");
   const contract = spiritActive(nk, input.contractId, userId).value, teacherId = spiritOther(contract, userId);
-  const teacher = loadCharacter(nk, teacherId).state;
-  if (teacher.form.kind !== "spirit_beast" || !teacher.form.selected)
+  const teacherForm = peekCharacterForm(nk, teacherId);
+  if (teacherForm.kind !== "spirit_beast" || !teacherForm.selected)
     return fail(nkruntime.Codes.FAILED_PRECONDITION, "Only a Tinh Linh can teach Hấp Linh");
   const result = commitAssetMutation(nk, userId, input.operationId, "inner_learn", {contractId: input.contractId}, function (next) {
     if (next.form.kind !== "human" || !next.form.selected) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Choose the human form before learning");

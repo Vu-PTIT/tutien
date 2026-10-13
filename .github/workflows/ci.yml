@@ -16,7 +16,13 @@ jobs:
         working-directory: server
       - run: npm test
         working-directory: server
+      - name: Every RPC loads game content in a fresh Nakama VM
+        run: node --test tests/*.test.cjs
+        working-directory: server
+        env:
+          COLD_CONTENT: "1"
       - run: node scripts/build-life-world.cjs --check
+      - run: node scripts/build-game-content.cjs --check
       - run: docker compose config --quiet
       - run: docker compose up --build --wait --wait-timeout 180
       - run: node scripts/smoke.mjs
@@ -26,6 +32,8 @@ jobs:
         run: node scripts/life-smoke.mjs
       - name: Player forms and contracts against Nakama and PostgreSQL
         run: node scripts/spirit-contract-smoke.mjs
+      - name: Nội Giới power system against Nakama and PostgreSQL
+        run: node scripts/inner-world-smoke.mjs
       - name: Install Godot for live adapter test
         run: |
           curl --fail --location --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip

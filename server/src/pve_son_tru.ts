@@ -118,7 +118,7 @@ const pveSonTruCreateRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, pa
   let matchId: string;
   try {
     matchId = nk.matchCreate("pve_son_tru", {owner: userId, encounterId: encounterId,
-      rewardEligible: profile.realm === "luyen_khi", initialHp: profile.hp, attack: attack, defense: defense});
+      rewardEligible: profile.form.selected, initialHp: profile.hp, attack: attack, defense: defense});
   } catch (_error) {
     const current = nk.storageRead([request])[0];
     if (current && current.value.encounterId === encounterId) {

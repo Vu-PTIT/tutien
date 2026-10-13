@@ -228,8 +228,8 @@ function worldWrite(nk:nkruntime.Nakama,userId:string,value:WorldSession,version
   const character=loadCharacter(nk,userId);
   lifeEnsureIdle(character.state,Date.now());
   // The unchanged profile is a CAS witness: activity_start cannot race a move.
-  return nk.storageWrite([worldSessionWriteRequest(userId,value,version),
-    characterWrite(userId,character.state,character.version)])[0].version;
+  return nk.storageWrite([worldSessionWriteRequest(userId,value,version)].concat(
+    characterWrites(userId,character.state,character)))[0].version;
 }
 const worldGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx);
@@ -399,7 +399,6 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     session.attackReadyAt=now+(activeSkill?Number(activeSkill.cooldownMs||700):700);
     if(target.hp===0) {
       target.respawnAt=now+target.respawnMs;
-      const xp=target.rewardXp;
       const items=[{itemId:target.rewardItemId,quantity:1}];
       let equipmentDropped=false,pityGuaranteed=false,pityMisses=0,pityLimit=0;
       if(target.equipmentDropItemId&&Number(target.equipmentDropBasisPoints||0)>0) {
@@ -422,13 +421,10 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
       }
       const reward=grantReward(nk,userId,"field_"+target.id.replace(/[^a-zA-Z0-9_-]/g,"_")+"_"+target.generation,
         "world:"+session.mapId+":"+target.id+":"+target.generation,
-        {spiritStones:0,cultivationXp:xp,items:items,
-          // Field kills release plenty of linh năng, mostly turbid, carrying the species' vị.
-          linhNang:[{vi:INNER_MOB_ESSENCE[target.enemyId]||"tho",motes:8,turbid:6}]},
+        {spiritStones:0,items:items,
+          linhNang:innerMobEssence(target.enemyId)},
         [worldSessionWriteRequest(userId,session,current.version)]);
       const rewardData=reward as {[key:string]:any};
-      const awardedXp=Number(rewardData.receipt.granted.cultivationXp||0);
-      const xpText=awardedXp>0?" • +"+awardedXp+" XP":"";
       const equipmentName=target.equipmentDropItemId?catalogItem(target.equipmentDropItemId).name:"";
       const lootText=equipmentDropped?"rơi "+equipmentName+(pityGuaranteed?" (bảo đảm)":"")+" và vật phẩm săn":"nhận vật phẩm săn";
       const pityText=!equipmentDropped&&equipmentName? " • "+equipmentName+" "+pityMisses+"/"+pityLimit+" lượt tới mốc bảo đảm":"";
@@ -436,7 +432,7 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
       return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,damage:damage,killed:true,
         profile:rewardData.profile,receipt:rewardData.receipt,fieldMobs:worldFieldMobSnapshot(session,session.mapId),
         equipmentPity:pityStatus,skillId:requestedSkillId,
-        message:(activeSkill?activeSkill.name+" • ":"")+"Đã hạ "+target.name+" • "+lootText+pityText+xpText+"."});
+        message:(activeSkill?activeSkill.name+" • ":"")+"Đã hạ "+target.name+" • "+lootText+pityText+"."});
     }
     try {
       worldWrite(nk,userId,session,current.version);

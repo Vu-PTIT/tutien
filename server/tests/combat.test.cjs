@@ -2,11 +2,13 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const fs = require('node:fs');
+const {contentInit} = require('./helpers/content_db.cjs');
 function harness() {
   const scope = vm.createContext({});
   vm.runInContext(fs.readFileSync('build/index.js','utf8'),scope);
   const matches = {}; const rpcs = {};
-  scope.InitModule({}, {}, {}, new Proxy({}, {get: (_, method) => method === 'registerRpc'
+  const content = contentInit();
+  scope.InitModule({}, content.logger, content.nk, new Proxy({}, {get: (_, method) => method === 'registerRpc'
     ? (id, fn) => {rpcs[id]=fn;} : method === 'registerMatch' ? (id, fn)=>{matches[id]=fn;} : ()=>{}}));
   const match = matches.sparring;
   const nk = {uuidv4:()=> 'epoch', binaryToString: b=>Buffer.from(b).toString()};

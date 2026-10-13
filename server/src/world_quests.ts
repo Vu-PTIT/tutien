@@ -31,7 +31,7 @@ function worldQuestView(profile: CharacterState): JsonObject {
       ? "Mang Mạch Bàn tới Trúc Âm, dò hai dấu nước. (%d/2)".replace("%d", String((quest.objectives.water_west ? 1 : 0) + (quest.objectives.water_east ? 1 : 0)))
       : "Tìm Lục Vi ở cổng làng để nhận Mạch Bàn.",
     q_main_003: "Trở về An Khê, đến Bàn Tĩnh Tâm và thực hành dẫn khí.",
-    q_main_complete: "Đã mở Luyện Khí 1 và Phi Nhận. Hành trình tiếp tục ở Trúc Âm."
+    q_main_complete: "Đã mở Tức Mạch Quyết và Phi Nhận. Hành trình tiếp tục ở Trúc Âm."
   };
   return {questId: quest.currentQuestId, title: title[quest.currentQuestId] || title.q_main_complete,
     body: body[quest.currentQuestId] || body.q_main_complete,
@@ -40,8 +40,8 @@ function worldQuestView(profile: CharacterState): JsonObject {
 }
 
 // Called only after world_interact validates the server-owned map, object,
-// distance, and line of sight. The profile CAS commits objective, item, XP,
-// realm, skill, and insight changes together.
+// distance, and line of sight. The profile CAS commits objective, item, skill
+// and insight changes together.
 function applyWorldQuestInteraction(nk: nkruntime.Nakama, userId: string, entityId: string): JsonObject {
   for (let attempt = 0; attempt < 5; attempt++) {
     const loaded = loadCharacter(nk, userId);
@@ -75,17 +75,16 @@ function applyWorldQuestInteraction(nk: nkruntime.Nakama, userId: string, entity
         }
       }
     } else if (progress.currentQuestId === "q_main_003" && entityId === "ak.shrine.breathing") {
-      if (before.realm !== "mortal") return fail(nkruntime.Codes.FAILED_PRECONDITION, "Opening quest requires a mortal character");
-      next.realm = "luyen_khi"; next.realmStage = 1;
+      // Breath control is a technique, not Hấp Linh: only a Tinh Linh teaches a human
+      // to absorb linh năng, so this ritual never touches realm or the Nội Giới.
       next.insightFlags = next.insightFlags || [];
       if (next.insightFlags.indexOf("insight.breath_control") < 0) next.insightFlags.push("insight.breath_control");
       next.learnedTechniques = next.learnedTechniques || [];
       if (next.learnedTechniques.indexOf("cp_tuc_mach") < 0) next.learnedTechniques.push("cp_tuc_mach");
       next.learnedSkills = next.learnedSkills || [];
       if (next.learnedSkills.indexOf("sk_phi_nhan") < 0) next.learnedSkills.push("sk_phi_nhan");
-      reward = {spiritStones: 0, cultivationXp: 40, items: []};
       progress.completed.push("q_main_003"); progress.currentQuestId = "q_main_complete";
-      message = "Dẫn khí thành công: Luyện Khí 1, Tức Mạch Quyết và Phi Nhận đã mở.";
+      message = "Dẫn khí thành công: Tức Mạch Quyết và Phi Nhận đã mở.";
     }
     if (progress.currentQuestId === quest.currentQuestId && JSON.stringify(progress.objectives) === JSON.stringify(quest.objectives)) {
       return {profile: before, quest: worldQuestView(before), message: message};
@@ -97,7 +96,7 @@ function applyWorldQuestInteraction(nk: nkruntime.Nakama, userId: string, entity
     if (updated.revision >= 1000000000) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "Character revision limit reached");
     validateCharacter(updated);
     try {
-      nk.storageWrite([characterWrite(userId, updated, loaded.version)]);
+      nk.storageWrite(characterWrites(userId, updated, loaded));
       return {profile: updated, quest: worldQuestView(updated), message: message};
     } catch (_error) { /* Retry the whole quest transaction after a concurrent profile write. */ }
   }

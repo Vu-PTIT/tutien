@@ -3,8 +3,8 @@
 ## Chơi thử
 
 1. Chạy backend như README, mở Godot, **Kết nối** rồi nhận vật tư khởi đầu trong **Túi đồ**.
-2. Trang bị Áo vải trong túi. Khi profile là Luyện Khí, nút **Săn Sơn Trư** mở bãi săn riêng; cùng nút điều khiển PC/cảm ứng dùng để đi, đánh và né.
-3. Đọc hướng gầm, né cú lao, đánh khi Sơn Trư hồi thế. Chiến thắng Luyện Khí nhận 10 tu vi và 1 Da Sơn Trư. Bài luyện Phàm Nhân không phát XP/loot.
+2. Trang bị Áo vải trong túi. Nút **Săn Sơn Trư** mở bãi săn riêng; cùng nút điều khiển PC/cảm ứng dùng để đi, đánh và né.
+3. Đọc hướng gầm, né cú lao, đánh khi Sơn Trư hồi thế. Người chơi đã chọn hình dạng thắng thì nhận 1 Da Sơn Trư và linh năng Thổ cho Nội Giới. Hồ sơ chưa chọn hình dạng chỉ luyện tập, không nhận thưởng.
 4. Hồi Nguyên Hoàn dùng trong Túi đồ, hồi tối đa 40 HP. Nếu túi đầy lúc nhận da, settlement được giữ; bỏ vật tư thường để trống một ô rồi bấm **Nhận thưởng đang chờ**.
 
 Gói prototype `starter:v1` giữ nguyên: 12 linh thạch, 2 hạt Cam Lộ, 4 nước,
@@ -34,7 +34,7 @@ Tiền, túi, XP, HP và trang bị nằm trong cùng object; không dùng Nakam
 - Túi 24 ô; nguyên liệu/tiêu hao stack tối đa 99; đồ nhiệm vụ tối đa 1 mỗi ô.
 - Trang bị có `instanceId` UUID. Áo vải thêm 15 phòng thủ; Thanh Thiết Kiếm thêm 5 công.
 - Hồi Nguyên Hoàn hồi 40 HP, tối đa 100; dùng thuốc khi HP đầy bị từ chối và không tiêu hao.
-- XP săn Sơn Trư: Luyện Khí tầng 1/2/3 được cộng tối đa tương ứng 600/1200/2000 XP tích lũy; tầng 4 không nhận XP. XP và loot lưu cùng giao dịch cấp reward. Đây là giới hạn an toàn thử nghiệm, chưa qua cân bằng vòng chơi.
+- Cảnh giới và XP đã bỏ từ 13/10/2026: `realm`, `realmStage`, `cultivationXp` chỉ còn là trường cũ bị đóng băng. Không phần thưởng nào cộng XP. Sức mạnh đến từ [Nội Giới](inner-world-backend.md).
 - Giới hạn tiền và revision: 1 tỷ, số nguyên. Đạt giới hạn thì từ chối toàn bộ.
 - Schema 1 được migrate sang 3 theo luật cũ (`pham_nhan/level:1` → mortal; Luyện Khí 1–4 giữ tầng). Schema 2 giữ tiền, realm/tầng, revision, inventory và trường bổ sung; thêm XP 0, HP 100, hai ô trang bị rỗng. CAS bảo vệ migration cạnh tranh.
 - Schema lạ, tầng ngoài phạm vi hoặc dữ liệu lỗi bị khóa thao tác để rà soát, không âm thầm reset/clamp. Chưa có màn hình quản trị xử lý dữ liệu cần rà soát.
@@ -61,12 +61,12 @@ Không có RPC cấp đồ/XP tùy ý.
 Match `pve_son_tru` là solo, 20 tick/giây; server kiểm tra chủ match, consent,
 sequence, phiên socket, biên, tốc độ, hit, HP, tell/charge/recover, cooldown và
 thời điểm né. Client chỉ gửi hướng di chuyển, hướng đánh và ý định đánh/né.
-Chỉ trang bị có trong profile mới đổi công/thủ. Hạ Sơn Trư ở Luyện Khí lưu outcome
+Chỉ trang bị có trong profile mới đổi công/thủ. Hạ Sơn Trư (đã chọn hình dạng) lưu outcome
 theo `encounterId:generation`, source riêng và con trỏ `pending` trong cùng batch
 storage trước khi báo nhận thưởng. Receipt asset giữ tính duy nhất khi retry.
 
 Khi túi đầy, profile không bị cộng nửa phần thưởng; outcome giữ nguyên qua restart,
-`inventory_get` báo rõ đồ/XP đang chờ, encounter thưởng mới bị chặn. Sau khi người
+`inventory_get` báo rõ đồ/linh năng đang chờ, encounter thưởng mới bị chặn. Sau khi người
 chơi dọn chỗ, cùng settlement được claim một lần rồi chuyển `settled`. Mất ACK có
 thể retry vì operation/source receipt ổn định.
 

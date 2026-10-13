@@ -35,7 +35,7 @@ function fixture(a,value) { storageFixture(a,'characters','main',value,1,0); }
 try {
   const a=await account();
   const initial=await Promise.all(Array.from({length:8},()=>good(a,'inventory_get')));
-  initial.forEach(v=>{assert.equal(v.profile.schemaVersion,4);assert.deepEqual(v.profile.equippedSkills,{active_1:''});assert.equal(v.profile.realm,'mortal');assert.equal(v.profile.hp,100);assert.equal(v.profile.cultivationXp,0);assert.equal(v.capacity,24);assert.equal(v.catalogVersion,3);assert.equal(v.catalog.length,31);});
+  initial.forEach(v=>{assert.equal(v.profile.schemaVersion,4);assert.deepEqual(v.profile.equippedSkills,{active_1:''});assert.equal(v.profile.realm,'mortal');assert.equal(v.profile.hp,100);assert.equal(v.profile.cultivationXp,0);assert.equal(v.capacity,24);assert.equal(v.catalogVersion,4);assert.equal(v.catalog.length,40);assert.match(v.catalogRevision,/^[0-9a-f]{16}$/);});
   const claims=await Promise.all(Array.from({length:12},()=>rpc(a,'inventory_claim_starter',{operationId:'same_operation_001'})));
   claims.forEach(r=>assert.equal(r.status,200,JSON.stringify(r.data)));
   assert.equal(claims.filter(r=>!r.value.replayed).length,1);
@@ -113,7 +113,8 @@ try {
   assert.equal(pendingLogin.status,200,JSON.stringify(pendingLogin.data));pending.auth='Bearer '+pendingLogin.data.token;
   assert.equal((await good(pending,'inventory_get')).pendingSettlement.encounterId,encounterId);
   const settlement=await good(pending,'pve_son_tru_claim_pending');
-  assert.equal(settlement.profile.cultivationXp,10);assert.equal(settlement.profile.hp,50);
+  // A pending outcome saved before realms were retired still offers XP; it is claimed for 0.
+  assert.equal(settlement.profile.cultivationXp,0);assert.equal(settlement.receipt.granted.cultivationXp,0);assert.equal(settlement.profile.hp,50);
   assert.equal(settlement.profile.inventory.at(-1).itemId,'it_boar_hide');
   assert.equal((await good(pending,'inventory_get')).pendingSettlement,null);
   assert.equal((await good(pending,'pve_son_tru_claim_pending')).pending,false);

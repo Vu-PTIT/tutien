@@ -12,6 +12,7 @@ interface SpiritContract {
 interface SpiritLoaded<T> { value:T; version:string; }
 const CONTRACT_INVITE_MS=15*60*1000;
 const CONTRACT_HUNT_MS=10*60*1000;
+const CONTRACT_HUNT_REPLAYS=32;
 function spiritMemberId(userId:string):nkruntime.StorageReadRequest {
   return {collection:"spirit_members",key:"main",userId:userId};
 }
@@ -21,15 +22,19 @@ function spiritContractId(id:string):nkruntime.StorageReadRequest {
 function spiritWrite(id:nkruntime.StorageReadRequest,value:any,version:string):nkruntime.StorageWriteRequest {
   return {collection:id.collection,key:id.key,userId:id.userId,value:value,version:version,permissionRead:0,permissionWrite:0};
 }
+// Nakama hands storage values to JS as Go-backed objects; assigning a fresh JS
+// object into one stores a snapshot, so later edits to that object were lost
+// (e.g. the first hunt join). Work on plain JS copies and write them back.
+function spiritCopy(value:any):any { return JSON.parse(JSON.stringify(value)); }
 function spiritMember(nk:nkruntime.Nakama,userId:string):SpiritLoaded<SpiritMember> {
   const row=nk.storageRead([spiritMemberId(userId)])[0];
-  return {value:row?row.value as SpiritMember:{activeId:"",invitations:[]},version:row?row.version:"*"};
+  return {value:row?spiritCopy(row.value) as SpiritMember:{activeId:"",invitations:[]},version:row?row.version:"*"};
 }
 function spiritRecord(nk:nkruntime.Nakama,id:string,userId:string):SpiritLoaded<SpiritContract> {
   if(!/^ct_[a-f0-9]{32}$/.test(id)) return fail(nkruntime.Codes.INVALID_ARGUMENT,"Invalid contract ID");
   const row=nk.storageRead([spiritContractId(id)])[0];
   if(!row) return fail(nkruntime.Codes.NOT_FOUND,"Contract not found");
-  const value=row.value as SpiritContract;
+  const value=spiritCopy(row.value) as SpiritContract;
   if(value.inviterId!==userId&&value.recipientId!==userId) return fail(nkruntime.Codes.PERMISSION_DENIED,"Contract belongs to other players");
   return {value:value,version:row.version};
 }
@@ -74,25 +79,31 @@ function spiritPendingId(userId:string):nkruntime.StorageReadRequest {
 }
 function spiritView(nk:nkruntime.Nakama,value:SpiritContract,userId:string):JsonObject {
   const otherId=spiritOther(value,userId),user=nk.usersGetId([otherId])[0];
-  const otherProfile=loadCharacter(nk,otherId).state;
   let hunt:any=value.hunt?JSON.parse(JSON.stringify(value.hunt)):null;
   if(hunt) {
     delete hunt.actions;
     if((hunt.phase==="waiting"||hunt.phase==="active")&&Date.now()>=hunt.expiresAt) hunt.phase="expired";
   }
   return {id:value.id,status:spiritStatus(value),inviterId:value.inviterId,recipientId:value.recipientId,
-    expiresAt:value.expiresAt,bond:value.bond,other:{userId:otherId,username:user?user.username:otherId,form:otherProfile.form},hunt:hunt};
+    expiresAt:value.expiresAt,bond:value.bond,other:{userId:otherId,username:user?user.username:otherId,form:peekCharacterForm(nk,otherId)},hunt:hunt};
 }
 const contractGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx); spiritInput(payload,[]);
   const member=spiritMember(nk,userId).value,incoming:JsonObject[]=[],outgoing:JsonObject[]=[];
-  for(let i=0;i<member.invitations.length;i++) {
-    const value=spiritRecord(nk,member.invitations[i],userId).value;
+  // One batched read for the inbox; a contract row that has been cleaned up is skipped.
+  const ids=member.invitations.slice();
+  if(member.activeId) ids.push(member.activeId);
+  const rows=ids.length?nk.storageRead(ids.map(spiritContractId)):[];
+  let active:JsonObject|null=null;
+  for(let i=0;i<rows.length;i++) {
+    const value=spiritCopy(rows[i].value) as SpiritContract;
+    if(value.inviterId!==userId&&value.recipientId!==userId) continue;
+    if(rows[i].key===member.activeId) { active=spiritView(nk,value,userId); continue; }
     if(spiritStatus(value)!=="pending") continue;
     (value.recipientId===userId?incoming:outgoing).push(spiritView(nk,value,userId));
   }
   const pending=nk.storageRead([spiritPendingId(userId)])[0];
-  return JSON.stringify({active:member.activeId?spiritView(nk,spiritRecord(nk,member.activeId,userId).value,userId):null,
+  return JSON.stringify({active:active,
     incoming:incoming,outgoing:outgoing,pendingReward:pending&&pending.value.status==="pending"?pending.value:null,serverNow:Date.now()});
 };
 const contractInviteRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
@@ -107,7 +118,7 @@ const contractInviteRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   }
   if(!nk.usersGetId([targetId])[0]) return fail(nkruntime.Codes.NOT_FOUND,"Player not found");
   if(spiritBlocked(nk,userId,targetId)) return fail(nkruntime.Codes.PERMISSION_DENIED,"Cannot invite a blocked player");
-  if(!loadCharacter(nk,userId).state.form.selected||!loadCharacter(nk,targetId).state.form.selected)
+  if(!loadCharacter(nk,userId).state.form.selected||!peekCharacterForm(nk,targetId).selected)
     return fail(nkruntime.Codes.FAILED_PRECONDITION,"Both players must select their character form first");
   consumeQuota(nk,userId,"contract_invite",20,3600000);
   for(let attempt=0;attempt<5;attempt++) {
@@ -208,7 +219,7 @@ const contractHuntStartRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload
     hunt.joined[userId]=true; hunt.hp[userId]=100; hunt.damage[userId]=0; hunt.readyAt[userId]=0;
     if(hunt.joined[ids[0]]&&hunt.joined[ids[1]]) hunt.phase="active";
     try {
-      nk.storageWrite([spiritWrite(spiritContractId(value.id),value,row.version),characterWrite(userId,profile.state,profile.version)]);
+      nk.storageWrite([spiritWrite(spiritContractId(value.id),value,row.version)].concat(characterWrites(userId,profile.state,profile)));
       return JSON.stringify({contract:spiritView(nk,value,userId),replayed:false});
     } catch(_error) { /* Joining never takes control of the partner's avatar. */ }
   }
@@ -230,9 +241,10 @@ const contractHuntAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payloa
     if(hunt.phase!=="active"||now>=hunt.expiresAt||!hunt.joined[userId]) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Both partners must join a live hunt");
     if(hunt.hp[userId]<=0) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Your avatar is down in this hunt");
     if(now<hunt.readyAt[userId]) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED,"Attack is recovering");
-    const ids=[value.inviterId,value.recipientId],profiles=ids.map(function(id){return loadCharacter(nk,id);});
-    const actorIndex=ids.indexOf(userId),profile=profiles[actorIndex].state;
-    for(let i=0;i<profiles.length;i++) lifeEnsureIdle(profiles[i].state,now);
+    // Only the attacker's profile is a CAS witness (they must stay idle). The
+    // partner's avatar is never written, so their own actions do not collide.
+    const ids=[value.inviterId,value.recipientId],loaded=loadCharacter(nk,userId),profile=loaded.state;
+    lifeEnsureIdle(profile,now);
     const inner=innerCombatBonus(profile);
     let attack=16+inner.attack,defense=5+inner.defense;
     for(let i=0;i<profile.inventory.length;i++) {
@@ -251,14 +263,16 @@ const contractHuntAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payloa
     hunt.readyAt[userId]=now+(input.skill?1800:700);
     if(hunt.mobHp>0) hunt.hp[userId]=Math.max(0,hunt.hp[userId]-Math.max(1,Math.floor(8*100/(100+defense))));
     hunt.actions.push({operationId:operationId,userId:userId,skill:input.skill,damage:damage,combo:combo});
-    const writes=profiles.map(function(p,i){return characterWrite(ids[i],p.state,p.version);});
+    // Replays are immediate client retries; a short tail keeps the contract row small.
+    if(hunt.actions.length>CONTRACT_HUNT_REPLAYS) hunt.actions.splice(0,hunt.actions.length-CONTRACT_HUNT_REPLAYS);
+    const writes=characterWrites(userId,profile,loaded);
     if(hunt.mobHp===0) {
       hunt.phase="victory"; value.bond++;
       for(let i=0;i<ids.length;i++) if(hunt.damage[ids[i]]>0) {
         const pending=nk.storageRead([spiritPendingId(ids[i])])[0];
         if(pending&&pending.value.status==="pending") return fail(nkruntime.Codes.FAILED_PRECONDITION,"Previous hunt reward is still pending");
         writes.push(spiritWrite(spiritPendingId(ids[i]),{status:"pending",huntId:hunt.id,contractId:value.id,
-          reward:{spiritStones:0,cultivationXp:10,items:[{itemId:"it_boar_hide",quantity:1}]}},pending?pending.version:"*"));
+          reward:{spiritStones:0,items:[{itemId:"it_boar_hide",quantity:1}],linhNang:innerMobEssence("en_boar")}},pending?pending.version:"*"));
       }
     } else if(hunt.hp[ids[0]]<=0&&hunt.hp[ids[1]]<=0) hunt.phase="defeat";
     writes.push(spiritWrite(spiritContractId(value.id),value,row.version));
@@ -289,6 +303,8 @@ const contractHuntClaimRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload
   const operationId="contract_hunt_"+row.value.huntId.replace(/-/g,""),sourceId="contract_hunt:"+row.value.huntId+":"+userId;
   const receipt=nk.storageRead([receiptId(userId,"source:"+sourceId)])[0];
   if(row.value.status==="settled"&&receipt) return JSON.stringify(assetResult(nk,userId,receipt.value as AssetReceipt,true));
+  // Old receipts are pruned; a settled pointer without one simply has nothing left to claim.
+  if(row.value.status==="settled") return fail(nkruntime.Codes.NOT_FOUND,"No hunt reward");
   if(row.value.status!=="pending") return fail(nkruntime.Codes.FAILED_PRECONDITION,"Reward requires review");
   const settled=JSON.parse(JSON.stringify(row.value)); settled.status="settled";
   return JSON.stringify(grantReward(nk,userId,operationId,sourceId,row.value.reward as RewardBundle,

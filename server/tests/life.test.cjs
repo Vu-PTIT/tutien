@@ -19,6 +19,9 @@ function command(s,action,session,op='activity_command_0001',extra={}) {
   return s.rpc('activity_'+action,{operationId:op,sessionId:session.sessionId,stateVersion:session.stateVersion,...extra});
 }
 const quantity=(s,id)=>s.state().inventory.filter(p=>p.itemId===id).reduce((a,p)=>a+p.quantity,0);
+const FISH=['it_fish_carp','it_fish_tilapia','it_lake_weed','it_lake_junk','it_fish_glimmer'];
+const fished=s=>FISH.reduce((n,id)=>n+quantity(s,id),0);
+const mined=s=>['it_iron','it_copper'].reduce((n,id)=>n+quantity(s,id),0)+2*['it_glowstone'].reduce((n,id)=>n+quantity(s,id),0);
 test('fresh RPC VMs have the life world without calling the separate initializer',()=>{
   const scope=vm.createContext({});vm.runInContext(fs.readFileSync('build/index.js','utf8'),scope);
   assert.equal(scope.worldMapReachable('m_lang_que'),true);assert.equal(scope.worldMapReachable('m_mo_ngam'),true);
@@ -71,7 +74,7 @@ test('12 plots preserve the released six-plot save and compute ready state from 
   assert.equal(quantity(s,'it_seed_tinh_tam'),2);assert.equal(quantity(s,'it_water'),11);
   rejectsCode(()=>s.rpc('garden_action',{operationId:'harvest_early_001',action:'harvest',plotId:11}),9);
   clock(s,now+2700000);assert.equal(s.rpc('garden_get').plots[11].state,'ready');
-  const harvested=s.rpc('garden_action',{operationId:'harvest_last_001',action:'harvest',plotId:11});assert.equal(quantity(s,'it_herb_tinh_tam'),4);
+  const harvested=s.rpc('garden_action',{operationId:'harvest_last_001',action:'harvest',plotId:11});assert.equal(quantity(s,'it_herb_tinh_tam')+quantity(s,'it_herb_tinh_tam_glow'),4);
   assert.equal(harvested.garden.plots[11].state,'empty');
   s.rpc('world_travel',{mapId:'m_mo_lo_thien'});
   assert.equal(s.rpc('garden_action',{operationId:'harvest_last_001',action:'harvest',plotId:11}).replayed,true);
@@ -94,7 +97,7 @@ test('direct fishing requires the map, access point, tool and bait; one cast has
   rejectsCode(()=>command(s,'claim',result.session),9);
   clock(s,result.session.expectedEndAt);
   const claim=command(s,'claim',result.session);assert.equal(claim.granted.items.reduce((n,p)=>n+p.quantity,0),1);
-  assert.equal(quantity(s,'it_fish_carp')+quantity(s,'it_fish_tilapia'),1);assert.equal(s.state().cultivationXp,0);
+  assert.equal(fished(s),1);assert.equal(s.state().cultivationXp,0);
   assert.equal(command(s,'claim',result.session).replayed,true);
   rejectsCode(()=>command(s,'claim',claim.session,'different_claim_0001'),9);
 });
@@ -102,7 +105,7 @@ test('mining uses its own tool and timer and grants two server-picked ore units 
   const s=life();at(s,'ml_iron_01');const v=start(s,{siteId:'ml_iron_01',controlMode:'autonomous',cycles:3});
   assert.equal(v.session.intervalMs,45000);assert.equal(quantity(s,'it_bait'),30);
   clock(s,v.session.expectedEndAt);const r=command(s,'claim',v.session);
-  assert.equal(r.granted.items.reduce((n,p)=>n+p.quantity,0),6);assert.equal(quantity(s,'it_iron')+quantity(s,'it_copper'),6);
+  assert.ok(r.granted.items.every(p=>['it_iron','it_copper','it_glowstone'].includes(p.itemId)));assert.equal(mined(s),6);
   assert.equal(s.state().cultivationXp,0);
 });
 test('autonomous fishing routes around blockers and reconnect reconstructs the same avatar and progress',()=>{
@@ -155,8 +158,8 @@ test('garden activity consumes once, grows offline, and settles the same plot on
   const s=life();at(s,'new_plot_01');const v=start(s,{siteId:'new_plot_01',cropId:'crop_cam_lo'});assert.equal(quantity(s,'it_seed_cam_lo'),2);
   clock(s,v.session.expectedEndAt);assert.equal(s.rpc('garden_get').plots[0].state,'ready');
   rejectsCode(()=>s.rpc('garden_action',{operationId:'duplicate_harvest_01',action:'harvest',plotId:0}),9);
-  const result=command(s,'claim',v.session);assert.equal(result.garden.plots[0].state,'empty');assert.equal(quantity(s,'it_herb_cam_lo'),4);
-  command(s,'claim',v.session);assert.equal(quantity(s,'it_herb_cam_lo'),4);
+  const result=command(s,'claim',v.session);assert.equal(result.garden.plots[0].state,'empty');assert.equal(quantity(s,'it_herb_cam_lo')+quantity(s,'it_herb_cam_lo_glow'),4);
+  command(s,'claim',v.session);assert.equal(quantity(s,'it_herb_cam_lo')+quantity(s,'it_herb_cam_lo_glow'),4);
 });
 test('cancelling while travelling to plant returns seeds/water; cancelling after planting preserves the growing crop',()=>{
   const s=life(),v=start(s,{siteId:'new_plot_01',cropId:'crop_cam_lo',controlMode:'autonomous'});
@@ -165,14 +168,14 @@ test('cancelling while travelling to plant returns seeds/water; cancelling after
   at(s,'new_plot_01');const next=start(s,{operationId:'next_garden_0001',siteId:'new_plot_01',cropId:'crop_cam_lo'});
   clock(s,next.session.activeAt+10000);const stop=command(s,'cancel',next.session,'cancel_crop_0001');command(s,'claim',stop.session,'claim_crop_cancel_01');
   assert.equal(s.rpc('garden_get').plots[0].state,'growing');clock(s,next.session.expectedEndAt);
-  s.rpc('garden_action',{operationId:'manual_harvest_0001',action:'harvest',plotId:0});assert.equal(quantity(s,'it_herb_cam_lo'),4);
+  s.rpc('garden_action',{operationId:'manual_harvest_0001',action:'harvest',plotId:0});assert.equal(quantity(s,'it_herb_cam_lo')+quantity(s,'it_herb_cam_lo_glow'),4);
 });
 test('full inventory leaves rewards pending without partial settlement, and the same claim succeeds after making room',()=>{
   const s=life();at(s);const v=start(s);const p=s.state();p.inventory=[{itemId:'it_fishing_rod',quantity:1},...Array.from({length:23},()=>({itemId:'it_water',quantity:99}))];s.put(p);
   clock(s,v.session.expectedEndAt);const before=s.state();rejectsCode(()=>command(s,'claim',v.session),8);assert.deepEqual(s.state(),before);
   assert.equal(s.rpc('activity_get').session.settlement,'pending');
   s.rpc('inventory_discard',{operationId:'make_room_0001',itemId:'it_water',quantity:99});
-  const claimed=command(s,'claim',v.session);assert.equal(claimed.session.settlement,'settled');assert.equal(quantity(s,'it_fish_carp')+quantity(s,'it_fish_tilapia'),1);
+  const claimed=command(s,'claim',v.session);assert.equal(claimed.session.settlement,'settled');assert.equal(fished(s),1);
 });
 test('atomic commands recover lost acknowledgements, reject changed replays, and survive concurrent starter/claim writes',()=>{
   const s=life();at(s);const write=s.nk.storageWrite;s.nk.storageWrite=w=>{write(w);throw Error('lost acknowledgement');};
@@ -180,7 +183,7 @@ test('atomic commands recover lost acknowledgements, reject changed replays, and
   s.nk.storageWrite=write;rejectsCode(()=>start(s,{siteId:'new_fish_02'}),6);clock(s,v.session.expectedEndAt);
   s.nk.storageWrite=w=>{s.nk.storageWrite=write;s.rpc('inventory_claim_starter',{operationId:'concurrent_starter_01'});return write(w);};
   const r=command(s,'claim',v.session);assert.equal(r.session.settlement,'settled');assert.equal(s.state().spiritStones,12);
-  assert.equal(quantity(s,'it_fish_carp')+quantity(s,'it_fish_tilapia'),1);
+  assert.equal(fished(s),1);
 });
 test('competing starts cannot create two sessions or reserve the same supplies twice',()=>{
   const s=life();at(s);const write=s.nk.storageWrite;
@@ -199,7 +202,7 @@ test('failed storage never consumes supplies or creates a partial lease and lost
   assert.deepEqual(s.state(),before);assert.equal(s.rows.size,count);
   s.nk.storageWrite=write;const v=start(s);clock(s,v.session.expectedEndAt);
   s.nk.storageWrite=w=>{write(w);throw Error('response lost');};const result=command(s,'claim',v.session);
-  assert.equal(result.replayed,true);assert.equal(quantity(s,'it_fish_carp')+quantity(s,'it_fish_tilapia'),1);
+  assert.equal(result.replayed,true);assert.equal(fished(s),1);
   assert.equal(command(s,'claim',v.session).replayed,true);
 });
 test('life shop supports replenishment and sale at the real new-village stall, with session timing supplied only by the server',()=>{

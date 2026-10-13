@@ -31,7 +31,8 @@ for(let i=0;i<12;i++){
 }
 assert.equal(victory,true);
 for(const player of [a,b]){
-  const claim=await player.rpc('contract_hunt_claim');assert.equal(claim.profile.cultivationXp,10);
+  const claim=await player.rpc('contract_hunt_claim');assert.equal(claim.profile.cultivationXp,0);
+  assert.deepEqual(claim.receipt.granted.linhNang,[{vi:'tho',motes:8,turbid:6}]);
   assert.equal(claim.profile.inventory.find(item=>item.itemId==='it_boar_hide').quantity,1);
   assert.equal((await player.rpc('contract_hunt_claim')).replayed,true);
 }

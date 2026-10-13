@@ -165,10 +165,12 @@ func _refresh_labels() -> void:
 	if online:
 		field.form = str(profile.get("form", {}).get("kind", "human"))
 		ui.mode.text = "ONLINE • " + api.username
-		ui.stats.text = "%s  •  %s  •  XP %d  •  Túi %d/24" % ["Mèo linh thú" if field.form == "spirit_beast" else "Người", str(profile.get("realm", "mortal")), int(profile.get("cultivationXp", 0)), profile.get("inventory", []).size()]
+		var inner: Dictionary = profile.get("innerWorld", {})
+		var hap_linh := "Hấp Linh %d thửa" % (inner.get("cells", []).size() / 5) if bool(inner.get("learned", false)) else "Chưa học Hấp Linh"
+		ui.stats.text = "%s  •  %s  •  Túi %d/24" % ["Mèo linh thú" if field.form == "spirit_beast" else "Người", hap_linh, profile.get("inventory", []).size()]
 	else:
 		ui.mode.text = "CHƠI THỬ • PHẦN THƯỞNG CHƯA LƯU"
-		ui.stats.text = "%s  •  HP %d  •  XP thử %d  •  Vật liệu %d" % ["Mèo linh thú" if field.form == "spirit_beast" else "Người", demo_hp, demo_xp, demo_loot]
+		ui.stats.text = "%s  •  HP %d  •  Linh năng thử %d  •  Vật liệu %d" % ["Mèo linh thú" if field.form == "spirit_beast" else "Người", demo_hp, demo_xp, demo_loot]
 	ui.human.disabled = busy or selected
 	ui.cat.disabled = busy or selected
 	ui.login.text = "Đăng xuất" if online else "Đăng nhập"
@@ -367,7 +369,7 @@ func _attack(skill: bool) -> void:
 			demo_xp += 10
 			demo_loot += 1
 			mob.respawnAt = field.time + 8.0
-			_message("Hạ " + str(mob.name) + " • +10 XP thử • +1 vật liệu. Đăng nhập để chơi có lưu.")
+			_message("Hạ " + str(mob.name) + " • +10 linh năng thử • +1 vật liệu. Đăng nhập để chơi có lưu.")
 		else:
 			demo_hp = maxi(0, demo_hp - 6)
 			_message(("Linh Trảo" if field.form == "spirit_beast" else "Linh Trảm") + " • " + str(damage) + " sát thương.")

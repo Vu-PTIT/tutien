@@ -39,7 +39,7 @@ const cancelled=(await rpc('activity_cancel',{operationId:op(),sessionId:current
 const claimInput={operationId:op(),sessionId:cancelled.sessionId,stateVersion:cancelled.stateVersion};
 const claimed=await rpc('activity_claim',claimInput),replayed=await rpc('activity_claim',claimInput);
 assert.equal(replayed.replayed,true);assert.deepEqual(replayed.receipt,claimed.receipt);
-assert.equal(quantity(claimed.profile,'it_fish_carp')+quantity(claimed.profile,'it_fish_tilapia'),cancelled.completedCycles);
+assert.equal(['it_fish_carp','it_fish_tilapia','it_lake_weed','it_lake_junk','it_fish_glimmer'].reduce((n,id)=>n+quantity(claimed.profile,id),0),cancelled.completedCycles);
 assert.equal(quantity(claimed.profile,'it_bait'),30-cancelled.completedCycles);
 // Exercise the real mining lease/tool gate and garden reservation/refund without
 // accelerating production timers. Unit tests cover their completed yields.

@@ -7,7 +7,8 @@ interface CharacterState {
   equippedSkills: {[slot: string]: string}; learnedSkills: string[];
   spiritStones: number; revision: number; inventory: InventorySlot[];
 }
-interface LoadedCharacter { state: CharacterState; version: string; }
+// innerJson is the Nội Giới exactly as loaded ("" when it has no row yet).
+interface LoadedCharacter { state: CharacterState; version: string; innerVersion: string; innerJson: string; }
 const ASSET_LIMIT = 1000000000;
 const BAG_SIZE = 24;
 
@@ -28,6 +29,7 @@ function validateCharacter(state: CharacterState): void {
       Object.keys(state.equippedSkills).some(function (key) { return key !== "active_1"; }) ||
       !Array.isArray(state.inventory) || state.inventory.length > BAG_SIZE) invalidCharacter();
   if (state.innerWorld !== undefined) innerValidate(state.innerWorld);
+  validateOptionalFields(state);
   const learnedIds: string[] = [];
   for (let i = 0; i < state.learnedSkills.length; i++) {
     const skillId = state.learnedSkills[i];
@@ -60,6 +62,31 @@ function validateCharacter(state: CharacterState): void {
     if (!equippedItem || catalogItem(equippedItem.itemId).equipSlot !== slotName || equippedIds.indexOf(instanceId) >= 0) invalidCharacter();
     equippedIds.push(instanceId);
   }
+}
+function plainObject(value: unknown): value is {[key: string]: any} {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+function uniqueStrings(value: unknown): boolean {
+  if (!Array.isArray(value)) return false;
+  for (let i = 0; i < value.length; i++) if (typeof value[i] !== "string" || value.indexOf(value[i]) !== i) return false;
+  return true;
+}
+// Shape checks for fields owned by later systems. Unknown extra keys are kept
+// (released migrations preserve them); each module still validates deeply on use.
+function validateOptionalFields(state: CharacterState): void {
+  const gathered = state.resourceGatheredAt;
+  if (gathered !== undefined && (!plainObject(gathered) ||
+      Object.keys(gathered).some(function (key) { return !assetInteger(gathered[key], 0, LIFE_TIME_LIMIT); }))) invalidCharacter();
+  if (state.insightFlags !== undefined && !uniqueStrings(state.insightFlags)) invalidCharacter();
+  if (state.learnedTechniques !== undefined && !uniqueStrings(state.learnedTechniques)) invalidCharacter();
+  const quests = state.worldQuests;
+  if (quests !== undefined && (!plainObject(quests) || quests.schemaVersion !== 1 || typeof quests.currentQuestId !== "string" ||
+      !uniqueStrings(quests.completed) || !plainObject(quests.objectives) ||
+      Object.keys(quests.objectives).some(function (key) { return typeof quests.objectives[key] !== "boolean"; }))) invalidCharacter();
+  const session = state.activitySession;
+  if (session !== undefined && (!plainObject(session) || session.schemaVersion !== 1 || typeof session.sessionId !== "string")) invalidCharacter();
+  const plots = state.gardenPlots;
+  if (plots !== undefined && (!Array.isArray(plots) || (plots.length !== 6 && plots.length !== 12))) invalidCharacter();
 }
 function initialCharacter(userId: string): CharacterState {
   return { schemaVersion: 4, form:defaultPlayerForm(), characterId: userId, realm: "mortal", realmStage: 0,
@@ -112,21 +139,61 @@ function migrateCharacter(value: {[key: string]: any}, userId: string): Characte
   validateCharacter(next);
   return next;
 }
-function characterWrite(userId: string, state: CharacterState, version: string): nkruntime.StorageWriteRequest {
-  return { collection: "characters", key: "main", userId: userId, value: state,
-    version: version, permissionRead: 1, permissionWrite: 0 };
+function characterId(userId: string): nkruntime.StorageReadRequest {
+  return { collection: "characters", key: "main", userId: userId };
+}
+// The Nội Giới (up to 1600 cells) lives in its own row so moves, HP checkpoints and
+// inventory changes do not rewrite it. In memory it is still state.innerWorld.
+function innerWorldId(userId: string): nkruntime.StorageReadRequest {
+  return { collection: "inner_worlds", key: "main", userId: userId };
+}
+// The profile row is always written, so it serializes every character mutation;
+// the Nội Giới row is written only when it actually changed.
+function characterWrites(userId: string, state: CharacterState, loaded: LoadedCharacter): nkruntime.StorageWriteRequest[] {
+  const profile: {[key: string]: any} = {};
+  for (const key in state) if (key !== "innerWorld") profile[key] = state[key];
+  const writes: nkruntime.StorageWriteRequest[] = [{ collection: "characters", key: "main", userId: userId, value: profile,
+    version: loaded.version, permissionRead: 1, permissionWrite: 0 }];
+  if (state.innerWorld !== undefined && JSON.stringify(state.innerWorld) !== loaded.innerJson) {
+    writes.push({ collection: "inner_worlds", key: "main", userId: userId, value: state.innerWorld,
+      version: loaded.innerVersion, permissionRead: 1, permissionWrite: 0 });
+  }
+  return writes;
 }
 function loadCharacter(nk: nkruntime.Nakama, userId: string): LoadedCharacter {
+  contentEnsure(nk);
   for (let attempt = 0; attempt < 5; attempt++) {
-    const row = nk.storageRead([{ collection: "characters", key: "main", userId: userId }])[0];
+    const rows = nk.storageRead([characterId(userId), innerWorldId(userId)]);
+    let row: nkruntime.StorageObject | undefined, innerRow: nkruntime.StorageObject | undefined;
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i].collection === "characters") row = rows[i]; else innerRow = rows[i];
+    }
     const state = row ? migrateCharacter(row.value, userId) : initialCharacter(userId);
-    if (row && row.value.schemaVersion === 4 && row.value.form !== undefined) return { state: state, version: row.version };
+    // A Nội Giới still embedded in the profile predates the split and wins.
+    const embedded = !!row && row.value.innerWorld !== undefined;
+    let innerJson = "";
+    if (!embedded && innerRow) {
+      innerJson = JSON.stringify(innerRow.value);
+      state.innerWorld = JSON.parse(innerJson);
+      innerValidate(state.innerWorld);
+    }
+    const loaded: LoadedCharacter = { state: state, version: row ? row.version : "*",
+      innerVersion: innerRow ? innerRow.version : "*", innerJson: innerJson };
+    if (row && row.value.schemaVersion === 4 && row.value.form !== undefined && !embedded) return loaded;
     try {
-      const ack = nk.storageWrite([characterWrite(userId, state, row ? row.version : "*")])[0];
-      return { state: state, version: ack.version };
+      const writes = characterWrites(userId, state, loaded), acks = nk.storageWrite(writes);
+      loaded.version = acks[0].version;
+      if (writes.length > 1) { loaded.innerVersion = acks[1].version; loaded.innerJson = JSON.stringify(state.innerWorld); }
+      return loaded;
     } catch (_error) { /* Re-read a concurrent initializer/migration; bounded retry. */ }
   }
   return fail(nkruntime.Codes.UNAVAILABLE, "Character storage busy or unavailable; retry");
+}
+// Read-only look at another player's form: never creates or migrates their rows.
+function peekCharacterForm(nk: nkruntime.Nakama, userId: string): PlayerForm {
+  const row = nk.storageRead([characterId(userId)])[0];
+  const form = row && row.value.form ? JSON.parse(JSON.stringify(row.value.form)) as PlayerForm : defaultPlayerForm();
+  return validPlayerForm(form) ? form : defaultPlayerForm();
 }
 
 // Pure preparation: the loaded state is never mutated, including on bag overflow.
@@ -141,29 +208,11 @@ function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Na
   if (next.spiritStones + bundle.spiritStones > ASSET_LIMIT || next.revision >= ASSET_LIMIT) {
     return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "Asset limit reached");
   }
-  const thresholds = [300, 600, 1000];
-  let progress = next.cultivationXp;
-  if (next.realm === "luyen_khi") {
-    progress += 100;
-    for (let stage = 1; stage < next.realmStage; stage++) progress += thresholds[stage - 1];
-  }
-  const maxProgress = 100 + thresholds[0] + thresholds[1] + thresholds[2];
-  const grantedXp = Math.min(offeredXp, Math.max(0, maxProgress - progress));
-  if (grantedXp > 0) {
-    next.cultivationXp += grantedXp;
-    if (next.realm === "mortal" && next.cultivationXp >= 100) {
-      next.realm = "luyen_khi";
-      next.realmStage = 1;
-      next.cultivationXp -= 100;
-    }
-    while (next.realm === "luyen_khi" && next.realmStage < 4) {
-      const threshold = thresholds[next.realmStage - 1];
-      if (next.cultivationXp < threshold) break;
-      next.cultivationXp -= threshold;
-      next.realmStage++;
-    }
-    if (next.realm === "luyen_khi" && next.realmStage >= 4) next.cultivationXp = 0;
-  }
+  // Realm levels are retired: power comes only from the Nội Giới. realm/realmStage/
+  // cultivationXp stay frozen as legacy fields so released Luyện Khí progress can
+  // migrate once. Old pending rewards that still offer XP are claimable for 0 XP;
+  // nothing may promote a realm, or an untaught human would learn Hấp Linh.
+  const grantedXp = 0;
   next.spiritStones += bundle.spiritStones;
   for (let i = 0; i < bundle.items.length; i++) {
     const reward = bundle.items[i];
@@ -260,8 +309,8 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
     try {
       // Nakama storageWrite batch is transactional: all CAS checks and all three
       // writes commit together, including the create-only source uniqueness gate.
-      nk.storageWrite(additionalWrites.concat([characterWrite(userId, next, loaded.version),
-        receiptWrite(userId, opKey, receipt), receiptWrite(userId, sourceKey, receipt)]));
+      nk.storageWrite(additionalWrites.concat(characterWrites(userId, next, loaded),
+        [receiptWrite(userId, opKey, receipt), receiptWrite(userId, sourceKey, receipt)]));
       return { receipt: receipt, replayed: false, profile: next };
     } catch (_error) { /* Includes lost acknowledgement after commit: re-read receipt. */ }
   }
@@ -287,7 +336,7 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
 const inventoryGetRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, _payload) {
   const userId = authenticated(ctx);
   return JSON.stringify({ profile: loadCharacter(nk, userId).state, capacity: BAG_SIZE,
-    catalogVersion: 3, catalog: ITEM_CATALOG, skills: SKILL_CATALOG,
+    catalogVersion: 4, catalogRevision: gameContent().revision, catalog: gameContent().items, skills: SKILL_CATALOG,
     starterClaimed: nk.storageRead([receiptId(userId, "source:starter:v1")]).length > 0,
     pendingSettlement: getPvePendingSettlement(nk, userId) });
 };
@@ -324,7 +373,7 @@ function pveOutcomeKey(encounterId: string, generation: number): string {
 }
 function pveOutcomeSame(a: PveSonTruOutcome, b: PveSonTruOutcome): boolean {
   return a.encounterId === b.encounterId && a.generation === b.generation && a.enemyId === b.enemyId &&
-    a.operationId === b.operationId && a.sourceId === b.sourceId && JSON.stringify(a.reward) === JSON.stringify(b.reward);
+    a.operationId === b.operationId && a.sourceId === b.sourceId && JSON.stringify(a.reward.items) === JSON.stringify(b.reward.items);
 }
 // The authoritative encounter calls this before announcing a kill. Outcome and pending pointer commit together.
 function recordPveSonTruOutcome(nk: nkruntime.Nakama, userId: string, encounterId: string,
@@ -336,8 +385,8 @@ function recordPveSonTruOutcome(nk: nkruntime.Nakama, userId: string, encounterI
   const sourceId = "pve:son_tru:" + encounterId + ":" + generation + ":" + userId;
   const value: PveSonTruOutcome = {encounterId: encounterId, generation: generation, enemyId: "en_boar",
     operationId: operationId, sourceId: sourceId,
-    reward: {spiritStones: 0, cultivationXp: rewardEligible ? 10 : 0,
-      items: rewardEligible ? [{itemId: "it_boar_hide", quantity: 1}] : []},
+    reward: rewardEligible ? {spiritStones: 0, items: [{itemId: "it_boar_hide", quantity: 1}], linhNang: innerMobEssence("en_boar")}
+      : {spiritStones: 0, items: []},
     status: "pending", createdAt: Date.now()};
   const key = pveOutcomeKey(encounterId, generation);
   const sessionRequest = {collection: "pve_son_tru_sessions", key: "active", userId: userId};
@@ -391,7 +440,9 @@ function getPvePendingSettlement(nk: nkruntime.Nakama, userId: string): PveSonTr
   const value = row.value as PveSonTruOutcome;
   if (value.enemyId !== "en_boar" || value.reward.spiritStones !== 0 || value.reward.items.length > 1 ||
       (value.reward.items.length === 1 && (value.reward.items[0].itemId !== "it_boar_hide" || value.reward.items[0].quantity !== 1)) ||
-      (value.reward.cultivationXp !== 0 && value.reward.cultivationXp !== 10)) {
+      // Outcomes saved before realms were retired still carry 0/10 XP; it is ignored on claim.
+      (value.reward.cultivationXp !== undefined && value.reward.cultivationXp !== 0 && value.reward.cultivationXp !== 10) ||
+      (value.reward.linhNang !== undefined && JSON.stringify(value.reward.linhNang) !== JSON.stringify(innerMobEssence("en_boar")))) {
     return fail(nkruntime.Codes.FAILED_PRECONDITION, "Pending settlement requires review");
   }
   return value;
@@ -442,8 +493,8 @@ function commitAssetMutation(nk: nkruntime.Nakama, userId: string, operationId: 
     apply(next); next.revision++; validateCharacter(next);
     const receipt: AssetMutationReceipt = {operationId: operationId, fingerprint: fingerprint, action: action, revision: next.revision, committedAt: Date.now()};
     try {
-      nk.storageWrite([characterWrite(userId, next, loaded.version), {collection: "asset_mutations", key: "op:" + operationId,
-        userId: userId, value: receipt, version: "*", permissionRead: 0, permissionWrite: 0}]);
+      nk.storageWrite(characterWrites(userId, next, loaded).concat([{collection: "asset_mutations", key: "op:" + operationId,
+        userId: userId, value: receipt, version: "*", permissionRead: 0, permissionWrite: 0}]));
       return {receipt: receipt, replayed: false, profile: next};
     } catch (_error) { /* CAS retries and lost acknowledgements share the stable operation ID. */ }
   }
@@ -496,6 +547,7 @@ const inventoryUseRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, paylo
   const userId = authenticated(ctx), input = objectPayload(payload);
   if (Object.keys(input).some(function (key) { return key !== "operationId" && key !== "itemId"; }) ||
       typeof input.operationId !== "string" || typeof input.itemId !== "string") return fail(nkruntime.Codes.INVALID_ARGUMENT, "Expected operationId and itemId only");
+  contentEnsure(nk);
   const definition = catalogItem(input.itemId);
   if (!definition.healAmount) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Item is not usable yet");
   return JSON.stringify(commitAssetMutation(nk, userId, input.operationId as string, "use", {itemId: input.itemId}, function (next) {
@@ -511,6 +563,7 @@ const inventoryDiscardRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, p
   const userId = authenticated(ctx), input = objectPayload(payload);
   if (Object.keys(input).some(function (key) { return key !== "operationId" && key !== "itemId" && key !== "quantity" && key !== "instanceId"; }) ||
       typeof input.operationId !== "string" || typeof input.itemId !== "string") return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid discard request");
+  contentEnsure(nk);
   const definition = catalogItem(input.itemId), quantity = input.quantity;
   if (definition.bound) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Bound items cannot be discarded");
   if (!assetInteger(quantity, 1, BAG_SIZE * definition.stackMax)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid discard quantity");
@@ -527,27 +580,8 @@ const inventoryDiscardRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, p
   }));
 };
 
-// Economy prices, recipes and crop timers are server-owned. Every action is
-// committed through the same profile revision + operation receipt as inventory.
-const SHOP_BUY: {[itemId: string]: number} = {
-  it_fishing_rod: 5, it_pickaxe: 5, it_bait: 1,
-  it_heal_pill: 8, it_seed_cam_lo: 3, it_seed_tinh_tam: 3, it_seed_ich_khi: 3, it_water: 1
-};
-const SHOP_SELL: {[itemId: string]: number} = {
-  it_fish_carp: 3, it_fish_tilapia: 2, it_copper: 2,
-  it_bamboo: 1, it_boar_hide: 3, it_escape_talisman: 2, it_heal_pill: 2,
-  it_herb_cam_lo: 1, it_herb_ich_khi: 1, it_herb_tinh_tam: 1, it_iron: 1,
-  it_qi_pill: 2, it_seed_cam_lo: 1, it_seed_tinh_tam: 1, it_seed_ich_khi: 1,
-  it_spider_silk: 1, it_spirit_dust: 1, it_ward_talisman: 2
-};
-interface RecipeDefinition { ingredients: {[itemId: string]: number}; fee: number; output: string; }
-const RECIPES: {[recipeId: string]: RecipeDefinition} = {
-  rc_heal: {ingredients: {it_herb_cam_lo: 2, it_water: 1}, fee: 2, output: "it_heal_pill"},
-  rc_qi: {ingredients: {it_herb_ich_khi: 2, it_herb_tinh_tam: 1}, fee: 3, output: "it_qi_pill"},
-  rc_ward: {ingredients: {it_spider_silk: 2, it_spirit_dust: 1}, fee: 4, output: "it_ward_talisman"},
-  rc_sword: {ingredients: {it_iron: 6, it_bamboo: 2}, fee: 8, output: "it_iron_sword"},
-  rc_escape: {ingredients: {it_herb_tinh_tam: 2, it_bamboo: 1}, fee: 4, output: "it_escape_talisman"}
-};
+// Economy prices and recipes come from the game_* tables (game_content.ts). Every
+// action is committed through the same profile revision + operation receipt as inventory.
 function requireServicePosition(nk: nkruntime.Nakama, userId: string, entityId: string): void {
   lifeGuardWorldAction(nk,userId);
   const current = worldReadSession(nk, userId).session, map = WORLD_MAPS[current.mapId];
@@ -588,7 +622,8 @@ const economyActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payl
   const details: {[key: string]: unknown} = {itemId: itemId, quantity: quantity};
   if (action === "buy" || action === "sell") {
     requireServicePosition(nk, userId, "ak.market.village");
-    const prices = action === "buy" ? SHOP_BUY : SHOP_SELL, price = prices[itemId];
+    const content = contentEnsure(nk), prices = action === "buy" ? content.buy : content.sell;
+    const price = contentHas(prices, itemId) ? prices[itemId] : undefined;
     if (price === undefined || (action === "buy" && catalogItem(itemId).instance) || catalogItem(itemId).bound) return fail(nkruntime.Codes.FAILED_PRECONDITION, "This item is not available at the shop");
     details.price = price;
     return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "shop_" + action, details, function (next) {
@@ -606,8 +641,9 @@ const economyActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payl
   }
   if (action === "craft") {
     requireServicePosition(nk, userId, "ak.service.do_khe");
-    if (typeof input.recipeId !== "string" || !RECIPES[input.recipeId]) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Unknown recipe");
-    const recipe = RECIPES[input.recipeId]; details.recipeId = input.recipeId;
+    const recipes = contentEnsure(nk).recipes;
+    if (!contentHas(recipes, input.recipeId)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Unknown recipe");
+    const recipe = recipes[input.recipeId as string]; details.recipeId = input.recipeId;
     return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "craft", details, function (next) {
       lifeEnsureIdle(next,Date.now());requireServicePosition(nk,userId,"ak.service.do_khe");
       if (next.spiritStones < recipe.fee * (quantity as number)) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Not enough linh thạch for crafting");
@@ -646,7 +682,7 @@ function saveCharacterHp(nk: nkruntime.Nakama, userId: string, hp: number): Char
     if (loaded.state.revision >= ASSET_LIMIT) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "Asset revision limit reached");
     const next = JSON.parse(JSON.stringify(loaded.state)) as CharacterState;
     next.hp = hp; next.revision++; validateCharacter(next);
-    try { nk.storageWrite([characterWrite(userId, next, loaded.version)]); return next; }
+    try { nk.storageWrite(characterWrites(userId, next, loaded)); return next; }
     catch (_error) { /* Re-read after a CAS conflict; saving the latest HP is safe to retry. */ }
   }
   return fail(nkruntime.Codes.UNAVAILABLE, "Checkpoint health storage unavailable; retry");

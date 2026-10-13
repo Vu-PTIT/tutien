@@ -6,15 +6,31 @@ Triển khai ngày 12/10/2026 trên `feat/map-ui-rebuild`. Dùng Nakama TypeScri
 
 | Hoạt động | Điều kiện | Thời gian server | Kết quả |
 | --- | --- | --- | --- |
-| Trồng Cam Lộ | 1 hạt Cam Lộ + 1 nước, luống trống | 20 phút | 4 Cam Lộ |
-| Trồng Tĩnh Tâm | 1 hạt Tĩnh Tâm + 1 nước, luống trống | 45 phút | 4 Tĩnh Tâm |
-| Trồng Ích Khí | 1 hạt Ích Khí + 1 nước, luống trống | 60 phút | 4 Ích Khí |
-| Câu cá | Cần câu + 1 mồi/lượt | 30 giây/lượt, sau khi tới bến | 1 cá chép hoặc cá rô phi/lượt |
-| Đào khoáng | Cuốc chim | 45 giây/lượt, sau khi tới vỉa | 2 đơn vị sắt hoặc đồng quặng/lượt |
+| Trồng Cam Lộ | 1 hạt Cam Lộ + 1 nước, luống trống | 20 phút | 4 Cam Lộ (có thể 1 là Dạ Quang), 25% thêm 1 hạt |
+| Trồng Tĩnh Tâm | 1 hạt Tĩnh Tâm + 1 nước, luống trống | 45 phút | như trên |
+| Trồng Ích Khí | 1 hạt Ích Khí + 1 nước, luống trống | 60 phút | như trên |
+| Câu cá | Cần câu + 1 mồi/lượt | 30 giây/lượt, sau khi tới bến | 1 thứ/lượt theo bảng của bến |
+| Đào khoáng | Cuốc chim | 45 giây/lượt, sau khi tới vỉa | 2 quặng hoặc 1 vật phẩm Linh/Hiếm/lượt theo bảng của vỉa |
+
+### Bảng sản lượng v2 (bảng `game_loot`, `game_crops`)
+
+Theo [game-design/08](game-design/08-life-yields.md). Tỉ lệ dưới đây là seed ban đầu; giá trị đang chạy nằm trong database, xem [storage-backend.md](storage-backend.md). Mỗi lượt được tung bằng seed server của phiên, nên retry/replay không đổi kết quả. Phiên bắt đầu trước v2 (không có `lootVersion`) giữ bảng cũ: cá chép 35% / cá rô phi 65%, đồng 20% / sắt 80%.
+
+| Điểm | Bảng (trọng số %) |
+| --- | --- |
+| Hồ Lặng (`new_fish_*`) | Cá chép 40, Cá rô phi 45, Rong hồ 8, Đồ rơi 5, Cá Lấp Lánh 2. Khi trời linh: 35 / 37 / 8 / 5 / 15 |
+| Mỏ Lộ Thiên (`ml_iron_*`) | Sắt 70 (×2), Đồng 25 (×2), Đá Vân Sáng 5 |
+| Hầm B1 (`ng_iron_b1_*`) | Sắt 50 (×2), Đồng 30 (×2), Đá Vân Sáng 15, Tinh Thể Linh Mạch 4, Mảnh Tím 1 |
+| Luống làng | 15% một cây là bản Dạ Quang (30% nếu thu ban đêm); 25% thêm 1 hạt. Seed lưu ở `plot.lootSeed` lúc gieo |
+
+- **Mảnh Tím:** `profile.lifeLoot = {b1Cycles, shardFound}` đếm lượt đào B1; mảnh đầu tiên bảo đảm ở lượt thứ 40.
+- **Đồng hồ server:** một ngày game = 2 giờ thật, chia 5 pha bằng nhau (`sang_som`, `trua`, `chieu_vang`, `toi`, `khuya`); `toi`/`khuya` là đêm. Trời linh xét theo cửa sổ 30 phút bằng hash, khoảng 1/8 số cửa sổ; mỗi lượt câu được xét theo thời điểm lượt đó kết thúc. `life_get` trả `clock`.
+- **Hấp:** `inner_world_absorb_item {operationId,itemId,quantity?}` (1–20) đổi vật phẩm Linh thành hạt linh tinh: Cá Lấp Lánh → Thủy 1, Đá Vân Sáng → Thạch 1, Tinh Thể Linh Mạch → Thạch 4, Cam Lộ/Ích Khí Dạ Quang → Thổ 1, Tĩnh Tâm Dạ Quang → Mộc 1. Cần đã học Hấp Linh và không có phiên hoạt động chưa nhận.
+- Giá bán prototype cho vật phẩm mới; Mảnh Tím không bán được.
 
 Không có minigame, không cấp XP tu luyện hoặc thưởng từ việc người dùng tự khai hoạt động ngoài đời. Một lệnh trực tiếp chạy 1 lượt; tự động chạy 1–120 lượt. Trồng cây chạy 1 chu kỳ sinh trưởng. Các con số là cân bằng prototype để chạy thử.
 
-`life_claim_starter` cấp **một lần/tài khoản**, tách khỏi gói combat cũ: 1 cần câu, 1 cuốc chim, 30 mồi, 3 hạt mỗi loại và 12 nước. Có thể mua thêm dụng cụ/mồi/hạt/nước và bán cá/quặng qua `economy_action` tại chợ. Item catalog tăng lên v3 với 31 ID, giữ nguyên 25 ID cũ và schema nhân vật v4.
+`life_claim_starter` cấp **một lần/tài khoản**, tách khỏi gói combat cũ: 1 cần câu, 1 cuốc chim, 30 mồi, 3 hạt mỗi loại và 12 nước. Có thể mua thêm dụng cụ/mồi/hạt/nước và bán cá/quặng qua `economy_action` tại chợ. Item catalog v4 có 40 ID (thêm 9 ID của bảng sản lượng v2), giữ nguyên các ID cũ và schema nhân vật v4.
 
 ## Vị trí trên map
 

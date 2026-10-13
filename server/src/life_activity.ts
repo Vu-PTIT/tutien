@@ -10,7 +10,7 @@ interface LifeSession {
   schemaVersion:number;sessionId:string;avatarId:string;type:string;siteId:string;mapId:string;
   controlMode:string;state:string;stateVersion:number;startedAt:number;activeAt:number;expectedEndAt:number;
   intervalMs:number;cycles:number;completedCycles:number;completedAt:number;settlement:string;
-  cropId:string;route:LifeWaypoint[];rewardSeed:string;refundPlanting?:boolean;
+  cropId:string;route:LifeWaypoint[];rewardSeed:string;refundPlanting?:boolean;lootVersion?:number;
 }
 function lifeFields(input:JsonObject,allowed:string[]):void {
   if(Object.keys(input).some(function(k){return allowed.indexOf(k)<0;})) return fail(nkruntime.Codes.INVALID_ARGUMENT,"Unexpected request fields");
@@ -60,7 +60,7 @@ function lifeValidateSession(s:LifeSession):void {
       !assetInteger(s.stateVersion,1,ASSET_LIMIT)||!assetInteger(s.intervalMs,1,3600000)||
       !assetInteger(s.startedAt,0,LIFE_TIME_LIMIT)||!assetInteger(s.activeAt,s.startedAt,LIFE_TIME_LIMIT)||
       s.expectedEndAt!==s.activeAt+s.intervalMs*s.cycles||!Array.isArray(s.route)||!s.route.length||
-      typeof s.rewardSeed!=="string") return fail(nkruntime.Codes.FAILED_PRECONDITION,"Activity state requires review");
+      typeof s.rewardSeed!=="string"||(s.lootVersion!==undefined&&s.lootVersion!==LIFE_LOOT_VERSION)) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Activity state requires review");
   const site=lifeSite(s.siteId);
   if(site.mapId!==s.mapId||site.type!==s.type) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Activity site requires review");
 }
@@ -138,7 +138,8 @@ function lifeMutation(nk:nkruntime.Nakama,userId:string,op:string,action:string,
     next.revision++;validateCharacter(next);
     const receipt:any={operationId:op,action:action,fingerprint:fingerprint,revision:next.revision,committedAt:now,
       session:outcome.session||null,granted:outcome.granted||{spiritStones:0,items:[]}};
-    writes.push(characterWrite(userId,next,loaded.version),worldSessionWriteRequest(userId,world,position.version),
+    Array.prototype.push.apply(writes,characterWrites(userId,next,loaded));
+    writes.push(worldSessionWriteRequest(userId,world,position.version),
       {collection:receiptId.collection,key:receiptId.key,userId:userId,value:receipt,version:"*",permissionRead:0,permissionWrite:0});
     try {nk.storageWrite(writes);return result(receipt,next,false);}
     catch(_error) { /* Also recovers lost acknowledgements by reading the receipt. */ }
@@ -233,7 +234,7 @@ const lifeClaimStarterRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload)
 const lifeGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx);lifeFields(objectPayload(payload),[]);
   const state=loadCharacter(nk,userId).state,now=Date.now();
-  return JSON.stringify({serverNow:now,worldRevision:LIFE_WORLD_REVISION,sites:LIFE_SITES,crops:LIFE_CROPS,
+  return JSON.stringify({serverNow:now,clock:lifeClockView(nk,now),worldRevision:LIFE_WORLD_REVISION,sites:LIFE_SITES,crops:gameContent().crops,
     activities:{fishing:{intervalMs:30000,tool:"it_fishing_rod",consumes:"it_bait",maxCycles:120},
       mining:{intervalMs:45000,tool:"it_pickaxe",maxCycles:120},gardening:{maxCycles:1},
       meditation:{intervalMs:LIFE_MEDITATION_MS,maxCycles:120,motesPerCycle:3,purifyPerCycle:1,requiresHapLinh:true}},
@@ -247,7 +248,7 @@ const activityGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
 };
 const activityStartRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx),input=objectPayload(payload);lifeFields(input,["operationId","siteId","controlMode","cycles","cropId"]);
-  const op=lifeOperation(input.operationId),site=lifeSite(textField(input.siteId,"siteId",1,80));
+  const op=lifeOperation(input.operationId),site=lifeSite(textField(input.siteId,"siteId",1,80));contentEnsure(nk);
   const mode=input.controlMode===undefined?"direct":input.controlMode;
   if(mode!=="direct"&&mode!=="autonomous") return fail(nkruntime.Codes.INVALID_ARGUMENT,"Unknown control mode");
   const cycles=input.cycles===undefined?1:input.cycles;
@@ -270,9 +271,9 @@ const activityStartRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     const s:LifeSession={schemaVersion:1,sessionId:nk.uuidv4(),avatarId:userId,type:site.type,siteId:site.id,mapId:site.mapId,
       controlMode:mode as string,state:"active",stateVersion:1,startedAt:now,activeAt:activeAt,expectedEndAt:activeAt+interval*(cycles as number),
       intervalMs:interval,cycles:cycles as number,completedCycles:0,completedAt:0,settlement:"pending",cropId:cropId,
-      route:route,rewardSeed:nk.uuidv4()};
+      route:route,rewardSeed:nk.uuidv4(),lootVersion:LIFE_LOOT_VERSION};
     if(site.type==="fishing") lifeRemove(next,"it_bait",s.cycles);
-    if(site.type==="gardening") lifePlant(next,site.plotId!,cropId,s.sessionId,activeAt);
+    if(site.type==="gardening") lifePlant(next,site.plotId!,cropId,s.sessionId,activeAt,nk);
     const old=lifeCheckSlot(nk,site,now),id=lifeSlotRequest(site);
     writes.push({collection:id.collection,key:id.key,userId:id.userId,value:{sessionId:s.sessionId,expiresAt:s.expectedEndAt},
       version:old?old.version:"*",permissionRead:0,permissionWrite:0});
@@ -294,16 +295,6 @@ function lifeTarget(state:CharacterState,id:string,version:number):LifeSession {
   if(s.settlement==="settled") return fail(nkruntime.Codes.FAILED_PRECONDITION,"This activity is already settled");
   if(s.stateVersion>=ASSET_LIMIT) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED,"Activity version limit reached");
   return s;
-}
-function lifeReward(s:LifeSession,nk:nkruntime.Nakama):RewardBundle {
-  const items:{[id:string]:number}={};
-  if(s.type==="meditation") return {spiritStones:0,items:[]};
-  for(let i=0;i<s.completedCycles;i++) {
-    const roll=parseInt(nk.sha256Hash(s.rewardSeed+":"+i).substring(0,8),16)%100;
-    const id=s.type==="fishing"?(roll<35?"it_fish_carp":"it_fish_tilapia"):(roll<20?"it_copper":"it_iron");
-    items[id]=(items[id]||0)+(s.type==="mining"?2:1);
-  }
-  return {spiritStones:0,items:Object.keys(items).sort().map(function(id){return {itemId:id,quantity:items[id]};})};
 }
 function lifeFinishWorld(world:WorldSession,s:LifeSession,now:number):void {
   const pos=lifePosition(s,now);world.mapId=pos.mapId;world.x=pos.x;world.y=pos.y;world.seq++;world.updatedAt=now;
@@ -342,14 +333,13 @@ function lifeSessionCommand(ctx:nkruntime.Context,nk:nkruntime.Nakama,payload:st
         const site=lifeSite(s.siteId),plot=lifePlots(next)[site.plotId!];
         if(s.completedCycles===1) {
           if(plot.plantingId!==s.sessionId) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Crop belongs to another planting");
-          const crop=lifeCrop(s.cropId);lifeHarvest(next,site.plotId!,now,nk);
-          granted={spiritStones:0,items:[{itemId:crop.output,quantity:crop.yield}]};
+          granted=lifeHarvest(next,site.plotId!,now,nk);
         } else {
           granted={spiritStones:0,items:s.refundPlanting?[{itemId:lifeCrop(s.cropId).seed,quantity:1},{itemId:"it_water",quantity:1}]:[]};
           for(let i=0;i<granted.items.length;i++)economyAdd(next,granted.items[i].itemId,granted.items[i].quantity,nk);
         }
       } else {
-        granted=lifeReward(s,nk);
+        granted=lifeReward(s,nk,next);
         // Unused reserved bait is returned with the earned rewards atomically.
         if(s.type==="fishing"&&s.cycles>s.completedCycles)granted.items.push({itemId:"it_bait",quantity:s.cycles-s.completedCycles});
         for(let i=0;i<granted.items.length;i++)economyAdd(next,granted.items[i].itemId,granted.items[i].quantity,nk);

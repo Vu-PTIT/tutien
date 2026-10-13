@@ -67,9 +67,10 @@ test('opening quest grants Mạch Bàn, records both samples, and completes brea
   assert.equal(east.quest.questId,'q_main_003');
   assert.deepEqual(east.profile.inventory.map(x=>x.itemId),['it_mach_ban','it_water_sample','it_water_sample']);
   const ritual=interactAt('m_an_khe',800,640,'ak.shrine.breathing');
-  assert.equal(ritual.profile.realm,'luyen_khi');
-  assert.equal(ritual.profile.realmStage,1);
-  assert.equal(ritual.profile.cultivationXp,40);
+  // Breath control is a technique; it must not teach Hấp Linh or promote a realm.
+  assert.equal(ritual.profile.realm,'mortal');
+  assert.equal(ritual.profile.cultivationXp,0);
+  assert.equal(s.rpc('inner_world_get').innerWorld.learned,false);
   assert.ok(ritual.profile.learnedTechniques.includes('cp_tuc_mach'));
   assert.ok(ritual.profile.learnedSkills.includes('sk_phi_nhan'));
   assert.ok(ritual.profile.insightFlags.includes('insight.breath_control'));
@@ -77,7 +78,7 @@ test('opening quest grants Mạch Bàn, records both samples, and completes brea
   const revision=ritual.profile.revision;
   const replay=interactAt('m_an_khe',800,640,'ak.shrine.breathing');
   assert.equal(replay.profile.revision,revision);
-  assert.equal(replay.profile.cultivationXp,40);
+  assert.equal(replay.profile.realm,'mortal');
   assert.equal(replay.profile.inventory.filter(x=>x.itemId==='it_water_sample').length,2);
 });
 
@@ -151,7 +152,8 @@ test('field attack checks map, range, target id, cooldown, and grants one durabl
   }
   assert.equal(lostAtomicRewardAck,true);
   assert.equal(hit.killed,true);
-  assert.equal(hit.profile.cultivationXp,10);
+  assert.equal(hit.profile.cultivationXp,0);
+  assert.deepEqual(hit.receipt.granted.linhNang,[{vi:'tho',motes:8,turbid:6}]);
   assert.equal(hit.profile.inventory.find(i=>i.itemId==='it_boar_hide').quantity,1);
   const sword=hit.profile.inventory.find(i=>i.itemId==='it_iron_sword');
   assert.ok(sword&&sword.instanceId,'server loot roll can award a unique weapon instance');
@@ -239,7 +241,7 @@ test('spider equipment pity survives world reads, guarantees an upgrade, and equ
   assert.equal(equipped.profile.equipped.armor,robe.instanceId);
 });
 
-test('a mortal character can start farming immediately and earn XP toward the first breakthrough', async () => {
+test('an untaught human can farm immediately but kills never teach Hấp Linh', async () => {
   const s=setup();
   setPosition(s,'m_truc_am',464,560);
   const spider=s.rpc('world_get').fieldMobs.find(m=>m.id==='ta.mob.doc_chu.01');
@@ -251,7 +253,9 @@ test('a mortal character can start farming immediately and earn XP toward the fi
   }
   assert.equal(hit.killed,true);
   assert.equal(hit.profile.realm,'mortal');
-  assert.equal(hit.profile.cultivationXp,15);
+  assert.equal(hit.profile.cultivationXp,0);
+  assert.equal(hit.receipt.granted.inner.ignored,true);
+  assert.equal(s.rpc('inner_world_get').innerWorld.learned,false);
   assert.equal(hit.profile.inventory.find(i=>i.itemId==='it_spider_silk').quantity,1);
 });
 

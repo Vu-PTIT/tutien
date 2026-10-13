@@ -5,10 +5,12 @@ const op='starter_request_001';
 const reward={spiritStones:3,items:[{itemId:'it_water',quantity:5}]};
 const claim=s=>s.rpc('inventory_claim_starter',{operationId:op});
 const grant=(s,id=op,source='test:encounter:1',bundle=reward)=>clone(s.scope.grantReward(s.nk,A,id,source,bundle));
+// Rows that hold game data; get_profile also writes small cleanup markers.
+const dataRows=s=>[...s.rows.values()].filter(r=>r.collection!=='maintenance').length;
 const at=(s,x,y)=>s.nk.storageWrite([{collection:'world_sessions',key:'main',userId:A,value:{mapId:'m_an_khe',x,y,seq:1,updatedAt:Date.now()},version:'*',permissionRead:0,permissionWrite:0}]);
-test('catalog v3 preserves existing IDs and adds six life activity items',()=>{
-  const s=setup(),v=s.rpc('inventory_get');assert.equal(v.capacity,24);assert.equal(v.catalogVersion,3);assert.equal(v.catalog.length,31);
-  assert.equal(new Set(v.catalog.map(i=>i.id)).size,31);
+test('catalog v4 preserves existing IDs, life activity items and life yield v2 items',()=>{
+  const s=setup(),v=s.rpc('inventory_get');assert.equal(v.capacity,24);assert.equal(v.catalogVersion,4);assert.equal(v.catalog.length,40);
+  assert.equal(new Set(v.catalog.map(i=>i.id)).size,40);
   assert.equal(v.catalog.find(i=>i.id==='it_spider_robe').defenseBonus,20);
   assert.equal(v.catalog.find(i=>i.id==='it_mach_ban').bound,true);
   assert.equal(v.catalog.find(i=>i.id==='it_water').stackMax,99);
@@ -94,7 +96,7 @@ test('concurrent same operation interleaved commit replays without 409 conflict'
 test('concurrent different IDs cannot both claim starter',()=>{
   const s=setup();s.rpc('get_profile');const write=s.nk.storageWrite;
   s.nk.storageWrite=w=>{s.nk.storageWrite=write;s.rpc('inventory_claim_starter',{operationId:'concurrent_other'});return write(w);};
-  rejectsCode(()=>claim(s),6);assert.equal(s.state().revision,1);assert.equal(s.rows.size,3);
+  rejectsCode(()=>claim(s),6);assert.equal(s.state().revision,1);assert.equal(dataRows(s),3);
 });
 test('lost acknowledgement after commit recovers receipt, reconnect replay is safe',()=>{
   const s=setup();s.rpc('get_profile');const write=s.nk.storageWrite;
@@ -105,7 +107,7 @@ test('lost acknowledgement after commit recovers receipt, reconnect replay is sa
 });
 test('database failure before commit leaves no partial assets or receipts',()=>{
   const s=setup();s.rpc('get_profile');const before=s.state();s.nk.storageWrite=()=>{throw Error('unavailable');};
-  rejectsCode(()=>claim(s),14);assert.deepEqual(s.state(),before);assert.equal(s.rows.size,1);
+  rejectsCode(()=>claim(s),14);assert.deepEqual(s.state(),before);assert.equal(dataRows(s),1);
 });
 test('same operation is scoped to each authenticated account',()=>{
   const s=setup();claim(s);const other=s.rpc('inventory_claim_starter',{operationId:op},'22222222-2222-4222-8222-222222222222');
@@ -115,26 +117,16 @@ function luyenKhi(s, stage=1) {
   const profile=s.rpc('get_profile');profile.realm='luyen_khi';profile.realmStage=stage;
   s.put(profile);return profile;
 }
-test('monster XP opens cultivation and advances stages while max stage keeps loot without XP',()=>{
+test('realms are retired: offered XP grants nothing and never promotes a realm',()=>{
   const one=setup();luyenKhi(one,1);
   const first=grant(one,'repeatable_xp_001','pve:boar:one',{spiritStones:0,cultivationXp:700,items:[{itemId:'it_boar_hide',quantity:1}]});
-  assert.equal(first.profile.realmStage,2);assert.equal(first.profile.cultivationXp,400);assert.equal(first.receipt.granted.cultivationXp,700);
-  const two=setup();luyenKhi(two,2);
-  const second=grant(two,'repeatable_xp_002','pve:boar:two',{spiritStones:0,cultivationXp:1500,items:[{itemId:'it_boar_hide',quantity:1}]});
-  assert.equal(second.profile.realmStage,3);assert.equal(second.profile.cultivationXp,900);assert.equal(second.receipt.granted.cultivationXp,1500);
-  const nearMax=setup();const advanced=luyenKhi(nearMax,3);advanced.cultivationXp=999;nearMax.put(advanced);
-  const finalStep=grant(nearMax,'repeatable_xp_003','pve:boar:near-max',{spiritStones:0,cultivationXp:5000,items:[{itemId:'it_boar_hide',quantity:1}]});
-  assert.equal(finalStep.profile.realmStage,4);assert.equal(finalStep.profile.cultivationXp,0);assert.equal(finalStep.receipt.granted.cultivationXp,1);
-  const four=setup();luyenKhi(four,4);
-  const max=grant(four,'repeatable_xp_004','pve:boar:four',{spiritStones:0,cultivationXp:10,items:[{itemId:'it_boar_hide',quantity:1}]});
-  assert.equal(max.profile.cultivationXp,0);assert.equal(max.receipt.granted.cultivationXp,0);
-  assert.equal(max.profile.inventory[0].itemId,'it_boar_hide');
-  const mortal=setup();
-  const training=grant(mortal,'repeatable_xp_000','pve:boar:mortal',{spiritStones:0,cultivationXp:10,items:[{itemId:'it_boar_hide',quantity:1}]});
-  assert.equal(training.profile.realm,'mortal');assert.equal(training.profile.cultivationXp,10);
-  const breakthrough=grant(mortal,'repeatable_xp_005','pve:boar:mortal:2',{spiritStones:0,cultivationXp:90,items:[{itemId:'it_spider_silk',quantity:1}]});
-  assert.equal(breakthrough.profile.realm,'luyen_khi');assert.equal(breakthrough.profile.realmStage,1);
-  assert.equal(breakthrough.profile.cultivationXp,0);assert.equal(breakthrough.receipt.granted.cultivationXp,90);
+  assert.equal(first.profile.realmStage,1);assert.equal(first.profile.cultivationXp,0);assert.equal(first.receipt.granted.cultivationXp,0);
+  assert.equal(first.profile.inventory[0].itemId,'it_boar_hide');
+  const mortal=setup();mortal.rpc('get_profile');
+  const old=grant(mortal,'repeatable_xp_005','pve:boar:mortal:2',{spiritStones:0,cultivationXp:100,items:[{itemId:'it_spider_silk',quantity:1}]});
+  assert.equal(old.profile.realm,'mortal');assert.equal(old.profile.cultivationXp,0);
+  // A replay of the same old offer still matches its saved fingerprint.
+  assert.equal(grant(mortal,'repeatable_xp_005','pve:boar:mortal:2',{spiritStones:0,cultivationXp:100,items:[{itemId:'it_spider_silk',quantity:1}]}).replayed,true);
 });
 test('equip toggles server-owned instances and has idempotent mutation receipts',()=>{
   const s=setup();
@@ -200,7 +192,7 @@ test('garden planting consumes seed and water once; early harvest is blocked; re
   rejectsCode(()=>s.rpc('garden_action',{operationId:'harvest_early_01',action:'harvest',plotId:0}),9);
   const ready=s.state();ready.gardenPlots[0].readyAt=Date.now()-1;s.put(ready);
   const harvested=s.rpc('garden_action',{operationId:'harvest_camlo_01',action:'harvest',plotId:0});
-  assert.equal(harvested.profile.inventory.find(i=>i.itemId==='it_herb_cam_lo').quantity,4);
+  assert.equal(harvested.profile.inventory.filter(i=>i.itemId.startsWith('it_herb_cam_lo')).reduce((n,i)=>n+i.quantity,0),4);
   assert.equal(harvested.profile.gardenPlots[0].state,'empty');
   assert.equal(s.rpc('garden_action',{operationId:'harvest_camlo_01',action:'harvest',plotId:0}).replayed,true);
 });

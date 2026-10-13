@@ -132,8 +132,10 @@ test('victory records separate pending loot, each claim is durable and exactly o
   const s=game(),c=pair(s),h=hunt(s,c),result=win(s,c,h);assert.equal(result.contract.bond,1);
   for(const id of [A,B]){
     assert.equal(s.rpc('contract_get',{},id).pendingReward.huntId,h.id);
-    const claim=s.rpc('contract_hunt_claim',{},id);assert.equal(claim.profile.cultivationXp,10);assert.equal(claim.profile.inventory.find(x=>x.itemId==='it_boar_hide').quantity,1);
-    assert.equal(s.rpc('contract_hunt_claim',{},id).replayed,true);assert.equal(s.rpc('get_profile',{},id).cultivationXp,10);
+    const claim=s.rpc('contract_hunt_claim',{},id);assert.equal(claim.profile.cultivationXp,0);
+    // Loot carries the boar's linh năng: the cat absorbs it, the untaught human does not.
+    assert.deepEqual(claim.receipt.granted.linhNang,[{vi:'tho',motes:8,turbid:6}]);assert.equal(claim.receipt.granted.inner.ignored,id===A);assert.equal(claim.profile.inventory.find(x=>x.itemId==='it_boar_hide').quantity,1);
+    assert.equal(s.rpc('contract_hunt_claim',{},id).replayed,true);assert.equal(s.rpc('get_profile',{},id).realm,'mortal');
   }
 });
 test('offline non-contributors receive no loot and do not share account control',()=>{
@@ -148,12 +150,12 @@ test('full bags keep pending loot claimable after the contract has ended',()=>{
   win(s,c,h);rejectsCode(()=>s.rpc('contract_hunt_claim'),8);assert.equal(s.state().cultivationXp,0);
   s.rpc('contract_release',{contractId:c.id},B);assert.ok(s.rpc('contract_get').pendingReward);
   s.rpc('inventory_discard',{operationId:'free_one_bag_slot',itemId:'it_water',quantity:99});
-  assert.equal(s.rpc('contract_hunt_claim').profile.cultivationXp,10);
+  assert.equal(s.rpc('contract_hunt_claim').profile.inventory.some(x=>x.itemId==='it_boar_hide'),true);
 });
 test('lost kill and claim acknowledgements cannot duplicate loot or bond',()=>{
   const s=game(),c=pair(s),h=hunt(s,c),write=s.nk.storageWrite;
   s.nk.storageWrite=w=>{const a=write(w);if(w.some(x=>x.collection==='spirit_hunt_rewards'))throw Error('lost acknowledgement');return a;};
-  assert.equal(win(s,c,h).contract.bond,1);assert.equal(s.rpc('contract_hunt_claim').profile.cultivationXp,10);assert.equal(s.rpc('contract_hunt_claim').replayed,true);
+  assert.equal(win(s,c,h).contract.bond,1);assert.equal(s.rpc('contract_hunt_claim').profile.inventory.filter(x=>x.itemId==='it_boar_hide').length,1);assert.equal(s.rpc('contract_hunt_claim').replayed,true);
 });
 test('leaving or expiry closes the current hunt while preserving the pact',()=>{
   const s=game(),c=pair(s),h=hunt(s,c);

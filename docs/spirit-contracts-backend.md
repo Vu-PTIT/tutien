@@ -46,9 +46,9 @@ Mỗi người tự tham gia; hai người cùng joined mới được tấn cô
 
 Trận dùng HP riêng, vị trí trình diễn cố định và hành động RPC. Đi lại trong đấu trường chưa là authoritative real-time co-op; chuyển sang match là milestone sau. `world_attack` ngoài rừng vẫn xác minh vị trí/đường đi server và dùng kill receipts hiện có.
 
-Hạ quái ghi thắng, gắn kết và pending reward của người có đóng góp vào cùng transaction. Claim dùng source `contract_hunt:<huntId>:<userId>` và operation ID do server tạo. Tiền thưởng luôn 0, XP tối đa 10 theo progression cap hiện có, vật liệu một Da Sơn Trư. Không mở hộp thưởng cho người chưa đóng góp.
+Hạ quái ghi thắng, gắn kết và pending reward của người có đóng góp vào cùng transaction. Claim dùng source `contract_hunt:<huntId>:<userId>` và operation ID do server tạo. Tiền thưởng luôn 0, không có XP; vật liệu một Da Sơn Trư và linh năng Thổ (8, trong đó 6 đục) cho Nội Giới. Người chưa học Hấp Linh để linh năng đi qua. Không mở hộp thưởng cho người chưa đóng góp.
 
-Túi đầy không mất thưởng. Pending reward là dữ liệu của tài khoản, tiếp tục claim được khi đã kết thúc khế ước. Mỗi người có một pending reward slot; phải giải quyết thưởng trước khi mở trận săn mới. Mất phản hồi hoặc retry không tăng bond/XP/đồ thêm lần nữa.
+Túi đầy không mất thưởng. Pending reward là dữ liệu của tài khoản, tiếp tục claim được khi đã kết thúc khế ước. Mỗi người có một pending reward slot; phải giải quyết thưởng trước khi mở trận săn mới. Mất phản hồi hoặc retry không tăng bond/linh năng/đồ thêm lần nữa. Một đòn chỉ ghi hồ sơ của người ra đòn; hồ sơ bạn đồng hành không bị ghi nên hành động của họ không bị xung đột. Lịch sử replay của trận chỉ giữ 32 đòn gần nhất.
 
 ## Lưu trữ và đồng thời
 
@@ -68,7 +68,7 @@ Hành động săn dùng hồ sơ làm CAS witness và kiểm tra activity chưa
 
 Client M1 dùng `client/scripts/nakama_api.gd`, `spirit_gameplay.gd`, `spirit_playfield.gd`. Adapter REST gửi payload RPC dưới dạng JSON string đúng envelope của Nakama, tách HTTPRequest theo request, timeout tám giây, không lưu password/token xuống disk. Login email hoặc username dùng authenticate/email; tạo tài khoản cần username, email và password hợp lệ. Default localhost sử dụng server key dev của compose. Server thật dùng endpoint HTTPS và key cấu hình phù hợp.
 
-UI polling khế ước mỗi hai giây để xem lời mời/HP quái chung. Đây là cơ chế của lát cắt thử; presence và combat realtime sản phẩm tiếp tục dùng Nakama match/socket ở milestone sau. Contract get không thay đổi trạng thái và không tự cấp XP.
+UI polling khế ước mỗi hai giây để xem lời mời/HP quái chung. Đây là cơ chế của lát cắt thử; presence và combat realtime sản phẩm tiếp tục dùng Nakama match/socket ở milestone sau. Contract get không thay đổi trạng thái, không tạo hồ sơ cho người khác (chỉ đọc hình dạng) và bỏ qua hợp đồng đã được dọn.
 
 Tests unit gồm migration/form, ủy quyền, blocked/self target, hạn lời mời, hai acceptance đồng thời, mất ACK, cooldown, contribution, full bag và claim sau khi kết thúc. `scripts/spirit-contract-smoke.mjs` chạy tài khoản mới trên Nakama/PostgreSQL; `client/tests/spirit_api_live_smoke.gd` kiểm tra adapter Godot với backend thật.
 

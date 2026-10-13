@@ -2,6 +2,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const fs = require('node:fs');
+const {contentInit} = require('./helpers/content_db.cjs');
 const {randomUUID, createHash} = require('node:crypto');
 const A = '11111111-1111-4111-8111-111111111111';
 const B = '22222222-2222-4222-8222-222222222222';
@@ -15,7 +16,8 @@ function setup() {
   const handlers = {};
   const scope = vm.createContext({});
   vm.runInContext(fs.readFileSync('build/index.js', 'utf8'), scope);
-  scope.InitModule({}, {}, {}, new Proxy({}, {get: (_, method) => (...args) => {
+  const content = contentInit();
+  scope.InitModule({}, content.logger, content.nk, new Proxy({}, {get: (_, method) => (...args) => {
     const key = method === 'registerRpc' ? args[0] : method === 'registerMatch' ? `match:${args[0]}` : method === 'registerRtBefore' ? `rt:${args[0]}` : method;
     assert.equal(handlers[key], undefined, `duplicate registration: ${key}`);
     handlers[key] = args.at(-1);
