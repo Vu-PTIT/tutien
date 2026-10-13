@@ -26,6 +26,7 @@ Có code backend nhưng chưa thiết kế lại: **kinh tế**, **nhiệm vụ*
 | 05 | [Bố cục chi tiết từng map](05-map-layouts.md) | Mỗi map chia khu ra sao, cái gì nằm ở đâu? |
 | 06 | [Quái](06-monsters.md) | Có những quái nào, đánh thế nào, ở đâu? |
 | 07 | [Sức mạnh: Nội Giới](07-power-system.md) | Nhân vật mạnh lên bằng cách nào? |
+| 08 | [Sản lượng đời sống](08-life-yields.md) | Trồng, câu, đào được gì, ở đâu? |
 
 ## Quyết định đã chốt
 
@@ -48,7 +49,7 @@ Có code backend nhưng chưa thiết kế lại: **kinh tế**, **nhiệm vụ*
 
 ## Thứ tự làm
 
-1. Duyệt 7 tài liệu này.
+1. Duyệt 8 tài liệu này.
 2. **Art test**: một góc Làng Hồ Lặng có Cổng Ẩn Giới + một avatar Người + một avatar Tinh Linh, theo [04](04-map-art.md) §10.
 3. **Lát chơi đầu**: Làng Hồ Lặng đi được, tương tác được, câu/trồng nối với backend.
 4. **Chương 1 hồi A–B** cho cả hai role.

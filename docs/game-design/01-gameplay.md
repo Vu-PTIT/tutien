@@ -100,6 +100,8 @@ Thứ làm thế giới sống động:
 
 Tinh Linh câu cá bằng cần như Người, nhưng animation riêng (tai cụp, đuôi đung đưa). Không có minigame bắt buộc.
 
+Thu được gì ở từng bến, vỉa, luống: xem [08](08-life-yields.md).
+
 ### 5.3 Tự hoạt động (đã có backend)
 
 Mọi hoạt động ở 5.2 có thể **giao cho nhân vật tự làm**:
