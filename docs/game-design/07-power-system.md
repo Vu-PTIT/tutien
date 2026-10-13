@@ -121,7 +121,7 @@ Hấp thụ vị **Tím** không mọc thành địa hình mà tạo ra **vết 
 
 ## 7. Nội Giới là một nơi người chơi nhìn thấy
 
-Người chơi mở Nội Giới bằng một nút (hoặc khi thiền). Đây là một **diorama pixel nhỏ** trôi trong khoảng tối, nhìn từ trên xuống 3/4 như thế giới game.
+Người chơi mở Nội Giới bằng một nút (hoặc khi thiền). Đây là một **diorama pixel nhỏ** trôi trong khoảng tối, người chơi nhìn vào qua cùng góc camera 3/4 như thế giới game (thửa đất vẫn xếp trên lưới vuông).
 
 - Thấy từng thửa mới mọc ra sau mỗi lần hấp thụ.
 - **Xếp lại**: kéo thửa sang chỗ khác để tạo hình thái (ví dụ nối 3 thửa Thủy thành Suối). Mỗi lần xếp tốn một ít linh lực, không giới hạn số lần.

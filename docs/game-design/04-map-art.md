@@ -2,7 +2,7 @@
 
 ## 1. Một câu định hướng
 
-> **Pixel art 32 px, nhìn top-down 3/4; nơi Người ấm như một buổi chiều ngoại ô, nơi Tinh Linh dịu như nắng xuyên tán lá; linh năng là ánh sáng, không phải sơn.**
+> **Pixel art 32 px, người chơi nhìn từ góc camera 3/4; nơi Người ấm như một buổi chiều ngoại ô, nơi Tinh Linh dịu như nắng xuyên tán lá; linh năng là ánh sáng, không phải sơn.**
 
 Tham chiếu tinh thần, không sao chép: **Eastward** (ánh sáng động, đồ vật kể chuyện, thiên nhiên đan vào đô thị), **Stardew Valley** (đời sống cozy, góc nhìn), **Sea of Stars** (pixel + ánh sáng), phim **Ghibli** (thiên nhiên trùm lên công nghệ, tinh linh rừng).
 
@@ -10,7 +10,13 @@ Mượn từ Eastward **phần hình ảnh**, không mượn lối chơi phiêu 
 
 ## 2. Góc nhìn và tỉ lệ
 
-- **Góc nhìn 3/4 thẳng:** lưới vuông, camera chếch từ trên. Thấy mái nhà từ trên xuống, mặt tiền ngắn, mặt đất chiếm phần lớn khung hình. Không isometric hình thoi, không side-view.
+> **"3/4" là góc nhìn của người chơi (camera), không phải hình dạng hay cách thiết kế map.**
+>
+> - **Map** được thiết kế như một **bản đồ mặt bằng trên lưới vuông**: ô nào là đất, nước, nhà, đường, va chạm ở đâu. Bố cục, kích thước, vị trí trong [05](05-map-layouts.md) và `server/data/` đều tính theo lưới phẳng này; không có trục chéo, không có "hướng 3/4" trong dữ liệu map.
+> - **Góc nhìn 3/4** chỉ là cách **vẽ sprite và đặt camera** để người chơi nhìn vào map đó: camera chếch từ trên xuống nên thấy được mặt tiền ngắn của nhà, thân cây, nhân vật đứng.
+> - Vì vậy: người thiết kế map nghĩ bằng mặt bằng; họa sĩ vẽ asset theo góc 3/4; code giữ logic trên lưới vuông và chỉ xử lý 3/4 ở phần hiển thị (thứ tự vẽ theo trục Y, che khuất).
+
+- **Camera 3/4 thẳng:** chiếu lên lưới vuông, camera chếch từ trên, không xoay. Người chơi thấy mái nhà từ trên xuống, mặt tiền ngắn, mặt đất chiếm phần lớn khung hình. Không isometric hình thoi, không side-view.
 - **1 ô = 32 px ≈ 1 m.** Lưới phụ 16 px để đặt đồ.
 - **Phóng to số nguyên**, không scale lẻ, không xoay sprite.
   - Khám phá: ×2 (màn 1080p thấy ≈ 30×17 ô).
