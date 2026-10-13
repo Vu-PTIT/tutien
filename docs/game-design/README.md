@@ -1,65 +1,50 @@
-# Tu Tiên — Thiết kế sản phẩm
+# Tu Tiên — Game Design
 
-**Cập nhật:** 08/10/2026.  
-**Nhánh định hình:** `feat/map-ui-rebuild`; quy chuẩn map được đồng bộ với `feat/dual-experience-platform`.  
-**Nền kỹ thuật:** Godot/GDScript, Nakama/TypeScript, PostgreSQL.
+**Bắt đầu lại:** 13/10/2026, nhánh `feat/map-ui-rebuild`. Bộ tài liệu cũ đã bị xóa; bản cũ còn trong lịch sử git.
+**Sửa lần 2 (13/10/2026):** bỏ bối cảnh Việt Nam, chuyển sang thế giới hiện đại hư cấu; thêm hai role chơi được là **Người** và **Tinh Linh**.
 
-> Một sản phẩm có hai không gian liên kết: nền tảng sinh hoạt/học/làm và thế giới game pixel Việt Nam pha kỳ ảo. Người dùng có thể tham gia cộng đồng, sắp xếp việc trong ngày hoặc chơi game theo ý mình.
+## Trọng tâm hiện tại
 
-## 1. Canon sản phẩm
+Chỉ thiết kế ba thứ, theo thứ tự:
 
-1. [01 — Tầm nhìn và vòng trải nghiệm](01-vision-and-core-loop.md)
-2. [09 — Hai không gian sản phẩm](09-dual-experience-platform.md)
-3. [08 — Trạng thái sinh hoạt và hiện diện xã hội](08-social-presence-and-lifestyle.md)
-4. [04 — Bối cảnh Việt Nam hiện đại pha kỳ ảo](04-world-setting-vietnam-awakening.md)
-5. [11 — World Bible: thế giới nhìn thấy được](11-world-bible.md)
-6. [12 — Art Bible: chuẩn mỹ thuật duy nhất](12-art-bible.md)
-7. [10 — Map phân lớp và vật thể tương tác](10-layered-interactive-maps.md)
+1. **Map art**: thế giới nhìn ra sao, từng vùng có cảm giác gì.
+2. **Gameplay**: người chơi điều khiển gì, hai role khác nhau thế nào.
+3. **Cốt truyện**: vì sao thế giới như vậy, hai tộc đứng ở đâu.
 
-Các tài liệu 01, 09 và 08 mô tả hướng sản phẩm hiện hành. **11 và 12 là nguồn chuẩn cho bối cảnh hình ảnh và mỹ thuật**; demo làng hiện tại chỉ là tech demo. **Tài liệu 10 là nguồn chuẩn cho kiến trúc map mới:** nền vẽ phân lớp, vật thể và tương tác độc lập; tileset chỉ dùng nơi thích hợp, không bắt buộc toàn map. Nếu tài liệu cũ yêu cầu map thuần tile, ưu tiên 10 cho phần dựng map. Những phần cũ về săn quái, quest, economy hoặc cốt truyện được giữ làm tham chiếu kỹ thuật/lịch sử, không còn quyết định vòng chơi ưu tiên.
+## Để sau
 
-## 2. Hai không gian
+Có code backend nhưng chưa thiết kế lại: **kinh tế**, **nhiệm vụ** dạng danh sách, **túi đồ/trang bị**, **xã hội** (bạn bè, chat, nhóm), **sảnh/platform**. Tài liệu dưới đây chỉ ghi chỗ chúng sẽ gắn vào.
 
-- **Nền tảng sinh hoạt:** lịch/việc trong ngày, hẹn giờ tập trung, phòng học/làm việc chung, trạng thái, bạn bè và chat.
-- **Thế giới game:** giao lưu ở thị trấn, trồng trọt, câu cá, thu thập, chế tạo, chăm nhà/vườn, tu luyện bằng thiền và đánh quái PvE.
-- **Lớp dùng chung:** một danh tính, avatar, hồ sơ, bạn bè, chat và trạng thái hiện diện. Mỗi không gian vẫn dùng được riêng.
+## Tài liệu
 
-Học/làm/nghỉ từ app ánh xạ tới địa điểm, đường đi và slot hoạt động trong map. Trạng thái được server quản lý; hiệu ứng môi trường không phải gameplay và không cần đồng bộ từng hạt.
+| # | Tài liệu | Trả lời câu hỏi |
+| --- | --- | --- |
+| 01 | [Gameplay](01-gameplay.md) | Chơi thế nào, Người và Tinh Linh khác nhau ra sao? |
+| 02 | [Cốt truyện](02-story.md) | Chuyện gì đang xảy ra? |
+| 03 | [Thế giới và map](03-world-and-maps.md) | Đi đâu, mỗi nơi có gì? |
+| 04 | [Map art](04-map-art.md) | Trông ra sao, vẽ thế nào? |
 
-## 3. Tài liệu hệ thống
+## Quyết định đã chốt
 
-- [00 — Rà soát và quyết định](00-review-and-decisions.md): quyết định mới ở đầu; nội dung lịch sử bên dưới.
-- [02 — Nhân vật và tu luyện](02-character-and-cultivation.md)
-- [03 — Chiến đấu, kỹ năng và vật phẩm](03-combat-skills-and-artifacts.md)
-- [13 — Người, linh thú và khế ước](13-player-forms-and-spirit-contracts.md): lựa chọn hình dạng, bạn đồng hành và săn chung M1.
-- [05 — Story bible](05-story-bible.md): tham khảo cho giai đoạn sau.
-- [06 — Nhiệm vụ và sự kiện](06-quests-and-events.md): không phải ưu tiên của lát cắt đầu.
-- [07 — Vườn, chế tạo và kinh tế](07-garden-crafting-and-economy.md): prototype cũ cần cân chỉnh theo hướng đời sống.
-- [Đặc tả tiến trình/PvE](progression-pve-spec.md): giữ cho nhánh combat tùy chọn.
-- [Quy chuẩn sửa map trong client](../../client/MAP_DESIGN.md)
+- **Bối cảnh:** thế giới hiện đại hư cấu, không gắn quốc gia thật. Linh năng xuất hiện sau một biến cố gọi là Linh Chấn. Không cổ trang, không tông môn.
+- **Hai role:** **Người** và **Tinh Linh** (cư dân của Ẩn Giới, thế giới bị ẩn giấu hiện ra cùng linh năng; mang nét thú nhưng không phải thú). Quái/dị thú là động vật bị nhiễm linh năng. Hai tộc dùng chung khoảng 70% lối chơi; phần còn lại khác nhau.
+- **Quan hệ:** hai tộc sống chung một thế giới và còn căng thẳng. Người chơi hai tộc vẫn chơi cùng nhau.
+- **Hình ảnh:** pixel 32 px, top-down 3/4 kiểu Stardew/Eastward, ánh sáng động; "một phần Eastward" về hình, không về lối chơi.
+- **Map:** thế giới chia **3 khu**: Khu Người (Làng Hồ Lặng), Khu Rừng Quái (Bìa Rừng, Rừng Sâu, mỏ, Trạm) nằm cạnh nhau qua một tường rào; Khu Tinh Linh (Ẩn Giới) vào qua **Cổng Ẩn Giới đặt giữa làng**. Giữ các ID đã có trong `server/data/life_world.json`, đổi tên hiển thị; xem [03](03-world-and-maps.md).
+- Nhân vật có thể tự hoạt động khi người chơi vắng mặt (đã có backend).
+- **M1 Người/linh thú và khế ước:** code và cảnh test F5 đã triển khai theo [13 — Người, linh thú và khế ước](13-player-forms-and-spirit-contracts.md).
 
-## 4. Thứ tự sản xuất
+## Việc backend phát sinh (ghi lại, chưa làm)
 
-**P0 — Map/UI/nhân vật:** thực hiện M1–M3 của tài liệu 10 trên một góc làng trước: nền sạch + nước/props + collision/Y-sort/camera, sau đó tương tác thật, cuối cùng hiệu ứng và kiểm tra hiệu năng. Không mở rộng diện tích hoặc sinh lại toàn map khi cảnh mẫu chưa đạt.
+- Thêm trường `race` (`human` / `spirit`) vào hồ sơ nhân vật, chọn một lần lúc tạo.
+- Thêm map mới `m_an_gioi` (Ẩn Giới) và cổng nối với `m_lang_que`; Tinh Linh xuất phát ở `m_an_gioi`. Hiện `world_get` chỉ cho xuất phát ở `m_lang_que` hoặc `m_an_khe`.
+- Đổi Chốt Tường Rào (`ln_lang_vanh`) thành lối duy nhất từ làng ra rừng; bỏ `ln_lang_thang` khỏi chương 1.
+- Kỹ năng hóa thú và cách tu luyện riêng của Tinh Linh (xem [01](01-gameplay.md) §3).
 
-**P1 — Nền tảng sinh hoạt:** lịch/việc, focus, phòng học/làm việc, hồ sơ và trạng thái.
+## Thứ tự làm
 
-**P2 — Cộng đồng đồng bộ:** bạn bè/chat/hiện diện dùng chung với thế giới game; M4 kiểm tra avatar đi đến điểm học/làm/nghỉ ngay cả khi client của chủ nhân đóng.
-
-**P3 — Vòng đời sống trong game:** nhà/vườn, cây trồng, câu cá, thu thập, chế tạo và thăm nhà.
-
-**P4 — Tu luyện:** thiền và đánh quái PvE cho người muốn phát triển sức mạnh.
-
-**Sau đó — Mở rộng:** cốt truyện dài, vùng đất và hệ thống nâng cao.
-
-## 5. Tách mục tiêu khỏi hiện trạng
-
-Ở mốc `d8565ca`, client tập trung demo làng bằng `village_demo.gd`, `village_tile_layer.gd` và `village_sprite_object.gd`; việc props đã riêng không chứng minh có đầy đủ tương tác có lưu. Backend xã hội, inventory/reward và prototype chiến đấu là nền kỹ thuật cần đánh giá tái sử dụng, không suy ra rằng chúng đã tích hợp vào scene làng hiện tại.
-
-Cập nhật 08/10 chốt thiết kế, chưa thay renderer, tạo asset hay chạy test Godot. Công cụ học/làm, hiện diện đồng bộ hai phần, farming/fishing và tiến trình thiền vẫn phải được kiểm chứng bằng code và test riêng. Không dùng tài liệu thiết kế như báo cáo tính năng đã hoàn tất.
-
-## 6. Quy hoạch 8 vùng liên thông (đặc tả, 12/10/2026)
-
-Theo yêu cầu mở rộng thế giới: [World Map Blueprint](world-map/README.md) gồm [sơ đồ & 10 cặp portal](world-map/00-world-topology-and-routes.md), [chuẩn layer/runtime](world-map/01-layer-contract-and-runtime.md), **8 hồ sơ map** (làng, thành phố, vành đai, cảng, mỏ lộ thiên, mỏ ngầm, rừng, trạm), [NPC/quái/activity](world-map/10-npc-ai-monsters-and-activities.md), [asset/production](world-map/11-assets-and-production-plan.md) và [QA](world-map/12-qa-and-acceptance.md).
-
-Đây là **bản thiết kế, chưa có 8 scene chơi được**. Bốn vùng trong `04`/`11` vẫn là trọng tâm MVP; bốn khu mới là phần mở rộng đã quy hoạch, triển khai theo milestone và art test trước khi công bố hoàn tất.
+1. Duyệt 4 tài liệu này.
+2. **Art test**: một góc Làng Hồ Lặng có Cổng Ẩn Giới + một avatar Người + một avatar Tinh Linh, theo [04](04-map-art.md) §10.
+3. **Lát chơi đầu**: Làng Hồ Lặng đi được, tương tác được, câu/trồng nối với backend.
+4. **Chương 1 hồi A–B** cho cả hai role.
+5. Sau khi 1–4 đạt: thiết kế lại kinh tế, nhiệm vụ, xã hội.

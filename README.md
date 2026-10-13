@@ -1,6 +1,6 @@
 # Tu Tiên
 
-> Game pixel online dành cho Gen Z, đồng thời là một không gian số để học/làm việc và gặp gỡ bạn bè trong một Việt Nam hiện đại nơi linh khí vừa trở lại.
+> Game pixel online dành cho Gen Z, đồng thời là một không gian số để học/làm việc và gặp gỡ bạn bè trong một thế giới hiện đại nơi linh năng vừa xuất hiện, nơi Người và Tinh Linh cùng sống.
 
 Tu Tiên có **hai không gian song song, dùng chung tài khoản, avatar, bạn bè và trạng thái**. Người dùng có thể vào phần nền tảng để sắp xếp việc trong ngày, học/làm cùng bạn và trò chuyện; khi muốn chơi, họ mở thế giới pixel để chăm nhà/vườn, khám phá và tu luyện. Mỗi không gian có ích ngay cả khi người dùng không mở phần còn lại.
 
@@ -8,7 +8,7 @@ Tu Tiên có **hai không gian song song, dùng chung tài khoản, avatar, bạ
 
 Map mới theo hướng **nền vẽ phân lớp + nước riêng + vật thể tương tác độc lập + dữ liệu va chạm/đi lại riêng**. Giữ phong cách pixel nhưng không bắt toàn bộ làng ghép từ tileset. Tile vẫn dùng được ở luống trồng, sàn hoặc chi tiết lặp. Cây, ghế, cửa và đồ vật có ID, action và state riêng; không bake vào một ảnh nền phẳng.
 
-Quy chuẩn áp dụng trên cả `feat/map-ui-rebuild` và `feat/dual-experience-platform`, không merge chéo toàn bộ code. Xem [10 — Thiết kế map và lộ trình nghiệm thu](docs/game-design/10-layered-interactive-maps.md). Các đường dẫn demo client phía dưới là mốc lịch sử trước khi runtime bị gỡ ngày 12/10/2026.
+Quy chuẩn áp dụng trên cả `feat/map-ui-rebuild` và `feat/dual-experience-platform`, không merge chéo toàn bộ code. Xem [03 — Thế giới và map](docs/game-design/03-world-and-maps.md) §4. Các đường dẫn demo client phía dưới là mốc lịch sử trước khi runtime bị gỡ ngày 12/10/2026.
 
 **Đã có bản thử M1** tại `client/scenes/layered_village_m1.tscn`: nền/đường/nước bằng các polygon pixel phân lớp, vật thể riêng, tương tác offline mẫu và minimap cùng dữ liệu. Giữ bản đồ cũ tại `legacy_linh_khe.tscn`. Đây chưa phải bản art hoàn chỉnh hoặc đã nghiệm thu Godot/mobile; xem `client/M1_LAYERED_IMPLEMENTATION.md` để theo dõi.
 
@@ -30,14 +30,13 @@ Backend/hợp đồng `activity_session` là phần giao nhau: platform gửi l�
 
 ## Tài liệu thiết kế
 
-- [Tầm nhìn và vòng chơi](docs/game-design/01-vision-and-core-loop.md)
-- [Hai không gian: nền tảng sinh hoạt và thế giới game](docs/game-design/09-dual-experience-platform.md)
-- [Trạng thái sinh hoạt và hiện diện xã hội](docs/game-design/08-social-presence-and-lifestyle.md)
-- [Map phân lớp và vật thể tương tác](docs/game-design/10-layered-interactive-maps.md)
-- [Mục lục và thứ tự sản xuất](docs/game-design/README.md)
-- [Bối cảnh Việt Nam hiện đại](docs/game-design/04-world-setting-vietnam-awakening.md)
-- [World Bible — thế giới nhìn thấy được](docs/game-design/11-world-bible.md)
-- [Art Bible — chuẩn mỹ thuật](docs/game-design/12-art-bible.md)
+Viết lại từ đầu ngày 13/10/2026, tập trung map art, gameplay và cốt truyện; kinh tế, nhiệm vụ, xã hội để sau.
+
+- [Mục lục và thứ tự làm](docs/game-design/README.md)
+- [01 — Gameplay](docs/game-design/01-gameplay.md)
+- [02 — Cốt truyện](docs/game-design/02-story.md)
+- [03 — Thế giới và map](docs/game-design/03-world-and-maps.md)
+- [04 — Map art](docs/game-design/04-map-art.md)
 
 > Demo làng hiện tại là tech demo, không phải chuẩn hình ảnh. Asset pack 16×16 trong `client/assets/tileset/` chưa có license trong repo; chỉ dùng làm placeholder.
 
