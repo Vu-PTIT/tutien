@@ -32,7 +32,7 @@ Có code backend nhưng chưa thiết kế lại: **kinh tế**, **nhiệm vụ*
 - **Hình ảnh:** pixel 32 px, top-down 3/4 kiểu Stardew/Eastward, ánh sáng động; "một phần Eastward" về hình, không về lối chơi.
 - **Map:** thế giới chia **3 khu**: Khu Người (Làng Hồ Lặng), Khu Rừng Quái (Bìa Rừng, Rừng Sâu, mỏ, Trạm) nằm cạnh nhau qua một tường rào; Khu Tinh Linh (Ẩn Giới) vào qua **Cổng Ẩn Giới đặt giữa làng**. Giữ các ID đã có trong `server/data/life_world.json`, đổi tên hiển thị; xem [03](03-world-and-maps.md).
 - Nhân vật có thể tự hoạt động khi người chơi vắng mặt (đã có backend).
-- **M1 Người/linh thú và khế ước:** code và cảnh test F5 đã triển khai theo [13 — Người, linh thú và khế ước](13-player-forms-and-spirit-contracts.md).
+
 
 ## Việc backend phát sinh (ghi lại, chưa làm)
 
