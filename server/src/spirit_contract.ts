@@ -233,7 +233,8 @@ const contractHuntAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payloa
     const ids=[value.inviterId,value.recipientId],profiles=ids.map(function(id){return loadCharacter(nk,id);});
     const actorIndex=ids.indexOf(userId),profile=profiles[actorIndex].state;
     for(let i=0;i<profiles.length;i++) lifeEnsureIdle(profiles[i].state,now);
-    let attack=16,defense=5;
+    const inner=innerCombatBonus(profile);
+    let attack=16+inner.attack,defense=5+inner.defense;
     for(let i=0;i<profile.inventory.length;i++) {
       const slot=profile.inventory[i],definition=catalogItem(slot.itemId);
       if(slot.instanceId===profile.equipped.weapon) attack+=Number(definition.attackBonus||0);

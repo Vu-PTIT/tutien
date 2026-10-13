@@ -3,6 +3,8 @@ interface GardenPlot {
   plantedAt?: number; readyAt?: number; plantingId?: string;
 }
 interface CropDefinition { seed: string; output: string; durationMs: number; yield: number; }
+// A harvest settles a little clean Thổ and Mộc into the Nội Giới.
+const LIFE_HARVEST_ESSENCE:InnerEssence[]=[{vi:"tho",motes:2,turbid:0},{vi:"moc",motes:1,turbid:0}];
 const LIFE_CROPS: {[id: string]: CropDefinition} = {
   crop_cam_lo: {seed:"it_seed_cam_lo",output:"it_herb_cam_lo",durationMs:1200000,yield:4},
   crop_tinh_tam: {seed:"it_seed_tinh_tam",output:"it_herb_tinh_tam",durationMs:2700000,yield:4},
@@ -83,6 +85,7 @@ function lifeGardenAction(ctx:nkruntime.Context,nk:nkruntime.Nakama,payload:stri
     else {
       const crop=lifeCrop(lifePlots(next)[plotId].cropId);
       lifeHarvest(next,plotId,now,nk);granted.items.push({itemId:crop.output,quantity:crop.yield});
+      granted.linhNang=LIFE_HARVEST_ESSENCE;granted.inner=innerAbsorb(next,nk,LIFE_HARVEST_ESSENCE);
     }
     return {session:null,granted:granted};
   }));

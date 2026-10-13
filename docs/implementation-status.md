@@ -7,6 +7,7 @@
 - Trồng cây: 12 luống, ba loại cây, hạt/nước, giờ sinh trưởng server, thu hoạch và migration từ save sáu luống.
 - Câu cá/đào khoáng: dụng cụ, mồi câu, lượt có thời lượng, direct/autonomous, tuyến qua cổng mở, session lưu bền, đổi mode tại slot, hủy, nhận thưởng/refund.
 - Lease slot server, version và receipt giao dịch ngăn lệnh đồng thời/nhận trùng; túi đầy giữ kết quả chờ.
+- **Nội Giới (13/10/2026):** sức mạnh không theo cấp. Linh thú biết Hấp Linh bẩm sinh, Người học từ Bé Mơ hoặc bạn khế ước linh thú; Hấp Linh ở 6 điểm, hoạt động đời sống và hạ quái làm Nội Giới lớn lên; hình thái, chỉ số, bước nhảy Hạt → Quần đảo, xếp lại thửa. Xem [inner-world-backend.md](inner-world-backend.md).
 - Manifest vị trí dùng geometry làng mới và các blockout; mỏ ngầm mới hỗ trợ B1, các cổng khóa vẫn khóa.
 
 ## Client

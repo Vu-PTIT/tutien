@@ -3,7 +3,7 @@
 const LIFE_TIME_LIMIT = 9007199254740991;
 interface LifeSite {
   id:string;mapId:string;type:string;x:number;y:number;radius:number;facing:string;
-  name:string;nameEn:string;plotId?:number;floorId?:string;
+  name:string;nameEn:string;plotId?:number;floorId?:string;element?:string;
 }
 interface LifeWaypoint { mapId:string;x:number;y:number;at:number; }
 interface LifeSession {
@@ -54,7 +54,7 @@ function lifeRequirePosition(world:WorldSession,id:string):void {
 }
 function lifeValidateSession(s:LifeSession):void {
   if(!s||s.schemaVersion!==1||typeof s.sessionId!=="string"||typeof s.avatarId!=="string"||
-      ["fishing","mining","gardening"].indexOf(s.type)<0||["direct","autonomous"].indexOf(s.controlMode)<0||
+      ["fishing","mining","gardening","meditation"].indexOf(s.type)<0||["direct","autonomous"].indexOf(s.controlMode)<0||
       ["active","cancelled","completed"].indexOf(s.state)<0||["pending","settled"].indexOf(s.settlement)<0||
       !assetInteger(s.cycles,1,120)||!assetInteger(s.completedCycles,0,s.cycles)||
       !assetInteger(s.stateVersion,1,ASSET_LIMIT)||!assetInteger(s.intervalMs,1,3600000)||
@@ -235,7 +235,9 @@ const lifeGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const state=loadCharacter(nk,userId).state,now=Date.now();
   return JSON.stringify({serverNow:now,worldRevision:LIFE_WORLD_REVISION,sites:LIFE_SITES,crops:LIFE_CROPS,
     activities:{fishing:{intervalMs:30000,tool:"it_fishing_rod",consumes:"it_bait",maxCycles:120},
-      mining:{intervalMs:45000,tool:"it_pickaxe",maxCycles:120},gardening:{maxCycles:1}},
+      mining:{intervalMs:45000,tool:"it_pickaxe",maxCycles:120},gardening:{maxCycles:1},
+      meditation:{intervalMs:LIFE_MEDITATION_MS,maxCycles:120,motesPerCycle:3,purifyPerCycle:1,requiresHapLinh:true}},
+    innerWorld:innerView(state),
     garden:lifeGardenView(state,now),session:lifeSessionView(state.activitySession,now),
     starterClaimed:nk.storageRead([receiptId(userId,"source:life:starter:v1")]).length>0});
 };
@@ -256,13 +258,15 @@ const activityStartRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   return JSON.stringify(lifeMutation(nk,userId,op,"life_start",{siteId:site.id,controlMode:mode,cycles:cycles,cropId:cropId},function(next,world,writes,now) {
     lifeEnsureIdle(next,now);
     if(mode==="direct") lifeRequirePosition(world,site.id);
-    if(site.type!=="gardening") {
+    if(site.type==="meditation"&&!innerOf(next).learned)
+      return fail(nkruntime.Codes.FAILED_PRECONDITION,"Learn Hấp Linh from a Tinh Linh before meditating");
+    if(site.type==="fishing"||site.type==="mining") {
       const tool=site.type==="fishing"?"it_fishing_rod":"it_pickaxe";
       if(findInventorySlot(next,tool)<0) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Required tool is missing");
     }
     const route=mode==="autonomous"?lifeRoute(world,site,now):[{mapId:site.mapId,x:world.x,y:world.y,at:now}];
     const activeAt=route[route.length-1].at;
-    const interval=site.type==="gardening"?lifeCrop(cropId).durationMs:site.type==="fishing"?30000:45000;
+    const interval=site.type==="gardening"?lifeCrop(cropId).durationMs:site.type==="fishing"?30000:site.type==="meditation"?LIFE_MEDITATION_MS:45000;
     const s:LifeSession={schemaVersion:1,sessionId:nk.uuidv4(),avatarId:userId,type:site.type,siteId:site.id,mapId:site.mapId,
       controlMode:mode as string,state:"active",stateVersion:1,startedAt:now,activeAt:activeAt,expectedEndAt:activeAt+interval*(cycles as number),
       intervalMs:interval,cycles:cycles as number,completedCycles:0,completedAt:0,settlement:"pending",cropId:cropId,
@@ -293,6 +297,7 @@ function lifeTarget(state:CharacterState,id:string,version:number):LifeSession {
 }
 function lifeReward(s:LifeSession,nk:nkruntime.Nakama):RewardBundle {
   const items:{[id:string]:number}={};
+  if(s.type==="meditation") return {spiritStones:0,items:[]};
   for(let i=0;i<s.completedCycles;i++) {
     const roll=parseInt(nk.sha256Hash(s.rewardSeed+":"+i).substring(0,8),16)%100;
     const id=s.type==="fishing"?(roll<35?"it_fish_carp":"it_fish_tilapia"):(roll<20?"it_copper":"it_iron");
@@ -349,6 +354,10 @@ function lifeSessionCommand(ctx:nkruntime.Context,nk:nkruntime.Nakama,payload:st
         if(s.type==="fishing"&&s.cycles>s.completedCycles)granted.items.push({itemId:"it_bait",quantity:s.cycles-s.completedCycles});
         for(let i=0;i<granted.items.length;i++)economyAdd(next,granted.items[i].itemId,granted.items[i].quantity,nk);
       }
+      // Every finished activity settles its linh năng into the Nội Giới in this same write.
+      const essence=lifeEssence(s);
+      if(s.type==="meditation") granted.purified=innerPurify(next,s.completedCycles*LIFE_MEDITATION_PURIFY);
+      if(essence.length){granted.linhNang=essence;granted.inner=innerAbsorb(next,nk,essence);}
       s.state=s.state==="cancelled"?"cancelled":"completed";s.settlement="settled";s.stateVersion++;
       lifeReleaseSlot(nk,s,writes);
       // Cancellation already persisted the last position, including mid-route.
@@ -357,6 +366,18 @@ function lifeSessionCommand(ctx:nkruntime.Context,nk:nkruntime.Nakama,payload:st
     }
     s.stateVersion++;return {session:s};
   }));
+}
+const LIFE_MEDITATION_MS=60000;
+const LIFE_MEDITATION_MOTES=3;
+const LIFE_MEDITATION_PURIFY=1;
+// Hấp Linh gives little but clean essence; life work gives a trickle of its own vị.
+function lifeEssence(s:LifeSession):InnerEssence[] {
+  const done=s.completedCycles;
+  if(s.type==="meditation"){const site=lifeSite(s.siteId);return done?[{vi:site.element||"tho",motes:done*LIFE_MEDITATION_MOTES,turbid:0}]:[];}
+  if(s.type==="fishing") return Math.floor(done/4)?[{vi:"thuy",motes:Math.floor(done/4),turbid:0}]:[];
+  if(s.type==="mining") return Math.floor(done/3)?[{vi:"thach",motes:Math.floor(done/3),turbid:0}]:[];
+  if(s.type==="gardening"&&done) return LIFE_HARVEST_ESSENCE;
+  return [];
 }
 const activityClaimRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload){return lifeSessionCommand(ctx,nk,payload,"claim");};
 const activityCancelRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload){return lifeSessionCommand(ctx,nk,payload,"cancel");};

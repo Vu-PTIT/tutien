@@ -357,6 +357,7 @@ const worldInteractRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,profile:gathered.profile,
       message:"Đã thu thập tài nguyên. Nút sẽ hồi lại sau một phút."});
   }
+  if(point.kind==="teacher") return JSON.stringify(innerLearnFromNpc(nk,userId,point.id));
   if(point.kind==="life") return JSON.stringify({site:lifeSite(point.id),actions:lifeSite(point.id).type==="gardening"?["plant","harvest"]:["start"],serverNow:Date.now()});
   const result=applyWorldQuestInteraction(nk,userId,input.entityId);
   return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,quest:result.quest,profile:result.profile,message:result.message});
@@ -388,7 +389,7 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     const profile=loadCharacter(nk,userId).state;
     if(activeSkill&&(profile.equippedSkills.active_1!==requestedSkillId||profile.learnedSkills.indexOf(requestedSkillId)<0))
       return fail(nkruntime.Codes.FAILED_PRECONDITION,"Equip and learn this skill before using it");
-    let attack=16+(activeSkill?Number(activeSkill.powerBonus||0):0);
+    let attack=16+(activeSkill?Number(activeSkill.powerBonus||0):0)+innerCombatBonus(profile).attack;
     for(let i=0;i<profile.inventory.length;i++) {
       const item=profile.inventory[i],definition=catalogItem(item.itemId);
       if(item.instanceId===profile.equipped.weapon&&definition.equipSlot==="weapon") attack+=Number(definition.attackBonus||0);
@@ -421,7 +422,10 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
       }
       const reward=grantReward(nk,userId,"field_"+target.id.replace(/[^a-zA-Z0-9_-]/g,"_")+"_"+target.generation,
         "world:"+session.mapId+":"+target.id+":"+target.generation,
-        {spiritStones:0,cultivationXp:xp,items:items},[worldSessionWriteRequest(userId,session,current.version)]);
+        {spiritStones:0,cultivationXp:xp,items:items,
+          // Field kills release plenty of linh năng, mostly turbid, carrying the species' vị.
+          linhNang:[{vi:INNER_MOB_ESSENCE[target.enemyId]||"tho",motes:8,turbid:6}]},
+        [worldSessionWriteRequest(userId,session,current.version)]);
       const rewardData=reward as {[key:string]:any};
       const awardedXp=Number(rewardData.receipt.granted.cultivationXp||0);
       const xpText=awardedXp>0?" • +"+awardedXp+" XP":"";

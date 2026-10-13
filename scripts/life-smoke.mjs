@@ -15,7 +15,7 @@ await rpc('world_get',{preferredMapId:'m_lang_que'});
 const commandId=op(),starter=await rpc('life_claim_starter',{operationId:commandId});
 assert.equal(quantity(starter.profile,'it_fishing_rod'),1);
 assert.equal((await rpc('life_claim_starter',{operationId:commandId})).replayed,true);
-const catalog=await rpc('life_get');assert.equal(catalog.sites.length,20);assert.equal(catalog.garden.plots.length,12);
+const catalog=await rpc('life_get');assert.equal(catalog.sites.length,26);assert.equal(catalog.garden.plots.length,12);
 const started=(await rpc('activity_start',{operationId:op(),siteId:'new_fish_01',controlMode:'autonomous',cycles:2})).session;
 assert.equal(started.activityType,'fishing');
 // Poll through travel, then exercise a mode change and a partial cancellation.

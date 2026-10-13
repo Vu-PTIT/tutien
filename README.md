@@ -42,7 +42,9 @@ Viết lại từ đầu ngày 13/10/2026, tập trung map art, gameplay và c�
 
 ## Trạng thái code hiện tại — 13/10/2026
 
-**13/10/2026 — Người/linh thú và khế ước M1:** F5 mở cảnh chơi thử mới: chọn người hoặc mèo linh thú, đi lại và đánh quái. Có đăng ký/đăng nhập, khế ước hai người xác nhận, săn Sơn Trư chung và phần thưởng riêng có lưu. Đây là cảnh gameplay với art placeholder; chưa khôi phục bản làng cũ. Xem [thiết kế đầy đủ](docs/game-design/13-player-forms-and-spirit-contracts.md) và [API](docs/spirit-contracts-backend.md).
+**13/10/2026 — Người/linh thú và khế ước M1:** F5 mở cảnh chơi thử mới: chọn người hoặc mèo linh thú, đi lại và đánh quái. Có đăng ký/đăng nhập, khế ước hai người xác nhận, săn Sơn Trư chung và phần thưởng riêng có lưu. Đây là cảnh gameplay với art placeholder; chưa khôi phục bản làng cũ. Xem [API](docs/spirit-contracts-backend.md).
+
+**13/10/2026 — Sức mạnh Nội Giới (backend):** không còn cấp độ. Linh năng hấp thụ lắng thành một thế giới nhỏ bên trong nhân vật; Tinh Linh dạy Người cách Hấp Linh. Có 3 RPC mới, hoạt động Hấp Linh ở 6 điểm, linh năng từ câu/đào/trồng/đánh quái và bước nhảy Hạt → Quần đảo. Chưa có giao diện. Xem [thiết kế](docs/game-design/07-power-system.md) và [API](docs/inner-world-backend.md).
 
 Backend đã có tài khoản/hồ sơ, túi đồ, cộng đồng, prototype combat/PvE và **trồng cây, câu cá, đào khoáng**. Hoạt động có direct/autonomous, giờ server, phiên lưu bền, slot độc quyền, phần thưởng/refund chống trùng và xử lý túi đầy. Có 12 luống, 4 bến câu của làng mới và 4 điểm đào ở mỏ lộ thiên/B1. Xem [API và hướng dẫn nối client](docs/life-activities-backend.md).
 

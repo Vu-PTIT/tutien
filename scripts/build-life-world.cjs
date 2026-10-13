@@ -11,7 +11,8 @@ if (source.schema_version !== 1 || !maps || !Array.isArray(sites)) throw Error('
 const ids = new Set();
 for (const site of sites) {
   if (!maps[site.mapId] || ids.has(site.id) || !Number.isFinite(site.x) || !Number.isFinite(site.y) ||
-      !['fishing','gardening','mining'].includes(site.type)) throw Error('Invalid/duplicate activity anchor: '+site.id);
+      !['fishing','gardening','mining','meditation'].includes(site.type) ||
+      (site.type === 'meditation') !== ['tho','thuy','thach','moc','phong'].includes(site.element)) throw Error('Invalid/duplicate activity anchor: '+site.id);
   ids.add(site.id);
 }
 for (const map of Object.values(maps)) map.navEdges=navigation(map);

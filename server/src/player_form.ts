@@ -29,6 +29,8 @@ const characterSelectFormRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,paylo
       lifeEnsureIdle(next,Date.now());
       if(next.form.selected) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Character form has already been selected");
       next.form=selected;
+      // Spirit beasts know Hấp Linh from birth; humans must be taught by one.
+      if(selected.kind==="spirit_beast") innerLearn(next,"native");
       if(next.learnedSkills.indexOf(definition.starterSkillId)<0) next.learnedSkills.push(definition.starterSkillId);
       next.equippedSkills.active_1=definition.starterSkillId;
     }));

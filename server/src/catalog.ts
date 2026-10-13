@@ -61,7 +61,10 @@ function catalogItem(id: string): ItemDefinition {
   for (let i = 0; i < ITEM_CATALOG.length; i++) if (ITEM_CATALOG[i].id === id) return ITEM_CATALOG[i];
   return fail(nkruntime.Codes.FAILED_PRECONDITION, "Unknown item: " + id);
 }
-interface RewardBundle { spiritStones: number; items: { itemId: string; quantity: number }[]; cultivationXp?: number; }
+interface RewardBundle {
+  spiritStones: number; items: { itemId: string; quantity: number }[]; cultivationXp?: number;
+  linhNang?: InnerEssence[]; inner?: InnerAbsorbResult; purified?: number;
+}
 // Prototype starter budget stays immutable; repeatable encounter XP is server bounded.
 const STARTER_REWARD: RewardBundle = { spiritStones: 12, items: [
   { itemId: "it_seed_cam_lo", quantity: 2 }, { itemId: "it_water", quantity: 4 },

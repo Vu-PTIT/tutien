@@ -11,7 +11,7 @@ Sau Linh Chấn:
 - **Những mảnh Ẩn Giới hiện ra**, nhưng không nằm trên mặt đất của thế giới Người: chúng chỉ vào được qua những **vết rách** của màn che. Một vết rách như vậy mở ra ngay giữa **Làng Hồ Lặng**; phía bên kia là **Vườn Cây Mẹ**, nhà của Tinh Linh.
 - **Tinh Linh xuất hiện** cùng với những mảnh đất đó. Họ không mới sinh ra; họ đã sống ở Ẩn Giới hàng trăm năm. Chỉ là bây giờ con người nhìn thấy họ.
 - **Động vật bị nhiễm linh năng** biến thành **dị thú**: to hơn, hung hơn, mất kiểm soát. Dị thú là thú của thế giới con người, không phải Tinh Linh.
-- Một số người học được cách hấp thụ linh năng bằng cách luyện thở và rèn thân, gọi là **tu luyện**.
+- Tinh Linh hấp thụ linh năng bằng một cách thở gọi là **Hấp Linh**; linh năng lắng lại thành một thế giới nhỏ bên trong, gọi là **Nội Giới** (xem [07](07-power-system.md)). Người không tự khám phá ra Hấp Linh: linh năng đi qua họ nhưng không đọng lại. **Tinh Linh dạy Người cách dùng sức mạnh**; Người học xong thì mạnh lên theo đúng cách của Tinh Linh.
 
 Xã hội không sụp đổ. Làng dựng **tường rào** ngăn khu rừng nơi dị thú sinh sôi, dựng cổng có canh gác quanh vết rách, và vẫn trồng trọt, chợ vẫn họp. Sáu năm đủ để hai tộc quen mặt nhau, nhưng chưa đủ để tin nhau.
 
@@ -21,7 +21,7 @@ Xã hội không sụp đổ. Làng dựng **tường rào** ngăn khu rừng n�
 | --- | --- | --- | --- |
 | Từ đâu | Cư dân Ẩn Giới, có từ trước | Động vật thường bị nhiễm linh năng | Thế giới của chúng ta |
 | Trí khôn | Có, nói được, có văn hóa riêng | Không, hành động theo bản năng bị khuếch đại | Có |
-| Linh năng | Là một phần cơ thể họ | Như một thứ bệnh trong cơ thể | Phải tu luyện mới hấp thụ được |
+| Linh năng | Hấp Linh bẩm sinh | Nội Giới mọc loạn, nuốt mất ý thức | Phải được Tinh Linh dạy Hấp Linh mới dùng được linh năng |
 | Ngoại hình | Dạng gần người, mang nét thú (tai, đuôi, hoa văn); có dạng thú thật | Thú biến dạng, hoa văn rối | Người |
 
 ## 3. Hai tộc
@@ -72,14 +72,14 @@ Không ai là thiên tài hay người được chọn. Cả hai cùng đi tới
 | --- | --- | --- | --- | --- |
 | **Bà Nora** | Người | Làng Hồ Lặng | Bà cụ trồng thảo dược, hàng xóm của người chơi Người; người đầu tiên trong làng chịu bán hàng cho Tinh Linh | Giữ làng yên, dạy lớp trẻ trồng thảo dược linh biến |
 | **Rin** | Người | Làng → Bìa Rừng | Hướng dẫn viên thực địa | Tìm bố, người mất tích trong rừng năm Linh Chấn; tin Tinh Linh có liên quan |
-| **Lão Hồ** | Tinh Linh Cáo | Ẩn Giới | Tinh Linh già, người giữ Cây Mẹ, nhớ Ẩn Giới trước khi bị rách | Hàn lại màn che, đưa Ẩn Giới về như cũ; không tin Người |
-| **Bé Mơ** | Tinh Linh Mèo | Ẩn Giới → Làng | Tinh Linh nhỏ tò mò, mê đồ của Người, hay lẻn xuống làng | Được Người chấp nhận; có bạn ở cả hai thế giới |
+| **Lão Hồ** | Tinh Linh Cáo | Ẩn Giới | Tinh Linh già, người giữ Cây Mẹ, nhớ Ẩn Giới trước khi bị rách; từng dạy Hấp Linh cho Bà Nora rồi hối hận vì Người nhận cách đó là của mình | Hàn lại màn che, đưa Ẩn Giới về như cũ; không tin Người |
+| **Bé Mơ** | Tinh Linh Mèo | Ẩn Giới → Làng | Tinh Linh nhỏ tò mò, mê đồ của Người, hay lẻn xuống làng; người dạy Hấp Linh cho người chơi Người, trái lời Lão Hồ | Được Người chấp nhận; có bạn ở cả hai thế giới |
 | **Doran** | Người | Thị trấn, Làng Hồ Lặng | Thợ rèn | Tìm hợp kim linh biến để rèn đồ cho thợ săn |
 | **Tiến sĩ Theo** | Người | Trạm Viện, Làng Hồ Lặng | Nghiên cứu viên Viện Linh học | Chứng minh nhịp xung ở rừng không phải nhiễu; muốn hợp tác với Tinh Linh nhưng bị cấp trên cản |
 | **Chú Bram** | Người | Mỏ Bỏ Hoang | Quản đốc mỏ | Giữ mỏ hoạt động dù vỉa sâu ngày càng nguy hiểm |
 
 Tổ chức:
-- **Viện Linh học**: trụ sở ở thành phố xa, có Trạm Viện trong làng để theo dõi Cổng; cấp giấy phép ra rừng; giữ bí mật về những gì xảy ra trước Linh Chấn.
+- **Viện Linh học**: trụ sở ở thành phố xa, có Trạm Viện trong làng để theo dõi Cổng; cấp giấy phép ra rừng; giữ bí mật về những gì xảy ra trước Linh Chấn; công bố "phương pháp thiền Viện" như nghiên cứu của mình, giấu việc nó vốn là Hấp Linh của Tinh Linh.
 - **Đội Tuần Tra**: giữ Chốt Tường Rào và Cổng Ẩn Giới.
 - **Liên hiệp Thợ Săn**: nhận hợp đồng săn dị thú; hay va chạm với Tinh Linh.
 - **Hội Rễ**: hội đồng Tinh Linh họp dưới Cây Mẹ.
@@ -92,13 +92,13 @@ Hai role có mở đầu khác nhau, gặp nhau ở hồi B và đi chung từ �
 
 1. Về Làng Hồ Lặng, mở lại căn nhà cũ. Bà Nora cho hạt giống, chỉ cách trồng. *(dạy: đi, tương tác, trồng)*
 2. Rin rủ ra hồ câu như hồi nhỏ, kể chuyện bố cô mất tích. *(dạy: câu cá, giao tự hoạt động)*
-3. Đêm "trời linh": dải sáng trên trời, cá trong hồ phát sáng. Bà Nora dạy ngồi thở ở sân miếu → **Luyện Khí 1**. *(dạy: thiền)*
+3. Đêm "trời linh": dải sáng trên trời, cá trong hồ phát sáng. Linh năng tràn qua người chơi rồi tan đi, không đọng lại. Bà Nora (người từng học Hấp Linh từ Lão Hồ nhiều năm trước) dẫn ra sân miếu, nơi **Bé Mơ** đang đợi. Bé Mơ **dạy Hấp Linh**; lần đầu thở đúng, hạt sáng đầu tiên tự hiện ra và người chơi thấy Nội Giới của mình, cuối hồi thành **Đảo**. *(dạy: Hấp Linh, Nội Giới; mở đầu mối quan hệ thầy trò với Bé Mơ)*
 
 ### Hồi A (Tinh Linh) — Rời rừng
 
 1. Thức dậy ở khu Cây Mẹ. Lão Hồ dạy Hấp Linh bên suối, kể Ẩn Giới trước kia rộng và sáng thế nào. *(dạy: đi, tương tác, tu luyện)*
 2. Bé Mơ dạy Hóa Thú, khoe đồ "lượm" được của Người, rủ chạy đua qua lối mòn. *(dạy: kỹ năng riêng, thu thập)*
-3. Đêm "trời linh": vài Tinh Linh nhỏ ngã bệnh, lá Cây Mẹ héo theo một nhịp đều. Lão Hồ miễn cưỡng cử người chơi bước qua Cổng sang thế giới Người tìm nguyên nhân. Đội Tuần Tra khám xét ở đầu Cổng; Bé Mơ dẫn đi chợ làng → **Khai Linh 1**.
+3. Đêm "trời linh": vài Tinh Linh nhỏ ngã bệnh, lá Cây Mẹ héo theo một nhịp đều. Lão Hồ miễn cưỡng cử người chơi bước qua Cổng sang thế giới Người tìm nguyên nhân. Đội Tuần Tra khám xét ở đầu Cổng; Bé Mơ dẫn đi chợ làng. Mảnh Ẩn Giới trong người chơi đã lớn thành **Đảo**.
 
 ### Hồi B (chung) — Gặp nhau ở làng, ra Bìa Rừng
 
@@ -153,7 +153,7 @@ Hướng dài hạn: vùng này → các điểm rách khác → cả thế gi�
 4. Mọi cảnh truyện chính chơi được bằng cả hai role; thoại và một vài bước có thể khác.
 5. Tinh Linh không phải "thú cưng" của Người, và Người không phải "kẻ xâm lược" của Tinh Linh.
 6. Vùng nguy hiểm phải có lý do để không ai sống ở đó.
-7. Công nghệ vẫn hữu ích song song với tu luyện.
+7. Công nghệ vẫn hữu ích song song với sức mạnh Nội Giới.
 8. Cốt truyện không khóa hoạt động đời sống.
 
 ## 11. Nghiệm thu cốt truyện

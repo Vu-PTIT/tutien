@@ -74,6 +74,20 @@
           "destination": "m_tram_thien_mach",
           "arrivalX": 2496,
           "arrivalY": 3680
+        },
+        {
+          "id": "rs_med_goc_nam",
+          "x": 4800,
+          "y": 6400,
+          "radius": 2,
+          "kind": "life"
+        },
+        {
+          "id": "rs_med_goc_bac",
+          "x": 3840,
+          "y": 2240,
+          "radius": 2,
+          "kind": "life"
         }
       ],
       "waters": [
@@ -407,6 +421,27 @@
           "y": 5632,
           "radius": 2,
           "kind": "life"
+        },
+        {
+          "id": "lq_med_mieu",
+          "x": 1280,
+          "y": 1024,
+          "radius": 2,
+          "kind": "life"
+        },
+        {
+          "id": "lq_med_ho",
+          "x": 6400,
+          "y": 4864,
+          "radius": 2,
+          "kind": "life"
+        },
+        {
+          "id": "lq.npc.be_mo",
+          "kind": "teacher",
+          "x": 1408,
+          "y": 1088,
+          "radius": 2
         }
       ],
       "waters": [
@@ -3462,6 +3497,13 @@
           "y": 2816,
           "radius": 2,
           "kind": "life"
+        },
+        {
+          "id": "mb_med_ho_tay",
+          "x": 1664,
+          "y": 3072,
+          "radius": 2,
+          "kind": "life"
         }
       ],
       "waters": [
@@ -3750,6 +3792,13 @@
           "destination": "m_ba_vi",
           "arrivalX": 4960,
           "arrivalY": 7776
+        },
+        {
+          "id": "vd_med_thap",
+          "x": 6400,
+          "y": 4800,
+          "radius": 2,
+          "kind": "life"
         }
       ],
       "waters": [
@@ -4014,6 +4063,78 @@
       "name": "Vỉa khoáng B1",
       "nameEn": "B1 mineral vein",
       "floorId": "b1"
+    },
+    {
+      "id": "lq_med_mieu",
+      "mapId": "m_lang_que",
+      "type": "meditation",
+      "x": 1280,
+      "y": 1024,
+      "radius": 64,
+      "facing": "south",
+      "name": "Sân miếu",
+      "nameEn": "Shrine yard",
+      "element": "tho"
+    },
+    {
+      "id": "lq_med_ho",
+      "mapId": "m_lang_que",
+      "type": "meditation",
+      "x": 6400,
+      "y": 4864,
+      "radius": 64,
+      "facing": "south",
+      "name": "Bờ hồ Lặng",
+      "nameEn": "Still Lake shore",
+      "element": "thuy"
+    },
+    {
+      "id": "mb_med_ho_tay",
+      "mapId": "m_mo_lo_thien",
+      "type": "meditation",
+      "x": 1664,
+      "y": 3072,
+      "radius": 64,
+      "facing": "south",
+      "name": "Mỏm đá Hố Tây",
+      "nameEn": "West pit ledge",
+      "element": "thach"
+    },
+    {
+      "id": "vd_med_thap",
+      "mapId": "m_vanh_dai_tay",
+      "type": "meditation",
+      "x": 6400,
+      "y": 4800,
+      "radius": 64,
+      "facing": "south",
+      "name": "Chân tháp gió",
+      "nameEn": "Wind tower foot",
+      "element": "phong"
+    },
+    {
+      "id": "rs_med_goc_nam",
+      "mapId": "m_ba_vi",
+      "type": "meditation",
+      "x": 4800,
+      "y": 6400,
+      "radius": 64,
+      "facing": "south",
+      "name": "Gốc cây Tinh Linh phía nam",
+      "nameEn": "South spirit tree",
+      "element": "moc"
+    },
+    {
+      "id": "rs_med_goc_bac",
+      "mapId": "m_ba_vi",
+      "type": "meditation",
+      "x": 3840,
+      "y": 2240,
+      "radius": 64,
+      "facing": "south",
+      "name": "Gốc cây Tinh Linh phía bắc",
+      "nameEn": "North spirit tree",
+      "element": "moc"
     }
   ]
 }

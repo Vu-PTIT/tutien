@@ -46,7 +46,8 @@ test('life RPCs require authentication and reject forged times, yields, owners a
 });
 test('map manifest matches current village anchors and safe B1/open pit work points',()=>{
   const s=setup(),v=s.rpc('life_get');
-  assert.equal(v.sites.length,20);assert.equal(v.sites.filter(p=>p.type==='gardening').length,12);
+  assert.equal(v.sites.length,26);assert.equal(v.sites.filter(p=>p.type==='gardening').length,12);
+  assert.deepEqual(v.sites.filter(p=>p.type==='meditation').map(p=>p.element).sort(),['moc','moc','phong','thach','tho','thuy']);
   for(const p of v.sites)assert.equal(s.scope.worldWalkable(s.scope.WORLD_MAPS[p.mapId],[p.x,p.y]),true,p.id);
   // Freeze the village access-anchor contract used by the deleted client layout.
   for(let i=0;i<4;i++){const site=v.sites.find(s=>s.id==='new_fish_0'+(i+1));assert.deepEqual([site.x,site.y],[(169+i*6)*32,150*32]);}

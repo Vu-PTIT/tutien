@@ -49,7 +49,7 @@ Mượn từ Eastward **phần hình ảnh**, không mượn lối chơi phiêu 
 - Mỗi vùng 24–32 màu; toàn game ≤ 96 màu. Lưu palette `.gpl` trong repo khi bắt đầu vẽ.
 - **Bóng không đen/xám:** bóng ngả tím-xanh mát, chỗ sáng ngả vàng ấm.
 - **Ngọc lam chỉ dành cho linh năng. Tím chỉ dành cho vật thể ngoài thế giới.** Nước, đèn, UI không dùng hai màu này.
-- Tinh Linh có hoa văn ngọc lam trên người (vì là sinh vật linh năng); Người thì không, trừ aura lúc tu luyện.
+- Tinh Linh có hoa văn ngọc lam trên người (vì là sinh vật linh năng); Người thì không, trừ aura lúc thiền (màu theo vị chiếm nhiều nhất trong Nội Giới).
 - UI tương tác dùng vàng kem.
 
 ### 4.2 Palette khởi điểm
@@ -123,7 +123,7 @@ Không dùng: kiến trúc, trang phục, chữ viết hay biểu tượng nhậ
 - 4 hướng. Bộ chuyển động tối thiểu: đứng, đi, ngồi, câu, làm vườn, đào, thiền, tương tác, vẫy, đánh, né.
 - Màu da/tóc/áo/lông đổi bằng palette swap, không vẽ lại.
 - Chân dung thoại 96×96 với 6 biểu cảm.
-- Trang phục hiện đại: áo phông, áo khoác, quần jean, giày thể thao; thợ săn mặc áo khoác kỹ thuật. Tu luyện thể hiện qua tư thế và aura, không qua cổ phục.
+- Trang phục hiện đại: áo phông, áo khoác, quần jean, giày thể thao; thợ săn mặc áo khoác kỹ thuật. Sức mạnh thể hiện qua tư thế và aura, không qua cổ phục.
 - Nhân vật đang tự hoạt động: viền mờ + icon nhỏ trên đầu.
 - Outline 1 px tối màu theo chất liệu, không đen thuần.
 

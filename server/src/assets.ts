@@ -27,6 +27,7 @@ function validateCharacter(state: CharacterState): void {
       !Array.isArray(state.learnedSkills) || !state.equippedSkills || typeof state.equippedSkills.active_1 !== "string" ||
       Object.keys(state.equippedSkills).some(function (key) { return key !== "active_1"; }) ||
       !Array.isArray(state.inventory) || state.inventory.length > BAG_SIZE) invalidCharacter();
+  if (state.innerWorld !== undefined) innerValidate(state.innerWorld);
   const learnedIds: string[] = [];
   for (let i = 0; i < state.learnedSkills.length; i++) {
     const skillId = state.learnedSkills[i];
@@ -129,7 +130,7 @@ function loadCharacter(nk: nkruntime.Nakama, userId: string): LoadedCharacter {
 }
 
 // Pure preparation: the loaded state is never mutated, including on bag overflow.
-function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Nakama): {state: CharacterState; cultivationXp: number} {
+function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Nakama): {state: CharacterState; cultivationXp: number; inner?: InnerAbsorbResult} {
   validateCharacter(state);
   const offeredXp = bundle.cultivationXp === undefined ? 0 : bundle.cultivationXp;
   if (!assetInteger(bundle.spiritStones, 0, ASSET_LIMIT) || !assetInteger(offeredXp, 0, ASSET_LIMIT) ||
@@ -187,9 +188,11 @@ function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Na
       remaining -= count;
     }
   }
+  // Nội Giới growth commits in the same profile write as the items it came with.
+  const inner = bundle.linhNang && bundle.linhNang.length ? innerAbsorb(next, nk, bundle.linhNang) : undefined;
   next.revision++;
   validateCharacter(next);
-  return {state: next, cultivationXp: grantedXp};
+  return inner ? {state: next, cultivationXp: grantedXp, inner: inner} : {state: next, cultivationXp: grantedXp};
 }
 
 interface AssetReceipt {
@@ -221,6 +224,7 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
   const fingerprintInput: {[key: string]: unknown} = { sourceId: sourceId, spiritStones: bundle.spiritStones, items: items };
   // Preserve schema-2 starter receipt replays: the original fingerprint had no zero-XP field.
   if (offeredXp > 0) fingerprintInput.cultivationXp = offeredXp;
+  if (bundle.linhNang && bundle.linhNang.length) fingerprintInput.linhNang = bundle.linhNang;
   const fingerprint = nk.sha256Hash(JSON.stringify(fingerprintInput));
   const opKey = "op:" + operationId;
   const sourceKey = "source:" + sourceId;
@@ -250,6 +254,7 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
     const next = applied.state;
     const granted: RewardBundle = { spiritStones: bundle.spiritStones, items: bundle.items,
       cultivationXp: applied.cultivationXp };
+    if (bundle.linhNang && bundle.linhNang.length) { granted.linhNang = bundle.linhNang; if (applied.inner) granted.inner = applied.inner; }
     const receipt: AssetReceipt = { operationId: operationId, sourceId: sourceId, fingerprint: fingerprint,
       revision: next.revision, granted: granted, committedAt: Date.now() };
     try {

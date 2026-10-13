@@ -106,7 +106,7 @@ Không dùng trong chương 1: `ln_lang_thang`, `ln_vanh_thang`, `ln_thang_cang`
 - **Cảm giác:** cỏ cao, gió, cây thưa, nắng gắt.
 - **Có gì:** trạm gác của Đội Tuần Tra, tháp cảm biến, lều thợ săn (điểm dừng an toàn), đường mòn cũ, xe tải bỏ dở có dây leo, ruộng hoang.
 - **Linh năng (mức 1):** sương có ánh, vết cày của Lợn Gai.
-- **Quái:** Lợn Gai, Nhện Tơ Điện ở rìa.
+- **Quái:** Gà Rừng Mào Sét, Lợn Gai, Nhện Tơ Điện; Lợn Gai Đầu Đàn.
 - **Truyện:** hồi B.
 
 ### 5.2 Mỏ Bỏ Hoang và Hầm Mỏ — `m_mo_lo_thien`, `m_mo_ngam`
@@ -115,7 +115,7 @@ Không dùng trong chương 1: `ln_lang_thang`, `ln_vanh_thang`, `ln_thang_cang`
 - **Cảm giác:** bậc đá đỏ, máy xúc gỉ, lán thợ cũ; dưới hầm tối, ẩm, đèn mỏ vàng, tiếng "ù" xa.
 - **Có gì:** lán thợ (điểm dừng an toàn), giếng thang máy, đường ray goòng, cửa sắt B2 bị hàn, hầm cũ nối Rừng Sâu (khóa).
 - **Linh năng:** mức 1 ở mỏ trên; mức 2 dưới hầm, vân linh mạch chạy thẳng tắp; mảnh vật liệu tím đầu tiên.
-- **Quái:** Nhện Tơ Điện.
+- **Quái:** Nhện Tơ Điện, Rết Đá (mỏ trên); Dơi Vân Quặng, Nhện Mẹ (hầm).
 - **Truyện:** hồi C.
 
 ### 5.3 Rừng Sâu — `m_ba_vi`
@@ -124,7 +124,7 @@ Không dùng trong chương 1: `ln_lang_thang`, `ln_vanh_thang`, `ln_thang_cang`
 - **Cảm giác:** rừng ẩm nhiều tầng, sương dày, suối đá, rất ít ánh sáng.
 - **Có gì:** trạm cứu hộ bỏ hoang của bố Rin, bậc leo núi, thác, gốc cây lớn có dấu Tinh Linh để lại (điểm dừng an toàn), cửa kín dẫn xuống Trạm.
 - **Linh năng (mức 2, hoang):** dương xỉ khổng lồ, nấm phát quang, đá có vân sáng.
-- **Quái:** Khỉ Vách Đá, Rắn Sương.
+- **Quái:** Sói Rêu, Rắn Sương, Khỉ Vách Đá, Cú Đêm Linh (đêm); Khỉ Đầu Đàn.
 - **Lối mòn ẩn:** đường tắt qua bụi rậm và rễ cây, chỉ đi được khi Tinh Linh Hóa Thú.
 - **Truyện:** hồi D.
 
@@ -134,7 +134,7 @@ Không dùng trong chương 1: `ln_lang_thang`, `ln_vanh_thang`, `ln_thang_cang`
 - **Cảm giác:** im lặng, đèn chập chờn, nhịp xung đều.
 - **Có gì:** hành lang bê tông, phòng máy, phòng lưu trữ có logo cũ của Viện, phòng có lồng giam trống, cỗ máy đã xé màn che với lõi vẫn chạy.
 - **Linh năng (mức 3 + X):** vật liệu tím hình lục giác, không có bóng, nhấp nháy theo nhịp 47 giây.
-- **Quái:** Thủ Lĩnh Mạch Gãy (gấu núi nhiễm linh năng nặng).
+- **Quái:** Chuột Tím; boss Thủ Lĩnh Mạch Gãy (gấu núi nhiễm linh năng nặng).
 - **Truyện:** hồi E.
 
 ## 6. Khu Tinh Linh — Ẩn Giới (`m_an_gioi`, map mới)
@@ -147,7 +147,7 @@ Không dùng trong chương 1: `ln_lang_thang`, `ln_vanh_thang`, `ln_thang_cang`
 | --- | --- |
 | **Bến Cổng** | Phía Ẩn Giới của Cổng: vòng sáng đứng trên mặt hồ phẳng; nhìn qua thấy mờ mờ mái nhà của làng |
 | **Vườn Cây Mẹ** | Cây Mẹ khổng lồ ở giữa, nhà Tinh Linh trong hốc cây, trên cành, dưới rễ |
-| **Suối Hấp Linh** | Suối có hạt sáng trôi lên; điểm tu luyện chính của Tinh Linh, bến câu cá linh |
+| **Suối Hấp Linh** | Suối có hạt sáng trôi lên; điểm Hấp Linh chính của Tinh Linh, bến câu cá linh |
 | **Vườn nấm** | Luống nấm và cây Ẩn Giới; Tinh Linh trồng ở đây |
 | **Vòng Đá** | Nơi Hội Rễ họp |
 | **Rìa Phai** | Mép của mảnh Ẩn Giới: cảnh vật mờ dần thành sương trắng, lá héo theo nhịp. Cho thấy Ẩn Giới đang co lại |
@@ -166,6 +166,8 @@ Không dùng trong chương 1: `ln_lang_thang`, `ln_vanh_thang`, `ln_thang_cang`
 | Tinh Linh | Vườn Cây Mẹ, Ẩn Giới | Ẩn Giới → Cổng → Làng Hồ Lặng → Chốt Tường Rào → Bìa Rừng → Mỏ → Rừng Sâu → Trạm |
 
 Làng Hồ Lặng là trung tâm: mọi chuyến đi xuất phát và quay về đây.
+
+Bố cục chi tiết từng map (tọa độ, khu, đường đi): [05](05-map-layouts.md). Quái: [06](06-monsters.md).
 
 ## 8. Quy tắc dựng map
 

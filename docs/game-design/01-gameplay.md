@@ -9,14 +9,14 @@
 | Trụ cột | Người chơi cảm thấy | Hoạt động |
 | --- | --- | --- |
 | **Sống** | Đây là nhà mình | Đi dạo, trồng cây, câu cá, ngồi quán, gặp người |
-| **Mạnh lên** | Mình tiến bộ bằng công sức | Thiền/hấp linh, đào khoáng, đánh dị thú |
+| **Mạnh lên** | Tự tay xây thế giới bên trong mình | Hấp thụ linh năng, xếp Nội Giới, đánh dị thú |
 | **Khám phá** | Thế giới còn điều chưa biết | Đi vùng mới, cảm nhận linh năng, theo cốt truyện |
 
 Không bắt người chơi theo đủ cả ba. Người chỉ thích sống ở làng vẫn có trải nghiệm trọn vẹn.
 
 ## 3. Hai role: Người và Tinh Linh
 
-Chọn một lần khi tạo nhân vật. Hai role dùng chung **khoảng 70%** lối chơi: đi lại, tương tác, hoạt động đời sống, đòn đánh cơ bản, né, cảnh giới. Phần khác nhau nằm ở **cách cảm nhận linh năng, cách tu luyện, kỹ năng riêng và cách thế giới đối xử với mình**.
+Chọn một lần khi tạo nhân vật. Hai role dùng chung **khoảng 70%** lối chơi: đi lại, tương tác, hoạt động đời sống, đòn đánh cơ bản, né, hình dạng Nội Giới. Phần khác nhau nằm ở **cách cảm nhận linh năng, cách hấp thụ linh năng, kỹ năng riêng và cách thế giới đối xử với mình**.
 
 ### 3.1 Người
 
@@ -24,7 +24,7 @@ Con người thích nghi bằng công cụ và cộng đồng.
 
 - **Ngoại hình:** người thường, trang phục hiện đại.
 - **Cảm nhận linh năng:** dùng **Máy Quét Linh Phổ** (giữ Q) để thấy dấu vết, điểm yếu, vật ẩn.
-- **Tu luyện:** **Thiền** ở điểm yên tĩnh (sân miếu, công viên, sân thượng). Tu vi đều ở mọi nơi.
+- **Hấp thụ linh năng:** không tự khám phá được; phải được một Tinh Linh **dạy Hấp Linh** (Bé Mơ ở sân miếu, hoặc bạn khế ước là linh thú). Học xong thì Hấp Linh (Người gọi là thiền) và lên giống hệt Tinh Linh.
 - **Kỹ năng riêng đầu tiên:** **Phi Nhận**, phóng lưỡi linh năng tầm gần.
 - **Thế mạnh:** dùng được mọi công cụ và vũ khí rèn; đi lại tự do trong làng, qua chốt và cổng không bị khám.
 - **Điểm yếu:** chịu linh năng dày kém hơn; vào sâu rừng cần đồ bảo hộ hoặc người dẫn.
@@ -35,7 +35,7 @@ Cư dân của **Ẩn Giới**, thế giới bị ẩn giấu hiện ra cùng li
 
 - **Loài lúc ra mắt:** **Cáo**, **Mèo**, **Hươu**. Loài chỉ đổi ngoại hình và dạng thú, không đổi sức mạnh.
 - **Cảm nhận linh năng:** **Linh Cảm** bẩm sinh (giữ Q). Thấy như máy quét nhưng tầm ngắn hơn và không cần thiết bị. Thấy rõ hơn khi ở gần thiên nhiên, mờ hơn khi ở gần máy móc.
-- **Tu luyện:** **Hấp Linh**: ngồi cạnh cây cổ thụ, suối, đá linh mạch. Nhanh hơn Người khi ở nơi linh năng dày, chậm hơn khi ở trong làng.
+- **Hấp thụ linh năng:** **Hấp Linh** là bản năng từ nhỏ. Cùng tốc độ, cùng hệ thống với Người.
 - **Kỹ năng riêng đầu tiên:** **Hóa Thú**, trở về dạng thật (thú linh của Ẩn Giới) trong vài giây: chạy nhanh, lách qua lối hẹp, khó bị dị thú phát hiện; trong lúc hóa thú không đánh được.
 - **Thế mạnh:** dị thú ít để ý hơn; đi được các lối mòn tự nhiên mà Người không thấy.
 - **Điểm yếu:** một số công cụ máy móc dùng kém hiệu quả; ở làng bị nhìn với ánh mắt dè chừng, bị khám ở đầu Cổng, một số NPC từ chối giúp hoặc tính giá cao hơn.
@@ -46,14 +46,14 @@ Cư dân của **Ẩn Giới**, thế giới bị ẩn giấu hiện ra cùng li
 | --- | --- | --- |
 | Điểm bắt đầu | Làng Hồ Lặng | Vườn Cây Mẹ, Ẩn Giới (qua Cổng là tới làng) |
 | Cảm nhận linh năng | Máy Quét Linh Phổ | Linh Cảm bẩm sinh |
-| Tu luyện | Thiền, đều mọi nơi | Hấp Linh, mạnh ở thiên nhiên, yếu ở phố |
+| Hấp thụ | Hấp Linh, sau khi được Tinh Linh dạy | Hấp Linh, bẩm sinh |
+| Nội Giới | Giống nhau: cùng hạt Ẩn, cùng tốc độ, cùng bước nhảy | Giống nhau |
 | Kỹ năng riêng đầu tiên | Phi Nhận (tấn công) | Hóa Thú (di chuyển, lẩn) |
 | Công cụ/vũ khí rèn | Đầy đủ | Một phần |
 | Khu Người | Tự do | Bị dè chừng |
 | Khu Tinh Linh (Ẩn Giới) | Khách; cần được mời ở hồi B | Nhà |
 | Khu Rừng Quái | Chiến đấu bằng công cụ | Lẩn tránh, đi lối mòn ẩn |
 | Đời sống (trồng, câu, đào) | Giống nhau | Giống nhau |
-| Cảnh giới | Chung một thang | Chung một thang |
 
 ### 3.4 Nguyên tắc cân bằng
 
@@ -96,7 +96,7 @@ Thứ làm thế giới sống động:
 | **Trồng cây** | Đứng ở luống → chọn hạt → gieo; quay lại khi chín → thu | Thấy cây lớn qua từng giai đoạn trên map |
 | **Câu cá** | Đứng ở bến → quăng cần → chờ phao giật → bấm thu | Thư giãn; tiếng nước, có người câu bên cạnh |
 | **Đào khoáng** | Đứng ở vỉa → bấm đào → đá vỡ theo nhát | Chắc tay; mảnh đá văng, vân linh mạch lóe |
-| **Thiền / Hấp Linh** | Ngồi ở điểm hợp lệ → giữ nút → vòng thở | Tĩnh; linh năng tụ quanh người |
+| **Hấp Linh (thiền)** | Ngồi ở điểm hợp lệ → giữ nút → vòng thở; lọc thửa đục trong Nội Giới | Tĩnh; linh năng tụ quanh người, thấy Nội Giới lớn lên |
 
 Tinh Linh câu cá bằng cần như Người, nhưng animation riêng (tai cụp, đuôi đung đưa). Không có minigame bắt buộc.
 
@@ -142,13 +142,7 @@ Rời nơi an toàn qua cổng có biển cảnh báo. Bên ngoài:
 
 Dị thú là **động vật của thế giới Người bị nhiễm linh năng**: to hơn, hung hơn, không kiểm soát được. Chúng không phải Tinh Linh. Với Tinh Linh, dị thú là bằng chứng linh năng của Ẩn Giới đang làm hại thế giới bên này, nên họ thấy áy náy khi phải đánh chúng; với Người, dị thú là lý do để sợ mọi thứ đến từ Ẩn Giới.
 
-| Dị thú | Vùng | Hành vi | Dạy người chơi |
-| --- | --- | --- | --- |
-| **Lợn Gai** | Bìa Rừng | Gầm → lao thẳng → đứng thở | Né ngang, đánh khi nó thở |
-| **Nhện Tơ Điện** | Bìa Rừng, Mỏ | Giăng tơ làm chậm, cắn | Tránh vùng tơ, đánh từ bên |
-| **Khỉ Vách Đá** | Rừng Sâu | Nhảy, ném đá từ cao | Tìm chỗ nấp, đánh khi nó xuống |
-| **Rắn Sương** | Rừng Sâu | Ẩn trong sương, cắn bất ngờ | Dùng máy quét/Linh Cảm |
-| **Thủ Lĩnh Mạch Gãy** (boss) | Trạm Thiên Mạch | Kết hợp các đòn trên + xung linh năng | Áp dụng tất cả |
+Chương 1 có 10 loài thường, 3 đầu đàn và 1 boss, chia theo khu: Bìa Rừng (Gà Rừng Mào Sét, Lợn Gai, Nhện Tơ Điện), Mỏ và Hầm (Rết Đá, Dơi Vân Quặng, Nhện Mẹ), Rừng Sâu (Sói Rêu, Rắn Sương, Khỉ Vách Đá, Cú Đêm Linh), Trạm (Chuột Tím, boss Thủ Lĩnh Mạch Gãy). Mỗi loài dạy một kỹ năng đọc đòn. Chi tiết ở [06](06-monsters.md).
 
 Dị thú hạ gục thì ngã và tan thành sương, không máu.
 
@@ -158,17 +152,14 @@ Ngã xuống → tỉnh lại ở điểm dừng an toàn gần nhất, máu h�
 
 ## 7. Mạnh lên
 
-- **Cảnh giới chung:** Phàm → Luyện Khí tầng 1–4 (đã có backend). Tinh Linh gọi tên khác cho hợp bối cảnh nhưng cùng ngưỡng:
+Không có cấp độ hay cảnh giới. Linh năng hấp thụ vào người lắng lại thành **Nội Giới**, một thế giới nhỏ bên trong: hạt đất → đảo → quần đảo → lục địa → ... → hành tinh. Chi tiết ở [07](07-power-system.md).
 
-| Tầng | Người gọi | Tinh Linh gọi |
-| --- | --- | --- |
-| 0 | Phàm Nhân | Ấu Linh |
-| 1–4 | Luyện Khí 1–4 | Khai Linh 1–4 |
-
-- **Nguồn tu vi:** Thiền hoặc Hấp Linh, đánh dị thú, mốc cốt truyện.
-- **Lên cảnh giới thấy được:** aura đậm hơn; Người mở kỹ năng mới, Tinh Linh giữ dạng thú lâu hơn và có thêm hoa văn phát sáng; chịu được linh năng mạnh hơn để vào vùng sâu.
+- **Lượng** (Nội Giới to bao nhiêu) quyết định máu, linh lực, phòng thủ, tốc độ.
+- **Chất** (gồm địa hình gì, sạch hay đục, xếp ra sao) quyết định kỹ năng.
+- **Người và Tinh Linh lên giống hệt nhau.** Người phải được Tinh Linh dạy Hấp Linh mới bắt đầu được (xem [07](07-power-system.md) §9).
+- **Nguồn:** Hấp Linh (ít, sạch), hoạt động đời sống (rất ít, sạch vừa, tích cả khi tự hoạt động), hạ dị thú (nhiều, đục). Mỗi nơi cho một **vị** linh năng khác nhau: hồ cho Thủy, mỏ cho Thạch, rừng cho Mộc...
+- **Bước nhảy:** khi lượng đủ và chất đủ điều kiện, Nội Giới đổi hình dạng, mở kỹ năng mới và cho vào vùng linh năng dày hơn.
 - Việc ngoài đời thật không cho sức mạnh trong game.
-- Số liệu cụ thể để sau.
 
 ## 8. Phiên chơi mẫu (20 phút)
 

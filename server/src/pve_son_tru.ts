@@ -102,7 +102,8 @@ const pveSonTruCreateRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, pa
     const seconds = Math.ceil((Number(previous.value.nextSpawnAt) - Date.now()) / 1000);
     return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "Sơn Trư respawns in " + seconds + " seconds");
   }
-  let attack = PVE_SON_TRU.attack, defense = PVE_SON_TRU.defense;
+  const inner = innerCombatBonus(profile);
+  let attack = PVE_SON_TRU.attack + inner.attack, defense = PVE_SON_TRU.defense + inner.defense;
   for (let i = 0; i < profile.inventory.length; i++) {
     const item = profile.inventory[i], definition = catalogItem(item.itemId);
     if (item.instanceId === profile.equipped.weapon && definition.equipSlot === "weapon") attack += Number(definition.attackBonus || 0);

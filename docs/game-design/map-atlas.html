@@ -1,0 +1,551 @@
+<title>Atlas Nhịp 47</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Pixelify+Sans:wght@500;700&display=swap">
+<style>
+/* Layout: field-atlas — tab rail of maps on top, large map plate left, legend + monster ledger right; stacks on phones. */
+:root {
+  --bg: #eef1ec;
+  --panel: #f8faf6;
+  --ink: #1f2a2c;
+  --muted: #5d6b6a;
+  --rule: #cfd8d2;
+  --human: #d9a441;
+  --spirit: #2fb9a0;
+  --wild: #6f8a3e;
+  --safe: #3d7fc4;
+  --locked: #9a8f86;
+  --water: #7fb3c7;
+  --violet: #8f6bff;
+  --t1: #7d9a2f;
+  --t2: #c58a1e;
+  --t3: #c4572f;
+  --t4: #8f6bff;
+  --plate: #e3e9e1;
+  --grid: rgba(31,42,44,.06);
+  --label: #1f2a2c;
+  --font-display: "Pixelify Sans", "Courier New", monospace;
+  --font-body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12181b; --panel: #192226; --ink: #e6ece8; --muted: #9aa9a6; --rule: #2c3a3e;
+    --human: #e3b456; --spirit: #46d6bb; --wild: #8fae52; --safe: #6aa8e8; --locked: #8b827b;
+    --water: #3f7488; --violet: #a68bff; --t1: #9fbd45; --t2: #e0a33a; --t3: #e2714a; --t4: #a68bff;
+    --plate: #1d282c; --grid: rgba(230,236,232,.05); --label: #e6ece8; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12181b; --panel: #192226; --ink: #e6ece8; --muted: #9aa9a6; --rule: #2c3a3e;
+  --human: #e3b456; --spirit: #46d6bb; --wild: #8fae52; --safe: #6aa8e8; --locked: #8b827b;
+  --water: #3f7488; --violet: #a68bff; --t1: #9fbd45; --t2: #e0a33a; --t3: #e2714a; --t4: #a68bff;
+  --plate: #1d282c; --grid: rgba(230,236,232,.05); --label: #e6ece8; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; padding-inline: 16px; padding-block: 20px 40px; }
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 18px; }
+header { display: grid; gap: 6px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 36px); margin: 0; letter-spacing: .02em; text-wrap: balance; }
+.sub { color: var(--muted); margin: 0; max-width: 70ch; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab { font: 500 13px var(--font-body); color: var(--ink); background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+.tab .sw { width: 9px; height: 9px; border-radius: 2px; }
+.tab[aria-selected="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.tab:focus-visible, .chip:focus-visible, .mob:focus-visible, .tog:focus-visible { outline: 2px solid var(--safe); outline-offset: 2px; }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+@media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.plate { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.plate-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; }
+.plate-head h2 { font-family: var(--font-display); font-weight: 500; font-size: 22px; margin: 0; }
+.meta { font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.desc { margin: 0; color: var(--muted); max-width: 75ch; }
+.svgbox { overflow-x: auto; border-radius: 6px; background: var(--plate); }
+.svgbox svg { display: block; width: 100%; height: auto; min-width: 520px; }
+.controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tog { font: 500 12px var(--font-body); color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
+.tog[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.side { display: grid; gap: 14px; min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 14px; display: grid; gap: 10px; }
+.card h3 { font-family: var(--font-display); font-weight: 500; font-size: 16px; margin: 0; letter-spacing: .03em; }
+.legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; font-size: 13px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend i { width: 14px; height: 10px; border-radius: 2px; flex: none; }
+.mobs { display: grid; gap: 6px; }
+.mob { text-align: left; font: inherit; color: inherit; background: transparent; border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.mob[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.mob .dot { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: 700 11px var(--font-mono); color: #fff; }
+.mob .nm { font-weight: 600; font-size: 14px; }
+.mob .ar { font-size: 12px; color: var(--muted); }
+.mob .tier { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.detail { display: grid; gap: 8px; font-size: 14px; }
+.detail dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; margin: 0; }
+.detail dt { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding-top: 2px; }
+.detail dd { margin: 0; }
+.empty { color: var(--muted); font-size: 14px; margin: 0; }
+.world-note { font-size: 13px; color: var(--muted); margin: 0; }
+svg text { font-family: var(--font-body); }
+@media (prefers-reduced-motion: no-preference) { .pulse { animation: pulse 4.7s ease-in-out infinite; } @keyframes pulse { 0%, 88%, 100% { opacity: .35; } 92% { opacity: 1; } } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Atlas Nhịp 47</h1>
+    <p class="sub">Bản đồ chương 1: ba khu, bố cục từng map và vùng xuất hiện quái. Kích thước map, sông hồ, cổng, bến câu, luống và vỉa lấy từ <code>server/data/life_world.json</code>; khu và quái theo tài liệu 05 và 06. Tọa độ tính theo ô 32 px.</p>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Chọn map"></nav>
+
+  <div class="main">
+    <section class="plate" aria-live="polite">
+      <div class="plate-head">
+        <h2 id="mapTitle">Toàn cảnh</h2>
+        <span class="meta" id="mapMeta"></span>
+      </div>
+      <p class="desc" id="mapDesc"></p>
+      <div class="controls" id="controls">
+        <button class="tog" id="togZones" aria-pressed="true">Khu</button>
+        <button class="tog" id="togMobs" aria-pressed="true">Quái</button>
+        <button class="tog" id="togPoints" aria-pressed="true">Điểm</button>
+        <button class="tog" id="togNight" aria-pressed="false">Ban đêm</button>
+      </div>
+      <div class="svgbox"><svg id="map" role="img" aria-label="Bản đồ"></svg></div>
+    </section>
+
+    <aside class="side">
+      <div class="card">
+        <h3>Chú giải</h3>
+        <div class="legend">
+          <span><i style="background:var(--human)"></i>Khu Người</span>
+          <span><i style="background:var(--spirit)"></i>Ẩn Giới</span>
+          <span><i style="background:var(--wild)"></i>Vùng có quái</span>
+          <span><i style="background:var(--safe)"></i>Điểm an toàn</span>
+          <span><i style="background:var(--water)"></i>Nước</span>
+          <span><i style="background:var(--locked)"></i>Khóa / đóng</span>
+          <span><i style="background:var(--t1)"></i>Quái cấp 1</span>
+          <span><i style="background:var(--t2)"></i>Quái cấp 2</span>
+          <span><i style="background:var(--t3)"></i>Quái cấp 3</span>
+          <span><i style="background:var(--t4)"></i>Quái cấp 4 / boss</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3 id="mobsTitle">Quái trên map</h3>
+        <div class="mobs" id="mobs"></div>
+      </div>
+      <div class="card detail" id="detail">
+        <p class="empty">Chọn một quái để xem cách đánh và vùng xuất hiện.</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const MOBS = {
+  ga:    {name:"Gà Rừng Mào Sét", tier:1, code:"G", from:"Gà rừng", look:"Gà rừng to cỡ chó nhỏ, mào và đuôi nhấp nháy tia sáng.", act:"Chạy vòng quanh người chơi, mổ lao ngắn sau khi xù lông 0,9 giây. Còn một con thì bỏ chạy.", teach:"Không để bị vây.", stat:"2 nhát · 6% · tốc độ 1,3", group:"3–4 con", time:"Ngày"},
+  lon:   {name:"Lợn Gai", tier:1, code:"L", from:"Heo rừng", look:"Heo rừng lưng mọc gai đá có vân sáng.", act:"Gầm 1,0 giây → lao thẳng 4 ô → đứng thở 1,2 giây. Lao vào cây hoặc xe tải thì choáng thêm.", teach:"Né ngang, đánh khi nó thở.", stat:"4 nhát · 12% · tốc độ 0,8 (lao 3,0)", group:"1–2 con", time:"Cả ngày"},
+  lonE:  {name:"Lợn Gai Đầu Đàn", tier:1, elite:true, code:"L+", from:"Heo rừng", look:"To gấp rưỡi, gai sáng mạnh, một nanh gãy.", act:"Lao hai lần liên tiếp, lần hai đổi hướng. Còn 50% máu thì gọi thêm 2 Lợn Gai.", teach:"Kiểm tra bài học của Lợn Gai (hồi B).", stat:"12 nhát", group:"1", time:"Hồi sinh mỗi ngày"},
+  nhen:  {name:"Nhện Tơ Điện", tier:2, code:"N", from:"Nhện", look:"Nhện chân dài cỡ con mèo, tơ phát sáng.", act:"Giăng lưới tơ 2×2 ô làm chậm 50% trong 8 giây; cắn khi đứng cạnh (giơ chân trước 0,8 giây).", teach:"Đọc mặt đất, đánh từ bên hông.", stat:"3 nhát · 8% · tốc độ 1,1", group:"2–3 con", time:"Cả ngày"},
+  ret:   {name:"Rết Đá", tier:2, code:"R", from:"Rết", look:"Rết dài 2 ô, vỏ như đá đỏ.", act:"Đi ngầm dưới đất; đất nứt và rung 0,8 giây trước khi trồi lên cắn, rồi nằm hở 2 giây.", teach:"Đọc dấu hiệu dưới chân, dùng máy quét hoặc Linh Cảm.", stat:"6 nhát · 14% · ngầm 1,4", group:"1–2 con", time:"Cả ngày"},
+  doi:   {name:"Dơi Vân Quặng", tier:2, code:"D", from:"Dơi", look:"Dơi nhỏ, cánh có vân như mạch quặng.", act:"Cả đàn sà xuống theo đường thẳng, bóng đổ báo trước 0,7 giây. Sợ ánh sáng đèn mỏ.", teach:"Đọc bóng đổ, đứng trong vùng sáng.", stat:"1 nhát/con · 5%/con · tốc độ 1,8", group:"Đàn 4–6", time:"Cả ngày"},
+  nhenE: {name:"Nhện Mẹ", tier:2, elite:true, code:"N+", from:"Nhện", look:"Nhện cỡ con bò, bụng chứa trứng sáng.", act:"Giăng tơ phủ nửa hang, đẻ 2 nhện con mỗi 15 giây, kéo người chơi lại bằng sợi tơ (sáng 0,8 giây trước).", teach:"Kiểm tra bài học của Nhện Tơ Điện (hồi C).", stat:"16 nhát", group:"1", time:"Sau hồi C"},
+  soi:   {name:"Sói Rêu", tier:3, code:"S", from:"Chó sói", look:"Sói lông dài phủ rêu, mắt ngọc lam.", act:"Một con đối mặt, hai con đi vòng ra sau. Con trước hú 0,6 giây là cả đàn vồ.", teach:"Giữ lưng sát vật cản, ưu tiên mục tiêu.", stat:"5 nhát · 12% · tốc độ 1,2", group:"Đàn 3", time:"Cả ngày"},
+  ran:   {name:"Rắn Sương", tier:3, code:"Ra", from:"Rắn", look:"Thân mờ vào sương, chỉ đầu và mắt sáng.", act:"Vô hình trong sương; phóng cắn từ 3 ô sau khi gợn sương dừng 0,6 giây. Cắn trúng gây độc 4 giây.", teach:"Dùng máy quét hoặc Linh Cảm, kiên nhẫn.", stat:"5 nhát · 10% + độc 6% · phóng 4,0", group:"1–2 con", time:"Cả ngày"},
+  khi:   {name:"Khỉ Vách Đá", tier:3, code:"K", from:"Khỉ", look:"Khỉ tay rất dài, khớp tay có tinh thể sáng.", act:"Ném đá từ gờ cao (vòng đỏ trên đất 0,7 giây); khi người chơi tới chân vách thì nhảy xuống đập rồi ngồi thở.", teach:"Tìm chỗ nấp, ép quái xuống đất.", stat:"6 nhát · đá 10%, đập 16%", group:"2–4 con", time:"Ngày"},
+  khiE:  {name:"Khỉ Đầu Đàn", tier:3, elite:true, code:"K+", from:"Khỉ", look:"Lưng bạc, tinh thể sáng trên hai vai.", act:"Ra lệnh cả bầy ném đá cùng lúc; còn 30% máu thì lăn một tảng đá lớn theo đường thẳng.", teach:"Kiểm tra bài học của Khỉ Vách Đá (hồi D).", stat:"18 nhát", group:"1", time:"Sau hồi D"},
+  cu:    {name:"Cú Đêm Linh", tier:3, night:true, code:"C", from:"Cú", look:"Cú lớn lông bạc, bay để lại vệt sáng mờ.", act:"Bay không tiếng; mắt sáng trên tán cây và một tiếng kêu 0,6 giây trước khi bổ nhào, rồi đậu xuống đất 2 giây.", teach:"Nghe âm thanh, để ý ngày đêm.", stat:"4 nhát · 15% · bay 2,0", group:"1–2 con", time:"Chỉ ban đêm"},
+  chuot: {name:"Chuột Tím", tier:4, code:"Ch", from:"Chuột", look:"Chuột cỡ bàn tay, lưng mọc tinh thể tím lục giác.", act:"Chạy thành dòng theo hành lang; cứ 47 giây cả đàn phát xung tím đẩy lùi.", teach:"Đếm nhịp 47 giây, chuẩn bị cho boss.", stat:"1 nhát/con · 4%/con, xung 10%", group:"Đàn 6–10", time:"Cả ngày"},
+  boss:  {name:"Thủ Lĩnh Mạch Gãy", tier:4, boss:true, code:"B", from:"Gấu núi", look:"Gấu khổng lồ, lưng mọc tinh thể tím, da nứt sáng ngọc lam.", act:"Giai đoạn 1: lao và vồ. Giai đoạn 2: đập đất làm tinh thể trồi theo hàng, gọi Chuột Tím. Giai đoạn 3: lõi phát xung toàn phòng mỗi 47 giây, phải nấp sau cột.", teach:"Kiểm tra mọi bài học của chương 1 (hồi E).", stat:"40 nhát, 3 giai đoạn", group:"1", time:"Hồi E"}
+};
+
+const MAPS = [
+  { id:"world", label:"Toàn cảnh", zone:"world" },
+  { id:"m_lang_que", label:"Làng Hồ Lặng", zone:"human", w:256, h:192,
+    desc:"Khu Người. Tường rào ở bắc ngăn với rừng quái; Cổng Ẩn Giới đứng giữa quảng trường. Không có quái.",
+    zones:[
+      {n:"Tường rào", k:"locked", r:[0,0,256,6]},
+      {n:"Chốt Tường Rào", k:"safe", r:[140,4,14,10]},
+      {n:"Đồi Miếu", k:"human", r:[18,16,42,34]},
+      {n:"Xóm nhà", k:"human", r:[12,55,88,80]},
+      {n:"Quảng trường Cổng", k:"spirit", r:[108,78,42,38]},
+      {n:"Chợ phiên", k:"human", r:[150,92,20,24]},
+      {n:"Thị trấn", k:"human", r:[170,36,56,96]},
+      {n:"Trạm buýt", k:"locked", r:[238,100,10,10]},
+      {n:"Vườn", k:"human", r:[58,160,34,24]},
+      {n:"Ruộng", k:"human", r:[95,138,40,48]}
+    ],
+    water:[{s:"r",p:[[237,0],[232,18],[231,39],[233,56],[231,75],[235,90],[238,105],[244,123],[237,140],[228,158],[233,178],[245,192]],w:4},{s:"r",p:[[126,29],[109,23],[95,19],[76,15],[56,13],[34,13],[17,16]],w:1.6},{s:"r",p:[[106,122],[115,133],[117,144],[116,151],[120,164],[131,177],[141,192]],w:2.6},{s:"p",p:[[151,153],[157,148],[167,147],[173,150],[181,149],[189,153],[199,157],[204,164],[203,172],[198,178],[187,181],[178,183],[167,180],[158,179],[150,175],[143,171],[139,164],[143,157]]}],
+    waterLabels:[["Hồ Lặng",172,168],["Sông",236,60]],
+    points:[
+      {t:"gate", x:147, y:8, n:"Chốt → Bìa Rừng"},
+      {t:"closed", x:249, y:105, n:"Tuyến về thành phố (đóng)"},
+      {t:"portal", x:128, y:92, n:"Cổng Ẩn Giới"},
+      {t:"spawn", x:130, y:111, n:"Điểm vào"},
+      {t:"shop", x:157, y:103, n:"Chợ"},
+      {t:"home", x:75, y:123, n:"Nhà người chơi"},
+      {t:"npc", x:59, y:108, n:"Bà Nora"},
+      {t:"npc", x:176, y:53, n:"Xưởng rèn Doran"},
+      {t:"npc", x:197, y:53, n:"Trạm Viện"},
+      {t:"med", x:39, y:30, n:"Miếu, sân thiền"},
+      ...[169,175,181,187].map(x=>({t:"fish", x, y:150})),
+      ...[166,171,176].flatMap(y=>[65,71,77,83].map(x=>({t:"plot", x, y})))
+    ],
+    mobs:[] },
+  { id:"m_an_gioi", label:"Ẩn Giới", zone:"spirit", w:160, h:128, isNew:true,
+    desc:"Khu Tinh Linh, map mới. Vào qua Cổng ở giữa làng. Rìa Phai ở mép là nơi Ẩn Giới đang co lại. Không có quái.",
+    zones:[
+      {n:"Vòng Đá", k:"spirit", r:[10,10,24,22]},
+      {n:"Vườn Cây Mẹ", k:"spirit", r:[50,18,60,62]},
+      {n:"Suối Hấp Linh", k:"spirit", r:[112,36,36,46]},
+      {n:"Vườn nấm", k:"spirit", r:[12,50,34,34]},
+      {n:"Bãi đồ rơi", k:"human", r:[40,86,30,14]},
+      {n:"Bến Cổng", k:"spirit", r:[66,104,28,20]}
+    ],
+    frame:"Rìa Phai",
+    water:[{s:"e",c:[80,114],r:[14,7]},{s:"r",p:[[142,28],[132,46],[126,62],[118,80],[104,96]],w:2}],
+    waterLabels:[["Hồ Gương",80,124]],
+    points:[
+      {t:"portal", x:80, y:114, n:"Cổng → làng"},
+      {t:"tree", x:80, y:45, n:"Cây Mẹ"},
+      {t:"med", x:120, y:45}, {t:"med", x:128, y:58}, {t:"med", x:122, y:72},
+      {t:"fish", x:136, y:50}, {t:"fish", x:130, y:66},
+      {t:"npc", x:70, y:52, n:"Lão Hồ"},
+      ...[[18,60],[26,60],[34,60],[18,70],[26,70],[34,70]].map(([x,y])=>({t:"plot", x, y}))
+    ],
+    mobs:[] },
+  { id:"m_vanh_dai_tay", label:"Bìa Rừng", zone:"wild", w:288, h:224,
+    desc:"Dải đệm ngay sau tường rào. Bãi săn đầu tiên: Gà Rừng ở ruộng hoang, Lợn Gai ở đồng cỏ, Nhện giữa các xe tải.",
+    zones:[
+      {n:"Hàng cây rừng", k:"wild", r:[0,0,288,30], dense:true},
+      {n:"Đồng cỏ cao", k:"wild", r:[90,40,170,80]},
+      {n:"Ruộng hoang", k:"wild", r:[90,120,110,68]},
+      {n:"Xe tải bỏ dở", k:"wild", r:[15,35,65,135]},
+      {n:"Đường cao tốc gãy", k:"locked", r:[262,0,26,224]},
+      {n:"Trạm gác + lều thợ săn", k:"safe", r:[110,188,70,36]}
+    ],
+    water:[{s:"r",p:[[17,191],[34,197],[56,201],[72,212]],w:0.9}],
+    points:[
+      {t:"gate", x:143, y:215, n:"→ Làng"},
+      {t:"gate", x:156, y:8, n:"→ Rừng Sâu"},
+      {t:"gate", x:9, y:55, n:"→ Mỏ"},
+      {t:"closed", x:279, y:109, n:"(đóng)"},
+      {t:"tower", x:201, y:140, n:"Tháp cảm biến"}
+    ],
+    mobs:[
+      ...[[110,150],[140,170],[170,145],[195,172]].map(([x,y])=>({m:"ga",x,y,r:8})),
+      ...[[110,60],[120,102],[180,55],[205,95],[235,62],[242,105]].map(([x,y])=>({m:"lon",x,y,r:10})),
+      {m:"lonE",x:155,y:85,r:11},
+      ...[[35,60],[58,100],[40,145]].map(([x,y])=>({m:"nhen",x,y,r:8}))
+    ],
+    safe:[[145,206,14]] },
+  { id:"m_mo_lo_thien", label:"Mỏ Bỏ Hoang", zone:"wild", w:224, h:192,
+    desc:"Mỏ lộ thiên bỏ sau Linh Chấn. Đào ở Hố Tây; Nhện ở bãi máy hỏng, Rết Đá đi ngầm dưới bậc đá.",
+    zones:[
+      {n:"Đường núi", k:"wild", r:[95,0,30,40]},
+      {n:"Hố Tây", k:"human", r:[28,62,64,48]},
+      {n:"Bãi máy hỏng", k:"wild", r:[110,45,70,75]},
+      {n:"Bậc đá", k:"wild", r:[20,120,130,65]},
+      {n:"Lán thợ", k:"safe", r:[180,140,35,35]}
+    ],
+    water:[{s:"e",c:[198,174],r:[7,3]}],
+    points:[
+      {t:"gate", x:215, y:154, n:"→ Bìa Rừng"},
+      {t:"gate", x:110, y:9, n:"→ Rừng Sâu"},
+      {t:"gate", x:85, y:80, n:"Giếng → Hầm"},
+      {t:"ore", x:44, y:83}, {t:"ore", x:61, y:88},
+      {t:"npc", x:195, y:152, n:"Chú Bram"}
+    ],
+    mobs:[
+      ...[[125,62],[158,88],[132,108]].map(([x,y])=>({m:"nhen",x,y,r:9})),
+      ...[[40,142],[75,166],[110,140],[135,170]].map(([x,y])=>({m:"ret",x,y,r:9}))
+    ],
+    safe:[[197,157,12],[52,85,6]] },
+  { id:"m_mo_ngam", label:"Hầm Mỏ", zone:"wild", w:192, h:160,
+    desc:"Hầm dưới mỏ. B1 mở, cửa B2 bị hàn. Dơi ở hang giữa, tổ Nhện và Nhện Mẹ ở Hầm Tây; mảnh tím đầu tiên nằm cuối Hầm Tây.",
+    zones:[
+      {n:"Cửa B2", k:"locked", r:[85,5,20,20]},
+      {n:"Hầm Tây", k:"wild", r:[12,30,53,70]},
+      {n:"Hang Giữa", k:"wild", r:[75,30,50,70]},
+      {n:"Vỉa Đông", k:"human", r:[135,55,40,40]},
+      {n:"Hầm cũ", k:"locked", r:[175,30,17,20]},
+      {n:"Đường ray", k:"wild", r:[15,112,160,16]},
+      {n:"Sân giếng", k:"safe", r:[75,130,40,30]}
+    ],
+    water:[{s:"e",c:[158,128],r:[4,2]}],
+    points:[
+      {t:"gate", x:93, y:150, n:"→ Mỏ"},
+      {t:"locked", x:183, y:41, n:"→ Rừng Sâu (hồi D)"},
+      {t:"ore", x:146, y:81}, {t:"ore", x:161, y:73},
+      {t:"violet", x:18, y:36, n:"Mảnh tím"}
+    ],
+    mobs:[
+      ...[[92,48],[108,82],[132,118]].map(([x,y])=>({m:"doi",x,y,r:10})),
+      ...[[28,62],[48,86]].map(([x,y])=>({m:"nhen",x,y,r:8})),
+      {m:"nhenE",x:30,y:42,r:9}
+    ],
+    safe:[[95,145,10],[153,77,6]] },
+  { id:"m_ba_vi", label:"Rừng Sâu", zone:"wild", w:320, h:256,
+    desc:"Rừng chính. Sói ở rìa rừng ẩm, Rắn trong đầm sương, Khỉ trên vách đá, Cú chỉ ra vào ban đêm. Lối mòn ẩn chỉ đi được khi Tinh Linh Hóa Thú.",
+    zones:[
+      {n:"Tán Cao", k:"wild", r:[20,10,110,90], dense:true},
+      {n:"Sườn núi", k:"wild", r:[130,0,100,50]},
+      {n:"Vách Đá", k:"wild", r:[230,40,70,110]},
+      {n:"Thung Suối", k:"wild", r:[140,110,90,70], light:true},
+      {n:"Đầm Sương", k:"wild", r:[15,130,95,105]},
+      {n:"Rìa rừng ẩm", k:"wild", r:[120,180,120,76]}
+    ],
+    water:[{s:"r",p:[[292,13],[257,56],[245,111],[245,117]],w:1.3},{s:"r",p:[[245,121],[246,126],[266,158],[293,207]],w:1.3},{s:"e",c:[278,119],r:[7,5]}],
+    trails:[[[150,200],[170,180],[200,150]],[[40,130],[70,100],[120,70]]],
+    points:[
+      {t:"gate", x:155, y:247, n:"→ Bìa Rừng"},
+      {t:"gate", x:9, y:136, n:"→ Mỏ"},
+      {t:"locked", x:9, y:213, n:"→ Hầm (hồi D)"},
+      {t:"locked", x:168, y:9, n:"→ Trạm (hồi E)"},
+      {t:"tree", x:150, y:200, n:"Gốc cây Tinh Linh"},
+      {t:"tree", x:120, y:70, n:"Gốc cây Tinh Linh"},
+      {t:"npc", x:200, y:150, n:"Trạm cứu hộ"}
+    ],
+    mobs:[
+      ...[[135,232],[185,218],[222,198]].map(([x,y])=>({m:"soi",x,y,r:11})),
+      ...[[35,160],[72,182],[38,215],[90,215]].map(([x,y])=>({m:"ran",x,y,r:9})),
+      ...[[240,62],[262,100],[240,135]].map(([x,y])=>({m:"khi",x,y,r:9})),
+      {m:"khiE",x:272,y:50,r:9},
+      ...[[42,30],[90,48],[60,80]].map(([x,y])=>({m:"cu",x,y,r:12}))
+    ],
+    safe:[[150,200,10],[120,70,10],[155,238,12]] },
+  { id:"m_tram_thien_mach", label:"Trạm Thiên Mạch", zone:"wild", w:160, h:128,
+    desc:"Trạm nghiên cứu xây trước Linh Chấn. Chuột Tím chạy trong hành lang; boss canh lõi máy ở phòng trên cùng.",
+    zones:[
+      {n:"Phòng Lõi", k:"violet", r:[55,8,50,34]},
+      {n:"Phòng máy", k:"wild", r:[8,45,37,23]},
+      {n:"Hành lang trên", k:"wild", r:[45,45,70,13]},
+      {n:"Lồng giam", k:"locked", r:[115,45,37,23]},
+      {n:"Lưu trữ", k:"locked", r:[8,75,37,27]},
+      {n:"Hành lang dưới", k:"wild", r:[45,75,70,15]},
+      {n:"Kho", k:"locked", r:[115,75,25,25]},
+      {n:"Sảnh vào", k:"safe", r:[55,100,50,28]}
+    ],
+    water:[],
+    points:[
+      {t:"gate", x:78, y:119, n:"→ Rừng Sâu"},
+      {t:"violet", x:80, y:25, n:"Lõi"}
+    ],
+    mobs:[
+      ...[[58,82],[100,82],[26,56],[82,51]].map(([x,y])=>({m:"chuot",x,y,r:7})),
+      {m:"boss",x:80,y:28,r:13}
+    ],
+    safe:[[80,112,10]] }
+];
+
+const ZONE_FILL = {human:"var(--human)", spirit:"var(--spirit)", wild:"var(--wild)", safe:"var(--safe)", locked:"var(--locked)", violet:"var(--violet)"};
+const TIER = {1:"var(--t1)",2:"var(--t2)",3:"var(--t3)",4:"var(--t4)"};
+const state = { map:"world", zones:true, mobs:true, points:true, night:false, mob:null };
+const NS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById("map");
+
+function el(tag, attrs, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function pathOf(pts) { return pts.map((p,i)=>(i?"L":"M")+p[0]+" "+p[1]).join(" "); }
+
+function drawWater(g, w) {
+  if (w.s === "p") el("path", {d: pathOf(w.p)+" Z", fill:"var(--water)", opacity:.85}, g);
+  else if (w.s === "r") el("path", {d: pathOf(w.p), fill:"none", stroke:"var(--water)", "stroke-width": w.w*2, "stroke-linecap":"round", "stroke-linejoin":"round", opacity:.85}, g);
+  else el("ellipse", {cx:w.c[0], cy:w.c[1], rx:w.r[0], ry:w.r[1], fill:"var(--water)", opacity:.85}, g);
+}
+
+function pointGlyph(g, p, u) {
+  const s = u*1.1;
+  const map = {
+    gate:   () => el("rect", {x:p.x-s, y:p.y-s, width:s*2, height:s*2, fill:"var(--safe)", stroke:"var(--panel)", "stroke-width":u*.3}, g),
+    closed: () => el("rect", {x:p.x-s, y:p.y-s, width:s*2, height:s*2, fill:"var(--locked)", stroke:"var(--panel)", "stroke-width":u*.3}, g),
+    locked: () => el("rect", {x:p.x-s, y:p.y-s, width:s*2, height:s*2, fill:"var(--locked)", stroke:"var(--ink)", "stroke-width":u*.3, "stroke-dasharray":u*.6}, g),
+    portal: () => { el("circle", {cx:p.x, cy:p.y, r:u*5, fill:"var(--spirit)", opacity:.25, class:"pulse"}, g); el("circle", {cx:p.x, cy:p.y, r:u*2.2, fill:"none", stroke:"var(--spirit)", "stroke-width":u*.9}, g); },
+    spawn:  () => el("path", {d:`M${p.x} ${p.y-s*1.2} L${p.x+s} ${p.y+s} L${p.x-s} ${p.y+s} Z`, fill:"var(--ink)"}, g),
+    shop:   () => el("circle", {cx:p.x, cy:p.y, r:s, fill:"var(--human)", stroke:"var(--ink)", "stroke-width":u*.3}, g),
+    home:   () => el("rect", {x:p.x-s, y:p.y-s, width:s*2, height:s*2, rx:u*.3, fill:"var(--human)", stroke:"var(--ink)", "stroke-width":u*.4}, g),
+    npc:    () => el("circle", {cx:p.x, cy:p.y, r:s*.8, fill:"var(--panel)", stroke:"var(--ink)", "stroke-width":u*.4}, g),
+    med:    () => el("circle", {cx:p.x, cy:p.y, r:s*.8, fill:"none", stroke:"var(--spirit)", "stroke-width":u*.5}, g),
+    tree:   () => el("circle", {cx:p.x, cy:p.y, r:s*1.6, fill:"var(--spirit)", stroke:"var(--panel)", "stroke-width":u*.4}, g),
+    fish:   () => el("path", {d:`M${p.x-s} ${p.y-s*.6} L${p.x+s} ${p.y-s*.6} L${p.x} ${p.y+s} Z`, fill:"var(--safe)"}, g),
+    plot:   () => el("rect", {x:p.x-s*.9, y:p.y-s*.6, width:s*1.8, height:s*1.2, fill:"var(--human)", stroke:"var(--ink)", "stroke-width":u*.2}, g),
+    ore:    () => el("path", {d:`M${p.x} ${p.y-s} L${p.x+s} ${p.y} L${p.x} ${p.y+s} L${p.x-s} ${p.y} Z`, fill:"var(--t2)", stroke:"var(--ink)", "stroke-width":u*.3}, g),
+    tower:  () => el("rect", {x:p.x-s*.5, y:p.y-s*1.5, width:s, height:s*3, fill:"var(--locked)"}, g),
+    violet: () => el("path", {d: hexPath(p.x, p.y, s*1.3), fill:"var(--violet)", class:"pulse"}, g)
+  };
+  (map[p.t] || map.npc)();
+  if (p.n) el("text", {x:p.x + s*1.8, y:p.y + s*.6, "font-size":u*2.3, fill:"var(--label)", "font-weight":500, "paint-order":"stroke", stroke:"var(--plate)", "stroke-width":u*.7}, g, p.n);
+}
+function hexPath(x, y, r) { let d=""; for (let i=0;i<6;i++){ const a=Math.PI/3*i; d+=(i?"L":"M")+(x+r*Math.cos(a))+" "+(y+r*Math.sin(a)); } return d+"Z"; }
+
+function renderMap(m) {
+  svg.innerHTML = "";
+  const u = Math.max(m.w, m.h) / 160;
+  svg.setAttribute("viewBox", `0 0 ${m.w} ${m.h}`);
+  el("rect", {x:0, y:0, width:m.w, height:m.h, fill:"var(--plate)"}, svg);
+  const grid = el("g", {}, svg);
+  for (let x=0; x<=m.w; x+=16) el("line", {x1:x, y1:0, x2:x, y2:m.h, stroke:"var(--grid)", "stroke-width":u*.25}, grid);
+  for (let y=0; y<=m.h; y+=16) el("line", {x1:0, y1:y, x2:m.w, y2:y, stroke:"var(--grid)", "stroke-width":u*.25}, grid);
+  if (m.frame) el("rect", {x:3, y:3, width:m.w-6, height:m.h-6, fill:"none", stroke:"var(--muted)", "stroke-width":6, opacity:.25, "stroke-dasharray":"3 2"}, svg);
+
+  const zg = el("g", {}, svg); zg.style.display = state.zones ? "" : "none";
+  for (const z of m.zones) {
+    const [x,y,w,h] = z.r;
+    el("rect", {x, y, width:w, height:h, rx:u*.8, fill:ZONE_FILL[z.k], "fill-opacity": z.dense ? .32 : z.light ? .12 : .2, stroke:ZONE_FILL[z.k], "stroke-opacity":.6, "stroke-width":u*.35}, zg);
+    el("text", {x:x+u*1.2, y:y+u*3, "font-size":u*2.6, "font-weight":600, fill:"var(--label)", opacity:.85}, zg, z.n);
+  }
+  const wg = el("g", {}, svg);
+  for (const w of m.water) drawWater(wg, w);
+  for (const [t,x,y] of (m.waterLabels||[])) el("text", {x, y, "font-size":u*2.4, "text-anchor":"middle", fill:"var(--label)", opacity:.7, "font-style":"italic"}, wg, t);
+
+  for (const tr of (m.trails||[])) el("path", {d:pathOf(tr), fill:"none", stroke:"var(--spirit)", "stroke-width":u*.8, "stroke-dasharray":`${u*2} ${u*1.4}`}, zg);
+
+  const sg = el("g", {}, svg); sg.style.display = state.zones ? "" : "none";
+  for (const [x,y,r] of (m.safe||[])) el("circle", {cx:x, cy:y, r, fill:"var(--safe)", "fill-opacity":.08, stroke:"var(--safe)", "stroke-width":u*.4, "stroke-dasharray":`${u} ${u}`}, sg);
+
+  const mg = el("g", {}, svg); mg.style.display = state.mobs ? "" : "none";
+  for (const t of m.mobs) {
+    const d = MOBS[t.m];
+    const hidden = d.night && !state.night;
+    const active = state.mob === t.m;
+    const dim = state.mob && !active;
+    const g = el("g", {opacity: hidden ? .18 : dim ? .25 : 1, style:"cursor:pointer"}, mg);
+    el("circle", {cx:t.x, cy:t.y, r:t.r, fill:TIER[d.tier], "fill-opacity": active ? .3 : .15, stroke:TIER[d.tier], "stroke-width": u*(d.boss||d.elite ? .9 : .5), "stroke-dasharray": d.boss||d.elite ? "" : `${u*1.4} ${u}`}, g);
+    el("circle", {cx:t.x, cy:t.y, r:u*(d.boss ? 3.4 : d.elite ? 2.8 : 2.2), fill:TIER[d.tier]}, g);
+    el("text", {x:t.x, y:t.y + u*.85, "font-size":u*(d.code.length>1 ? 2 : 2.4), "text-anchor":"middle", fill:"#fff", "font-weight":700, "font-family":"JetBrains Mono, monospace"}, g, d.code);
+    g.addEventListener("click", () => selectMob(t.m));
+  }
+
+  const pg = el("g", {}, svg); pg.style.display = state.points ? "" : "none";
+  for (const p of m.points) pointGlyph(pg, p, u);
+}
+
+function renderWorld() {
+  svg.innerHTML = "";
+  svg.setAttribute("viewBox", "0 0 960 520");
+  el("rect", {x:0, y:0, width:960, height:520, fill:"var(--plate)"}, svg);
+  const block = (x,y,w,h,k,title,sub) => {
+    el("rect", {x, y, width:w, height:h, rx:10, fill:ZONE_FILL[k], "fill-opacity":.14, stroke:ZONE_FILL[k], "stroke-width":2}, svg);
+    el("text", {x:x+16, y:y+30, "font-size":20, "font-weight":700, fill:"var(--label)", "font-family":"Pixelify Sans, monospace"}, svg, title);
+    el("text", {x:x+16, y:y+52, "font-size":13, fill:"var(--muted)"}, svg, sub);
+  };
+  block(250, 20, 300, 140, "spirit", "KHU TINH LINH", "Ẩn Giới · không có quái");
+  block(30, 230, 380, 260, "human", "KHU NGƯỜI", "Làng Hồ Lặng · không có quái");
+  block(500, 200, 430, 300, "wild", "KHU RỪNG QUÁI", "Bìa Rừng → mỏ → Rừng Sâu → Trạm");
+  el("rect", {x:440, y:230, width:16, height:260, fill:"var(--locked)", opacity:.6}, svg);
+  el("text", {x:448, y:222, "font-size":12, "text-anchor":"middle", fill:"var(--muted)"}, svg, "tường rào");
+
+  const nodes = {
+    m_an_gioi:[400,110], m_lang_que:[220,370], m_vanh_dai_tay:[600,400],
+    m_mo_lo_thien:[620,270], m_mo_ngam:[760,300], m_ba_vi:[810,400], m_tram_thien_mach:[860,250]
+  };
+  const links = [["m_lang_que","m_an_gioi","Cổng Ẩn Giới",false,true],["m_lang_que","m_vanh_dai_tay","Chốt Tường Rào"],["m_vanh_dai_tay","m_mo_lo_thien"],["m_vanh_dai_tay","m_ba_vi"],["m_mo_lo_thien","m_mo_ngam","giếng"],["m_mo_lo_thien","m_ba_vi"],["m_mo_ngam","m_ba_vi","hồi D",true],["m_ba_vi","m_tram_thien_mach","hồi E",true]];
+  for (const [a,b,lab,locked,portal] of links) {
+    const [x1,y1]=nodes[a], [x2,y2]=nodes[b];
+    el("line", {x1,y1,x2,y2, stroke: portal ? "var(--spirit)" : locked ? "var(--locked)" : "var(--ink)", "stroke-width": portal ? 4 : 2, "stroke-dasharray": locked ? "6 5" : "", opacity:.75}, svg);
+    if (lab) el("text", {x:(x1+x2)/2+8, y:(y1+y2)/2-6, "font-size":12, fill:"var(--muted)", "paint-order":"stroke", stroke:"var(--plate)", "stroke-width":4}, svg, lab + (locked ? " 🔒" : ""));
+  }
+  for (const id in nodes) {
+    const m = MAPS.find(x=>x.id===id), [x,y]=nodes[id];
+    const g = el("g", {style:"cursor:pointer", tabindex:0, role:"button", "aria-label":"Mở "+m.label}, svg);
+    el("circle", {cx:x, cy:y, r:24, fill:ZONE_FILL[m.zone==="wild"?"wild":m.zone], stroke:"var(--panel)", "stroke-width":3}, g);
+    const cnt = m.mobs.length;
+    el("text", {x, y:y+5, "font-size":14, "text-anchor":"middle", fill:"#fff", "font-weight":700, "font-family":"JetBrains Mono, monospace"}, g, cnt ? cnt : "–");
+    el("text", {x, y:y+44, "font-size":14, "text-anchor":"middle", fill:"var(--label)", "font-weight":600, "paint-order":"stroke", stroke:"var(--plate)", "stroke-width":4}, g, m.label);
+    const go = () => setMap(id);
+    g.addEventListener("click", go);
+    g.addEventListener("keydown", e => { if (e.key==="Enter"||e.key===" ") { e.preventDefault(); go(); } });
+  }
+  el("text", {x:30, y:505, "font-size":12, fill:"var(--muted)"}, svg, "Số trong vòng tròn = số vùng quái trên map. Bấm một map để xem chi tiết.");
+}
+
+function renderMobList(m) {
+  const box = document.getElementById("mobs");
+  box.innerHTML = "";
+  const ids = m.id === "world" ? Object.keys(MOBS) : [...new Set(m.mobs.map(t=>t.m))];
+  document.getElementById("mobsTitle").textContent = m.id === "world" ? "Tất cả quái chương 1" : "Quái trên map";
+  if (!ids.length) { box.innerHTML = '<p class="empty">Khu này không có quái. Chỉ có thú vô hại và NPC.</p>'; return; }
+  for (const id of ids) {
+    const d = MOBS[id];
+    const b = document.createElement("button");
+    b.className = "mob"; b.type = "button"; b.setAttribute("aria-pressed", state.mob === id);
+    const count = m.id === "world" ? "" : m.mobs.filter(t=>t.m===id).length + " vùng";
+    b.innerHTML = `<span class="dot" style="background:${TIER[d.tier]}">${d.code}</span><span><span class="nm">${d.name}</span><br><span class="ar">${d.group} · ${d.time}${count ? " · "+count : ""}</span></span><span class="tier">${d.boss ? "BOSS" : d.elite ? "ĐẦU ĐÀN" : "CẤP "+d.tier}</span>`;
+    b.addEventListener("click", () => selectMob(state.mob === id ? null : id));
+    box.appendChild(b);
+  }
+}
+
+function renderDetail() {
+  const box = document.getElementById("detail");
+  if (!state.mob) { box.innerHTML = '<p class="empty">Chọn một quái để xem cách đánh và vùng xuất hiện.</p>'; return; }
+  const d = MOBS[state.mob];
+  box.innerHTML = `<h3>${d.name}</h3><dl>
+    <dt>Gốc</dt><dd>${d.from}</dd>
+    <dt>Hình</dt><dd>${d.look}</dd>
+    <dt>Đánh</dt><dd>${d.act}</dd>
+    <dt>Dạy</dt><dd>${d.teach}</dd>
+    <dt>Chỉ số</dt><dd>${d.stat}</dd>
+    <dt>Khi nào</dt><dd>${d.time}</dd></dl>
+    <p class="world-note">Máu tính bằng số nhát đánh thường của người chơi mới; % là phần máu người chơi mất mỗi đòn trúng.</p>`;
+}
+
+function selectMob(id) {
+  state.mob = id;
+  const m = MAPS.find(x=>x.id===state.map);
+  if (id && MOBS[id].night && !state.night) { state.night = true; document.getElementById("togNight").setAttribute("aria-pressed","true"); }
+  if (m.id === "world" && id) {
+    const home = MAPS.find(x=>x.mobs && x.mobs.some(t=>t.m===id));
+    if (home) { setMap(home.id, true); return; }
+  }
+  draw();
+}
+
+function setMap(id, keepMob) {
+  state.map = id;
+  if (!keepMob) state.mob = null;
+  try { localStorage.setItem("atlas47-map", id); } catch (e) {}
+  for (const b of document.querySelectorAll(".tab")) b.setAttribute("aria-selected", b.dataset.id === id);
+  draw();
+}
+
+function draw() {
+  const m = MAPS.find(x=>x.id===state.map);
+  document.getElementById("mapTitle").textContent = m.label;
+  const ctl = document.getElementById("controls");
+  if (m.id === "world") {
+    document.getElementById("mapMeta").textContent = "3 khu · 7 map";
+    document.getElementById("mapDesc").textContent = "Khu Người và Khu Rừng Quái nằm cạnh nhau, ngăn bằng tường rào có chốt. Khu Tinh Linh không nằm trên cùng mặt đất: vào qua Cổng Ẩn Giới đặt giữa làng.";
+    ctl.hidden = true;
+    renderWorld();
+  } else {
+    document.getElementById("mapMeta").textContent = `${m.id}${m.isNew ? " (mới)" : ""} · ${m.w}×${m.h} ô · ${m.w*32}×${m.h*32} px`;
+    document.getElementById("mapDesc").textContent = m.desc;
+    ctl.hidden = false;
+    renderMap(m);
+  }
+  renderMobList(m);
+  renderDetail();
+}
+
+const tabs = document.getElementById("tabs");
+for (const m of MAPS) {
+  const b = document.createElement("button");
+  b.className = "tab"; b.type = "button"; b.setAttribute("role","tab"); b.dataset.id = m.id;
+  const sw = m.zone === "world" ? "var(--ink)" : ZONE_FILL[m.zone];
+  b.innerHTML = `<span class="sw" style="background:${sw}"></span>${m.label}`;
+  b.addEventListener("click", () => setMap(m.id));
+  tabs.appendChild(b);
+}
+for (const [id,key] of [["togZones","zones"],["togMobs","mobs"],["togPoints","points"],["togNight","night"]]) {
+  const b = document.getElementById(id);
+  b.addEventListener("click", () => { state[key] = !state[key]; b.setAttribute("aria-pressed", state[key]); draw(); });
+}
+let start = "world";
+try { const saved = localStorage.getItem("atlas47-map"); if (saved && MAPS.some(m=>m.id===saved)) start = saved; } catch (e) {}
+setMap(start);
+</script>
