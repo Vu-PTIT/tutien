@@ -34,7 +34,42 @@ Mượn từ Eastward **phần hình ảnh**, không mượn lối chơi phiêu 
 | Ghế | 20 px |
 | Dị thú nhỏ / vừa / boss | 32×32 / 48–64 px / ≤ 128 px |
 
-## 3. Hình khối theo vùng
+## 3. Thống nhất giữa các map, khác biệt theo vùng
+
+Mọi map phải trông như **cùng một thế giới, cùng một tay vẽ**. Vùng nào cũng chỉ được khác nhau ở **hình khối, màu và đồ vật**. Góc nhìn, tỉ lệ, ánh sáng và cách vẽ thì giống nhau ở mọi map.
+
+### 3.1 Luật chung cho mọi map
+
+- **Cùng góc camera, cùng tỉ lệ.** Một cái cây ở Ẩn Giới và một cái cây ở Làng Hồ Lặng phải vẽ cùng độ chếch: tỉ lệ thân/tán như nhau, gốc cây chạm đất ở cùng cách. Không map nào được "phẳng" hơn hay "nghiêng" hơn map khác.
+- **Nhân vật là thước đo.** Mọi vật đều đo theo chiều cao nhân vật (~42 px):
+
+| Vật | Cao (px) | So với nhân vật |
+| --- | --- | --- |
+| Cỏ, hoa, đá nhỏ | 8–16 | Tới mắt cá / gối |
+| Bụi cây, hàng rào | 24–32 | Tới hông / ngực |
+| Cây thường | 64–96 | 1,5–2,5 người |
+| Cây lớn, cây cổ thụ | 128–160 | 3–4 người |
+| Cột điện | 128 | 3 người |
+| Cây Mẹ | Ngoại lệ duy nhất; không bao giờ thấy trọn trong một khung hình | — |
+
+- **Cùng mật độ chi tiết.** Cùng độ phân giải pixel, cùng số mảng sáng–tối trên một vật (3–4 mảng), cùng kiểu outline 1 px màu theo chất liệu. Không map nào vẽ mịn hơn hay thô hơn hẳn.
+- **Cùng ánh sáng.** Sáng từ trên-trái, bóng ngả phải-dưới, bóng là sprite riêng màu tím mờ, ở mọi map. Ánh sáng riêng của từng vùng (tia nắng xiên ở Ẩn Giới, đèn mỏ...) chỉ **cộng thêm** vào, không đổi hướng sáng chính.
+- **Chung lõi màu.** Mỗi vùng có palette riêng nhưng bắt buộc dùng chung: màu bóng `#2E2A4A`, linh năng, tím vật thể lạ, màu UI, bộ màu da/tóc nhân vật.
+- **Nhân vật nổi trên mọi nền.** Nhân vật, NPC, Tinh Linh, dị thú phải tách khỏi mặt đất ở mọi map và mọi giờ (đặc biệt ở Rừng Sâu và ban đêm). Nếu không tách được thì chỉnh màu nền chứ không vẽ lại nhân vật cho riêng map đó.
+
+### 3.2 Đồ vật và cây theo họ
+
+- **Một loại vật = một họ asset.** Cây, đá, hàng rào, đèn, ghế... vẽ một **mẫu gốc** rồi tạo biến thể theo vùng (đổi màu, thêm rêu/gỉ/dây leo/hoa văn), không vẽ lại từ đầu. Ví dụ: cột điện ở làng → bản gỉ có dây leo ở Bìa Rừng; cây sồi ở làng → bản tán dày, tối hơn ở Rừng Sâu → bản có lá phát sáng ở Ẩn Giới.
+- Tên file thể hiện họ: `hl_flora_cay_soi_a` → `rs_flora_cay_soi_toi` → `ag_flora_cay_soi_linh`.
+- **Người và Tinh Linh khác nhau theo quy tắc hai tộc** (mục 3.4), nhưng vẫn cùng góc nhìn, tỉ lệ và cách tô bóng. Nhìn ghế gỗ sống của Tinh Linh cạnh ghế nhựa của Người phải thấy đó là hai món đồ trong cùng một game.
+
+### 3.3 Chỗ nối giữa các map
+
+- **Mép map nối liền.** Hai map cạnh nhau dùng chung tile ở dải mép (khoảng 3–4 ô): đường, cỏ, tường rào nhìn từ hai phía phải khớp nhau.
+- **Chuyển dần, không cắt cụt.** Càng gần ranh giới, đồ của vùng bên kia càng xuất hiện nhiều hơn: gần tường rào thì cỏ cao và gỉ sét lấn vào làng; quanh Cổng Ẩn Giới thì lồng đèn lá, dây leo lẫn vào Quảng trường; phía Ẩn Giới gần Cổng có vài món đồ của Người (biển báo, ghế nhựa).
+- Một vật mốc lớn nên **thấy được từ map bên cạnh** (ví dụ ngọn Cây Mẹ ló sau Cổng, tháp Trạm nhô sau rừng) để người chơi cảm thấy các map là một thế giới liền mạch.
+
+### 3.4 Hình khối theo vùng
 
 | Vùng | Hình khối chủ đạo |
 | --- | --- |
@@ -46,7 +81,7 @@ Mượn từ Eastward **phần hình ảnh**, không mượn lối chơi phiêu 
 | Rừng Sâu | Tròn hữu cơ nhưng rối, tán chồng tầng, tối |
 | Trạm Thiên Mạch | Vuông lạnh; vật thể lạ là lục giác, đường thẳng tuyệt đối |
 
-**Quy tắc hai tộc:** đồ của Người có **góc vuông, kim loại, nhựa, chữ in**. Đồ của Tinh Linh có **đường cong, gỗ sống, lá, dây leo, ký hiệu vẽ tay**. Ở vùng giữa, hai kiểu này đặt cạnh nhau để kể chuyện.
+**Quy tắc hai tộc** (vẫn theo luật chung ở 3.1)**:** đồ của Người có **góc vuông, kim loại, nhựa, chữ in**. Đồ của Tinh Linh có **đường cong, gỗ sống, lá, dây leo, ký hiệu vẽ tay**. Ở vùng giữa, hai kiểu này đặt cạnh nhau để kể chuyện.
 
 ## 4. Màu
 
@@ -175,6 +210,7 @@ Một góc **Làng Hồ Lặng** khoảng 30×17 ô, chạy trong Godot:
 - 5 người chưa biết dự án nhìn ảnh chụp nói được "Người" và "Tinh Linh" là ai trong ≤ 3 giây.
 - Phân biệt được Tinh Linh với dị thú ngay lần đầu nhìn.
 - Avatar đọc rõ ở ×2 trên điện thoại 6".
+- **Ghép thử:** đặt cạnh nhau trên một ảnh 1 cây, 1 đồ vật, 1 nhân vật của làng và bản biến thể Ẩn Giới / Rừng Sâu (vẽ phác). Người xem phải thấy chúng thuộc cùng một game, khác vùng chứ không khác tay vẽ.
 - Ảnh chụp buổi tối đặt cạnh ảnh Eastward: thấy "cùng họ ánh sáng" nhưng là một thế giới riêng.
 - Ghi lại thời gian vẽ 1 nhà + normal map, 1 bộ quần áo, 1 bộ tai/đuôi/dạng thú để ước tính chi phí cả game.
 
