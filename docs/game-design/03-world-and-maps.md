@@ -5,17 +5,23 @@
 Thế giới chương 1 chia làm **ba khu**:
 
 ```text
-                     ┌──────────────────────────┐
-                     │   KHU TINH LINH          │
-                     │   (Ẩn Giới, Cây Mẹ ★)     │
-                     └────────────▲─────────────┘
-                                  │  Cổng Ẩn Giới
-                                  │  (đặt trong khu Người)
-┌─────────────────────────────────┴──────┐  tường  ┌──────────────────────────────┐
-│   KHU NGƯỜI                            │  rào /  │   KHU RỪNG QUÁI              │
-│   Làng Hồ Lặng + thị trấn              │ ◄─cổng─►│   bìa rừng → rừng sâu         │
-│   (nhà, vườn, hồ, chợ, Trạm Viện)       │  chốt   │   mỏ bỏ hoang, Trạm Thiên Mạch │
-└────────────────────────────────────────┘         └──────────────────────────────┘
+                         ┌───────────────────────────┐
+                         │  RỪNG SÂU (núi, nguồn sông) │──► Trạm Thiên Mạch (dưới núi)
+                         └─────────────┬─────────────┘
+ ┌──────────────┐  đường núi           │ lối mòn kiểm lâm
+ │ MỎ BỎ HOANG  │◄──────────────►──────┘
+ │ (+ Hầm Mỏ)   │                ┌─────────────┴─────────────┐
+ │              │◄── đường xe ──►│  BÌA RỪNG          ≈ sông │   KHU RỪNG QUÁI
+ └──────────────┘                └─────────────┬─────────────┘
+ ═══════════════════════ TƯỜNG RÀO ════ [Chốt] ═╪═══════ ≈ ════════════════
+                                 ┌─────────────┴─────────────┐   KHU NGƯỜI
+           ┌──────────┐          │  LÀNG HỒ LẶNG       ≈ sông│──► trạm buýt → Thăng Long
+           │ Nhà riêng│◄─ cửa ──►│  (Cổng Ẩn Giới ở giữa)    │     (sau chương 1)
+           └──────────┘          └─────────────┬─────────────┘
+                                               │ Cổng Ẩn Giới (không nằm trên mặt đất)
+                                 ┌─────────────┴─────────────┐
+                                 │  ẨN GIỚI — Vườn Cây Mẹ    │   KHU TINH LINH
+                                 └───────────────────────────┘
 ```
 
 | Khu | Là gì | Cảm giác | Ai sống | Có quái |
@@ -25,7 +31,8 @@ Thế giới chương 1 chia làm **ba khu**:
 | **Khu Tinh Linh** | Một mảnh **Ẩn Giới**, vào qua cổng ở giữa khu Người | Dịu, sáng, lạ, như trong mơ | Tinh Linh | Không |
 
 Ý tưởng chính:
-- **Khu Người** và **Khu Rừng Quái** nằm cạnh nhau, ngăn bằng một **tường rào có chốt gác**. Đi bộ qua chốt là sang rừng.
+- **Khu Rừng Quái nằm phía bắc Khu Người**, ngăn bằng một **tường rào có chốt gác** chạy ngang mép bắc làng. Đi bộ qua chốt là sang Bìa Rừng; càng lên bắc càng sâu vào núi.
+- **Một con sông** chảy từ núi Rừng Sâu xuống qua Bìa Rừng, chui qua cống dưới tường rào rồi chảy dọc mép đông làng. Đây là sợi chỉ nối các map với nhau.
 - **Khu Tinh Linh** không nằm trên cùng mặt đất. Đêm Linh Chấn, một vết rách của màn che mở ra **ngay trong làng**; người ta dựng quanh nó một cái cổng có canh gác, gọi là **Cổng Ẩn Giới**. Bước qua cổng là sang thế giới của Tinh Linh.
 - Vì cổng nằm giữa làng, Người và Tinh Linh **buộc phải sống cạnh nhau**. Đây là nguồn của mọi căng thẳng và mọi tình bạn trong chương 1.
 
@@ -40,15 +47,18 @@ Thế giới chương 1 chia làm **ba khu**:
 
 Chương 1 chỉ dùng các map dưới đây. Giữ ID đã có trong `server/data/life_world.json`; thêm một map mới cho Ẩn Giới.
 
-| Khu | ID | Tên hiển thị | Vai trò |
-| --- | --- | --- | --- |
-| Người | `m_lang_que` | **Làng Hồ Lặng** | Toàn bộ khu Người: làng, hồ, thị trấn, Cổng Ẩn Giới |
-| Rừng Quái | `m_vanh_dai_tay` | **Bìa Rừng** | Dải đệm ngay sau tường rào: trạm gác, bãi săn đầu tiên |
-| Rừng Quái | `m_ba_vi` | **Rừng Sâu** | Rừng chính, quái mạnh hơn |
-| Rừng Quái | `m_mo_lo_thien` | **Mỏ Bỏ Hoang** | Mỏ lộ thiên cũ trong rừng |
-| Rừng Quái | `m_mo_ngam` | **Hầm Mỏ** | Hầm dưới mỏ, B1 mở, B2 đóng |
-| Rừng Quái | `m_tram_thien_mach` | **Trạm Thiên Mạch** | Trạm nghiên cứu dưới núi, boss chương 1 |
-| Tinh Linh | `m_an_gioi` *(mới)* | **Ẩn Giới — Vườn Cây Mẹ** | Nhà và điểm bắt đầu của Tinh Linh |
+**Game online: mỗi map tối đa 30 người chơi một kênh**; đầy thì mở kênh mới (bản sao map). Kích thước từng map tính theo con số này, xem [10](10-kich-thuoc-map-online.md).
+
+| Khu | ID | Tên hiển thị | Kích thước (ô) | Vai trò |
+| --- | --- | --- | --- | --- |
+| Người | `m_lang_que` | **Làng Hồ Lặng** | 160×120 | Toàn bộ khu Người: làng, hồ, thị trấn, Cổng Ẩn Giới |
+| Người | `m_nha` | **Nhà riêng** | 32×24 | Nhà + vườn 12 luống của từng người chơi, mỗi người một bản |
+| Rừng Quái | `m_vanh_dai_tay` | **Bìa Rừng** | 176×128 | Dải đệm ngay sau tường rào: trạm gác, bãi săn đầu tiên |
+| Rừng Quái | `m_ba_vi` | **Rừng Sâu** | 192×144 | Rừng chính, quái mạnh hơn |
+| Rừng Quái | `m_mo_lo_thien` | **Mỏ Bỏ Hoang** | 128×112 | Mỏ lộ thiên cũ trong rừng |
+| Rừng Quái | `m_mo_ngam` | **Hầm Mỏ** | 112×80 | Hầm dưới mỏ, B1 mở, B2 đóng |
+| Rừng Quái | `m_tram_thien_mach` | **Trạm Thiên Mạch** | 96×80 | Trạm nghiên cứu dưới núi, boss chương 1 |
+| Tinh Linh | `m_an_gioi` *(mới)* | **Ẩn Giới — Vườn Cây Mẹ** | 128×96 | Nhà và điểm bắt đầu của Tinh Linh |
 
 Để sau chương 1: `m_thang_long` (thành phố lớn) và `m_cang_dong_bac` (cảng). Không dựng trong chương 1.
 
@@ -58,6 +68,7 @@ Chương 1 chỉ dùng các map dưới đây. Giữ ID đã có trong `server/d
 | --- | --- | --- |
 | **Cổng Ẩn Giới** *(mới)* | Làng Hồ Lặng ↔ Ẩn Giới | Mở. Tinh Linh qua tự do; Người qua được sau hồi A |
 | `ln_lang_vanh` — **Chốt Tường Rào** | Làng Hồ Lặng ↔ Bìa Rừng | Mở |
+| `ln_lang_nha` — **Cửa nhà** | Làng Hồ Lặng ↔ Nhà riêng | Mở; mỗi người vào bản nhà của mình |
 | `ln_vanh_rung` | Bìa Rừng ↔ Rừng Sâu | Mở |
 | `ln_vanh_mo` | Bìa Rừng ↔ Mỏ Bỏ Hoang | Mở |
 | `ln_mo_rung` | Mỏ Bỏ Hoang ↔ Rừng Sâu | Mở |
@@ -65,7 +76,33 @@ Chương 1 chỉ dùng các map dưới đây. Giữ ID đã có trong `server/d
 | `ln_ngam_rung` | Hầm Mỏ ↔ Rừng Sâu | 🔒 Hồi D |
 | `ln_rung_tram` | Rừng Sâu ↔ Trạm Thiên Mạch | 🔒 Hồi E |
 
-Không dùng trong chương 1: `ln_lang_thang`, `ln_vanh_thang`, `ln_thang_cang`.
+Không dùng trong chương 1: `ln_lang_thang` (khóa), `ln_thang_cang`. Cao tốc gãy ở mép đông Bìa Rừng chỉ là cảnh nền, không có cổng.
+
+### Ghép map thành một thế giới
+
+Các map ngoài trời là những mảnh **nằm cạnh nhau trên cùng một mặt đất**. Đi ra mép nào của map này thì vào đúng mép đối diện của map bên cạnh, ở cùng vị trí ngang hoặc dọc. Tọa độ thế giới (ô) của góc trên-trái mỗi map, lấy Bìa Rừng làm gốc:
+
+| Map | Góc trên-trái | Giáp với |
+| --- | --- | --- |
+| Bìa Rừng | (0, 0) | bắc: Rừng Sâu · nam: Làng (qua tường) · tây: Mỏ |
+| Làng Hồ Lặng | (−5, 128) | bắc: Bìa Rừng · đông: Thăng Long (sau chương 1) |
+| Rừng Sâu | (2, −144) | nam: Bìa Rừng · tây: Mỏ (phần trên) |
+| Mỏ Bỏ Hoang | (−128, −59) | đông: Bìa Rừng (phần dưới) và Rừng Sâu (phần trên) |
+| Thăng Long | (155, 134) | tây: Làng |
+
+Hầm Mỏ nằm **dưới** Mỏ, Trạm nằm **dưới** núi Rừng Sâu, Ẩn Giới và Nhà riêng **không nằm trên mặt đất**; các map này không cần khớp mép.
+
+**Những thứ phải khớp qua mép map:**
+
+| Chỗ nối | Bên này | Bên kia |
+| --- | --- | --- |
+| Sông | Rừng Sâu ra mép nam ở x 148 | Bìa Rừng vào mép bắc ở x 150 (cùng một điểm trên thế giới) |
+| Sông | Bìa Rừng ra mép nam ở x 143 | Làng vào mép bắc ở x 148 |
+| Tường rào | Làng: dải y 0–4, Chốt ở x 92 | Bìa Rừng: dải y 124–128 (mặt ngoài), Chốt ở x 87 |
+| Lối mòn | Bìa Rừng mép bắc x 95 | Rừng Sâu mép nam x 93 |
+| Đường xe cũ | Bìa Rừng mép tây y 31 | Mỏ mép đông y 90 |
+| Đường núi | Mỏ mép đông y 25 | Rừng Sâu mép tây y 110 |
+| Đường nhựa | Làng mép đông y 66 (trạm buýt) | Thăng Long mép tây y 60 |
 
 ## 4. Khu Người — Làng Hồ Lặng (`m_lang_que`)
 
@@ -75,11 +112,11 @@ Không dùng trong chương 1: `ln_lang_thang`, `ln_vanh_thang`, `ln_thang_cang`
 
 | Phần | Có gì |
 | --- | --- |
-| **Xóm nhà** | Nhà người chơi + vườn, nhà bà Nora, ngõ nhỏ, sân phơi |
-| **Hồ Lặng** | 4 bến câu, cầu gỗ, quán nước dưới gốc cây lớn |
-| **Ruộng vườn** | 12 luống thảo dược, ruộng, nhà kính nhỏ |
+| **Xóm nhà** | **Cửa nhà** dẫn vào nhà riêng của người chơi, nhà bà Nora, ngõ nhỏ, sân phơi |
+| **Hồ Lặng** | 12 bến câu (sàn gỗ bờ bắc, cầu gỗ chìa ra hồ, bờ đông), quán nước dưới gốc cây lớn |
+| **Ruộng vườn** | Ruộng, nhà kính nhỏ (trang trí, NPC làm đồng); luống của người chơi ở nhà riêng |
 | **Thị trấn** | Chợ phiên, cửa hàng tiện lợi, xưởng rèn của Doran, trạm xe buýt, **Trạm Viện** (văn phòng của Viện Linh học, nơi Tiến sĩ Theo làm việc) |
-| **Đồi miếu** | Miếu cổ, sân thiền |
+| **Đồi miếu** | Miếu cổ, sân thiền 8 chỗ ngồi |
 | **Quảng trường Cổng** | **Cổng Ẩn Giới** ở giữa, chốt gác của Người, góc chợ Tinh Linh (nấm, mật, bùa lá) |
 | **Tường rào** | Tường bê tông + lưới, **Chốt Tường Rào** có đèn pha, biển "Phía sau là khu nguy hiểm" |
 
@@ -111,10 +148,10 @@ Không dùng trong chương 1: `ln_lang_thang`, `ln_vanh_thang`, `ln_thang_cang`
 
 ### 5.2 Mỏ Bỏ Hoang và Hầm Mỏ — `m_mo_lo_thien`, `m_mo_ngam`
 
-- **Vai trò:** mỏ cũ bị bỏ sau Linh Chấn; chú Bram vẫn quay lại khai thác các vỉa nông. Đào khoáng ở 2 vỉa trên và 2 vỉa B1.
+- **Vai trò:** mỏ cũ bị bỏ sau Linh Chấn; chú Bram vẫn quay lại khai thác các vỉa nông. Đào khoáng ở 8 vỉa trên và 6 vỉa B1.
 - **Cảm giác:** bậc đá đỏ, máy xúc gỉ, lán thợ cũ; dưới hầm tối, ẩm, đèn mỏ vàng, tiếng "ù" xa.
 - **Có gì:** lán thợ (điểm dừng an toàn), giếng thang máy, đường ray goòng, cửa sắt B2 bị hàn, hầm cũ nối Rừng Sâu (khóa).
-- **Linh năng:** mức 1 ở mỏ trên; mức 2 dưới hầm, vân linh mạch chạy thẳng tắp; mảnh vật liệu tím đầu tiên.
+- **Linh năng:** mức 1 ở mỏ trên; mức 2 dưới hầm, vân linh mạch chạy thẳng tắp về phía bắc (hướng Trạm); mảnh vật liệu tím đầu tiên.
 - **Quái:** Nhện Tơ Điện, Rết Đá (mỏ trên); Dơi Vân Quặng, Nhện Mẹ (hầm).
 - **Truyện:** hồi C.
 
@@ -130,11 +167,12 @@ Không dùng trong chương 1: `ln_lang_thang`, `ln_vanh_thang`, `ln_thang_cang`
 
 ### 5.4 Trạm Thiên Mạch — `m_tram_thien_mach`
 
-- **Vai trò:** trạm nghiên cứu dưới núi, boss chương 1.
-- **Cảm giác:** im lặng, đèn chập chờn, nhịp xung đều.
-- **Có gì:** hành lang bê tông, phòng máy, phòng lưu trữ có logo cũ của Viện, phòng có lồng giam trống, cỗ máy đã xé màn che với lõi vẫn chạy.
+- **Vai trò:** trạm nghiên cứu dưới núi của dự án **Thiên Mạch** (Viện Linh học), boss chương 1. **Map chung 30 người** như các map khác: đánh boss là trận đông người.
+- **Cảm giác:** im lặng, đèn chập chờn, nhịp xung đều. Bị niêm phong từ sáng sau Linh Chấn: cửa hàn, giấy niêm phong, bàn ghế còn nguyên như người ta bỏ đi vội.
+- **Có gì:** hành lang bê tông, phòng máy có **vách sập** thông ra hang núi (lối dị thú vào), kho bị chuột gặm, phòng lưu trữ có logo cũ của Viện và hồ sơ "rơi từ trời", phòng lồng giam trống (từ **trước** Linh Chấn), Phòng Lõi với cỗ máy đã xé màn che, lõi vẫn chạy.
+- **Lõi trong thế giới chung:** luôn chạy. Khi một người chơi chọn **Ngắt lõi**, cả kênh thấy lõi tắt và nhịp 47 giây ngừng trong **47 phút**; sau đó lõi tự khởi động lại và gấu quay về. Lựa chọn Ngắt/Sao dữ liệu chỉ ghi vào câu chuyện của riêng người đó ([02](02-story.md) hồi E).
 - **Linh năng (mức 3 + X):** vật liệu tím hình lục giác, không có bóng, nhấp nháy theo nhịp 47 giây.
-- **Quái:** Chuột Tím; boss Thủ Lĩnh Mạch Gãy (gấu núi nhiễm linh năng nặng).
+- **Quái:** Chuột Tím (đàn đông, xung 47 giây); boss Thủ Lĩnh Mạch Gãy (gấu núi nhiễm linh năng nặng).
 - **Truyện:** hồi E.
 
 ## 6. Khu Tinh Linh — Ẩn Giới (`m_an_gioi`, map mới)
@@ -170,6 +208,8 @@ Làng Hồ Lặng là trung tâm: mọi chuyến đi xuất phát và quay về 
 Bố cục chi tiết từng map (tọa độ, khu, đường đi): [05](05-map-layouts.md). Quái: [06](06-monsters.md).
 
 ## 8. Quy tắc dựng map
+
+- **Mép map phải khớp** với map bên cạnh theo bảng "Ghép map thành một thế giới" ở §3: sông, đường, tường, rừng chảy liền qua mép; dải 3–4 ô sát mép dùng chung tile ([04](04-map-art.md) §3.3). Kiểm tra bằng cách ghép các map theo tọa độ thế giới.
 
 - **Nền vẽ theo lớp, không ghép toàn bộ từ tile.** Tile chỉ dùng cho mặt đường, sàn, luống lặp.
 - Mỗi vật tương tác (cây, ghế, cửa, bến câu, luống, cổng) là **đối tượng riêng** có ID, trạng thái và điểm đứng.

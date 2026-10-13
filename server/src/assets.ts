@@ -73,16 +73,13 @@ function uniqueStrings(value: unknown): boolean {
 }
 // Shape checks for fields owned by later systems. Unknown extra keys are kept
 // (released migrations preserve them); each module still validates deeply on use.
+// Progress kept only for the retired An Khê prototype route (quest chain, its
+// insight/technique rewards and resource nodes); dropped on load.
+const RETIRED_CHARACTER_FIELDS = ["worldQuests", "insightFlags", "learnedTechniques", "resourceGatheredAt"];
+function dropRetiredFields(state: CharacterState): void {
+  for (let i = 0; i < RETIRED_CHARACTER_FIELDS.length; i++) delete state[RETIRED_CHARACTER_FIELDS[i]];
+}
 function validateOptionalFields(state: CharacterState): void {
-  const gathered = state.resourceGatheredAt;
-  if (gathered !== undefined && (!plainObject(gathered) ||
-      Object.keys(gathered).some(function (key) { return !assetInteger(gathered[key], 0, LIFE_TIME_LIMIT); }))) invalidCharacter();
-  if (state.insightFlags !== undefined && !uniqueStrings(state.insightFlags)) invalidCharacter();
-  if (state.learnedTechniques !== undefined && !uniqueStrings(state.learnedTechniques)) invalidCharacter();
-  const quests = state.worldQuests;
-  if (quests !== undefined && (!plainObject(quests) || quests.schemaVersion !== 1 || typeof quests.currentQuestId !== "string" ||
-      !uniqueStrings(quests.completed) || !plainObject(quests.objectives) ||
-      Object.keys(quests.objectives).some(function (key) { return typeof quests.objectives[key] !== "boolean"; }))) invalidCharacter();
   const session = state.activitySession;
   if (session !== undefined && (!plainObject(session) || session.schemaVersion !== 1 || typeof session.sessionId !== "string")) invalidCharacter();
   const plots = state.gardenPlots;
@@ -98,7 +95,7 @@ function migrateCharacter(value: {[key: string]: any}, userId: string): Characte
   if (value.schemaVersion === 4) {
     const next=JSON.parse(JSON.stringify(value)) as CharacterState;
     if(next.form===undefined) next.form=defaultPlayerForm();
-    validateCharacter(next); return next;
+    dropRetiredFields(next); validateCharacter(next); return next;
   }
   if (value.schemaVersion === 3) {
     const next = JSON.parse(JSON.stringify(value)) as CharacterState;
@@ -106,7 +103,7 @@ function migrateCharacter(value: {[key: string]: any}, userId: string): Characte
     next.form = defaultPlayerForm();
     next.equippedSkills = next.equippedSkills || {active_1: ""};
     next.learnedSkills = next.learnedSkills || [];
-    validateCharacter(next);
+    dropRetiredFields(next); validateCharacter(next);
     return next;
   }
   if (value.schemaVersion === 2) {
@@ -621,13 +618,13 @@ const economyActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payl
   if (!assetInteger(quantity, 1, 10)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Quantity must be 1–10");
   const details: {[key: string]: unknown} = {itemId: itemId, quantity: quantity};
   if (action === "buy" || action === "sell") {
-    requireServicePosition(nk, userId, "ak.market.village");
+    requireServicePosition(nk, userId, "lq.shop.market");
     const content = contentEnsure(nk), prices = action === "buy" ? content.buy : content.sell;
     const price = contentHas(prices, itemId) ? prices[itemId] : undefined;
     if (price === undefined || (action === "buy" && catalogItem(itemId).instance) || catalogItem(itemId).bound) return fail(nkruntime.Codes.FAILED_PRECONDITION, "This item is not available at the shop");
     details.price = price;
     return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "shop_" + action, details, function (next) {
-      lifeEnsureIdle(next,Date.now());requireServicePosition(nk,userId,"ak.market.village");
+      lifeEnsureIdle(next,Date.now());requireServicePosition(nk,userId,"lq.shop.market");
       const total = price * (quantity as number);
       if (action === "buy") {
         if (next.spiritStones < total) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Not enough linh thạch");
@@ -640,12 +637,12 @@ const economyActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payl
     }));
   }
   if (action === "craft") {
-    requireServicePosition(nk, userId, "ak.service.do_khe");
+    requireServicePosition(nk, userId, "lq.npc.doran");
     const recipes = contentEnsure(nk).recipes;
     if (!contentHas(recipes, input.recipeId)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Unknown recipe");
     const recipe = recipes[input.recipeId as string]; details.recipeId = input.recipeId;
     return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "craft", details, function (next) {
-      lifeEnsureIdle(next,Date.now());requireServicePosition(nk,userId,"ak.service.do_khe");
+      lifeEnsureIdle(next,Date.now());requireServicePosition(nk,userId,"lq.npc.doran");
       if (next.spiritStones < recipe.fee * (quantity as number)) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Not enough linh thạch for crafting");
       for (const ingredient in recipe.ingredients) economyRemove(next, ingredient, recipe.ingredients[ingredient] * (quantity as number));
       next.spiritStones -= recipe.fee * (quantity as number);
@@ -657,23 +654,6 @@ const economyActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payl
 const gardenActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payload) {
   return lifeGardenAction(ctx,nk,payload);
 };
-function gatherWorldResource(nk: nkruntime.Nakama, userId: string, entityId: string): JsonObject {
-  const sources: {[id: string]: {itemId: string; quantity: number}} = {
-    "ta.node.cam_lo": {itemId: "it_herb_cam_lo", quantity: 2},
-    "tc.node.iron_ore": {itemId: "it_iron", quantity: 2}
-  };
-  const source = sources[entityId];
-  if (!source) return fail(nkruntime.Codes.FAILED_PRECONDITION, "This resource node is not harvestable");
-  const now = Date.now(), window = Math.floor(now / 30000);
-  const operationId = "gather_" + entityId.replace(/[^a-zA-Z0-9_-]/g, "_") + "_" + window;
-  return commitAssetMutation(nk, userId, operationId, "gather", {entityId: entityId, window: window}, function (next) {
-    const cooldowns = next.resourceGatheredAt && typeof next.resourceGatheredAt === "object" ? next.resourceGatheredAt : {};
-    const last = cooldowns[entityId] || 0;
-    if (now - last < 60000) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "This resource node needs time to recover");
-    economyAdd(next, source.itemId, source.quantity, nk);
-    cooldowns[entityId] = now; next.resourceGatheredAt = cooldowns;
-  });
-}
 function saveCharacterHp(nk: nkruntime.Nakama, userId: string, hp: number): CharacterState {
   if (!assetInteger(hp, 0, 100)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid checkpoint health");
   for (let attempt = 0; attempt < 5; attempt++) {

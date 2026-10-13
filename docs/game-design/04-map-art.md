@@ -230,3 +230,40 @@ Một góc **Làng Hồ Lặng** khoảng 30×17 ô, chạy trong Godot:
 - Chỉ dùng asset có license thương mại; lưu license ở `client/assets/LICENSES/`.
 - AI tạo ảnh: chỉ dùng cho moodboard nội bộ. Asset đưa vào game phải do người vẽ hoặc chỉnh sửa đáng kể, có ghi chú.
 - Không dùng logo, thương hiệu thật.
+
+## 13. Bộ mô tả phong cách (concept AI và brief họa sĩ)
+
+Dùng chung cho mọi ảnh concept tạo bằng AI (§12: chỉ làm moodboard nội bộ) và để giao việc cho họa sĩ. **Không ghi tên game hay tên studio vào lệnh tạo ảnh**; chỉ tả đặc điểm muốn mượn từ các tham chiếu ở §1. Lệnh viết bằng tiếng Anh vì model hiểu tốt hơn. Ảnh lưu ở `docs/game-design/concept/` và trang "Concept AI" trong Figma.
+
+**Đã chốt (14/10/2026):** chủ dự án chọn hướng nhìn của ảnh [`concept/lang-ho-lang-toan-canh-v2.png`](concept/lang-ho-lang-toan-canh-v2.png) (tạo bằng bộ mô tả này) làm mốc cho mọi map: chi tiết dày, dây điện chằng chịt, cửa sổ sáng đèn, màu dịu và đều. Bản v1 chỉ để tham khảo.
+
+### 13.1 Khối chung (đặt đầu mọi lệnh)
+
+```text
+Detailed hand-placed pixel art game map, 32px tiles. Straight top-down 3/4 camera:
+rooftops seen from above with a short front facade, everything on a square grid,
+no isometric diamond, no side view. Light from the top-left, soft cool purple shadows
+falling to the bottom-right, 1px dark outlines tinted by material (never pure black),
+3-4 tone shading per object, dense lived-in detail, harmonious limited palette.
+Turquoise glow is reserved for spirit energy; purple hexagons only for the unknown
+material. No text, no UI, no logos, no real-country architecture, no palace roofs.
+```
+
+### 13.2 Khối theo vùng
+
+| Vùng | Mượn tinh thần từ (§1) | Khối mô tả |
+| --- | --- | --- |
+| Làng Hồ Lặng | đời sống ấm cúng; đồ vật kể chuyện | `golden afternoon, warm cozy rural-suburban life, orange and red tiled roofs, fenced yards with vegetable patches, laundry lines, scooters, bundled power lines on utility poles, vending machines, soft warm point lights` |
+| Thị trấn trong làng | phố chật, đồ đời sống, đèn điểm | `dense small-town streets, 2-3 storey flat-roof buildings with water tanks and AC units, striped awnings, shop signs as colored blocks, tangled overhead wires, warm window glow` |
+| Bìa Rừng | thiên nhiên nuốt công nghệ | `wild windy buffer zone beyond a concrete wall, tall grass, abandoned rice fields, rusted trucks and containers swallowed by vines, broken highway, a hunters' camp, faint glowing mist, cooler palette than the village` |
+| Rừng Sâu | thiên nhiên nuốt công nghệ, tinh linh rừng | `ancient layered forest, giant ferns, mossy boulders, dense fog in hollows, faintly glowing mushrooms, cliffs and waterfalls, dark greens with cold highlights` |
+| Mỏ, Hầm Mỏ | — | `terraced red-rock open pit, rusted excavators and conveyor belts, miners' shack with warm lamps; underground: dark tunnels, yellow mine lamps, straight glowing ore veins` |
+| Ẩn Giới | thiên nhiên trùm công nghệ; pixel + ánh sáng | `dreamlike spirit garden around a colossal mother tree, translucent leaves, slanted god rays through the canopy, fireflies, homes inside tree hollows and on branches, rope bridges, no straight lines or right angles, soft jade sky` |
+| Trạm Thiên Mạch | pixel + ánh sáng | `sealed underground research station, cold concrete corridors, flickering emergency lights, empty cages, a humming machine core, hexagonal purple crystals casting no shadow` |
+
+### 13.3 Cách viết một lệnh
+
+1. Khối chung (13.1).
+2. Khối vùng (13.2).
+3. Bố cục lấy từ [05](05-map-layouts.md), tả theo hướng bắc–nam–đông–tây, kèm những gì phải khớp qua mép map ([03](03-world-and-maps.md) §3: sông, tường, đường).
+4. Giờ và thời tiết theo §5 nếu cần.

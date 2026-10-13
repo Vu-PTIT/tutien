@@ -74,7 +74,7 @@ Hạ dị thú cho nhiều linh năng nhưng **đục**, mang vị theo loài (x
 ### 1. Gà Rừng Mào Sét — cấp 1
 
 - **Hình:** gà rừng to cỡ chó nhỏ, mào và đuôi có tia sáng ngọc lam nhấp nháy.
-- **Nhóm:** 3–4 con, ruộng hoang Bìa Rừng.
+- **Nhóm:** 4 con, ruộng hoang Bìa Rừng.
 - **Hành vi:** chạy vòng quanh người chơi; **mổ lao** ngắn (lùi người, xù lông báo đòn 0,9 giây). Còn 1 con thì bỏ chạy.
 - **Dạy:** quan sát nhiều mục tiêu, không bị vây.
 - **Máu / sát thương / tốc độ:** 2 nhát / 6% / 1,3.
@@ -83,7 +83,7 @@ Hạ dị thú cho nhiều linh năng nhưng **đục**, mang vị theo loài (x
 ### 2. Lợn Gai — cấp 1
 
 - **Hình:** heo rừng lưng mọc gai đá có vân sáng; to gần bằng người.
-- **Nhóm:** 1–2 con, đồng cỏ Bìa Rừng.
+- **Nhóm:** 2 con, đồng cỏ Bìa Rừng.
 - **Hành vi:** **gầm** (cúi đầu, chân cào đất, 1,0 giây) → **lao thẳng** 4 ô → **đứng thở** 1,2 giây. Lao trúng cây/xe tải thì choáng thêm 1 giây.
 - **Dạy:** né ngang, đánh khi nó thở; dẫn nó lao vào vật cản.
 - **Máu / sát thương / tốc độ:** 4 nhát / 12% / 0,8 (khi lao 3,0).
@@ -92,7 +92,7 @@ Hạ dị thú cho nhiều linh năng nhưng **đục**, mang vị theo loài (x
 ### 3. Nhện Tơ Điện — cấp 1–2
 
 - **Hình:** nhện chân dài cỡ con mèo, bụng có vạch sáng; tơ phát sáng xanh lam.
-- **Nhóm:** 2–3 con; Bìa Rừng (giữa các xe tải), Mỏ (bãi máy), Hầm (Hầm Tây).
+- **Nhóm:** 3 con; Bìa Rừng (giữa các xe tải), Mỏ (bãi máy), Hầm (Hầm Tây).
 - **Hành vi:** giăng **lưới tơ** trên đất (vùng 2×2 ô, tồn tại 8 giây, đi vào bị chậm 50%); **cắn** khi đứng cạnh (báo đòn 0,8 giây, giơ hai chân trước). Bám tường, leo lên xe tải.
 - **Dạy:** đọc mặt đất, tránh vùng tơ, đánh từ bên hông.
 - **Máu / sát thương / tốc độ:** 3 nhát / 8% / 1,1.
@@ -101,7 +101,7 @@ Hạ dị thú cho nhiều linh năng nhưng **đục**, mang vị theo loài (x
 ### 4. Rết Đá — cấp 2
 
 - **Hình:** rết dài 2 ô, vỏ như đá đỏ, các đốt sáng mờ.
-- **Nhóm:** 1–2 con, Bậc đá ở Mỏ Bỏ Hoang.
+- **Nhóm:** 3 con, Bậc đá ở Mỏ Bỏ Hoang.
 - **Hành vi:** **chui xuống đất**, đi ngầm; mặt đất **nứt và rung** ở chỗ nó sắp trồi lên (báo đòn 0,8 giây, thấy rõ hơn bằng Máy Quét/Linh Cảm) → **trồi lên cắn** → nằm trên mặt đất 2 giây (hở).
 - **Dạy:** đọc dấu hiệu dưới chân, dùng công cụ cảm nhận.
 - **Máu / sát thương / tốc độ:** 6 nhát / 14% / ngầm 1,4.
@@ -128,7 +128,7 @@ Hạ dị thú cho nhiều linh năng nhưng **đục**, mang vị theo loài (x
 ### 7. Rắn Sương — cấp 3
 
 - **Hình:** rắn dài, thân mờ dần vào sương, chỉ đầu và mắt sáng rõ.
-- **Nhóm:** 1–2 con, Đầm Sương.
+- **Nhóm:** 2–3 con, Đầm Sương.
 - **Hành vi:** **vô hình trong sương** (chỉ thấy gợn sương di chuyển); Máy Quét/Linh Cảm làm nó hiện rõ. **Phóng cắn** từ 3 ô (gợn sương dừng lại 0,6 giây trước). Cắn trúng gây **độc**: mất máu chậm trong 4 giây.
 - **Dạy:** dùng công cụ cảm nhận, kiên nhẫn.
 - **Máu / sát thương / tốc độ:** 5 nhát / 10% + độc 6% / 1,0 (phóng 4,0).
@@ -137,7 +137,7 @@ Hạ dị thú cho nhiều linh năng nhưng **đục**, mang vị theo loài (x
 ### 8. Khỉ Vách Đá — cấp 3
 
 - **Hình:** khỉ tay rất dài, lông xám, khớp tay có tinh thể sáng.
-- **Nhóm:** 2–4 con, Vách Đá ở Rừng Sâu.
+- **Nhóm:** 3 con, Vách Đá ở Rừng Sâu.
 - **Hành vi:** đứng trên gờ đá cao, **ném đá** (vòng tròn đỏ trên đất nơi đá rơi, 0,7 giây); khi người chơi tới chân vách thì **nhảy xuống đập** (vòng tròn lớn hơn) rồi ngồi thở 1,5 giây trước khi leo lại.
 - **Dạy:** tìm chỗ nấp, ép quái xuống đất.
 - **Máu / sát thương / tốc độ:** 6 nhát / đá 10%, đập 16% / 1,1.
@@ -146,7 +146,7 @@ Hạ dị thú cho nhiều linh năng nhưng **đục**, mang vị theo loài (x
 ### 9. Cú Đêm Linh — cấp 3, chỉ ban đêm
 
 - **Hình:** cú lớn, lông xám bạc, khi bay để lại vệt sáng mờ.
-- **Nhóm:** 1–2 con, Tán Cao ở Rừng Sâu; **chỉ xuất hiện từ tối tới sáng**.
+- **Nhóm:** 2 con, Tán Cao ở Rừng Sâu; **chỉ xuất hiện từ tối tới sáng**.
 - **Hành vi:** bay vòng trên cao, **không có tiếng**; trước khi bổ nhào, đôi mắt **sáng lên** trên tán cây và vang một tiếng cú duy nhất (0,6 giây). Bổ xong đậu xuống đất 2 giây.
 - **Dạy:** nghe âm thanh, để ý chu kỳ ngày đêm.
 - **Máu / sát thương / tốc độ:** 4 nhát / 15% / bay 2,0.
@@ -155,17 +155,17 @@ Hạ dị thú cho nhiều linh năng nhưng **đục**, mang vị theo loài (x
 ### 10. Chuột Tím — cấp 4
 
 - **Hình:** chuột cỡ bàn tay, lưng mọc tinh thể tím lục giác. Dị thú duy nhất có **màu tím**: chúng bị nhiễm cả linh năng lẫn vật liệu tím từ lõi máy.
-- **Nhóm:** đàn 6–10, hành lang và phòng máy ở Trạm.
-- **Hành vi:** chạy thành dòng theo hành lang; **cứ 47 giây** cả đàn cùng **phát xung** (lóe tím, đẩy người chơi lùi). Từng con rất yếu, cả đàn thì nguy hiểm.
+- **Nhóm:** đàn 4, sáu đàn rải ở hành lang, phòng máy và kho của Trạm. Vào qua vách sập ở Phòng Máy.
+- **Hành vi:** chạy thành dòng theo hành lang; **cứ 47 giây** cả đàn cùng **phát xung** (lóe tím, đẩy người chơi lùi). Từng con yếu, nhưng xung của cả đàn rất đau: đứng giữa hành lang lúc xung là mất gần một phần năm máu. Nấp vào hốc tường hoặc phòng bên cạnh để tránh.
 - **Dạy:** đếm nhịp 47 giây; chuẩn bị cho boss.
-- **Máu / sát thương / tốc độ:** 1 nhát mỗi con / 4% mỗi con, xung 10% / 1,5.
+- **Máu / sát thương / tốc độ:** 2 nhát mỗi con / 6% mỗi con, xung 18% / 1,5.
 - **Rơi:** mảnh tinh thể tím (vật phẩm cốt truyện, rất hiếm).
 
 ## 4. Đầu đàn và boss
 
 ### E1. Lợn Gai Đầu Đàn — hồi B
 
-- **Ở đâu:** tâm Đồng cỏ cao, Bìa Rừng (150,90). Xuất hiện cố định trong cảnh truyện; sau đó hồi sinh mỗi ngày một lần.
+- **Ở đâu:** tâm Đồng cỏ cao, Bìa Rừng (112,66). Xuất hiện cố định trong cảnh truyện; sau đó hồi sinh mỗi ngày một lần.
 - **Hình:** to gấp rưỡi Lợn Gai, gai lưng sáng mạnh, một nanh gãy.
 - **Khác Lợn Gai thường:** lao **hai lần liên tiếp** (lần hai đổi hướng theo người chơi); gầm gọi thêm 2 Lợn Gai khi còn 50% máu.
 - **Máu:** 12 nhát.
@@ -187,8 +187,9 @@ Hạ dị thú cho nhiều linh năng nhưng **đục**, mang vị theo loài (x
 ### B1. Thủ Lĩnh Mạch Gãy — boss chương 1, hồi E
 
 - **Ở đâu:** Phòng Lõi, Trạm Thiên Mạch. Sàn tròn, 4 cột che, lõi ở giữa.
-- **Hình:** gấu núi khổng lồ (≤ 128 px), lưng mọc **tinh thể tím lục giác**, các vết nứt sáng ngọc lam trên da. Ngồi canh lõi suốt sáu năm.
-- **Máu:** 40 nhát, chia 3 giai đoạn.
+- **Hình:** gấu núi khổng lồ (≤ 128 px), lưng mọc **tinh thể tím lục giác**, các vết nứt sáng ngọc lam trên da. Lọt vào trạm qua vách sập, ngồi canh lõi suốt sáu năm.
+- **Trận chung:** Trạm là map 30 người; ai đứng trong Phòng Lõi đều đánh cùng một con gấu, ai gây sát thương đều được tính hạ boss.
+- **Máu:** 40 nhát cho một người, nhân theo số người trong Phòng Lõi lúc bắt đầu trận (×(1 + 0,5 × số người thêm)); chia 3 giai đoạn.
 
 | Giai đoạn | Máu | Đòn | Dạy lại từ |
 | --- | --- | --- | --- |
@@ -196,8 +197,9 @@ Hạ dị thú cho nhiều linh năng nhưng **đục**, mang vị theo loài (x
 | 2 | 66–33% | Thêm **đập đất**: tinh thể tím trồi lên theo hàng (mặt đất nứt trước, như Rết Đá); lõi gọi một đàn Chuột Tím | Rết Đá, Chuột Tím |
 | 3 | 33–0% | **Cứ 47 giây** lõi phát xung toàn phòng: người chơi phải nấp sau cột (cột sáng lên báo trước 2 giây). Gấu điên hơn, ít hở hơn | Nhịp 47, Khỉ Vách Đá |
 
-- Sau trận: gấu không chết mà **ngã xuống, tinh thể tím vỡ ra**, rồi lủi vào bóng tối. Đây là động vật bị hại, không phải kẻ ác.
-- Thua: tỉnh lại ở Sảnh vào, boss hồi đầy máu, giai đoạn bắt đầu lại từ 1.
+- Sau trận: gấu không chết mà **ngã xuống, tinh thể tím vỡ ra**, rồi lủi vào hang qua vách sập. Đây là động vật bị hại, không phải kẻ ác.
+- **Quay lại sau 47 phút:** lõi tự khởi động lại và ánh tím kéo gấu về (cũng là lúc nhịp 47 giây chạy lại nếu có người vừa Ngắt lõi).
+- Thua: tỉnh lại ở Sảnh vào. Boss chỉ hồi đầy máu và về giai đoạn 1 khi trong Phòng Lõi không còn ai đứng.
 
 ## 5. Biến thể (mod)
 
@@ -215,24 +217,26 @@ Biến thể **Nhiễm Tím** chỉ bật sau hồi C để thế giới thay đ
 
 ## 6. Bảng xuất hiện theo khu
 
+Số quái tính cho map đủ 30 người, khoảng 1–1,5 quái/người, tối đa 6 quái trong một màn ([10](10-kich-thuoc-map-online.md) §5.2). Tọa độ lãnh địa ở [05](05-map-layouts.md).
+
 | Khu | Quái | Nhóm × số nhóm | Hồi sinh | Thời gian |
 | --- | --- | --- | --- | --- |
-| Bìa Rừng — Ruộng hoang | Gà Rừng Mào Sét | 3–4 × 4 | 60 giây | Ngày |
-| Bìa Rừng — Đồng cỏ | Lợn Gai | 1–2 × 6 | 45 giây | Cả ngày |
+| Bìa Rừng — Ruộng hoang | Gà Rừng Mào Sét | 4 × 4 | 60 giây | Ngày |
+| Bìa Rừng — Đồng cỏ | Lợn Gai | 2 × 6 | 45 giây | Cả ngày |
 | Bìa Rừng — Đồng cỏ (tâm) | Lợn Gai Đầu Đàn | 1 × 1 | 1 ngày | Cả ngày, sau hồi B |
-| Bìa Rừng — Xe tải bỏ dở | Nhện Tơ Điện | 2–3 × 3 | 60 giây | Cả ngày |
-| Mỏ Bỏ Hoang — Bãi máy | Nhện Tơ Điện | 2–3 × 3 | 60 giây | Cả ngày |
-| Mỏ Bỏ Hoang — Bậc đá | Rết Đá | 1–2 × 4 | 75 giây | Cả ngày |
-| Hầm Mỏ — Hang Giữa, đường ray | Dơi Vân Quặng | 4–6 × 3 | 90 giây | Cả ngày |
-| Hầm Mỏ — Hầm Tây | Nhện Tơ Điện | 2–3 × 2 | 60 giây | Cả ngày |
+| Bìa Rừng — Xe tải bỏ dở | Nhện Tơ Điện | 3 × 3 | 60 giây | Cả ngày |
+| Mỏ Bỏ Hoang — Bãi máy | Nhện Tơ Điện | 3 × 3 | 60 giây | Cả ngày |
+| Mỏ Bỏ Hoang — Bậc đá | Rết Đá | 3 × 4 | 75 giây | Cả ngày |
+| Hầm Mỏ — Hang Giữa, đường ray | Dơi Vân Quặng | 4 × 3 | 90 giây | Cả ngày |
+| Hầm Mỏ — Hầm Tây | Nhện Tơ Điện | 3 × 2 | 60 giây | Cả ngày |
 | Hầm Mỏ — cuối Hầm Tây | Nhện Mẹ | 1 × 1 | 1 ngày | Sau hồi C |
-| Rừng Sâu — Rìa rừng ẩm | Sói Rêu | 3 × 3 | 90 giây | Cả ngày |
-| Rừng Sâu — Đầm Sương | Rắn Sương | 1–2 × 4 | 75 giây | Cả ngày; sương dày hơn sáng sớm |
-| Rừng Sâu — Vách Đá | Khỉ Vách Đá | 2–4 × 3 | 90 giây | Ngày |
+| Rừng Sâu — Rìa rừng ẩm | Sói Rêu | 3 × 4 | 90 giây | Cả ngày |
+| Rừng Sâu — Đầm Sương | Rắn Sương | 2–3 × 4 | 75 giây | Cả ngày; sương dày hơn sáng sớm |
+| Rừng Sâu — Vách Đá | Khỉ Vách Đá | 3 × 4 | 90 giây | Ngày |
 | Rừng Sâu — đỉnh Vách Đá | Khỉ Đầu Đàn | 1 × 1 | 1 ngày | Sau hồi D |
-| Rừng Sâu — Tán Cao | Cú Đêm Linh | 1–2 × 3 | 120 giây | Chỉ đêm |
-| Trạm — hành lang, phòng máy | Chuột Tím | 6–10 × 4 | 120 giây | Cả ngày |
-| Trạm — Phòng Lõi | Thủ Lĩnh Mạch Gãy | 1 × 1 | 1 ngày, sau lần hạ đầu | Hồi E |
+| Rừng Sâu — Tán Cao | Cú Đêm Linh | 2 × 3 | 120 giây | Chỉ đêm |
+| Trạm — hành lang, phòng máy, kho | Chuột Tím | 4 × 6 | 120 giây | Cả ngày |
+| Trạm — Phòng Lõi | Thủ Lĩnh Mạch Gãy | 1 × 1 | 47 phút | Từ hồi E |
 
 Hồi sinh luôn xảy ra **ngoài tầm nhìn** của người chơi (không hiện ngay trước mặt).
 
@@ -244,10 +248,14 @@ Mỗi quái có **một âm thanh báo đòn riêng**, nhận ra được khi kh
 
 ## 8. Ghi chú backend
 
-Backend hiện chỉ có 2 loài ngoài map (Sơn Trư, Độc Chu) ở cụm map prototype cũ, đánh kiểu bấm-trúng và **chưa đánh trả**. Để làm đúng thiết kế này cần:
-- Khai báo nhóm quái theo map và lãnh địa (tâm, bán kính, số con, hồi sinh, giờ xuất hiện) trong dữ liệu thế giới.
-- Quái có vòng trạng thái và đòn đánh trả như trận Sơn Trư 20 Hz đang có, thay cho kiểu bấm-trúng.
-- Điểm an toàn và bán kính cấm quái.
-- Biến thể theo giờ, thời tiết và tiến trình cốt truyện.
+**Đã có (13/10/2026):** `server/data/world_population.json` là nguồn duy nhất cho quái và NPC trên map. File khai báo 14 loài (máu = số nhát × 16, sát thương %, hồi sinh, giờ xuất hiện, vị linh năng), lãnh địa theo bảng §6 (tọa độ ở [05](05-map-layouts.md)), điểm an toàn và NPC. `node scripts/build-life-world.cjs` biên dịch file này vào `server/src/life_world_generated.ts` và **từ chối build** nếu một con quái đứng trên nước, trong điểm an toàn, cách điểm đến của cổng dưới 12 ô hoặc cách điểm hoạt động dưới 6 ô (§4 ở [05](05-map-layouts.md)). Có 117 quái ở 5 map rừng. Cụm map prototype cũ không còn quái.
+- Gà Rừng và Khỉ chỉ hiện ban ngày, Cú chỉ hiện ban đêm (theo đồng hồ đời sống).
+- Đầu đàn và boss đã khai báo nhưng **chưa xuất hiện** (`storyGate`), chờ hệ thống cốt truyện.
+- Loài chưa có vật phẩm rơi trong catalog thì chỉ cho linh năng. Vị của Gà Rừng (Phong) và Chuột Tím/boss (Thạch, tạm thay cho Tím) là giá trị tạm.
+- `world_map_get` trả thêm `territories` và `safeZones`; NPC có tên trả lời qua `world_interact`.
 
-Chưa làm trong lần này; ghi lại để lên kế hoạch.
+**Còn thiếu:**
+- Quái có vòng trạng thái và đòn đánh trả như trận Sơn Trư 20 Hz đang có, thay cho kiểu bấm-trúng.
+- Quái di chuyển trong lãnh địa và bị kéo về khi ra quá bán kính; hồi sinh ngoài tầm nhìn.
+- Biến thể theo thời tiết và tiến trình cốt truyện; mở khóa đầu đàn/boss.
+- Map Ẩn Giới (`m_an_gioi`) và NPC của nó (Lão Hồ...).

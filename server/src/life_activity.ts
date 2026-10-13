@@ -100,16 +100,18 @@ function lifeEnsureIdle(state:CharacterState,now:number):void {
 function lifeGuardWorldAction(nk:nkruntime.Nakama,userId:string):void {
   lifeEnsureIdle(loadCharacter(nk,userId).state,Date.now());
 }
-function lifeSlotRequest(site:LifeSite):nkruntime.StorageReadRequest {
-  return {collection:"life_slots",key:site.mapId+":"+site.id,userId:SYSTEM_ID};
+// Garden plots live in each player's private home (m_nha), so their lease is
+// per player; every other site is shared by everyone on the map.
+function lifeSlotRequest(site:LifeSite,userId:string):nkruntime.StorageReadRequest {
+  return {collection:"life_slots",key:site.mapId+":"+site.id+(site.type==="gardening"?":"+userId:""),userId:SYSTEM_ID};
 }
-function lifeCheckSlot(nk:nkruntime.Nakama,site:LifeSite,now:number):nkruntime.StorageObject|undefined {
-  const row=nk.storageRead([lifeSlotRequest(site)])[0];
+function lifeCheckSlot(nk:nkruntime.Nakama,site:LifeSite,userId:string,now:number):nkruntime.StorageObject|undefined {
+  const row=nk.storageRead([lifeSlotRequest(site,userId)])[0];
   if(row&&Number(row.value.expiresAt)>now) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED,"This activity slot is occupied; choose another site");
   return row;
 }
 function lifeReleaseSlot(nk:nkruntime.Nakama,s:LifeSession,writes:nkruntime.StorageWriteRequest[]):void {
-  const id=lifeSlotRequest(lifeSite(s.siteId)),row=nk.storageRead([id])[0];
+  const id=lifeSlotRequest(lifeSite(s.siteId),s.avatarId),row=nk.storageRead([id])[0];
   if(row&&row.value.sessionId===s.sessionId) writes.push({collection:id.collection,key:id.key,userId:id.userId,
     value:{expiresAt:0},version:row.version,permissionRead:0,permissionWrite:0});
 }
@@ -274,7 +276,7 @@ const activityStartRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
       route:route,rewardSeed:nk.uuidv4(),lootVersion:LIFE_LOOT_VERSION};
     if(site.type==="fishing") lifeRemove(next,"it_bait",s.cycles);
     if(site.type==="gardening") lifePlant(next,site.plotId!,cropId,s.sessionId,activeAt,nk);
-    const old=lifeCheckSlot(nk,site,now),id=lifeSlotRequest(site);
+    const old=lifeCheckSlot(nk,site,userId,now),id=lifeSlotRequest(site,userId);
     writes.push({collection:id.collection,key:id.key,userId:id.userId,value:{sessionId:s.sessionId,expiresAt:s.expectedEndAt},
       version:old?old.version:"*",permissionRead:0,permissionWrite:0});
     next.activitySession=s;return {session:s};

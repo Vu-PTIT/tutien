@@ -285,7 +285,7 @@ func _load_online() -> void:
 		busy = false
 		_result(profile)
 		return
-	var world: Dictionary = await api.request_rpc("world_get", {"preferredMapId": "m_truc_am"})
+	var world: Dictionary = await api.request_rpc("world_get", {"preferredMapId": "m_vanh_dai_tay"})
 	if _result(world):
 		_apply_world(world)
 		var geometry: Dictionary = await api.request_rpc("world_map_get")

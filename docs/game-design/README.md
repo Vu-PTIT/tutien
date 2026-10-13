@@ -27,6 +27,8 @@ Có code backend nhưng chưa thiết kế lại: **kinh tế**, **nhiệm vụ*
 | 06 | [Quái](06-monsters.md) | Có những quái nào, đánh thế nào, ở đâu? |
 | 07 | [Sức mạnh: Nội Giới](07-power-system.md) | Nhân vật mạnh lên bằng cách nào? |
 | 08 | [Sản lượng đời sống](08-life-yields.md) | Trồng, câu, đào được gì, ở đâu? |
+| 09 | [Hiện trạng các map](09-map-hien-trang.md) | Dữ liệu map hiện có gì, lệch thiết kế chỗ nào? |
+| 10 | [Kích thước map cho online](10-kich-thuoc-map-online.md) | Map bao to để chứa tối đa 30 người một kênh? |
 
 ## Quyết định đã chốt
 
@@ -42,7 +44,7 @@ Có code backend nhưng chưa thiết kế lại: **kinh tế**, **nhiệm vụ*
 ## Việc backend phát sinh (ghi lại, chưa làm)
 
 - Thêm trường `race` (`human` / `spirit`) vào hồ sơ nhân vật, chọn một lần lúc tạo.
-- Thêm map mới `m_an_gioi` (Ẩn Giới) và cổng nối với `m_lang_que`; Tinh Linh xuất phát ở `m_an_gioi`. Hiện `world_get` chỉ cho xuất phát ở `m_lang_que` hoặc `m_an_khe`.
+- Thêm map mới `m_an_gioi` (Ẩn Giới) và cổng nối với `m_lang_que`; Tinh Linh xuất phát ở `m_an_gioi`. Hiện mọi người chơi mới xuất phát ở `m_lang_que`.
 - Đổi Chốt Tường Rào (`ln_lang_vanh`) thành lối duy nhất từ làng ra rừng; bỏ `ln_lang_thang` khỏi chương 1.
 - Kỹ năng Hóa Thú và cách hấp thụ riêng của Tinh Linh (xem [01](01-gameplay.md) §3).
 - Thay cảnh giới/tu vi bằng dữ liệu Nội Giới (xem [07](07-power-system.md) §13).

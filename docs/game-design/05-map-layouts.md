@@ -2,265 +2,331 @@
 
 Tọa độ tính theo **ô 32 px**, gốc (0,0) ở góc **trên-trái**, x sang phải, y xuống dưới. Hướng bắc là phía trên.
 
-**Giữ nguyên với backend** (`server/data/life_world.json`): kích thước map, vị trí cổng, 4 bến câu, 12 luống, 4 vỉa, sông hồ. Những thứ này đánh dấu **[BE]**. Phần còn lại (nhà, khu, đường, quái) là thiết kế mới; khi dựng client cần cập nhật footprint và collision trong cùng file đó.
+**Kích thước tính cho 30 người chơi một kênh** (13/10/2026, xem [10](10-kich-thuoc-map-online.md)). Màn hình ở zoom mặc định thấy ≈ 30×17 ô; đi bộ 2,25 ô/giây.
 
-Xem quái ở [06](06-monsters.md). Khu và tên gọi theo [03](03-world-and-maps.md).
+**[BE]** = đã có trong `server/data/life_world.json` hoặc `world_population.json`, đúng tọa độ ghi ở đây: kích thước map, điểm xuất phát, cổng, điểm hoạt động, nước, cầu, vùng an toàn, lãnh địa quái, NPC. Phần còn lại (nhà, khu, đường) là thiết kế. Bên trong các map **chưa có collision** (chỉ có tường viền); khi dựng client cần thêm footprint nhà, cây, vách vào cùng file đó.
+
+Xem quái ở [06](06-monsters.md). Khu và tên gọi theo [03](03-world-and-maps.md). Hiện trạng dữ liệu: [09](09-map-hien-trang.md).
 
 ---
 
-## 1. Khu Người — Làng Hồ Lặng (`m_lang_que`, 256×192)
+## 1. Khu Người — Làng Hồ Lặng (`m_lang_que`, 160×120)
 
 ### 1.1 Sơ đồ
 
 ```text
-x→ 0        40        80        120       160       200       240  256
-y0 ╔══════════════════ TƯỜNG RÀO ═══[CHỐT]══════════════════╗≈≈≈≈╗
-   ║ ~~~~~~~ suối bắc ~~~~~~~~~~        ▲ ln_lang_vanh (147,8)║≈≈≈≈║
-20 ║  ┌─ĐỒI MIẾU─┐                       │ đường Chốt          ║≈ s ║
-   ║  │ miếu     │                       │                     ║≈ ô ║
-40 ║  │ sân thiền│     ┌───────────── THỊ TRẤN ─────────────┐ ║≈ n ║
-   ║  └──────────┘     │                │  xưởng rèn  Trạm Viện│ ║≈ g ║
-60 ║ ┌──── XÓM NHÀ ──┐ │                │  tiện lợi   quán cf  │ ║≈   ║
-   ║ │ ngõ, sân phơi │ │   ┌─QUẢNG TRƯỜNG CỔNG─┐ CHỢ PHIÊN      │ ║≈ đ ║
-80 ║ │ nhà dân       │ │   │     ◎ CỔNG        │ ●(157,103)[BE] │ ║≈ ô ║
-   ║ │               │ │   │   ẨN GIỚI (128,92)│ trạm buýt ─────┼─╫─► ln_lang_thang
-100║ │ nhà Nora      │ │   │  chốt gác, chợ TL │ (249,105) đóng  │ ║≈   ║
-   ║ │ nhà người chơi│ │   └────★ spawn(130,111)┘                │ ║≈   ║
-120║ └───────────────┘ │  ~~ kênh ~~                             │ ║≈   ║
-   ║                   └─────────│──────────────────────────────┘ ║≈   ║
-140║  ┌── VƯỜN ──┐    ┌─RUỘNG─┐  ~~    ┌──── HỒ LẶNG ────┐         ║≈   ║
-   ║  │12 luống  │    │ lúa   │   ~~   │ ▼▼▼▼ 4 bến (169–187,150)[BE]║≈   ║
-160║  │(65–83,   │    │ nhà   │    ~~  │      mặt hồ         │      ║≈   ║
-   ║  │166–176)  │    │ kính  │     ~~ │  cầu gỗ, quán nước  │      ║≈   ║
-180║  └──[BE]────┘    └───────┘      ~~└─────────────────────┘      ║≈   ║
-192╚════════════════════════════════════════════════════════════════╩════╝
+x→ 0         20        40        60        80        100       120       140   160
+y0 ╔═══════════════════ TƯỜNG RÀO ════════════[CHỐT ▲(92,5)]════════════╗≈≈≈╗
+   ║  ~~~~~~~~~ suối bắc ~~~~~~~~~~~~~~                │ đường Chốt      ║≈  ║
+10 ║  ┌── ĐỒI MIẾU ──┐                                 │                 ║≈ s║
+   ║  │ miếu   Bé Mơ │                                 │   ┌─ THỊ TRẤN ─────┐≈ ô║
+20 ║  │ ☯☯☯☯ sân     │                                 │   │                │≈ n║
+   ║  │ ☯☯☯☯ thiền   │                                 │   │ rèn   Trạm Viện│≈ g║
+30 ║  └──────────────┘                                 │   │ (110,33)(123,33)≈  ║
+   ║ ┌───────── XÓM NHÀ ─────────┐                     │   │ tiện lợi  cà phê≈  ║
+40 ║ │ ngõ, sân phơi, giếng      │                     │   │                │≈  ║
+   ║ │                           │   ┌── QUẢNG TRƯỜNG CỔNG ──┐ CHỢ          │≈  ║
+50 ║ │                           │   │                       │ PHIÊN        │≈  ║
+   ║ │                           │   │    ◎ CỔNG ẨN GIỚI     │ ▣(98,64)     │≈  ║
+60 ║ │                           │   │       (80,57)         │              │≈  ║
+   ║ │  nhà Nora (37,70)         │   │ chợ TL                │      ═cầu═══╪═►(156,66)
+70 ║ │                           │   │      ★ (81,69)        │              │≈ trạm
+   ║ │        ⌂ CỬA NHÀ (47,78)  │   └───────────────────────┘              │≈ buýt
+80 ║ └───────────────────────────┘ ~~kênh   ═cầu kênh(69,84)  └────────────┘≈  ║
+   ║                                  ~~       Rin(103,88)                  ≈   ║
+90 ║      ┌──── RUỘNG VƯỜN ────┐       ~~  ┌═🎣🎣🎣🎣🎣🎣 sàn gỗ═┐ quán nước  ≈   ║
+   ║      │ lúa, nhà kính      │        ~~ │                    │🎣          ≈  ║
+100║      │ (trang trí)        │        ~~ │     HỒ LẶNG        │🎣          ≈  ║
+   ║      │                    │         ~~│        🎣║         │🎣          ≈  ║
+110║      └────────────────────┘          ~│        🎣║ cầu gỗ  │            ≈  ║
+   ║                                       └───────🎣╨─────────┘            ≈  ║
+120╚═══════════════════════════════════════~~═══☯☯════☯☯═══════════════════╩≈≈≈╝
 ```
 
 ### 1.2 Các khu
 
 | Khu | Phạm vi ô (x, y) | Có gì | Ghi chú |
 | --- | --- | --- | --- |
-| **Tường rào** | toàn chiều ngang, y 0–6 | Tường bê tông + lưới, đèn pha mỗi 16 ô, biển cảnh báo | Chặn đi lại, trừ Chốt |
-| **Chốt Tường Rào** | x 140–154, y 4–14 | Cổng sắt, trạm gác, Đội Tuần Tra, bảng thông báo | **[BE]** `ln_lang_vanh` tại (147,8) → Bìa Rừng |
-| **Suối bắc** | dọc y 13–29, x 17–126 | Suối nhỏ, 2 cầu đá | **[BE]** nước |
-| **Đồi Miếu** | x 18–60, y 16–50 | Miếu cổ, sân thiền, bậc đá, cây cổ thụ | Điểm Thiền/Hấp Linh |
-| **Xóm nhà** | x 12–100, y 55–135 | ~18 nhà, ngõ, sân phơi, giếng; **nhà người chơi** (x 70–80, y 118–128), **nhà bà Nora** (x 55–64, y 104–112) | Khu sống chính |
-| **Quảng trường Cổng** | x 108–150, y 78–116 | **Cổng Ẩn Giới** tâm (128,92), khung thép, chốt gác, lồng đèn lá, góc chợ Tinh Linh (x 110–122, y 100–112), ghế đá | Điểm vào mặc định ★ (130,111) **[BE]** spawn |
-| **Chợ phiên** | x 150–170, y 92–116 | Sạp rau, cá, đồ khô | **[BE]** `ak.market.village` (157,103) |
-| **Thị trấn** | x 150–226, y 36–132 | Xưởng rèn Doran (x 170–182, y 48–58), Trạm Viện (x 190–204, y 46–60), cửa hàng tiện lợi, quán cà phê, nhà 2–3 tầng | Phía đông làng |
-| **Trạm buýt** | x 238–248, y 100–110 | Trạm chờ, biển "Tuyến về thành phố — tạm ngưng" | **[BE]** `ln_lang_thang` (249,105): **đóng** ở chương 1 |
-| **Sông đông** | x 228–246, toàn chiều dọc | Sông rộng 4 ô, bờ kè | **[BE]** nước; ranh giới tự nhiên phía đông |
-| **Kênh** | từ (106,122) xuống (141,192) | Kênh tưới, 2 cầu | **[BE]** nước; chia vườn/ruộng với hồ |
-| **Vườn** | x 58–92, y 160–184 | 12 luống, nhà kho nhỏ, thùng tưới | **[BE]** luống tại x 65–83, y 166–176 |
-| **Ruộng** | x 95–135, y 138–186 | Lúa, bù nhìn, nhà kính nhỏ | Trang trí, NPC làm đồng |
-| **Hồ Lặng** | x 151–204, y 147–183 | Mặt hồ, 4 bến bờ bắc, cầu gỗ, quán nước dưới gốc cây (x 205–215, y 150–160) | **[BE]** hồ + bến (169/175/181/187, 150) |
+| **Tường rào** | toàn chiều ngang, y 0–4 | Tường bê tông + lưới, đèn pha mỗi 12 ô, biển cảnh báo | Chặn đi lại, trừ Chốt |
+| **Chốt Tường Rào** | x 88–96, y 2–9 | Cổng sắt, trạm gác, bảng thông báo; Đội Tuần Tra (95,10) | **[BE]** `ln_lang_vanh` (92,5) → Bìa Rừng |
+| **Suối bắc** | (79,18) → (11,10), rộng 1,2 ô | Suối nhỏ, 1 cầu đá | **[BE]** nước |
+| **Đồi Miếu** | x 11–38, y 10–31 | Miếu cổ, bậc đá, cây cổ thụ; **sân thiền 8 chỗ** x 20–29, y 21–24; Bé Mơ (33,24) dạy Hấp Linh | **[BE]** 8 điểm thiền Thổ `lq_med_mieu…_08`; `lq.npc.be_mo` |
+| **Xóm nhà** | x 8–62, y 34–84 | ~14 nhà, ngõ, sân phơi, giếng; **nhà bà Nora** x 34–40, y 65–70; **Cửa nhà** (47,78): một dãy cổng ngõ dẫn vào nhà riêng | **[BE]** `ln_lang_nha` (47,78) → Nhà riêng; Nora (37,70) |
+| **Quảng trường Cổng** | x 68–94, y 49–72 | **Cổng Ẩn Giới** tâm (80,57), khung thép, chốt gác (Đội Tuần Tra (75,60)), lồng đèn lá, góc chợ Tinh Linh x 69–76, y 62–70, ghế đá | Điểm vào mặc định ★ **[BE]** (81,69) |
+| **Chợ phiên** | x 94–106, y 57–72 | Sạp rau, cá, đồ khô | **[BE]** `lq.shop.market` (98,64) |
+| **Thị trấn** | x 94–141, y 22–82 | Xưởng rèn Doran x 106–114, y 29–36; Trạm Viện x 119–128, y 29–38; cửa hàng tiện lợi, quán cà phê, nhà 2–3 tầng | **[BE]** Doran (110,33), Tiến sĩ Theo (123,33) |
+| **Sông đông** | dọc x ≈ 142–153, rộng 2,5 ô | Bờ kè; ranh giới phía đông. Chảy vào làng qua cống lưới dưới tường rào ở (148,0), từ Bìa Rừng | **[BE]** nước; cầu x 145–152, y 64–67 |
+| **Trạm buýt** | x 152–158, y 62–69 | Trạm chờ, biển "Tuyến về thành phố — tạm ngưng" | **[BE]** `ln_lang_thang` (156,66) **khóa** ở chương 1 |
+| **Kênh** | (66,76) → (88,120), rộng 1,8 ô | Kênh tưới | **[BE]** nước; cầu x 69–75, y 84–87 |
+| **Ruộng vườn** | x 36–84, y 86–116 | Lúa, bù nhìn, nhà kính nhỏ, NPC làm đồng | Trang trí; luống của người chơi ở Nhà riêng |
+| **Hồ Lặng** | x 87–128, y 92–114 | Mặt hồ; **sàn gỗ bờ bắc** x 96–120, y 90–95; **cầu gỗ** chìa từ bờ nam x 105–108, y 105–115; quán nước x 131–137, y 92–98; Rin (103,88) | **[BE]** 12 bến, 4 điểm thiền Thủy (xem dưới) |
+
+**12 bến câu [BE]:** sàn gỗ bờ bắc `new_fish_01…06` tại x 98/102/106/110/114/118, y 93 (quay nam); cầu gỗ `new_fish_07…09` tại (107,106), (107,109.5), (107,113); bờ đông `new_fish_10…12` tại (129.5,100), (129.5,104), (128.5,108).
+**Thiền Thủy [BE]:** `lq_med_ho…_04` bờ nam (96,116), (100,116.5), (114,116.5), (118,115.5).
 
 ### 1.3 Đường chính
 
-- **Trục Bắc–Nam:** Chốt (147,8) → Quảng trường (128,92) → bờ hồ (170,146). Rộng 3 ô, nhựa.
-- **Trục Tây–Đông:** Xóm nhà (60,100) → Quảng trường → Chợ → Thị trấn → Trạm buýt (240,105). Rộng 3 ô.
+- **Trục Bắc–Nam:** Chốt (92,5) → Quảng trường (80,57) → sàn gỗ hồ (100,92). Rộng 3 ô, nhựa.
+- **Trục Tây–Đông:** Xóm nhà (35,60) → Quảng trường → Chợ → Thị trấn → cầu sông → Trạm buýt (156,66). Rộng 3 ô.
 - **Ngõ:** rộng 1–2 ô, lát gạch, nối các nhà trong xóm và lên Đồi Miếu.
-- Từ nhà người chơi đi bộ tới: vườn ≈ 40 ô, hồ ≈ 100 ô, Cổng ≈ 60 ô, Chốt ≈ 130 ô.
+- Từ Cửa nhà đi bộ tới: Cổng ≈ 40 ô (18 s), hồ ≈ 55 ô (25 s), sân miếu ≈ 60 ô (27 s), Chốt ≈ 85 ô (38 s).
 
 ### 1.4 Ánh sáng và nhịp sống
 
-- Đèn đường dọc 2 trục chính; Cổng tự phát sáng, chiếu ngọc lam lên mái nhà trong bán kính ~12 ô.
+- Đèn đường dọc 2 trục chính; Cổng tự phát sáng, chiếu ngọc lam lên mái nhà trong bán kính ~8 ô.
 - Đèn pha trên tường rào quét chậm ban đêm.
-- NPC: ~15 Người (nông dân, chủ quán, Đội Tuần Tra, trẻ con), ~4 Tinh Linh (người bán ở góc chợ, một Tinh Linh ngủ trên mái miếu).
+- NPC: ~10 Người (nông dân, chủ quán, Đội Tuần Tra, trẻ con), ~3 Tinh Linh (người bán ở góc chợ, một Tinh Linh ngủ trên mái miếu). Hiện có 6 NPC + Bé Mơ **[BE]**.
 - Thú vô hại: gà, vịt ở hồ, mèo nhà, chim sẻ. **Không có quái.**
+- Khi đủ 30 người: sân miếu, sàn gỗ hồ và chợ là ba chỗ đông nhất (mỗi chỗ 6–10 người).
 
 ---
 
-## 2. Khu Tinh Linh — Ẩn Giới (`m_an_gioi`, map mới, 160×128 đề xuất)
+## 2. Nhà riêng (`m_nha`, 32×24)
 
-### 2.1 Sơ đồ
+Mỗi người chơi có **một bản riêng** của map này (không tính vào 30 người của kênh làng). Vào từ **Cửa nhà** ở Xóm nhà.
 
 ```text
-x→ 0         40          80          120        160
-y0 ░░░░░░░░░░░░░░ RÌA PHAI (sương trắng) ░░░░░░░░░░░░
-   ░ ┌VÒNG ĐÁ┐                                     ░
-20 ░ │Hội Rễ │        ✿✿✿✿✿✿✿✿✿                   ░
-   ░ └───────┘      ✿  CÂY MẸ  ✿                  ░
-40 ░                ✿  (80,45) ✿     ┌─SUỐI HẤP LINH─┐
-   ░ ┌VƯỜN NẤM┐     ✿ nhà hốc cây ✿  │ ≈≈≈≈≈≈≈≈≈≈≈≈  │
-60 ░ │ luống  │      ✿✿✿✿✿✿✿✿✿✿✿    │ 3 điểm hấp linh│
-   ░ │ nấm    │     nhà trên cành    │ 2 bến câu linh │
-80 ░ └────────┘     đường rễ cây     └───────────────┘
-   ░        đồ "rơi qua cổng": xe đạp, máy bán hàng
-100░            ~~~~ HỒ GƯƠNG ~~~~
-   ░            ~~  ◎ BẾN CỔNG  ~~
-120░            ~~    (80,114)  ~~   ★ đến từ làng
-128░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+x→ 0        8         16        24       32
+y0 ┌────────────────────────────────────┐
+   │   hàng rào gỗ, cây ăn quả          │
+6  │    ▦     ▦     ▦     ▦             │  luống 01–04
+10 │    ▦     ▦     ▦     ▦             │  luống 05–08
+14 │    ▦     ▦     ▦     ▦             │  luống 09–12
+   │ ┌──NHÀ──┐                 thùng    │
+18 │ │       │       ★(16,19)   tưới    │
+   │ └───────┘                          │
+24 └───────────────▼(16,22)─────────────┘
 ```
 
-### 2.2 Các khu
+| Khu | Phạm vi ô | Có gì | Ghi chú |
+| --- | --- | --- | --- |
+| **Vườn** | x 4–28, y 4–16 | 12 luống 4×3, lối đi giữa luống | **[BE]** `new_plot_01…12` tại x 7/13/19/25 × y 6/10/14, `plotId` 0–11 |
+| **Nhà** | x 2–12, y 16–22 | Nhà nhỏ (sau này: giường, rương đồ, trang trí) | Trang trí |
+| **Sân** | x 14–30, y 16–22 | Thùng tưới, giếng | Điểm xuất phát ★ **[BE]** (16,19) |
+| **Cổng ra** | (16,22) | Cổng gỗ | **[BE]** `ln_lang_nha` → làng (47,81) |
+
+Luống là của riêng từng người, nên server khóa luống theo từng người chơi, không dùng chung.
+
+---
+
+## 3. Khu Tinh Linh — Ẩn Giới (`m_an_gioi`, 128×96, chưa có trong dữ liệu)
+
+### 3.1 Sơ đồ
+
+```text
+x→ 0         32          64          96        128
+y0 ░░░░░░░░░░░░ RÌA PHAI (sương trắng) ░░░░░░░░░░░░
+   ░ ┌VÒNG ĐÁ┐                                  ░
+16 ░ │Hội Rễ │      ✿✿✿✿✿✿✿✿✿                   ░
+   ░ └───────┘    ✿  CÂY MẸ  ✿   ┌SUỐI HẤP LINH┐ ░
+32 ░              ✿  (64,34) ✿   │ ≈≈≈≈≈≈≈≈≈≈≈ │ ░
+   ░ ┌VƯỜN NẤM┐   ✿ nhà hốc   ✿  │ 8 điểm      │ ░
+48 ░ │ 6 luống│    ✿✿✿✿✿✿✿✿✿✿    │ hấp linh    │ ░
+   ░ │ nấm    │   nhà trên cành  │ 6 bến câu   │ ░
+64 ░ └────────┘   đường rễ cây   └─────────────┘ ░
+   ░      đồ "rơi qua cổng"                      ░
+80 ░           ~~~ HỒ GƯƠNG ◎ BẾN CỔNG (64,86) ~~~ ░
+96 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+```
+
+### 3.2 Các khu
 
 | Khu | Phạm vi ô | Có gì |
 | --- | --- | --- |
-| **Rìa Phai** | viền ngoài 0–6 ô | Cảnh vật mờ dần thành sương; đi vào thì bị đẩy nhẹ lại. Lá héo theo nhịp 47 giây |
-| **Bến Cổng** | x 66–94, y 104–124 | Phía Ẩn Giới của Cổng (80,114) đứng trên **Hồ Gương** phẳng; nhìn qua thấy mờ mái nhà làng. Điểm đến ★ cách cổng 4 ô về phía bắc |
-| **Vườn Cây Mẹ** | x 50–110, y 18–80 | Cây Mẹ tâm (80,45), rễ cao như tường; nhà hốc cây, nhà trên cành (có cầu thang rễ), cầu treo bằng dây leo; nhà người chơi Tinh Linh ở một hốc rễ phía nam |
-| **Suối Hấp Linh** | x 112–148, y 36–82 | Suối có hạt sáng trôi lên, 3 điểm Hấp Linh, 2 bến câu cá linh |
-| **Vườn nấm** | x 12–46, y 50–84 | Luống nấm và cây Ẩn Giới (trồng của Tinh Linh) |
-| **Vòng Đá** | x 10–34, y 10–32 | 9 tảng đá xếp vòng, nơi Hội Rễ họp |
-| **Bãi đồ rơi** | x 40–70, y 86–100 | Xe đạp, biển báo, máy bán hàng rơi qua cổng; Tinh Linh dùng làm đồ trang trí |
+| **Rìa Phai** | viền ngoài 0–5 ô | Cảnh vật mờ dần thành sương; đi vào thì bị đẩy nhẹ lại. Lá héo theo nhịp 47 giây |
+| **Bến Cổng** | x 52–76, y 78–94 | Phía Ẩn Giới của Cổng (64,86) đứng trên **Hồ Gương** phẳng; nhìn qua thấy mờ mái nhà làng. Điểm đến ★ cách cổng 4 ô về phía bắc |
+| **Vườn Cây Mẹ** | x 40–88, y 14–62 | Cây Mẹ tâm (64,34), rễ cao như tường; nhà hốc cây, nhà trên cành, cầu treo dây leo; hốc rễ phía nam là **cửa nhà riêng** của người chơi Tinh Linh |
+| **Suối Hấp Linh** | x 90–120, y 26–64 | Suối có hạt sáng trôi lên, **8 điểm Hấp Linh**, **6 bến câu cá linh** |
+| **Vườn nấm** | x 8–36, y 38–64 | **6 luống nấm riêng từng người** (khóa theo người như vườn nhà) |
+| **Vòng Đá** | x 8–28, y 8–26 | 9 tảng đá xếp vòng, nơi Hội Rễ họp |
+| **Bãi đồ rơi** | x 30–56, y 66–78 | Xe đạp, biển báo, máy bán hàng rơi qua cổng |
 
 - Không có tường, không có góc vuông; đường đi là rễ cây và đá lát tròn.
-- NPC: ~12 Tinh Linh (Lão Hồ ở gốc Cây Mẹ, Bé Mơ chạy khắp nơi). Sinh vật vô hại: **linh trùng** (đốm sáng bay), cá linh, chim lông trong. **Không có quái.**
-- Backend cần thêm: điểm Hấp Linh, luống nấm, 2 bến câu, cặp cổng `ln_lang_angioi` (làng (128,92) ↔ Ẩn Giới (80,114)).
+- NPC: ~8 Tinh Linh (Lão Hồ ở gốc Cây Mẹ). Sinh vật vô hại: linh trùng, cá linh, chim lông trong. **Không có quái.**
+- Backend cần thêm: map, điểm Hấp Linh, luống nấm, bến câu, cặp cổng `ln_lang_angioi` (làng (80,57) ↔ Ẩn Giới (64,86)).
 
 ---
 
-## 3. Khu Rừng Quái
+## 4. Khu Rừng Quái
 
-### 3.1 Bìa Rừng (`m_vanh_dai_tay`, 288×224)
+### 4.1 Bìa Rừng (`m_vanh_dai_tay`, 176×128)
+
+Nằm ngay **phía bắc** Làng Hồ Lặng, bên kia tường rào. Sông từ núi Rừng Sâu chảy qua map này rồi chui qua tường xuống làng.
 
 ```text
-x→ 0        60        120       180       240       288
-y0 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓[ĐƯỜNG MÒN]▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-   ▓▓▓ hàng cây rừng ▓▓▓▓ ▲ ln_vanh_rung (156,8) ▓▓▓▓▓▓
-40 ◄ ln_vanh_mo   ┌─────────────── ĐỒNG CỎ CAO ──────────┐  ║ĐƯỜNG
- (9,55)│ XE TẢI   │  ⓝ Nhện rìa      ⓛⓛ Lợn Gai        │  ║ CAO
-80     │ BỎ DỞ    │                 ⓛ   ⓛⓛ             │  ║ TỐC
-       │ ⓝⓝ Nhện  │      ⓁĐầu Đàn (hồi B)              │  ║ GÃY
-120    │ (đường   │   ruộng hoang      tháp cảm biến   │  ║ (279,109)
-       │  xe cũ)  │     ⓖⓖ Gà Rừng      (200,140)      │  ║ chặn
-160    └──────────┘   ⓖⓖ                   ⓖⓖ          │  ║
-   ~~~ suối nhỏ ~~~  └───────────────────────────────────┘
-200        ┌──── TRẠM GÁC + LỀU THỢ SĂN (an toàn) ────┐
-224 ═══════╧══════════ ▼ ln_lang_vanh (143,215) về làng ╧══════
+x→ 0         40          80          120     ≈≈ 150  160  176
+y0 ▓▓▓▓▓▓▓▓▓ hàng cây rừng ▓▓▓▓[▲(95,5) lối mòn]▓▓▓▓▓≈≈▓▓▓▓▓▓▓▓  ← sông từ Rừng Sâu (x 150)
+   ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓≈≈▓▓▓▓▓▓▓▓
+20 │ ┌XE TẢI──┐     ┌──────── ĐỒNG CỎ CAO ──────────≈≈─┐║ĐƯỜNG
+   │ │BỎ DỞ   │     │ ⓛ(62,30)        ⓛ(124,24)    ≈≈ ⓛ(158,30) CAO
+◄(5,31)        │     │                             ≈≈   ║TỐC
+   │ │        │     │        ⓛ(98,46)    ⓛ(140,52)═cầu═ ║GÃY
+50 │ │ⓝ(22,52)│     │                            ≈≈    ║(cảnh nền)
+   │ │        │     │ ⓛ(72,60)    Ⓛ(112,66)🔒   ≈≈     ║
+   │ │        │     └────────────────────────────≈≈────┘║
+70 │ │        │   ┌──────── RUỘNG HOANG ─────────≈≈──────┐║
+   │ │ⓝ(30,80)│   │                tháp ☯☯     ≈≈ ⓖ(150,80)
+   │ │        │   │ ⓖ(66,92)          (122,86) ≈≈       │║
+90 │ │ⓝ(16,98)│   │            ⓖ(104,98)  ⓖ(140,104)    │║
+   │ └────────┘   └─────────────────────────≈≈──────────┘║
+   │ ~~ suối ~~         ┌── TRẠM GÁC + LỀU (an toàn) ──┐≈≈ ║
+110│     ~~~~~          │ thợ săn ★(88,112)  tuần tra │≈≈  ║
+124▒▒▒▒▒▒▒▒▒▒ TƯỜNG RÀO (mặt ngoài) ▒▒▒[CHỐT ▼(87,123)]▒▒▒▒≈≈▒▒▒▒▒  ← sông chui qua cống tường (x 143)
+128└──────────────────────────────────────────────────────────┘
 ```
 
-| Khu | Phạm vi ô | Có gì | Quái |
+| Khu | Phạm vi ô | Có gì | Quái **[BE]** |
 | --- | --- | --- | --- |
-| **Trạm gác + lều thợ săn** | x 110–180, y 188–224 | Trạm gác bê tông, lều thợ săn, đống lửa, bảng hợp đồng săn. **An toàn**: quái không vào trong bán kính 14 ô | Không |
-| **Ruộng hoang** | x 90–200, y 120–188 | Ruộng bỏ, bù nhìn đổ, hàng rào gãy | Gà Rừng Mào Sét |
-| **Đồng cỏ cao** | x 90–260, y 40–130 | Cỏ cao che nửa người, vết cày, cây đơn lẻ | Lợn Gai; Lợn Gai Đầu Đàn ở tâm (150,90) |
-| **Tháp cảm biến** | x 196–206, y 134–146 | Tháp có đèn trạng thái; nhấp nháy theo nhịp 47 | Không |
-| **Xe tải bỏ dở** | x 15–80, y 35–170 | Đoạn đường cũ, xe tải và container phủ dây leo, dẫn ra Mỏ | Nhện Tơ Điện (giăng tơ giữa các xe) |
-| **Đường cao tốc gãy** | x 262–288, toàn dọc | Cầu cao tốc sập làm tường phía đông | **[BE]** `ln_vanh_thang` (279,109): **đóng** |
-| **Hàng cây rừng** | y 0–30 | Bức tường cây; một lối mòn kiểm lâm ở giữa | **[BE]** `ln_vanh_rung` (156,8) → Rừng Sâu |
-| **Suối nhỏ** | (17,191)→(72,212) | **[BE]** nước | Không |
+| **Trạm gác + lều thợ săn** | x 67–110, y 107–128 | Trạm gác bê tông, lều, đống lửa, bảng hợp đồng săn; Thợ săn (81,113), Đội Tuần Tra (95,113). Điểm xuất phát ★ (88,112) | Không; **an toàn** tâm (88,116) bán kính 10 |
+| **Ruộng hoang** | x 55–160, y 69–107 | Ruộng bỏ, bù nhìn đổ, hàng rào gãy | Gà Rừng ×4 tại (66,92), (104,98), (140,104), (150,80) |
+| **Tháp cảm biến** | x 120–126, y 77–84 | Tháp có đèn trạng thái nhấp nháy theo nhịp 47; 4 chỗ thiền dưới chân | **[BE]** thiền Phong `vd_med_thap…_04` (122–125, 86–89) |
+| **Đồng cỏ cao** | x 55–160, y 18–74 | Cỏ cao che nửa người, vết cày, cây đơn lẻ | Lợn Gai ×2 tại (62,30), (98,46), (124,24), (140,52), (158,30), (72,60); **Lợn Gai Đầu Đàn** (112,66) 🔒 hồi B |
+| **Xe tải bỏ dở** | x 9–49, y 20–100 | Đường cũ, xe tải, container phủ dây leo, dẫn ra Mỏ | Nhện Tơ Điện ×3 tại (22,52), (30,80), (16,98) |
+| **Sông** | từ (150,0) xuống (143,128), rộng 2,5 ô | Bờ đá, cống lưới chỗ sông chui qua tường; **cầu gỗ cũ** x 142–152, y 52–56 | **[BE]** nước + cầu. Cùng một dòng với sông Rừng Sâu (phía bắc) và sông đông của Làng (phía nam) |
+| **Đường cao tốc gãy** | x 160–176, toàn dọc | Cầu cao tốc sập làm tường phía đông; **chỉ là cảnh nền**, không có cổng | Không |
+| **Tường rào (mặt ngoài)** | y 124–128, toàn chiều ngang | Mặt sau của tường rào làng: bê tông trần, lưới, biển "Khu vực nguy hiểm — không vào" quay về phía rừng | Khớp với dải tường y 0–4 của Làng; Chốt ở (87,123) |
+| **Hàng cây rừng** | y 0–17 | Bức tường cây; lối mòn kiểm lâm ở giữa | **[BE]** `ln_vanh_rung` (95,5) → Rừng Sâu |
+| **Suối nhỏ** | (10,109) → (44,121) | **[BE]** nước | Không |
 
-Đường đi: về làng ở nam (143,215); lên Rừng Sâu ở bắc (156,8); sang Mỏ ở tây (9,55).
+Cổng: về làng ở nam (87,123); lên Rừng Sâu ở bắc (95,5); sang Mỏ ở tây (5,31). Phía đông là cao tốc gãy, không có cổng. Tổng 37 quái thường.
 
-### 3.2 Mỏ Bỏ Hoang (`m_mo_lo_thien`, 224×192)
+### 4.2 Mỏ Bỏ Hoang (`m_mo_lo_thien`, 128×112)
 
 ```text
-x→ 0         60          120         180        224
-y0 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓[ĐƯỜNG NÚI ▲ ln_mo_rung (110,9)]▓▓▓▓▓
-   ▓ vách đá đỏ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-40 ▓  ┌──── HỐ TÂY ────┐      ┌── BÃI MÁY HỎNG ──┐
-   ▓  │  bậc khai thác │      │ máy xúc, băng    │
-80 ▓  │ ⛏(44,83) ⛏(61,88)[BE] │ chuyền ⓝⓝ Nhện   │
-   ▓  │   ◎ GIẾNG (85,80)[BE]│        ⓝ         │
-120▓  └────────────────┘      └──────────────────┘
-   ▓   ⓡ   BẬC ĐÁ   ⓡ   (Rết Đá dưới đất)
-160▓      ⓡ          ⓡ            ┌LÁN THỢ (an toàn)┐ ◄ ln_vanh_mo
-   ▓                     ~ao~(198,174)[BE]          │   (215,154)
-192▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+x→ 0         32          64          96        128
+y0 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓ vách đá đỏ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+   ▓                     ┌── BÃI MÁY HỎNG ──┐ đường núi ▓
+20 ▓                     │  ⓝ(72,24)        │ ──────► (123,25) Rừng Sâu
+   ▓ ┌─── HỐ TÂY ───┐    │                  │      ▓
+40 ▓ │⛏ ⛏ ⛏ ⛏      │    │       ⓝ(96,44)   │      ▓
+   ▓ │     ◎GIẾNG(49,47)  │                  │      ▓
+50 ▓ │⛏ ⛏ ⛏ ⛏      │    │ ⓝ(76,66)         │      ▓
+   ▓ │    ☯☯ mỏm đá │    └──────────────────┘      ▓
+64 ▓ └──────────────┘                              ▓
+   ▓ ┌──────────── BẬC ĐÁ ─────────────┐           ▓
+80 ▓ │ⓡ(14,84)       ⓡ(62,86)          │ ┌LÁN THỢ ─┐◄(123,90)
+   ▓ │                                 │ │★(112,96)│
+100▓ │      ⓡ(38,100)       ⓡ(86,102)  │ │ ~ao~    │
+112▓▓└─────────────────────────────────┘▓└─────────┘
 ```
 
-| Khu | Phạm vi ô | Có gì | Quái |
+| Khu | Phạm vi ô | Có gì | Quái **[BE]** |
 | --- | --- | --- | --- |
-| **Lán thợ** | x 180–215, y 140–175 | Lán chú Bram, đèn mỏ, ao nhỏ. **An toàn**, bán kính 12 ô | Không |
-| **Hố Tây** | x 28–92, y 62–110 | Bậc khai thác hình bậc thang, 2 vỉa sắt, giếng thang máy | **[BE]** vỉa (44,83), (61,88); giếng `ln_mo_ngam` (85,80). Quái không vào trong 6 ô quanh vỉa |
-| **Bãi máy hỏng** | x 110–180, y 45–120 | Máy xúc gỉ, băng chuyền đứt, kho sập | Nhện Tơ Điện |
-| **Bậc đá** | x 20–150, y 120–185 | Bậc đá đỏ rộng, đá vụn | Rết Đá |
-| **Đường núi** | x 95–125, y 0–40 | Dốc lên rừng | **[BE]** `ln_mo_rung` (110,9) → Rừng Sâu |
+| **Lán thợ** | x 103–123, y 82–106 | Lán chú Bram (110,91), đèn mỏ, ao nhỏ (113,104). Điểm xuất phát ★ (112,96) | Không; **an toàn** tâm (112,94) bán kính 8 |
+| **Hố Tây** | x 16–53, y 36–64 | Bậc khai thác hình bậc thang, **8 vỉa sắt**, giếng thang máy, mỏm đá thiền | **[BE]** vỉa `ml_iron_01…08` tại (18,44), (24,41), (30,43), (36,40), (20,53), (26,56), (32,53), (38,57); giếng `ln_mo_ngam` (49,47); thiền Thạch `mb_med_ho_tay…_04` (44–47, 60–63). Quái không vào trong 6 ô quanh vỉa |
+| **Bãi máy hỏng** | x 63–103, y 18–70 | Máy xúc gỉ, băng chuyền đứt, kho sập | Nhện Tơ Điện ×3 tại (72,24), (96,44), (76,66) |
+| **Bậc đá** | x 11–90, y 70–108 | Bậc đá đỏ rộng, đá vụn | Rết Đá ×3 tại (14,84), (38,100), (62,86), (86,102) |
+| **Đường núi** | x 103–128, y 18–32 | Đường dốc men vách đá sang phía đông, lên Rừng Sâu | **[BE]** `ln_mo_rung` (123,25) → Rừng Sâu. Mép đông phần trên của Mỏ giáp mép tây Rừng Sâu |
 
-### 3.3 Hầm Mỏ (`m_mo_ngam`, 192×160)
+Cổng: về Bìa Rừng ở đông (123,90). Tổng 21 quái thường.
+
+### 4.3 Hầm Mỏ (`m_mo_ngam`, 112×80)
 
 ```text
-x→ 0         50         100        150       192
-y0 ████████████[ CỬA B2 BỊ HÀN (95,15) ]████████████
-   █ ┌─ HẦM TÂY ─┐   ┌─HANG GIỮA─┐               █
-40 █ │ TỔ NHỆN   │   │ trần cao  │  ┌ VỈA ĐÔNG ┐ ═► ln_ngam_rung (183,41) 🔒
-   █ │ ⓃNhện Mẹ  │   │ ⓓⓓⓓ Dơi  │  │⛏(161,73) │ █
-80 █ │ ⓝ ⓝ trứng │   │ ⓓⓓ       │  │⛏(146,81) │ █ [BE]
-   █ └───────────┘   └───────────┘  └──────────┘ █
-120█    ══════ đường ray goòng ══════  ~(158,128)~█
-   █              ┌ SÂN GIẾNG (an toàn) ┐        █
-160████████████████████ ▼ (93,150) ███████████████
+x→ 0         28          56          84        112
+y0 ████████████[CỬA B2 HÀN (55,7)]██████████████████
+   █ Ⓝ(16,14)🔒       ⓓ(54,22)                    █
+16 █ ┌─ HẦM TÂY ─┐  ┌─ HANG GIỮA ─┐  ┌ VỈA ĐÔNG ┐ ═► 🔒(107,20)
+   █ │ⓝ(14,34)  │  │              │  │ ⛏  ⛏  ⛏ │ █
+32 █ │          │  │              │  │ ⛏  ⛏  ⛏ │ █
+   █ │          │  │   ⓓ(62,46)   │  └──────────┘ █
+48 █ │ⓝ(28,56)  │  └──────────────┘               █
+   █ └──────────┘  ════ đường ray goòng ════ ~(92,64)~
+64 █                     ┌SÂN GIẾNG┐   ⓓ(82,68)    █
+   █                     │★(54,74) │               █
+80 ██████████████████████▼(54,76)███████████████████
 ```
 
-| Khu | Phạm vi ô | Có gì | Quái |
+| Khu | Phạm vi ô | Có gì | Quái **[BE]** |
 | --- | --- | --- | --- |
-| **Sân giếng** | x 75–115, y 130–160 | Thang máy, đèn, thùng đồ. **An toàn**, bán kính 10 ô | **[BE]** `ln_mo_ngam` (93,150) |
-| **Đường ray** | y 112–128, x 15–175 | Ray goòng nối các nhánh hầm, vài xe goòng đổ | Dơi bay ngang theo đàn |
-| **Vỉa Đông** | x 135–175, y 55–95 | 2 vỉa, vân linh mạch chạy thẳng tắp về phía đông | **[BE]** vỉa (146,81), (161,73). Quái không vào trong 6 ô |
-| **Hang Giữa** | x 75–125, y 30–100 | Hang trần cao, nhũ đá, ít ánh sáng | Dơi Vân Quặng |
-| **Hầm Tây** | x 12–65, y 30–100 | Tơ phủ kín vách, trứng nhện phát sáng; mảnh vật liệu tím đầu tiên ở góc trong cùng | Nhện Tơ Điện; **Nhện Mẹ** (hồi C) |
-| **Cửa B2** | x 85–105, y 5–25 | Cửa sắt hàn kín, tiếng "ù" sau cửa | Không; mở ở chương sau |
-| **Hầm cũ** | x 175–192, y 30–50 | Đường hầm nối Rừng Sâu | **[BE]** `ln_ngam_rung` (183,41) 🔒 hồi D |
+| **Sân giếng** | x 44–67, y 65–80 | Thang máy, đèn, thùng đồ. Điểm xuất phát ★ (54,74) | Không; **an toàn** tâm (54,72) bán kính 7; **[BE]** `ln_mo_ngam` (54,76) → Mỏ |
+| **Đường ray** | y 56–66, x 9–102 | Ray goòng nối các nhánh hầm, vài xe goòng đổ, vũng nước (92,64) | Dơi ×4 tại (82,68) |
+| **Vỉa Đông** | x 79–102, y 27–47 | **6 vỉa**, vân linh mạch chạy thẳng về phía bắc, hướng sườn núi và Trạm | **[BE]** `ng_iron_b1_01…06` tại (82,42), (88,38), (84,32), (92,30), (96,42), (100,34). Quái không vào trong 6 ô |
+| **Hang Giữa** | x 44–73, y 15–50 | Hang trần cao, nhũ đá, ít ánh sáng | Dơi ×4 tại (54,22), (62,46) |
+| **Hầm Tây** | x 7–38, y 10–60 | Tơ phủ kín vách, trứng nhện phát sáng; mảnh vật liệu tím ở góc trong cùng | Nhện Tơ Điện ×3 tại (14,34), (28,56); **Nhện Mẹ** (16,14) 🔒 hồi C |
+| **Cửa B2** | x 50–61, y 2–12 | Cửa sắt hàn kín, tiếng "ù" sau cửa | Không; mở ở chương sau |
+| **Hầm cũ** | x 102–112, y 15–25 | Đường hầm nối Rừng Sâu | **[BE]** `ln_ngam_rung` (107,20) 🔒 hồi D |
 
-### 3.4 Rừng Sâu (`m_ba_vi`, 320×256)
+Tổng 18 quái thường.
+
+### 4.4 Rừng Sâu (`m_ba_vi`, 192×144)
 
 ```text
-x→ 0        80        160       240       320
-y0 ▓▓▓▓▓ SƯỜN NÚI ▓▓▓▓[CỬA KÍN 🔒 (168,9)]▓▓▓▓≈≈≈≈≈▓
-   ▓ ⓒ TÁN CAO ⓒ(đêm)     thác  bậc leo      ≈ sông▓
-40 ▓  ⓒ   ⓒ        ✦gốc TL(120,70)       ┌VÁCH ĐÁ┐≈ ▓
-   ▓                                       │ⓚ Khỉ  │≈ ▓
-80 ▓        ───── lối mòn ẩn ─────         │ⓚⓚ  ⓚ │ ◎hồ(278,119)
-mỏ►(9,136)     ┌─THUNG SUỐI─┐              │ ⓀĐầu Đàn│≈ ▓
-120▓           │ trạm cứu hộ│ (200,150)     └───────┘≈ ▓
-   ▓ ┌─ ĐẦM SƯƠNG ─┐  bố Rin │                   ≈ ▓
-160▓ │ ⓢ Rắn Sương │──────────┘    ⓦⓦ Sói Rêu      ≈ ▓
-   ▓ │  ⓢ   ⓢ      │          ⓦ      ⓦ           ≈ ▓
-200hầm►(9,213)🔒 ⓢ │   ✦gốc TL(150,200)   ⓦⓦ       ≈ ▓
-   ▓ └──────────────┘   RÌA RỪNG ẨM               ≈ ▓
-256▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ ▼ (155,247) về Bìa Rừng ▓▓▓▓▓▓▓▓
+x→ 0         48          96          144       192
+y0 ▓▓▓▓▓▓▓▓ SƯỜN NÚI ▓▓▓[CỬA KÍN 🔒(101,5)]▓▓▓▓▓≈▓▓▓
+   ▓ ┌── TÁN CAO ──┐   thác   bậc leo     Ⓚ(168,22)🔒 ▓
+16 ▓ │ⓒ(22,16) ⓒ(50,22)                  ┌VÁCH ĐÁ─┐≈ ▓
+   ▓ │              │                     │ⓚ(140,34)│≈▓
+32 ▓ │    ✦☯☯☯(72,39) gốc TL bắc         │  ⓚ(162,50)≈ ▓
+   ▓ │ⓒ(30,52)      │                     │        ◎hồ(167,67)
+48 ▓ └──────────────┘                     │ⓚ(138,76)│≈▓
+   ▓   ···lối mòn ẩn···  ┌─ THUNG SUỐI ──┐│         │≈▓
+64 ▓                     │ trạm cứu hộ   │└─ⓚ(178,92)≈▓
+   ▓    ┌─ ĐẦM SƯƠNG ─┐  │ (120,84)      │          ≈▓
+   ▓    │ⓢ(18,90)     │  │  ⓦ(112,88)    │         ≈ ▓
+96 ▓    │   ⓢ(44,104) │  └───────────────┘         ≈ ▓
+   ▓    │             │ ✦☯☯☯(90,112)  ⓦ(134,106)    ≈▓
+112▓    │             │   gốc TL nam                 ▓
+🔒◄(5,120)ⓢ(20,128)  │  ⓦ(70,128)   ⓦ(116,126)      ▓
+128▓    │   ⓢ(50,128) │    RÌA RỪNG ẨM  ★(93,133)    ▓
+144▓▓▓▓▓└─────────────┘▓▓▓▓▼(93,139) về Bìa Rừng▓▓▓▓▓▓
 ```
 
-| Khu | Phạm vi ô | Có gì | Quái |
+| Khu | Phạm vi ô | Có gì | Quái **[BE]** |
 | --- | --- | --- | --- |
-| **Rìa rừng ẩm** | x 120–240, y 180–256 | Cây cao lần đầu che trời, dương xỉ, đường mòn | Sói Rêu (đàn 3) |
-| **Gốc cây Tinh Linh** | (150,200) và (120,70) | Cây có dấu lá, lồng đèn; **an toàn**, bán kính 10 ô; điểm hồi sinh khi thua | Không |
-| **Đầm Sương** | x 15–110, y 130–235 | Đầm lầy, sương dày dưới thấp, gỗ mục | Rắn Sương |
-| **Thung Suối** | x 140–230, y 110–180 | Suối đá, **trạm cứu hộ bỏ hoang của bố Rin** (200,150) | Thưa; vài Sói Rêu lạc |
-| **Vách Đá** | x 230–300, y 40–150 | Vách cao, gờ đá; sông và hồ **[BE]** ở chân vách | Khỉ Vách Đá; **Khỉ Đầu Đàn** (hồi D) |
-| **Tán Cao** | x 20–130, y 10–100 | Cây cổ thụ, rất tối | Cú Đêm Linh (chỉ ban đêm) |
-| **Sườn núi** | x 130–230, y 0–50 | Thác, bậc leo núi cũ, **cửa kín** dẫn xuống Trạm | **[BE]** `ln_rung_tram` (168,9) 🔒 hồi E |
-| **Lối mòn ẩn** | (150,200)→(200,150) và (40,130)→(120,70) | Đường tắt qua bụi rễ; **chỉ đi được khi Hóa Thú** | Không |
+| **Lối vào** | quanh (93,136) | Điểm xuất phát ★ (93,133) | **an toàn** tâm (93,134) bán kính 8 |
+| **Rìa rừng ẩm** | x 60–144, y 101–144 | Cây cao lần đầu che trời, dương xỉ, đường mòn | Sói Rêu ×3 tại (70,128), (116,126), (134,106) |
+| **Gốc cây Tinh Linh** | nam (90,112), bắc (72,39) | Cây có dấu lá, lồng đèn; điểm hồi sinh khi thua; 3 chỗ thiền mỗi cây | **an toàn** bán kính 7; **[BE]** thiền Mộc `rs_med_goc_nam…_03` (87–93,112), `rs_med_goc_bac…_03` (69–75,39) |
+| **Đầm Sương** | x 9–66, y 73–135 | Đầm lầy, sương dày, gỗ mục | Rắn Sương tại (18,90) ×3, (44,104) ×2, (20,128) ×2, (50,128) ×3 |
+| **Thung Suối** | x 84–138, y 62–101 | Suối đá, **trạm cứu hộ bỏ hoang của bố Rin** (120,84) | Sói Rêu ×3 tại (112,88) |
+| **Vách Đá** | x 136–180, y 22–96 | Vách cao, gờ đá; sông và hồ (167,67) ở chân vách | Khỉ Vách Đá ×3 tại (140,34), (162,50), (138,76), (178,92); **Khỉ Đầu Đàn** (168,22) 🔒 hồi D |
+| **Tán Cao** | x 12–78, y 6–56 | Cây cổ thụ, rất tối | Cú Đêm Linh ×2 tại (22,16), (50,22), (30,52) — chỉ ban đêm |
+| **Sườn núi** | x 78–136, y 0–28 | Thác, bậc leo núi cũ, **cửa kín** dẫn xuống Trạm | **[BE]** `ln_rung_tram` (101,5) 🔒 hồi E |
+| **Lối mòn ẩn** | (90,112)→(120,84) và (24,73)→(72,39) | Đường tắt qua bụi rễ; **chỉ đi được khi Hóa Thú** | Không; chưa có trong dữ liệu |
 
-Cửa vào: từ Bìa Rừng ở nam (155,247); từ Mỏ ở tây (9,136); từ Hầm cũ ở tây nam (9,213) 🔒.
+Cổng: từ Bìa Rừng ở nam (93,139); từ Mỏ ở tây (5,110); từ Hầm cũ ở tây nam (5,120) 🔒. Sông dưới Vách Đá chảy tiếp xuống mép nam ở x 148, sang Bìa Rừng. Tổng 40 quái thường (34 ban ngày, 28 ban đêm).
 
-### 3.5 Trạm Thiên Mạch (`m_tram_thien_mach`, 160×128)
+### 4.5 Trạm Thiên Mạch (`m_tram_thien_mach`, 96×80)
 
 ```text
-x→ 0         40          80          120       160
+x→ 0         24          48          72        96
 y0 ████████████████████████████████████████████████
-   █              ┌── PHÒNG LÕI ──┐              █
-20 █              │   ◉ LÕI (80,25)│              █
-   █              │ Thủ Lĩnh Mạch Gãy             █
-40 █              └───────┬───────┘              █
-   █ ┌PHÒNG MÁY┐  ═══ hành lang trên ═══  ┌LỒNG GIAM┐█
-60 █ │ ⓜⓜ      │          │               │ lồng trống█
-   █ └─────────┘          │               └────────┘█
-80 █ ┌LƯU TRỮ─┐  ═══ hành lang dưới ═══  ┌KHO┐     █
-   █ │ hồ sơ  │  ⓜⓜⓜ Chuột Tím ⓜⓜ      │   │     █
-100█ └────────┘          │                └───┘     █
-   █           ┌── SẢNH VÀO (an toàn) ──┐           █
-128█████████████████ ▼ (78,119) █████████████████████
+   █           ┌──── PHÒNG LÕI ────┐              █
+   █           │  ◉ LÕI, BOSS (47,14)🔒            █
+18 █ ┌PHÒNG MÁY┐│                   │┌── KHO ──┐   █
+  ▒▒╡ⓜ(14,26) │└─────────┬─────────┘│ⓜ(80,26) │   █
+32 █ └─────────┘══ hành lang trên ══ └─────────┘   █
+   █              ⓜ(47,36)                          █
+48 █ ══════ hành lang dưới ═════════════════════   █
+   █  ⓜ(14,50)       ⓜ(47,52)        ⓜ(80,50)      █
+60 █ ┌LƯU TRỮ─┐  ┌── SẢNH VÀO ──┐  ┌LỒNG GIAM┐     █
+   █ │ hồ sơ  │  │  ★(47,70)     │  │ trống   │     █
+80 █████████████████▼(47,75)████████████████████████
 ```
 
-| Khu | Phạm vi ô | Có gì | Quái |
+`▒` là vách sập ở tường tây Phòng Máy, thông ra hang núi (x 0–5, y 22–28).
+
+| Khu | Phạm vi ô | Có gì | Quái **[BE]** |
 | --- | --- | --- | --- |
-| **Sảnh vào** | x 55–105, y 100–128 | Cửa chống cháy, đèn khẩn cấp, ghế chờ. **An toàn**; điểm hồi sinh | **[BE]** `ln_rung_tram` (78,119) |
-| **Hành lang dưới / trên** | y 75–90 và y 45–58 | Hành lang bê tông, đèn chập chờn theo nhịp 47 | Chuột Tím (đàn) |
-| **Lưu trữ** | x 8–45, y 75–102 | Hồ sơ cho thấy Viện tìm vật liệu tím trước Linh Chấn | Không |
-| **Phòng máy** | x 8–45, y 45–68 | Máy móc cũ, tinh thể tím mọc trên vỏ máy | Chuột Tím |
-| **Lồng giam** | x 115–152, y 45–68 | Dãy lồng trống, vết cào bên trong | Không (cảnh truyện) |
-| **Kho** | x 115–140, y 75–100 | Đồ tiếp tế cũ | Không |
-| **Phòng Lõi** | x 55–105, y 8–42 | Lõi cộng hưởng (80,25); sàn tròn rộng làm đấu trường boss; 4 cột che | **Thủ Lĩnh Mạch Gãy** |
+| **Sảnh vào** | x 33–63, y 60–80 | Cửa chống cháy còn vết hàn và giấy niêm phong của Viện, đèn khẩn cấp, ghế chờ; điểm hồi sinh. Điểm xuất phát ★ (47,70) | **an toàn** tâm (47,70) bán kính 6; **[BE]** `ln_rung_tram` (47,75) 🔒 |
+| **Hành lang dưới** | y 46–56, x 5–91 | Hành lang bê tông, đèn chập chờn theo nhịp 47 | Chuột Tím ×4 tại (14,50), (47,52), (80,50) |
+| **Hành lang trên** | y 32–40, x 5–91 | Nối Phòng Lõi với hai cánh | Chuột Tím ×4 tại (47,36) |
+| **Phòng máy** | x 5–27, y 18–32 | Máy móc cũ, tinh thể tím mọc trên vỏ máy; **vách sập** ở tường tây (x 0–5, y 22–28) thông ra một đoạn hang cụt, có vết cào và lông gấu | Chuột Tím ×4 tại (14,26) |
+| **Kho** | x 69–91, y 18–32 | Đồ tiếp tế cũ, bị chuột gặm | Chuột Tím ×4 tại (80,26) |
+| **Lưu trữ** | x 5–27, y 60–76; cửa x 14–18, y 56–60 ra hành lang dưới | Hồ sơ dự án Thiên Mạch: mảnh tím đào từ hố cổ trên đỉnh núi, ghi chú "rơi từ trời"; lệnh niêm phong sáng sau Linh Chấn | Không |
+| **Lồng giam** | x 69–91, y 60–76; cửa x 78–82, y 56–60 ra hành lang dưới | Dãy lồng trống, vết cào bên trong, thẻ ghi ngày **trước** Linh Chấn | Không (cảnh truyện) |
+| **Phòng Lõi** | x 30–66, y 2–26 | Lõi cộng hưởng (47,14), bảng điều khiển ở mép nam; sàn tròn ~24×20 ô làm đấu trường boss, vừa 30 người; 4 cột che. Lõi luôn chạy; ai đó Ngắt lõi thì cả kênh thấy lõi tối 47 phút | **Thủ Lĩnh Mạch Gãy** (47,14) 🔒 hồi E, quay lại sau 47 phút |
+
+Tổng 24 Chuột Tím.
 
 ---
 
-## 4. Quy tắc chung khi đặt quái
+## 5. Quy tắc chung khi đặt quái
 
-- **Điểm an toàn** (trạm gác, lán thợ, sân giếng, gốc cây Tinh Linh, sảnh Trạm): quái không đi vào trong bán kính ghi ở từng map. Thua thì tỉnh lại ở điểm an toàn gần nhất.
-- **Đầu cổng:** không đặt quái trong 12 ô quanh điểm đến của mọi cổng.
-- **Điểm hoạt động** (vỉa, bến câu): quái không vào trong 6 ô; avatar tự hoạt động không bị tấn công.
-- **Mật độ:** tối đa 6 quái trong một màn hình ở zoom mặc định (≈ 30×17 ô).
+Các quy tắc có dấu ✔ được `scripts/build-life-world.cjs` kiểm tra; script từ chối build nếu sai.
+
+- ✔ **Điểm an toàn**: quái không đứng trong bán kính an toàn. Thua thì tỉnh lại ở điểm an toàn gần nhất.
+- ✔ **Đầu cổng và điểm xuất phát:** không đặt quái trong 12 ô.
+- ✔ **Điểm hoạt động** (vỉa, bến câu, chỗ thiền): quái không vào trong 6 ô; avatar tự hoạt động không bị tấn công.
+- **Mật độ:** tối đa 6 quái trong một màn ở zoom mặc định (30×17 ô). Số quái tính cho map đủ 30 người, khoảng 1–1,5 quái/người ([10](10-kich-thuoc-map-online.md) §5.2).
 - **Lãnh địa:** mỗi nhóm quái có tâm và bán kính; đuổi ra quá bán kính thì quay về (xem [06](06-monsters.md) §2).

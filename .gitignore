@@ -5,7 +5,10 @@ server/build/
 *.log
 exports/
 .codex/
-
+server/tests/
+scripts/art-test/
+scripts/check-world-stitch.cjs
+server/data/world_population.json
 # Reconstructed from lossless parts by client/tools/restore_review_images.py
 /client/assets/world/lang_que_moi/source/community_hall.png
 /client/previews/lang_que_moi/lang_que_moi_overview.png

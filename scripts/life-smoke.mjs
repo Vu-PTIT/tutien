@@ -44,7 +44,7 @@ assert.equal(quantity(claimed.profile,'it_bait'),30-cancelled.completedCycles);
 // Exercise the real mining lease/tool gate and garden reservation/refund without
 // accelerating production timers. Unit tests cover their completed yields.
 for(const job of [{mapId:'m_mo_lo_thien',siteId:'ml_iron_01'},
-                 {mapId:'m_lang_que',siteId:'new_plot_01',cropId:'crop_cam_lo'}]) {
+                 {mapId:'m_nha',siteId:'new_plot_01',cropId:'crop_cam_lo'}]) {
   await rpc('world_travel',{mapId:job.mapId});
   const input={operationId:op(),siteId:job.siteId,controlMode:'autonomous',...(job.cropId?{cropId:job.cropId}:{})};
   const session=(await rpc('activity_start',input)).session;

@@ -16,23 +16,25 @@ function waterContains(w,x,y) {
   }
   return false;
 }
+// Same rule as worldWalkable on the server: an 8 px body clear of solids,
+// footprints and water (unless standing on a bridge).
+function pointWalkable(map,x,y) {
+  if(x<8||y<8||x>=map.width*32-8||y>=map.height*32-8)return false;
+  for(const [dx,dy] of [[0,0],[-8,0],[8,0],[0,-8],[0,8]]) {
+    const px=x+dx,py=y+dy,tx=Math.floor(px/32),ty=Math.floor(py/32);
+    for(const [rx,ry,w,h] of map.solids)if(tx>=rx&&tx<rx+w&&ty>=ry&&ty<ry+h)return false;
+    for(const [rx,ry,w,h] of map.footprints||[])if(px>=rx&&px<rx+w&&py>=ry&&py<ry+h)return false;
+    const cx=px/32,cy=py/32;
+    const bridge=(map.bridges||[]).some(([rx,ry,w,h])=>cx>=rx&&cx<=rx+w&&cy>=ry&&cy<=ry+h);
+    if(!bridge&&(map.waters||[]).some(w=>waterContains(w,cx,cy)))return false;
+  }
+  return true;
+}
 function navigation(map) {
   const cache=new Map();
   function walkable(x,y) {
     const key=x+','+y;if(cache.has(key))return cache.get(key);
-    let ok=true;
-    if(x<8||y<8||x>=map.width*32-8||y>=map.height*32-8)ok=false;
-    for(const [dx,dy] of [[0,0],[-8,0],[8,0],[0,-8],[0,8]]) {
-      if(!ok)break;
-      const px=x+dx,py=y+dy,tx=Math.floor(px/32),ty=Math.floor(py/32);
-      for(const [rx,ry,w,h] of map.solids)if(tx>=rx&&tx<rx+w&&ty>=ry&&ty<ry+h){ok=false;break;}
-      if(!ok)break;
-      for(const [rx,ry,w,h] of map.footprints||[])if(px>=rx&&px<rx+w&&py>=ry&&py<ry+h){ok=false;break;}
-      if(!ok)break;
-      const cx=px/32,cy=py/32;
-      const bridge=(map.bridges||[]).some(([rx,ry,w,h])=>cx>=rx&&cx<=rx+w&&cy>=ry&&cy<=ry+h);
-      if(!bridge&&(map.waters||[]).some(w=>waterContains(w,cx,cy)))ok=false;
-    }
+    const ok=pointWalkable(map,x,y);
     cache.set(key,ok);return ok;
   }
   function edge(x,y,nx,ny) {
@@ -49,4 +51,4 @@ function navigation(map) {
   return bits.map(row=>Array.from(row,n=>n.toString(16)).join('').match(/(.)\1*/g)
     .map(run=>run.length.toString(36)+':'+run[0]).join(','));
 }
-module.exports={navigation};
+module.exports={navigation,pointWalkable};

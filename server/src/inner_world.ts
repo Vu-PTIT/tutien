@@ -22,11 +22,14 @@ const INNER_MAX_CELLS = 1600;
 const INNER_MOTES_PER_CELL = 4;
 const INNER_MAX_HEIGHT = 4;
 const INNER_STAGE_CAP = 3; // Chapter 1 ends at Quần đảo.
-const INNER_MOB_ESSENCE: {[enemyId: string]: string} = {en_boar: "tho", en_spider: "moc"};
 // Every monster kill (field, solo encounter or contract hunt) releases plenty of
-// linh năng, mostly turbid, carrying the species' vị.
+// linh năng, mostly turbid, carrying the species' vị (WORLD_ENEMIES, from
+// world_population.json). A two-vị species splits it evenly.
 function innerMobEssence(enemyId: string): InnerEssence[] {
-  return [{vi: INNER_MOB_ESSENCE[enemyId] || "tho", motes: 8, turbid: 6}];
+  const enemy = WORLD_ENEMIES[enemyId], vis = enemy ? enemy.essence : ["tho"];
+  return vis.map(function (vi): InnerEssence {
+    return {vi: vi, motes: Math.floor(8 / vis.length), turbid: Math.floor(6 / vis.length)};
+  });
 }
 const INNER_STAGES = [
   {id: "hat", name: "Hạt", cells: 1, need: ""},

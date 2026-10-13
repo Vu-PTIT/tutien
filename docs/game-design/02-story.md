@@ -113,7 +113,7 @@ Hai role có mở đầu khác nhau, gặp nhau ở hồi B và đi chung từ �
 ### Hồi C — Dưới lòng đất (Mỏ Bỏ Hoang, Hầm Mỏ)
 
 7. Nhịp xung mạnh nhất ở hướng mỏ. Chú Bram kể thợ mỏ nghe tiếng "ù" dưới vỉa sâu, đã đóng tầng B2. *(dạy: đào khoáng)*
-8. Ở Hầm Mỏ B1: vân linh mạch chạy thẳng tắp về phía rừng, như kẻ bằng thước. Linh năng tự nhiên không chảy như vậy; có thứ gì đó đang **hút** nó. Nhện Tơ Điện làm tổ trong hầm.
+8. Ở Hầm Mỏ B1: vân linh mạch chạy thẳng tắp về phía bắc, hướng sườn núi sau Rừng Sâu, như kẻ bằng thước. Linh năng tự nhiên không chảy như vậy; có thứ gì đó đang **hút** nó. Nhện Tơ Điện làm tổ trong hầm.
 9. Tìm được một mảnh vật liệu **màu tím, hình lục giác, không có bóng**. Theo không nhận ra nó. Lão Hồ cũng không: **nó không thuộc thế giới Người, cũng không thuộc Ẩn Giới.**
 
 ### Hồi D — Rừng Sâu
@@ -124,13 +124,13 @@ Hai role có mở đầu khác nhau, gặp nhau ở hồi B và đi chung từ �
 
 ### Hồi E — Trạm Thiên Mạch
 
-13. Dưới núi là một trạm nghiên cứu xây **trước** Linh Chấn: hành lang bê tông, biển chỉ dẫn đã phai, logo cũ của Viện Linh học. Hồ sơ cho thấy Viện tìm được mảnh vật liệu tím từ nhiều năm trước, và xây một cỗ máy để **đọc** nó.
-14. Sự thật: đêm Linh Chấn, cỗ máy chạy quá tải và **xé màn che**. Nó chưa bao giờ tắt. Nhịp 47 giây là cỗ máy vẫn đang kéo Ẩn Giới vào thế giới Người: làm động vật nhiễm thêm linh năng và làm Tinh Linh ốm. Trong một phòng có những lồng trống: sau Linh Chấn, Viện đã bắt Tinh Linh để nghiên cứu.
-15. Canh giữ lõi máy là **Thủ Lĩnh Mạch Gãy**: một con gấu núi ở gần lõi suốt sáu năm, nhiễm linh năng nặng đến mức gần như hóa đá tím. Hạ nó, rồi người chơi chọn:
-    - **Tắt lõi:** rừng yên lại, Tinh Linh nhỏ khỏi bệnh, nhưng mất dữ liệu về vật liệu tím.
-    - **Giữ lõi để sao dữ liệu:** Theo có manh mối, nhưng nhịp vẫn chạy chậm lại.
+13. Dưới núi là một trạm nghiên cứu xây **trước** Linh Chấn: hành lang bê tông, biển chỉ dẫn đã phai, logo cũ của Viện Linh học. Hồ sơ cho thấy Viện đào được mảnh vật liệu tím từ một **hố cổ trên đỉnh núi**, ghi chú "rơi từ trời", và đặt tên dự án là **Thiên Mạch**. Họ xây một cỗ máy để **đọc** nó. Trong một phòng có những lồng trống: **trước** Linh Chấn, Viện đã bắt những Tinh Linh lọt qua các vết rách nhỏ để làm thí nghiệm. Đây là gốc của tin đồn trong làng.
+14. Sự thật: đêm Linh Chấn, cỗ máy chạy quá tải và **xé màn che**. Viện **niêm phong** trạm ngay sáng hôm sau, xóa hồ sơ và chuyển nhân viên đi. Tiến sĩ Theo vào Viện sau đó nên không biết trạm tồn tại. Cỗ máy chưa bao giờ tắt. Nhịp 47 giây là cỗ máy vẫn đang kéo Ẩn Giới vào thế giới Người: làm động vật nhiễm thêm linh năng và làm Tinh Linh ốm. Một mảng vách ở Phòng Máy đã sập vào hang núi; dị thú bị ánh tím hút vào trạm qua lối đó.
+15. Canh giữ lõi máy là **Thủ Lĩnh Mạch Gãy**: một con gấu núi lọt vào qua vách sập, ở gần lõi suốt sáu năm, nhiễm linh năng nặng đến mức gần như hóa đá tím. Hạ nó, rồi người chơi chọn ở bảng điều khiển lõi:
+    - **Ngắt lõi:** nhịp tắt, rừng yên lại, Tinh Linh nhỏ khỏi bệnh, nhưng mất dữ liệu về vật liệu tím.
+    - **Sao dữ liệu:** Theo có manh mối về nơi mảnh tím rơi xuống, nhưng nhịp vẫn chạy.
 
-    Không lựa chọn nào sai; cả hai đều về được nhà. Tắt lõi không vá được màn che: Ẩn Giới đã ở lại.
+    Không lựa chọn nào sai; cả hai đều về được nhà. Lựa chọn được ghi vào câu chuyện **của riêng người chơi đó**. Còn trong thế giới chung, lõi **không tắt hẳn được**: nó chạy bằng mảnh tím chứ không bằng điện của Viện. Ngắt lõi chỉ làm nhịp tắt một lúc, sau đó lõi tự khởi động lại và kéo gấu quay về. Tắt lõi cũng không vá được màn che: Ẩn Giới đã ở lại.
 
 ### Kết chương
 

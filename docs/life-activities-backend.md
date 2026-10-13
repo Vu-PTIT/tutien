@@ -36,14 +36,17 @@ Không có minigame, không cấp XP tu luyện hoặc thưởng từ việc ng�
 
 | Map | Slot | Số lượng | Nguồn |
 | --- | --- | --- | --- |
-| `m_lang_que` | `new_plot_01`…`new_plot_12` | 12 luống cá nhân | snapshot backend của `access_cell` làng mới |
-| `m_lang_que` | `new_fish_01`…`new_fish_04` | 4 bến câu | snapshot backend của `stand_cell` làng mới |
-| `m_mo_lo_thien` | `ml_iron_01`, `ml_iron_02` | 2 vỉa | `server/data/life_world.json` |
-| `m_mo_ngam`, B1 | `ng_iron_b1_01`, `ng_iron_b1_02` | 2 vỉa | `server/data/life_world.json` |
+| `m_nha` (nhà riêng) | `new_plot_01`…`new_plot_12` | 12 luống cá nhân | `server/data/life_world.json` |
+| `m_lang_que` | `new_fish_01`…`new_fish_12` | 12 bến câu | `server/data/life_world.json` |
+| `m_mo_lo_thien` | `ml_iron_01`…`ml_iron_08` | 8 vỉa | `server/data/life_world.json` |
+| `m_mo_ngam`, B1 | `ng_iron_b1_01`…`ng_iron_b1_06` | 6 vỉa | `server/data/life_world.json` |
+| 5 map | `*_med_*` | 26 điểm thiền | `server/data/life_world.json` |
 
-Các điểm đào trong blockout là điểm làm việc an toàn để nối scene quặng khi dựng client. B2 và Trạm Thiên Mạch vẫn khóa theo topology hiện tại. Luống là tiến trình riêng của từng tài khoản; slot avatar làm việc có capacity 1 dùng chung server. Cây mẫu `initial_stage` trong layout không tạo vật phẩm hoặc tiến trình thật.
+Kích thước map và số điểm theo [10 — kích thước map cho online](game-design/10-kich-thuoc-map-online.md); tọa độ ở [05](game-design/05-map-layouts.md).
 
-`server/data/life_world.json` lưu hợp đồng backend tối thiểu: điểm đứng, mặt nước, chân vật thể, cầu và cổng, được lấy từ layout ở commit `d40ae4d` trước khi client data bị gỡ. Không chứa hình ảnh, cây mẫu hay runtime client. `scripts/build-life-world.cjs` biên dịch cấu hình này thành `server/src/life_world_generated.ts`. Chạy lại generator khi sửa JSON; CI kiểm tra manifest khớp nguồn. Khi map mới có geometry khác, cần cập nhật cùng hợp đồng này trước khi bật tương tác online. Backend mới dùng làng mới làm gốc thế giới, song song với tuyến An Khê prototype cũ. `world_get({preferredMapId:"m_lang_que"})` chọn map cho phiên đầu tiên; tài khoản đã có vị trí dùng `world_travel`.
+Các điểm đào trong blockout là điểm làm việc an toàn để nối scene quặng khi dựng client. B2 và Trạm Thiên Mạch vẫn khóa theo topology hiện tại. Luống là tiến trình riêng của từng tài khoản và nằm trong nhà riêng `m_nha`, nên lease luống khóa theo từng người chơi (`m_nha:new_plot_NN:<userId>`); mọi slot khác có capacity 1 dùng chung server. Cây mẫu `initial_stage` trong layout không tạo vật phẩm hoặc tiến trình thật.
+
+`server/data/life_world.json` lưu hợp đồng backend tối thiểu: điểm đứng, mặt nước, cầu và cổng. Ngày 13/10/2026 toàn bộ map được thu nhỏ cho 30 người/map và bỏ footprint cũ của làng; collision bên trong map sẽ thêm lại khi có art. Không chứa hình ảnh, cây mẫu hay runtime client. `scripts/build-life-world.cjs` biên dịch cấu hình này thành `server/src/life_world_generated.ts`. Chạy lại generator khi sửa JSON; CI kiểm tra manifest khớp nguồn. Khi map mới có geometry khác, cần cập nhật cùng hợp đồng này trước khi bật tương tác online. Làng (`m_lang_que`) là gốc thế giới và điểm xuất phát mặc định; tuyến An Khê prototype cũ đã bị xóa, người chơi còn đứng ở đó được đưa về điểm vào của làng. Quái và NPC khai báo riêng trong `server/data/world_population.json`. `world_get({preferredMapId})` chọn map cho phiên đầu tiên; tài khoản đã có vị trí dùng `world_travel`.
 
 Đường đi tự động được tìm qua cổng mở và các cạnh đi được, không xuyên nước/chân nhà. Mask các cạnh đi được được biên dịch trước và nén theo hàng; RPC chỉ tìm trên mask, không quét hàng nghìn footprint khi nhận lệnh. Dữ liệu tĩnh được nạp khi bundle chạy trong từng VM của Nakama. Điểm đứng cuối, hướng và ID slot do server sở hữu. Thời gian đi dựa trên tốc độ server, không tính vào số lượt hoạt động.
 

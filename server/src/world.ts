@@ -1,10 +1,10 @@
 interface WorldPoint {
   id: string; x: number; y: number; radius: number; kind: string;
-  destination?: string; arrivalX?: number; arrivalY?: number;
+  destination?: string; arrivalX?: number; arrivalY?: number; name?: string; role?: string;
 }
 interface WorldFieldMobDefinition {
-  id: string; enemyId: string; name: string; x: number; y: number; maxHp: number;
-  attack: number; defense: number; rewardXp: number; rewardItemId: string; respawnMs: number;
+  id: string; enemyId: string; name: string; x: number; y: number; maxHp: number; territoryId?: string;
+  attack: number; defense: number; rewardXp: number; rewardItemId?: string; respawnMs: number;
   equipmentDropItemId?: string; equipmentDropBasisPoints?: number; equipmentDropPityKills?: number;
 }
 interface WorldFieldMobState extends WorldFieldMobDefinition {
@@ -13,8 +13,14 @@ interface WorldFieldMobState extends WorldFieldMobDefinition {
 interface WorldMapDefinition {
   width: number; height: number; spawnX: number; spawnY: number; solids: number[][]; points: WorldPoint[];
   fieldMobs?: WorldFieldMobDefinition[];
+  safeZones?: {id: string; x: number; y: number; radius: number}[];
+  territories?: {id: string; enemyId: string; x: number; y: number; radius: number}[];
   waters?: WorldWaterRegion[]; bridges?: number[][]; footprints?: number[][];
   navEdges?: string[]; // RLE rows of hex cardinal masks (W=1,E=2,N=4,S=8).
+}
+// Species data compiled from server/data/world_population.json.
+interface WorldEnemy {
+  name: string; tier: number; kind: string; active: string; essence: string[]; storyGate?: string;
 }
 interface WorldWaterRegion {
   shape: string; points?: number[][]; center_cell?: number[]; radii_cells?: number[]; width_cells?: number;
@@ -28,61 +34,9 @@ interface WorldSession {
 const WORLD_TILE = 32;
 const WORLD_SPEED = 72;
 const WORLD_RADIUS = 8;
-const WORLD_MAPS: {[key: string]: WorldMapDefinition} = {
-  m_an_khe: {width: 48, height: 36, spawnX: 768, spawnY: 576, solids: [
-    [0,0,48,1],[0,35,48,1],[0,0,1,36],[47,0,1,36],[42,1,5,34],
-    [5,7,4,4],[27,7,4,3],[31,16,4,2],[37,17,4,3],[5,25,4,3],[23,26,4,3],[39,8,2,2],[19,32,1,1]
-  ], points: [
-    {id:"ak.npc.ba_sam",x:240,y:384,radius:1.8,kind:"npc"},
-    {id:"ak.npc.luc_vi",x:768,y:992,radius:1.8,kind:"npc"},
-    {id:"ak.shrine.breathing",x:800,y:640,radius:1.7,kind:"shrine"},
-    {id:"ak.service.do_khe",x:1024,y:480,radius:1.8,kind:"service"},
-    {id:"ak.board.village",x:480,y:544,radius:1.7,kind:"service"},
-    {id:"ak.market.village",x:1248,y:672,radius:1.7,kind:"shop"},
-    {id:"ak.garden.home",x:320,y:864,radius:1.8,kind:"garden"},
-    {id:"ak.gate.truc_am",x:704,y:96,radius:1.8,kind:"gate",destination:"m_truc_am",arrivalX:160,arrivalY:928}
-  ]},
-  m_truc_am: {width:48,height:36,spawnX:160,spawnY:928,solids:[
-    [0,0,48,1],[0,35,48,1],[0,0,1,36],[47,0,1,36],[9,4,7,6],[20,3,10,6],
-    [34,5,9,6],[18,20,9,7],[34,23,9,7],[27,13,3,4]
-  ],points:[
-    {id:"ta.node.cam_lo",x:160,y:544,radius:1.7,kind:"resource"},
-    {id:"ta.poi.water_trace_west",x:256,y:576,radius:1.7,kind:"scan"},
-    {id:"ta.mach_ban.scan",x:896,y:576,radius:1.6,kind:"scan"},
-    {id:"ta.poi.water_trace_east",x:448,y:960,radius:1.7,kind:"scan"},
-    {id:"ta.trail.boar_sign",x:1072,y:560,radius:1.8,kind:"encounter"},
-    {id:"ta.gate.thach_can",x:1408,y:128,radius:1.8,kind:"gate",destination:"m_thach_can",arrivalX:128,arrivalY:544},
-    {id:"ta.retreat.ankhe",x:160,y:992,radius:1.8,kind:"gate",destination:"m_an_khe",arrivalX:704,arrivalY:128}
-  ], fieldMobs:[
-    {id:"ta.mob.son_tru.01",enemyId:"en_boar",name:"Sơn Trư",x:1136,y:560,maxHp:60,attack:12,defense:5,rewardXp:10,rewardItemId:"it_boar_hide",respawnMs:45000,equipmentDropItemId:"it_iron_sword",equipmentDropBasisPoints:2000,equipmentDropPityKills:8},
-    {id:"ta.mob.son_tru.02",enemyId:"en_boar",name:"Sơn Trư",x:1200,y:592,maxHp:60,attack:12,defense:5,rewardXp:10,rewardItemId:"it_boar_hide",respawnMs:45000,equipmentDropItemId:"it_iron_sword",equipmentDropBasisPoints:2000,equipmentDropPityKills:8},
-    {id:"ta.mob.doc_chu.01",enemyId:"en_spider",name:"Độc Chu",x:464,y:560,maxHp:45,attack:8,defense:0,rewardXp:15,rewardItemId:"it_spider_silk",respawnMs:60000,equipmentDropItemId:"it_spider_robe",equipmentDropBasisPoints:1000,equipmentDropPityKills:12},
-    {id:"ta.mob.doc_chu.02",enemyId:"en_spider",name:"Độc Chu",x:528,y:592,maxHp:45,attack:8,defense:0,rewardXp:15,rewardItemId:"it_spider_silk",respawnMs:60000,equipmentDropItemId:"it_spider_robe",equipmentDropBasisPoints:1000,equipmentDropPityKills:12}
-  ]},
-  m_thach_can: {width:48,height:36,spawnX:288,spawnY:576,solids:[
-    [0,0,48,1],[0,35,48,1],[0,0,1,36],[47,0,1,36],
-    [5,4,10,5],[20,8,4,13],[28,4,7,6],[34,13,3,8],
-    [8,27,10,5],[38,26,8,7],[26,30,8,4]
-  ],points:[
-    {id:"tc.checkpoint.ngoai_vi",x:160,y:992,radius:1.8,kind:"service"},
-    {id:"tc.node.iron_ore",x:992,y:672,radius:1.8,kind:"resource"},
-    {id:"tc.mach_ban.flow_pillar",x:1344,y:576,radius:1.8,kind:"scan"},
-    {id:"tc.retreat.truc_am",x:96,y:576,radius:1.8,kind:"gate",destination:"m_truc_am",arrivalX:1344,arrivalY:128},
-    {id:"tc.gate.co_tinh",x:1344,y:768,radius:1.8,kind:"gate",destination:"m_co_tinh",arrivalX:352,arrivalY:800}
-  ]},
-  m_co_tinh: {width:48,height:36,spawnX:352,spawnY:992,solids:[
-    [0,0,48,1],[0,35,48,1],[0,0,1,36],[47,0,1,36],
-    [1,8,3,11],[10,8,4,13],[16,1,4,9],[27,1,4,9],[33,4,2,4],[41,3,2,4],
-    [36,10,2,3],[44,10,2,3],[33,22,3,2],[40,22,3,2],[32,24,2,5],
-    [42,24,2,5],[33,29,3,2],[40,29,3,2],[3,27,6,5]
-  ],points:[
-    {id:"ct.checkpoint.entrance",x:352,y:992,radius:1.8,kind:"service"},
-    {id:"ct.mach_ban.balance",x:736,y:352,radius:1.8,kind:"scan"},
-    {id:"ct.formation.panel",x:1216,y:352,radius:1.8,kind:"service"},
-    {id:"ct.boss.heart_well",x:1152,y:832,radius:1.8,kind:"service"},
-    {id:"ct.retreat.thach_can",x:256,y:800,radius:1.8,kind:"gate",destination:"m_thach_can",arrivalX:1280,arrivalY:768}
-  ]}
-};
+// Filled from the generated life world manifest (installLifeWorldMaps).
+const WORLD_MAPS: {[key: string]: WorldMapDefinition} = {};
+const WORLD_START_MAP = "m_lang_que";
 function worldObject(userId: string): nkruntime.StorageReadRequest {
   return {collection:"world_sessions",key:"main",userId:userId};
 }
@@ -119,8 +73,9 @@ function worldFindPoint(map: WorldMapDefinition, id: string): WorldPoint | undef
 function worldMapReachable(targetId: string): boolean {
   const target=WORLD_MAPS[targetId];
   if (!target || !worldWalkable(target,[target.spawnX,target.spawnY])) return false;
-  const pending: string[] = ["m_an_khe", "m_lang_que"];
-  const visited: {[mapId: string]: boolean} = {"m_an_khe": true, "m_lang_que": true};
+  const pending: string[] = [WORLD_START_MAP];
+  const visited: {[mapId: string]: boolean} = {};
+  visited[WORLD_START_MAP] = true;
   while (pending.length > 0) {
     const mapId = pending[0];
     pending.splice(0, 1);
@@ -148,47 +103,54 @@ function worldEnsureFieldMobs(session: WorldSession, mapId: string, now: number)
     session.equipmentPity = {}; changed = true;
   }
   if (!session.fieldMobsByMap) { session.fieldMobsByMap = {}; changed = true; }
-  if (!session.fieldMobsByMap[mapId]) {
-    const definitions = WORLD_MAPS[mapId].fieldMobs || [];
-    session.fieldMobsByMap[mapId] = definitions.map(function (mob): WorldFieldMobState {
-      return {id:mob.id,enemyId:mob.enemyId,name:mob.name,x:mob.x,y:mob.y,maxHp:mob.maxHp,
-        attack:mob.attack,defense:mob.defense,rewardXp:mob.rewardXp,rewardItemId:mob.rewardItemId,
-        respawnMs:mob.respawnMs,equipmentDropItemId:mob.equipmentDropItemId,
-        equipmentDropBasisPoints:mob.equipmentDropBasisPoints,equipmentDropPityKills:mob.equipmentDropPityKills,
-        hp:mob.maxHp,generation:1,respawnAt:0,mode:"idle"};
-    });
-    changed = true;
-  }
-  const mobs = session.fieldMobsByMap[mapId];
-  const definitions = WORLD_MAPS[mapId].fieldMobs || [];
-  for (let i = 0; i < mobs.length; i++) {
-    const mob = mobs[i];
-    for (let j = 0; j < definitions.length; j++) {
-      if (definitions[j].id !== mob.id) continue;
-      if (definitions[j].equipmentDropItemId && (mob.equipmentDropItemId !== definitions[j].equipmentDropItemId ||
-          Number(mob.equipmentDropBasisPoints || 0) !== Number(definitions[j].equipmentDropBasisPoints || 0) ||
-          Number(mob.equipmentDropPityKills || 0) !== Number(definitions[j].equipmentDropPityKills || 0))) {
-        mob.equipmentDropItemId = definitions[j].equipmentDropItemId;
-        mob.equipmentDropBasisPoints = definitions[j].equipmentDropBasisPoints;
-        mob.equipmentDropPityKills = definitions[j].equipmentDropPityKills;
-        changed = true;
-      }
-      break;
-    }
+  // The map data is the roster: stored mobs keep their live hp/generation, while
+  // stats, position and drops always follow the current definitions. Mobs no
+  // longer defined (or still story-gated) are dropped.
+  const previous = session.fieldMobsByMap[mapId] || [];
+  const definitions = (WORLD_MAPS[mapId].fieldMobs || []).filter(worldMobSpawnable);
+  const mobs = definitions.map(function (def): WorldFieldMobState {
+    let live: WorldFieldMobState | undefined;
+    for (let i = 0; i < previous.length; i++) if (previous[i].id === def.id) { live = previous[i]; break; }
+    const mob: WorldFieldMobState = {id:def.id,enemyId:def.enemyId,name:def.name,x:def.x,y:def.y,maxHp:def.maxHp,
+      attack:def.attack,defense:def.defense,rewardXp:def.rewardXp,rewardItemId:def.rewardItemId,respawnMs:def.respawnMs,
+      territoryId:def.territoryId,equipmentDropItemId:def.equipmentDropItemId,
+      equipmentDropBasisPoints:def.equipmentDropBasisPoints,equipmentDropPityKills:def.equipmentDropPityKills,
+      hp:live ? Math.min(live.hp, def.maxHp) : def.maxHp,generation:live ? live.generation : 1,
+      respawnAt:live ? live.respawnAt : 0,mode:live ? live.mode : "idle"};
     if (mob.hp <= 0 && mob.respawnAt > 0 && now >= mob.respawnAt) {
-      mob.hp = mob.maxHp; mob.generation++; mob.respawnAt = 0; mob.mode = "idle"; changed = true;
+      mob.hp = mob.maxHp; mob.generation++; mob.respawnAt = 0; mob.mode = "idle";
     }
+    return mob;
+  });
+  if (!session.fieldMobsByMap[mapId] || previous.length !== mobs.length) changed = true;
+  // Field-by-field: stored JSON may come back with a different key order.
+  for (let i = 0; i < mobs.length && !changed; i++) {
+    const a = mobs[i] as unknown as {[key: string]: unknown}, b = previous[i] as unknown as {[key: string]: unknown};
+    for (const key in a) if (a[key] !== b[key]) { changed = true; break; }
   }
+  session.fieldMobsByMap[mapId] = mobs;
   return changed;
 }
+// Elites and the boss wait for the story system; until then they never spawn.
+function worldMobSpawnable(def: WorldFieldMobDefinition): boolean {
+  const enemy = WORLD_ENEMIES[def.enemyId];
+  return !enemy || !enemy.storyGate;
+}
+// Day-only and night-only species are hidden (and untargetable) outside their hours.
+function worldMobActive(mob: WorldFieldMobDefinition, now: number): boolean {
+  const enemy = WORLD_ENEMIES[mob.enemyId];
+  if (!enemy || enemy.active === "always") return true;
+  return (enemy.active === "night") === lifeIsNight(now);
+}
 function worldFieldMobSnapshot(session: WorldSession, mapId: string): WorldFieldMobState[] {
-  const source=(session.fieldMobsByMap && session.fieldMobsByMap[mapId]) || [];
+  const now=Date.now();
+  const source=((session.fieldMobsByMap && session.fieldMobsByMap[mapId]) || []).filter(function (mob) { return worldMobActive(mob, now); });
   const pity=session.equipmentPity || {};
   return source.map(function (mob): WorldFieldMobState {
     return {id:mob.id,enemyId:mob.enemyId,name:mob.name,x:mob.x,y:mob.y,maxHp:mob.maxHp,
       attack:mob.attack,defense:mob.defense,rewardXp:mob.rewardXp,rewardItemId:mob.rewardItemId,
       respawnMs:mob.respawnMs,hp:mob.hp,generation:mob.generation,respawnAt:mob.respawnAt,mode:mob.mode,
-      equipmentDropItemId:mob.equipmentDropItemId,equipmentDropBasisPoints:mob.equipmentDropBasisPoints,
+      territoryId:mob.territoryId,equipmentDropItemId:mob.equipmentDropItemId,equipmentDropBasisPoints:mob.equipmentDropBasisPoints,
       equipmentDropPityKills:mob.equipmentDropPityKills,
       equipmentDropPityMisses:mob.equipmentDropItemId ? Number(pity[mob.equipmentDropItemId] || 0) : 0};
   });
@@ -198,10 +160,24 @@ function worldReadSession(nk: nkruntime.Nakama,userId: string,preferredMapId: st
     const row=nk.storageRead([worldObject(userId)])[0];
     if(row) {
       const v=row.value;
-      if(!WORLD_MAPS[v.mapId]||typeof v.x!=="number"||typeof v.y!=="number"||typeof v.seq!=="number"||typeof v.updatedAt!=="number"||!worldWalkable(WORLD_MAPS[v.mapId],[v.x,v.y]))
+      if(typeof v.mapId!=="string"||typeof v.x!=="number"||typeof v.y!=="number"||typeof v.seq!=="number"||typeof v.updatedAt!=="number")
         return fail(nkruntime.Codes.FAILED_PRECONDITION,"World position requires review");
-      const startingMap=WORLD_MAPS.m_an_khe;
-      if(preferredMapId&&preferredMapId!=="m_an_khe"&&v.mapId==="m_an_khe"&&v.x===startingMap.spawnX&&v.y===startingMap.spawnY&&v.seq===0) {
+      if(!WORLD_MAPS[v.mapId]) {
+        // The map was retired (e.g. the old An Khê prototype route): move the player
+        // to the village spawn and forget field state kept for maps that are gone.
+        const moved=JSON.parse(JSON.stringify(v)) as WorldSession,start=WORLD_MAPS[WORLD_START_MAP];
+        moved.mapId=WORLD_START_MAP; moved.x=start.spawnX; moved.y=start.spawnY; moved.seq=v.seq+1; moved.updatedAt=Date.now();
+        const kept: {[mapId: string]: WorldFieldMobState[]} = {};
+        for(const id in moved.fieldMobsByMap||{}) if(WORLD_MAPS[id]) kept[id]=moved.fieldMobsByMap![id];
+        moved.fieldMobsByMap=kept;
+        try {
+          const version=nk.storageWrite([worldSessionWriteRequest(userId,moved,row.version)])[0].version;
+          return {session:moved,version:version};
+        } catch(_error) { continue; }
+      }
+      if(!worldWalkable(WORLD_MAPS[v.mapId],[v.x,v.y])) return fail(nkruntime.Codes.FAILED_PRECONDITION,"World position requires review");
+      const startingMap=WORLD_MAPS[WORLD_START_MAP];
+      if(preferredMapId&&preferredMapId!==WORLD_START_MAP&&v.mapId===WORLD_START_MAP&&v.x===startingMap.spawnX&&v.y===startingMap.spawnY&&v.seq===0) {
         const preferredMap=WORLD_MAPS[preferredMapId];
         if(preferredMap&&worldMapReachable(preferredMapId)) {
           const adopted=JSON.parse(JSON.stringify(v)) as WorldSession;
@@ -214,7 +190,7 @@ function worldReadSession(nk: nkruntime.Nakama,userId: string,preferredMapId: st
       }
       return {session:v as WorldSession,version:row.version};
     }
-    const initialMapId=preferredMapId&&worldMapReachable(preferredMapId)?preferredMapId:"m_an_khe";
+    const initialMapId=preferredMapId&&worldMapReachable(preferredMapId)?preferredMapId:WORLD_START_MAP;
     const map=WORLD_MAPS[initialMapId];
     const value:WorldSession={mapId:initialMapId,x:map.spawnX,y:map.spawnY,seq:0,updatedAt:Date.now(),fieldMobsByMap:{},attackReadyAt:0};
     try {
@@ -250,7 +226,7 @@ const worldGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     }
     const activity=lifeSessionView(loaded.state.activitySession,Date.now());
     const position=activity&&activity.state!=="cancelled"&&activity.settlement!=="settled" ? lifePosition(loaded.state.activitySession,Date.now()) : session;
-    return JSON.stringify({mapId:position.mapId,x:position.x,y:position.y,seq:session.seq,quest:worldQuestView(loaded.state),
+    return JSON.stringify({mapId:position.mapId,x:position.x,y:position.y,seq:session.seq,
       fieldMobs:worldFieldMobSnapshot(session,position.mapId),activity:activity,lifeWorldRevision:LIFE_WORLD_REVISION});
   }
   return fail(nkruntime.Codes.UNAVAILABLE,"World field state is busy; retry");
@@ -263,7 +239,8 @@ const worldMapGetRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const session=worldReadSession(nk,userId).session,map=WORLD_MAPS[session.mapId];
   return JSON.stringify({mapId:session.mapId,width:map.width*WORLD_TILE,height:map.height*WORLD_TILE,
     tileSize:WORLD_TILE,radius:WORLD_RADIUS,speed:WORLD_SPEED,solids:map.solids,
-    footprints:map.footprints||[],waters:map.waters||[],bridges:map.bridges||[],points:map.points});
+    footprints:map.footprints||[],waters:map.waters||[],bridges:map.bridges||[],points:map.points,
+    safeZones:map.safeZones||[],territories:map.territories||[]});
 };
 const worldTravelRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
   const userId=authenticated(ctx),input=objectPayload(payload);
@@ -278,7 +255,7 @@ const worldTravelRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
       if(worldEnsureFieldMobs(next,next.mapId,Date.now())) {
         try { worldWrite(nk,userId,next,current.version); } catch(_error) { continue; }
       }
-      return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,seq:next.seq,quest:worldQuestView(loadCharacter(nk,userId).state),
+      return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,seq:next.seq,
         fieldMobs:worldFieldMobSnapshot(next,next.mapId),message:"Bạn đang ở khu vực này."});
     }
     const target=WORLD_MAPS[input.mapId];
@@ -287,7 +264,7 @@ const worldTravelRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     worldEnsureFieldMobs(next,next.mapId,Date.now());
     try {
       worldWrite(nk,userId,next,current.version);
-      return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,seq:next.seq,quest:worldQuestView(loadCharacter(nk,userId).state),
+      return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,seq:next.seq,
         fieldMobs:worldFieldMobSnapshot(next,next.mapId),message:"Đã chuyển khu vực theo tuyến bản đồ."});
     } catch(_error) { /* Retry after a concurrent world movement or map change. */ }
   }
@@ -346,21 +323,19 @@ const worldInteractRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
       worldEnsureFieldMobs(next,next.mapId,Date.now());
       try {
         worldWrite(nk,userId,next,latest.version);
-        return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,seq:next.seq,quest:worldQuestView(loadCharacter(nk,userId).state),
+        return JSON.stringify({mapId:next.mapId,x:next.x,y:next.y,seq:next.seq,
           fieldMobs:worldFieldMobSnapshot(next,next.mapId),message:"Đã đi qua cổng do máy chủ xác nhận."});
       } catch(_error) { /* Retry after a concurrent movement or map transition. */ }
     }
     return fail(nkruntime.Codes.UNAVAILABLE,"World gate is busy; retry interaction");
   }
-  if(point.kind==="resource") {
-    const gathered=gatherWorldResource(nk,userId,input.entityId);
-    return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,profile:gathered.profile,
-      message:"Đã thu thập tài nguyên. Nút sẽ hồi lại sau một phút."});
-  }
   if(point.kind==="teacher") return JSON.stringify(innerLearnFromNpc(nk,userId,point.id));
+  if(point.kind==="npc") return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,
+    npc:{id:point.id,name:point.name||"",role:point.role||""},message:(point.name||"")+" • "+(point.role||"")});
   if(point.kind==="life") return JSON.stringify({site:lifeSite(point.id),actions:lifeSite(point.id).type==="gardening"?["plant","harvest"]:["start"],serverNow:Date.now()});
-  const result=applyWorldQuestInteraction(nk,userId,input.entityId);
-  return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,quest:result.quest,profile:result.profile,message:result.message});
+  // Shops are used through economy_action while standing here.
+  return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,service:point.kind,
+    message:point.kind==="shop"?"Chợ phiên: mua bán ngay tại đây.":"Không có gì để làm ở đây."});
 };
 
 const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
@@ -380,8 +355,8 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     const mobs=session.fieldMobsByMap![session.mapId];
     let target:WorldFieldMobState|undefined;
     for(let i=0;i<mobs.length;i++) if(mobs[i].id===input.targetId) { target=mobs[i]; break; }
-    if(!target) return fail(nkruntime.Codes.NOT_FOUND,"This monster is not on the current map");
     const now=Date.now();
+    if(!target||!worldMobActive(target,now)) return fail(nkruntime.Codes.NOT_FOUND,"This monster is not on the current map");
     if(target.hp<=0) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Monster is down; wait for it to respawn");
     if(now<Number(session.attackReadyAt||0)) return fail(nkruntime.Codes.RESOURCE_EXHAUSTED,"Attack is recovering");
     if(worldDistance(session.x,session.y,target.x,target.y)>WORLD_TILE*2.2||!worldPathWalkable(map,[session.x,session.y],[target.x,target.y]))
@@ -399,7 +374,8 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
     session.attackReadyAt=now+(activeSkill?Number(activeSkill.cooldownMs||700):700);
     if(target.hp===0) {
       target.respawnAt=now+target.respawnMs;
-      const items=[{itemId:target.rewardItemId,quantity:1}];
+      // Species without a catalog drop yet still release linh năng.
+      const items=target.rewardItemId?[{itemId:target.rewardItemId,quantity:1}]:[];
       let equipmentDropped=false,pityGuaranteed=false,pityMisses=0,pityLimit=0;
       if(target.equipmentDropItemId&&Number(target.equipmentDropBasisPoints||0)>0) {
         const itemId=target.equipmentDropItemId;
@@ -426,7 +402,7 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
         [worldSessionWriteRequest(userId,session,current.version)]);
       const rewardData=reward as {[key:string]:any};
       const equipmentName=target.equipmentDropItemId?catalogItem(target.equipmentDropItemId).name:"";
-      const lootText=equipmentDropped?"rơi "+equipmentName+(pityGuaranteed?" (bảo đảm)":"")+" và vật phẩm săn":"nhận vật phẩm săn";
+      const lootText=equipmentDropped?"rơi "+equipmentName+(pityGuaranteed?" (bảo đảm)":"")+" và vật phẩm săn":items.length?"nhận vật phẩm săn":"thu linh năng";
       const pityText=!equipmentDropped&&equipmentName? " • "+equipmentName+" "+pityMisses+"/"+pityLimit+" lượt tới mốc bảo đảm":"";
       const pityStatus=equipmentName?{itemId:target.equipmentDropItemId,misses:pityMisses,guaranteedAfter:pityLimit,guaranteed:pityGuaranteed}:null;
       return JSON.stringify({mapId:session.mapId,x:session.x,y:session.y,damage:damage,killed:true,

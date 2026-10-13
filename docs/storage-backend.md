@@ -40,7 +40,7 @@ Ngày: 13/10/2026. Nakama lưu mọi dữ liệu game trong bảng `storage` c�
 
 Hồ sơ và Nội Giới là hai row nhưng được đọc cùng nhau (`loadCharacter`) và ghi trong cùng batch (`characterWrites`). Row hồ sơ **luôn** được ghi khi hồ sơ đổi, nên nó vẫn là điểm tuần tự hoá mọi thao tác trên nhân vật. Row Nội Giới chỉ được ghi khi nội dung thật sự khác lúc đọc. Di chuyển, lưu HP, đổi túi đồ không còn ghi lại Nội Giới.
 
-`validateCharacter` kiểm tra cả các trường tuỳ chọn: `worldQuests`, `insightFlags`, `learnedTechniques`, `resourceGatheredAt`, `activitySession`, `gardenPlots`. Dữ liệu hỏng bị khoá để rà soát (`FAILED_PRECONDITION`), không bị reset. Key lạ không thuộc schema vẫn được giữ, vì các migration đã phát hành cam kết giữ chúng.
+`validateCharacter` kiểm tra cả các trường tuỳ chọn: `activitySession`, `gardenPlots`. Các trường của tuyến An Khê đã xóa (`worldQuests`, `insightFlags`, `learnedTechniques`, `resourceGatheredAt`) bị bỏ khi đọc hồ sơ. Dữ liệu hỏng bị khoá để rà soát (`FAILED_PRECONDITION`), không bị reset. Key lạ không thuộc schema vẫn được giữ, vì các migration đã phát hành cam kết giữ chúng.
 
 Muốn xem hình dạng của người khác (khế ước) thì dùng `peekCharacterForm`: chỉ đọc, không tạo hay migrate hồ sơ của họ.
 

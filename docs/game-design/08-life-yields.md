@@ -27,7 +27,7 @@ Theo luật màu của [04](04-map-art.md) §4: ngọc lam chỉ cho linh năng,
 
 Mỗi lượt 30 giây, tốn 1 mồi, ra **1 thứ**. Mồi không dùng hết được trả lại (đã có backend).
 
-### 3.1 Hồ Lặng — `m_lang_que`, 4 bến `new_fish_01…04` (linh năng mức 0)
+### 3.1 Hồ Lặng — `m_lang_que`, 12 bến `new_fish_01…12` (linh năng mức 0)
 
 | Thứ câu được | Bậc | Trời thường | Khi "trời linh" |
 | --- | --- | --- | --- |
@@ -40,7 +40,7 @@ Mỗi lượt 30 giây, tốn 1 mồi, ra **1 thứ**. Mồi không dùng hết 
 - "Trời linh" là thời tiết ở [04](04-map-art.md) §5; cá lấp lánh khớp mô tả linh năng của làng ở [03](03-world-and-maps.md) §4.
 - Đồ rơi chủ yếu để có chuyện cười. Một vài món (chìa khóa) là móc nối nhiệm vụ làng về sau.
 
-### 3.2 Suối Hấp Linh — `m_an_gioi`, 2 bến câu linh (mức 2, map mới)
+### 3.2 Suối Hấp Linh — `m_an_gioi`, 6 bến câu linh (mức 2, map mới)
 
 | Thứ câu được | Bậc | Tỉ lệ |
 | --- | --- | --- |
@@ -55,7 +55,7 @@ Mỗi lượt 30 giây, tốn 1 mồi, ra **1 thứ**. Mồi không dùng hết 
 
 Mỗi lượt 45 giây, cần cuốc chim. Quặng ra **2 đơn vị**/lượt; vật phẩm Linh trở lên ra **1**.
 
-### 4.1 Mỏ Bỏ Hoang — `m_mo_lo_thien`, vỉa `ml_iron_01/02` ở Hố Tây (mức 1)
+### 4.1 Mỏ Bỏ Hoang — `m_mo_lo_thien`, 8 vỉa `ml_iron_01…08` ở Hố Tây (mức 1)
 
 | Thứ đào được | Bậc | Tỉ lệ | Số lượng |
 | --- | --- | --- | --- |
@@ -63,7 +63,7 @@ Mỗi lượt 45 giây, cần cuốc chim. Quặng ra **2 đơn vị**/lượt; 
 | Đồng quặng | Thường | 25% | 2 |
 | Đá Vân Sáng | Linh | 5% | 1 |
 
-### 4.2 Hầm Mỏ B1 — `m_mo_ngam`, vỉa `ng_iron_b1_01/02` ở Vỉa Đông (mức 2)
+### 4.2 Hầm Mỏ B1 — `m_mo_ngam`, 6 vỉa `ng_iron_b1_01…06` ở Vỉa Đông (mức 2)
 
 | Thứ đào được | Bậc | Tỉ lệ | Số lượng |
 | --- | --- | --- | --- |
@@ -84,7 +84,9 @@ Mỗi lần thu hoạch còn có:
 - **25%** ra thêm 1 hạt cùng loại.
 - **15%** một cây trong số thu được là bản **"Dạ Quang"** (bậc Linh). Thu hoạch ban đêm thì tỉ lệ này thành 30%, khớp "thảo dược phát sáng ban đêm" ở [03](03-world-and-maps.md) §4.
 
-### 5.1 Ruộng vườn làng — `m_lang_que`, 12 luống riêng từng tài khoản
+### 5.1 Vườn nhà riêng — `m_nha`, 12 luống riêng từng tài khoản
+
+Mỗi người chơi có một bản map nhà riêng, vào qua cửa ở Xóm nhà của làng ([10](10-kich-thuoc-map-online.md) §5.4). Ruộng ở làng chỉ để trang trí.
 
 | Cây | Thời gian | Thu được | Bản Linh |
 | --- | --- | --- | --- |
@@ -147,6 +149,6 @@ Thứ **Linh** trở lên đều **Hấp** được: ngồi thiền với món �
 | Đào Mỏ Bỏ Hoang + Hầm B1 theo bảng, bảo đảm Mảnh Tím | ✅ `life_loot.ts` | — |
 | Đồng hồ ngày/đêm + trời linh phía server | ✅ `lifeClockView` (ngày game 2 giờ, trời linh ~1/8 cửa sổ 30 phút) | Chỉnh nhịp khi dựng client |
 | Hạt linh tinh mỗi hoạt động | ✅ Thủy 1/4 lượt câu, Thạch 1/3 lượt đào, thu hoạch Thổ 2 + Mộc 1 | Giữ nguyên |
-| Suối Hấp Linh, Vườn nấm | ❌ Map `m_an_gioi` chưa có | Thêm map, 2 bến, 6 luống nấm, 3 nấm/cây mới |
+| Suối Hấp Linh, Vườn nấm | ❌ Map `m_an_gioi` chưa có | Thêm map, 6 bến, 6 luống nấm riêng, 3 nấm/cây mới |
 | Hấp vật phẩm Linh | ✅ RPC `inner_world_absorb_item` | — |
 | Vật phẩm mới | ✅ 9 ID, catalog v4 | 7 ID của Ẩn Giới làm cùng map `m_an_gioi`; Hạt Sương Đọng tưới nhanh làm sau |

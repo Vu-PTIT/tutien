@@ -71,11 +71,8 @@ function lifeGardenAction(ctx:nkruntime.Context,nk:nkruntime.Nakama,payload:stri
   else if(input.cropId!==undefined) return fail(nkruntime.Codes.INVALID_ARGUMENT,"Harvest does not accept cropId");
   return JSON.stringify(lifeMutation(nk,userId,operationId,"garden_"+action,{plotId:plotId,cropId:cropId},function(next,world,writes,now) {
     lifeEnsureIdle(next,now);
-    if(world.mapId==="m_an_khe"&&plotId<6) lifeRequirePosition(world,"ak.garden.home");
-    else {
-      const site=lifeSite("new_plot_"+(plotId<9?"0":"")+(plotId+1));
-      lifeRequirePosition(world,site.id);lifeCheckSlot(nk,site,now);
-    }
+    const site=lifeSite("new_plot_"+(plotId<9?"0":"")+(plotId+1));
+    lifeRequirePosition(world,site.id);lifeCheckSlot(nk,site,userId,now);
     let granted:RewardBundle={spiritStones:0,items:[]};
     if(action==="plant") lifePlant(next,plotId,cropId,operationId,now,nk);
     else {

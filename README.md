@@ -70,7 +70,7 @@ npm ci
 npm test
 ```
 
-Để đồng bộ geometry sau khi sửa `server/data/life_world.json`, chạy `node scripts/build-life-world.cjs` tại gốc repo. Dừng dịch vụ bằng `docker compose down`; dữ liệu PostgreSQL được giữ trong named volume.
+Để đồng bộ geometry sau khi sửa `server/data/life_world.json` (hoặc quái/NPC trong `server/data/world_population.json`), chạy `node scripts/build-life-world.cjs` tại gốc repo. Dừng dịch vụ bằng `docker compose down`; dữ liệu PostgreSQL được giữ trong named volume.
 
 ## Công nghệ
 

@@ -333,8 +333,6 @@ TU SĨ,TU SĨ,CULTIVATOR
 Thanh Thiết Kiếm,Thanh Thiết Kiếm,Iron Sword
 This item is not available at the shop,Cửa hàng không có vật phẩm này.,This item is not available in the shop.
 This plot is occupied,Ô đất này đang được sử dụng.,This garden plot is occupied.
-This resource node is not harvestable,Không thể thu thập tài nguyên này.,This resource node cannot be harvested.
-This resource node needs time to recover,Nút tài nguyên cần thời gian để hồi phục.,This resource node needs time to recover.
 Thiết quặng,Thiết quặng,Iron Ore
 Thoát Thân Phù,Thoát Thân Phù,Escape Talisman
 Thu hoạch ô 1 nếu đã chín,Thu hoạch ô 1 nếu đã chín,Harvest plot 1 when ready
@@ -425,7 +423,6 @@ rơi %s và vật phẩm săn,rơi %s và vật phẩm săn,dropped %s and hunti
 Đã nhận %d tu vi và %s.,Đã nhận %d tu vi và %s.,Received %d Qi and %s.
 Đã nhận XP và vật phẩm đúng một lần.,Đã nhận XP và vật phẩm đúng một lần.,XP and items received once.
 Đã nhận vật tư,Đã nhận vật tư,Supplies received
-Đã thu thập tài nguyên. Nút sẽ hồi lại sau một phút.,Đã thu thập tài nguyên. Nút sẽ hồi lại sau một phút.,Resource gathered. This node will recover in one minute.
 Đã đồng bộ vị trí. Hãy tới gần Sơn Trư hoặc Độc Chu rồi đánh.,Đã đồng bộ vị trí. Hãy tới gần Sơn Trư hoặc Độc Chu rồi đánh.,Position synced. Move close to a boar or venom spider and attack.
 Đăng nhập được một phần nhưng máy chủ chưa hoàn tất kết nối. Nhấn Kết nối để thử lại.,Đăng nhập được một phần nhưng máy chủ chưa hoàn tất kết nối. Nhấn Kết nối để thử lại.,"Partially signed in, but the server connection is incomplete. Press Connect to try again."
 ĐẤU TẬP,ĐẤU TẬP,SPARRING
