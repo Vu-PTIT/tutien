@@ -48,6 +48,8 @@ function contentMigrate(nk: nkruntime.Nakama): void {
         ") ON CONFLICT (" + table.key.join(", ") + ") DO NOTHING", args);
     }
   }
+  // Thạch was split into Thổ (stone) and Kim (ore); ore items now carry Kim.
+  nk.sqlExec("UPDATE game_items SET absorb_vi = 'kim' WHERE absorb_vi = 'thach'");
 }
 function contentRows(nk: nkruntime.Nakama, table: string): {[column: string]: any}[] {
   const rows = nk.sqlQuery("SELECT * FROM " + table) as {[column: string]: any}[];

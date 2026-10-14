@@ -12,11 +12,23 @@ interface InnerWorld {
 interface InnerAbsorbResult { ignored: boolean; cells: number; raised: number; sky: number; leaps: string[]; }
 interface InnerSummary {
   area: number; turbid: number; turbidRatio: number; height: number;
-  clean: {[kind: string]: number}; total: {[kind: string]: number};
+  clean: {[kind: string]: number}; total: {[kind: string]: number}; eff: {[kind: string]: number};
   forms: {[id: string]: boolean}; formCount: number; dominant: string; lech: boolean;
+  sinh: number; khac: number; element: string;
 }
-const INNER_KINDS = ["an", "tho", "thuy", "thach", "moc"];
-const INNER_ELEMENTS = ["tho", "thuy", "thach", "moc", "phong"];
+// Linh năng comes in six hệ, the elements the world is made of. Ẩn is only the
+// seed every world starts from. Kim, Mộc, Thủy, Hỏa and Thổ grow land cells
+// (Thổ stacks into mountains); Phong never makes land, it widens the sky.
+const INNER_KINDS = ["an", "tho", "thuy", "kim", "moc", "hoa"];
+const INNER_ELEMENTS = ["kim", "moc", "thuy", "hoa", "tho", "phong"];
+const INNER_VERSION = 2;
+// Ngũ hành for the land hệ, plus Phong: water rises into wind, wind fans fire;
+// stone blocks wind, wind fells trees. Used for neighbouring cells and combat.
+const INNER_SINH: {[vi: string]: string[]} = {moc: ["hoa"], hoa: ["tho"], tho: ["kim"], kim: ["thuy"], thuy: ["moc", "phong"], phong: ["hoa"]};
+const INNER_KHAC: {[vi: string]: string[]} = {moc: ["tho"], tho: ["thuy", "phong"], thuy: ["hoa"], hoa: ["kim"], kim: ["moc"], phong: ["moc"]};
+const innerRelated = function (table: {[vi: string]: string[]}, a: string, b: string): boolean {
+  return !!table[a] && table[a].indexOf(b) >= 0;
+};
 const INNER_RADIUS = 30;
 const INNER_MAX_CELLS = 1600;
 const INNER_MOTES_PER_CELL = 4;
@@ -35,17 +47,17 @@ const INNER_STAGES = [
   {id: "hat", name: "Hạt", cells: 1, need: ""},
   {id: "dao", name: "Đảo", cells: 20, need: "Có Thổ và Thủy sạch"},
   {id: "dao_lon", name: "Đảo lớn", cells: 60, need: "Có Núi hoặc Rừng; đục dưới 50%"},
-  {id: "quan_dao", name: "Quần đảo", cells: 150, need: "3 hình thái; Thủy từ 25%; đục dưới 35%"},
+  {id: "quan_dao", name: "Quần đảo", cells: 150, need: "3 hình thái; Thủy từ 25%; đục dưới 35%; tương sinh không ít hơn tương khắc"},
   {id: "luc_dia", name: "Lục địa", cells: 400, need: "Có Sông"},
   {id: "dai_duong", name: "Đại dương", cells: 1000, need: "Có Biển; đục dưới 20%"},
   {id: "khi_quyen", name: "Khí quyển", cells: 2500, need: "Bầu trời phủ nửa Nội Giới; có Rừng"},
-  {id: "hanh_tinh", name: "Hành tinh", cells: 6000, need: "Đủ mọi vị; không lệch; gần như không đục"}
+  {id: "hanh_tinh", name: "Hành tinh", cells: 6000, need: "Đủ sáu hệ; không lệch; gần như không đục"}
 ];
 const INNER_FORMS: {id: string; name: string}[] = [
   {id: "suoi", name: "Suối"}, {id: "song", name: "Sông"}, {id: "ho", name: "Hồ"}, {id: "bien", name: "Biển"},
   {id: "bo_bien", name: "Bờ biển"}, {id: "nui", name: "Núi"}, {id: "day_nui", name: "Dãy núi"},
   {id: "rung", name: "Rừng"}, {id: "thung_lung", name: "Thung lũng"}, {id: "gio_long", name: "Gió lộng"},
-  {id: "rung_an", name: "Rừng Ẩn"}
+  {id: "rung_an", name: "Rừng Ẩn"}, {id: "mach_kim", name: "Mạch Kim"}, {id: "nui_lua", name: "Núi Lửa"}
 ];
 const INNER_NEIGHBORS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 
@@ -55,14 +67,29 @@ function innerSeedCells(): number[] { return [INNER_RADIUS, INNER_RADIUS, 0, 1, 
 function innerNew(state: CharacterState): InnerWorld {
   const spirit = !!state.form && state.form.kind === "spirit_beast" && state.form.selected === true;
   const legacy = state.realm === "luyen_khi";
-  const w: InnerWorld = {v: 1, learned: spirit || legacy, teacher: spirit ? "native" : legacy ? "legacy" : "",
+  const w: InnerWorld = {v: INNER_VERSION, learned: spirit || legacy, teacher: spirit ? "native" : legacy ? "legacy" : "",
     cells: spirit || legacy ? innerSeedCells() : [], sky: 0, pending: {}, grown: 0, shape: 0, lastLeap: null};
   if (legacy && !spirit) w.pending.tho = Number(state.realmStage) * 20;
   return w;
 }
 function innerInvalid(): never { return fail(nkruntime.Codes.FAILED_PRECONDITION, "Inner world requires review; no assets were changed"); }
+// Version 1 had a Thạch hệ for stone and ore. Its mountains become Thổ and its
+// waiting essence settles as Thổ; ore picked up later carries Kim.
+function innerMigrate(w: InnerWorld): void {
+  if (!w || typeof w !== "object" || w.v !== 1 || !Array.isArray(w.cells) || !w.pending || typeof w.pending !== "object") return;
+  for (let i = 2; i < w.cells.length; i += 5) if (w.cells[i] === 3) w.cells[i] = 1;
+  for (const key in w.pending) {
+    if (key !== "thach" && key !== "thach_d") continue;
+    const to = key === "thach" ? "tho" : "tho_d";
+    w.pending[to] = Number(w.pending[to] || 0) + Number(w.pending[key]);
+    delete w.pending[key];
+  }
+  w.v = INNER_VERSION;
+}
+// Every load path validates, so an old world is upgraded in place first.
 function innerValidate(w: InnerWorld): void {
-  if (!w || typeof w !== "object" || w.v !== 1 || typeof w.learned !== "boolean" || typeof w.teacher !== "string" ||
+  innerMigrate(w);
+  if (!w || typeof w !== "object" || w.v !== INNER_VERSION || typeof w.learned !== "boolean" || typeof w.teacher !== "string" ||
       !Array.isArray(w.cells) || w.cells.length % 5 !== 0 || w.cells.length / 5 > INNER_MAX_CELLS ||
       !assetInteger(w.sky, 0, INNER_MAX_CELLS) || !assetInteger(w.grown, 0, ASSET_LIMIT) ||
       !assetInteger(w.shape, 0, INNER_STAGES.length - 1) || !w.pending || typeof w.pending !== "object" ||
@@ -73,7 +100,7 @@ function innerValidate(w: InnerWorld): void {
   for (let i = 0; i < w.cells.length; i += 5) {
     const x = w.cells[i], y = w.cells[i + 1], kind = w.cells[i + 2], h = w.cells[i + 3], t = w.cells[i + 4];
     if (!assetInteger(x, 0, INNER_RADIUS * 2) || !assetInteger(y, 0, INNER_RADIUS * 2) || !assetInteger(kind, 0, INNER_KINDS.length - 1) ||
-        !assetInteger(h, 1, INNER_MAX_HEIGHT) || (t !== 0 && t !== 1) || (h > 1 && INNER_KINDS[kind] !== "thach") || seen[x + "," + y]) innerInvalid();
+        !assetInteger(h, 1, INNER_MAX_HEIGHT) || (t !== 0 && t !== 1) || (h > 1 && INNER_KINDS[kind] !== "tho") || seen[x + "," + y]) innerInvalid();
     seen[x + "," + y] = true;
   }
   if (w.sky > w.cells.length / 5) innerInvalid();
@@ -122,10 +149,18 @@ function innerGrowCell(nk: nkruntime.Nakama, state: CharacterState, w: InnerWorl
     w.sky++; result.sky++; return true;
   }
   const kind = INNER_KINDS.indexOf(vi);
-  if (vi === "thach" && !turbid) {
-    const stones: number[] = [];
-    for (let i = 0; i < w.cells.length; i += 5) if (w.cells[i + 2] === kind && !w.cells[i + 4] && w.cells[i + 3] < INNER_MAX_HEIGHT) stones.push(i);
-    if (stones.length && innerRoll(nk, state, w) < 0.45) {
+  // Clean Thổ sometimes rises instead of spreading, but only inland (all four
+  // sides are land), so a young world keeps its plains and shores.
+  if (vi === "tho" && !turbid) {
+    const stones: number[] = [], grid = innerGrid(w);
+    for (let i = 0; i < w.cells.length; i += 5) {
+      if (w.cells[i + 2] !== kind || w.cells[i + 4] || w.cells[i + 3] >= INNER_MAX_HEIGHT) continue;
+      let inland = true;
+      for (let n = 0; n < INNER_NEIGHBORS.length; n++)
+        if (grid[(w.cells[i] + INNER_NEIGHBORS[n][0]) + "," + (w.cells[i + 1] + INNER_NEIGHBORS[n][1])] === undefined) inland = false;
+      if (inland) stones.push(i);
+    }
+    if (stones.length && innerRoll(nk, state, w) < 0.3) {
       w.cells[stones[Math.floor(innerRoll(nk, state, w) * stones.length)] + 3]++;
       result.raised++; return true;
     }
@@ -203,12 +238,12 @@ function innerSummary(w: InnerWorld): InnerSummary {
   for (let i = 0; i < w.cells.length; i += 5) {
     const kind = INNER_KINDS[w.cells[i + 2]];
     total[kind]++;
-    if (w.cells[i + 4]) turbid++; else { clean[kind]++; if (kind === "thach") height += w.cells[i + 3]; }
+    if (w.cells[i + 4]) turbid++; else { clean[kind]++; if (kind === "tho") height += w.cells[i + 3]; }
   }
   const area = w.cells.length / 5;
   const is = function (i: number, kind: string): boolean { return INNER_KINDS[w.cells[i + 2]] === kind && !w.cells[i + 4]; };
   const at = function (x: number, y: number): number | undefined { return grid[x + "," + y]; };
-  const mountain = function (i: number | undefined): boolean { return i !== undefined && is(i, "thach") && w.cells[i + 3] >= 3; };
+  const mountain = function (i: number | undefined): boolean { return i !== undefined && is(i, "tho") && w.cells[i + 3] >= 3; };
   const touches = function (i: number, test: (j: number) => boolean): boolean {
     for (let n = 0; n < INNER_NEIGHBORS.length; n++) {
       const j = at(w.cells[i] + INNER_NEIGHBORS[n][0], w.cells[i + 1] + INNER_NEIGHBORS[n][1]);
@@ -226,10 +261,36 @@ function innerSummary(w: InnerWorld): InnerSummary {
   }
   const peaks = innerComponents(w, grid, function (i) { return mountain(i); });
   const forests = innerComponents(w, grid, function (i) { return is(i, "moc"); });
+  const ores = innerComponents(w, grid, function (i) { return is(i, "kim"); });
   const forms: {[id: string]: boolean} = {suoi: suoi, song: song, bien: bien, nui: peaks.length > 0, ho: false, bo_bien: false,
-    day_nui: false, rung: false, thung_lung: false, gio_long: false, rung_an: false};
+    day_nui: false, rung: false, thung_lung: false, gio_long: false, rung_an: false, mach_kim: false, nui_lua: false};
   for (let c = 0; c < peaks.length; c++) if (peaks[c].length >= 3) forms.day_nui = true;
   for (let c = 0; c < forests.length; c++) if (forests[c].length >= 6) forms.rung = true;
+  for (let c = 0; c < ores.length && !forms.mach_kim; c++)
+    if (ores[c].length >= 3) for (let j = 0; j < ores[c].length; j++) if (touches(ores[c][j], mountain)) { forms.mach_kim = true; break; }
+  // Sinh and khắc between neighbouring clean land cells. A cell fed by its
+  // sinh parent counts for half again; a cell held back by its khắc counts half.
+  let sinh = 0, khac = 0;
+  const eff: {[kind: string]: number} = {};
+  for (let k = 0; k < INNER_KINDS.length; k++) eff[INNER_KINDS[k]] = 0;
+  for (let i = 0; i < w.cells.length; i += 5) {
+    if (w.cells[i + 4]) continue;
+    const a = INNER_KINDS[w.cells[i + 2]];
+    let fed = false, held = false;
+    for (let n = 0; n < INNER_NEIGHBORS.length; n++) {
+      const j = at(w.cells[i] + INNER_NEIGHBORS[n][0], w.cells[i + 1] + INNER_NEIGHBORS[n][1]);
+      if (j === undefined || w.cells[j + 4]) continue;
+      const b = INNER_KINDS[w.cells[j + 2]];
+      if (innerRelated(INNER_SINH, b, a)) fed = true;
+      if (innerRelated(INNER_KHAC, b, a)) held = true;
+      // Each touching pair counts once, from its lower index.
+      if (j > i) {
+        if (innerRelated(INNER_SINH, a, b) || innerRelated(INNER_SINH, b, a)) sinh++;
+        if (innerRelated(INNER_KHAC, a, b) || innerRelated(INNER_KHAC, b, a)) khac++;
+      }
+    }
+    eff[a] += (2 + (fed ? 1 : 0) - (held ? 1 : 0)) / 2;
+  }
   for (let i = 0; i < w.cells.length; i += 5) {
     const x = w.cells[i], y = w.cells[i + 1];
     if (is(i, "thuy")) {
@@ -238,22 +299,30 @@ function innerSummary(w: InnerWorld): InnerSummary {
       if (land >= 3) forms.ho = true;
     } else if (is(i, "tho")) {
       if (touches(i, function (j) { return !!sea[j]; })) forms.bo_bien = true;
-      if ((mountain(at(x - 1, y)) && mountain(at(x + 1, y))) || (mountain(at(x, y - 1)) && mountain(at(x, y + 1)))) forms.thung_lung = true;
+      if (w.cells[i + 3] < 3 && ((mountain(at(x - 1, y)) && mountain(at(x + 1, y))) || (mountain(at(x, y - 1)) && mountain(at(x, y + 1))))) forms.thung_lung = true;
     } else if (is(i, "moc") && touches(i, function (j) { return is(j, "an"); })) forms.rung_an = true;
+    else if (is(i, "hoa") && touches(i, mountain)) forms.nui_lua = true;
   }
   forms.gio_long = forms.nui && w.sky >= 3;
   let formCount = 0;
   for (const id in forms) if (forms[id]) formCount++;
   let dominant = INNER_KINDS[0];
   for (let k = 1; k < INNER_KINDS.length; k++) if (total[INNER_KINDS[k]] > total[dominant]) dominant = INNER_KINDS[k];
-  return {area: area, turbid: turbid, turbidRatio: area ? turbid / area : 0, height: height, clean: clean, total: total,
-    forms: forms, formCount: formCount, dominant: dominant, lech: area >= 10 && total[dominant] / area > 0.8};
+  // The main hệ: the most clean land of one hệ, or the sky for Phong; needs 3.
+  let element = "", most = 2;
+  for (let e = 0; e < INNER_ELEMENTS.length; e++) {
+    const vi = INNER_ELEMENTS[e], count = vi === "phong" ? w.sky : clean[vi];
+    if (count > most) { element = vi; most = count; }
+  }
+  return {area: area, turbid: turbid, turbidRatio: area ? turbid / area : 0, height: height, clean: clean, total: total, eff: eff,
+    forms: forms, formCount: formCount, dominant: dominant, lech: area >= 10 && total[dominant] / area > 0.8,
+    sinh: sinh, khac: khac, element: element};
 }
 function innerStageMet(w: InnerWorld, s: InnerSummary, index: number): boolean {
   if (s.area < INNER_STAGES[index].cells || s.lech) return false;
   if (index === 1) return s.clean.tho > 0 && s.clean.thuy > 0;
   if (index === 2) return (s.forms.nui || s.forms.rung) && s.turbidRatio < 0.5;
-  if (index === 3) return s.formCount >= 3 && s.total.thuy / s.area >= 0.25 && s.turbidRatio < 0.35;
+  if (index === 3) return s.formCount >= 3 && s.total.thuy / s.area >= 0.25 && s.turbidRatio < 0.35 && s.sinh >= s.khac;
   if (index === 4) return s.forms.song;
   if (index === 5) return s.forms.bien && s.turbidRatio < 0.2;
   if (index === 6) return w.sky >= s.area * 0.5 && s.forms.rung;
@@ -276,21 +345,42 @@ function innerCheckLeap(w: InnerWorld): string[] {
 function innerStats(w: InnerWorld, s: InnerSummary): {[key: string]: number} {
   const cleanArea = s.area - s.turbid;
   return {
-    attackBonus: Math.floor(s.height / 4) + (s.forms.day_nui ? 2 : 0),
+    attackBonus: Math.floor(s.height / 4) + Math.floor(s.eff.kim / 3) + (s.forms.day_nui ? 2 : 0) + (s.forms.mach_kim ? 2 : 0) +
+      (s.forms.nui_lua ? 2 : 0),
     defenseBonus: Math.floor(s.height / 2) + (s.forms.nui ? 3 : 0) + (s.forms.thung_lung ? 2 : 0),
     maxHpBonus: Math.floor(cleanArea / 4),
-    linhLuc: s.clean.thuy * 2,
-    regenPerMinute: Math.floor(s.clean.moc / 3),
-    speedPercent: Math.min(30, w.sky)
+    linhLuc: Math.floor(s.eff.thuy * 2),
+    regenPerMinute: Math.floor(s.eff.moc / 3),
+    speedPercent: Math.min(30, w.sky),
+    critPercent: Math.min(25, Math.floor(s.eff.hoa))
   };
 }
-// Read-only bonus for combat code; never creates or persists a world.
-function innerCombatBonus(profile: CharacterState): {attack: number; defense: number} {
-  if (profile.innerWorld === undefined) return {attack: 0, defense: 0};
+// Read-only copy for combat code; never creates or persists a world.
+function innerReadOnly(profile: CharacterState): InnerWorld | null {
+  if (profile.innerWorld === undefined) return null;
   const w = JSON.parse(JSON.stringify(profile.innerWorld)) as InnerWorld;
   innerValidate(w);
+  return w;
+}
+function innerCombatBonus(profile: CharacterState): {attack: number; defense: number} {
+  const w = innerReadOnly(profile);
+  if (!w) return {attack: 0, defense: 0};
   const stats = innerStats(w, innerSummary(w));
   return {attack: stats.attackBonus, defense: stats.defenseBonus};
+}
+function innerEnemyVis(enemyId: string): string[] {
+  const enemy = WORLD_ENEMIES[enemyId];
+  return enemy ? enemy.essence : ["tho"];
+}
+// Percent of attack a hit keeps: the attacker's main hệ khắc the target's vị
+// for 125; a target whose vị khắc the attacker's hệ takes 85; otherwise 100.
+function innerElementPercent(profile: CharacterState, targetVis: string[]): number {
+  const w = innerReadOnly(profile);
+  const element = w ? innerSummary(w).element : "";
+  if (!element) return 100;
+  for (let i = 0; i < targetVis.length; i++) if (innerRelated(INNER_KHAC, element, targetVis[i])) return 125;
+  for (let i = 0; i < targetVis.length; i++) if (innerRelated(INNER_KHAC, targetVis[i], element)) return 85;
+  return 100;
 }
 function innerView(profile: CharacterState): JsonObject {
   const copy = JSON.parse(JSON.stringify(profile)) as CharacterState, w = innerOf(copy), s = innerSummary(w);
@@ -304,7 +394,9 @@ function innerView(profile: CharacterState): JsonObject {
     next: next ? {id: next.id, name: next.name, cells: next.cells, need: next.need, locked: w.shape + 1 > INNER_STAGE_CAP,
       met: w.shape + 1 <= INNER_STAGE_CAP && innerStageMet(w, s, w.shape + 1)} : null,
     lastLeap: w.lastLeap,
-    summary: {area: s.area, turbid: s.turbid, height: s.height, clean: s.clean, total: s.total, dominant: s.dominant, lech: s.lech},
+    summary: {area: s.area, turbid: s.turbid, height: s.height, clean: s.clean, total: s.total, dominant: s.dominant, lech: s.lech,
+      element: s.element, sinh: s.sinh, khac: s.khac},
+    elements: {list: INNER_ELEMENTS, sinh: INNER_SINH, khac: INNER_KHAC},
     formations: INNER_FORMS.map(function (f) { return {id: f.id, name: f.name, active: !!s.forms[f.id]}; }),
     stats: innerStats(w, s),
     limits: {radius: INNER_RADIUS, maxCells: INNER_MAX_CELLS, motesPerCell: INNER_MOTES_PER_CELL, stageCap: INNER_STAGE_CAP},

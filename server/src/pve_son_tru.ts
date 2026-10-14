@@ -109,6 +109,7 @@ const pveSonTruCreateRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, pa
     if (item.instanceId === profile.equipped.weapon && definition.equipSlot === "weapon") attack += Number(definition.attackBonus || 0);
     if (item.instanceId === profile.equipped.armor && definition.equipSlot === "armor") defense += Number(definition.defenseBonus || 0);
   }
+  attack = Math.floor(attack * innerElementPercent(profile, innerEnemyVis("en_boar")) / 100);
   const encounterId = nk.uuidv4();
   try {
     nk.storageWrite([{collection: request.collection, key: request.key, userId: userId,

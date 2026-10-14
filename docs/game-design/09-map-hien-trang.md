@@ -27,9 +27,9 @@ Tọa độ theo **ô 32 px**, gốc (0,0) ở góc trên-trái.
 
 | ID | Tên | Kích thước (ô) | Xuất phát | Cổng | Điểm hoạt động | Quái thường | NPC |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `m_lang_que` | Làng Hồ Lặng | 160×120 | (81,69) | 3 (1 khóa) | 12 câu, 12 thiền, 1 chợ, 1 dạy | 0 | 6 + Bé Mơ |
+| `m_lang_que` | Làng Hồ Lặng | 160×120 | (81,69) | 3 (1 khóa) | 12 câu, 14 thiền, 1 chợ, 1 dạy | 0 | 6 + Bé Mơ |
 | `m_nha` | Nhà riêng (mỗi người một bản) | 32×24 | (16,19) | 1 | 12 luống | 0 | 0 |
-| `m_vanh_dai_tay` | Bìa Rừng | 176×128 | (88,112) | 3 | 4 thiền | 37 | 2 |
+| `m_vanh_dai_tay` | Bìa Rừng | 176×128 | (88,112) | 3 | 8 thiền | 37 | 2 |
 | `m_mo_lo_thien` | Mỏ Bỏ Hoang | 128×112 | (112,96) | 3 | 8 vỉa, 4 thiền | 21 | 1 |
 | `m_mo_ngam` | Hầm Mỏ (B1) | 112×80 | (54,74) | 2 (1 khóa) | 6 vỉa | 18 | 0 |
 | `m_ba_vi` | Rừng Sâu | 192×144 | (93,133) | 4 (2 khóa) | 6 thiền | 40 | 0 |
@@ -37,7 +37,7 @@ Tọa độ theo **ô 32 px**, gốc (0,0) ở góc trên-trái.
 | `m_thang_long` | *(thành phố — sau chương 1)* | 320×256 | (156,139) | 2 (1 khóa) | 0 | 0 | 0 |
 | `m_cang_dong_bac` | *(cảng — sau chương 1)* | 256×192 | (43,115) | 1 | 0 | 0 | 0 |
 
-Tổng: **64 điểm hoạt động** (12 câu, 12 luống, 14 vỉa, 26 thiền), **14 loài quái**, **140 quái thường** + 4 đầu đàn/boss đang khóa, **9 NPC**.
+Tổng: **70 điểm hoạt động** (12 câu, 12 luống, 14 vỉa, 32 thiền theo 6 hệ), **14 loài quái**, **140 quái thường** + 4 đầu đàn/boss đang khóa, **9 NPC**.
 
 ### Sơ đồ nối cổng
 
@@ -91,7 +91,9 @@ Mỗi cổng có một điểm ở **cả hai map** cùng ID. Bán kính kích h
 | Thiền Thổ | Làng | `lq_med_mieu`, `lq_med_mieu_02…08` | 8 | Sân miếu |
 | Thiền Thủy | Làng | `lq_med_ho`, `lq_med_ho_02…04` | 4 | Bờ nam Hồ Lặng |
 | Thiền Phong | Bìa Rừng | `vd_med_thap`, `vd_med_thap_02…04` | 4 | Chân tháp cảm biến |
-| Thiền Thạch | Mỏ | `mb_med_ho_tay`, `mb_med_ho_tay_02…04` | 4 | Mỏm đá Hố Tây |
+| Thiền Kim | Mỏ | `mb_med_ho_tay`, `mb_med_ho_tay_02…04` | 4 | Mỏm đá Hố Tây |
+| Thiền Hỏa | Bìa Rừng | `vd_med_lua`, `vd_med_lua_02…04` | 4 | Bên đống lửa trại thợ săn |
+| Thiền Hỏa | Làng | `lq_med_lo_ren`, `lq_med_lo_ren_02` | 2 | Sân lò rèn Doran |
 | Thiền Mộc | Rừng Sâu | `rs_med_goc_nam…_03`, `rs_med_goc_bac…_03` | 6 | Hai gốc cây Tinh Linh |
 | Cửa hàng | Làng | `lq.shop.market` | 1 | Chợ phiên |
 | Dạy học | Làng | `lq.npc.be_mo` | 1 | Bé Mơ cạnh sân miếu |

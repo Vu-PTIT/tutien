@@ -2078,6 +2078,54 @@
       "element": "phong"
     },
     {
+      "id": "vd_med_lua",
+      "mapId": "m_vanh_dai_tay",
+      "type": "meditation",
+      "x": 2688,
+      "y": 3808,
+      "radius": 64,
+      "facing": "south",
+      "name": "Bên đống lửa trại",
+      "nameEn": "By the campfire",
+      "element": "hoa"
+    },
+    {
+      "id": "vd_med_lua_02",
+      "mapId": "m_vanh_dai_tay",
+      "type": "meditation",
+      "x": 2784,
+      "y": 3808,
+      "radius": 64,
+      "facing": "south",
+      "name": "Bên đống lửa trại 2",
+      "nameEn": "By the campfire",
+      "element": "hoa"
+    },
+    {
+      "id": "vd_med_lua_03",
+      "mapId": "m_vanh_dai_tay",
+      "type": "meditation",
+      "x": 2880,
+      "y": 3808,
+      "radius": 64,
+      "facing": "south",
+      "name": "Bên đống lửa trại 3",
+      "nameEn": "By the campfire",
+      "element": "hoa"
+    },
+    {
+      "id": "vd_med_lua_04",
+      "mapId": "m_vanh_dai_tay",
+      "type": "meditation",
+      "x": 2976,
+      "y": 3808,
+      "radius": 64,
+      "facing": "south",
+      "name": "Bên đống lửa trại 4",
+      "nameEn": "By the campfire",
+      "element": "hoa"
+    },
+    {
       "id": "mb_med_ho_tay",
       "mapId": "m_mo_lo_thien",
       "type": "meditation",
@@ -2087,7 +2135,7 @@
       "facing": "south",
       "name": "Mỏm đá Hố Tây",
       "nameEn": "West pit ledge",
-      "element": "thach"
+      "element": "kim"
     },
     {
       "id": "mb_med_ho_tay_02",
@@ -2099,7 +2147,7 @@
       "facing": "south",
       "name": "Mỏm đá Hố Tây 2",
       "nameEn": "West pit ledge",
-      "element": "thach"
+      "element": "kim"
     },
     {
       "id": "mb_med_ho_tay_03",
@@ -2111,7 +2159,7 @@
       "facing": "south",
       "name": "Mỏm đá Hố Tây 3",
       "nameEn": "West pit ledge",
-      "element": "thach"
+      "element": "kim"
     },
     {
       "id": "mb_med_ho_tay_04",
@@ -2123,7 +2171,7 @@
       "facing": "south",
       "name": "Mỏm đá Hố Tây 4",
       "nameEn": "West pit ledge",
-      "element": "thach"
+      "element": "kim"
     },
     {
       "id": "rs_med_goc_nam",
@@ -2196,6 +2244,30 @@
       "name": "Gốc cây Tinh Linh phía bắc 3",
       "nameEn": "North spirit tree",
       "element": "moc"
+    },
+    {
+      "id": "lq_med_lo_ren",
+      "mapId": "m_lang_que",
+      "type": "meditation",
+      "x": 3456,
+      "y": 1216,
+      "radius": 64,
+      "facing": "south",
+      "name": "Sân lò rèn",
+      "nameEn": "Forge yard",
+      "element": "hoa"
+    },
+    {
+      "id": "lq_med_lo_ren_02",
+      "mapId": "m_lang_que",
+      "type": "meditation",
+      "x": 3584,
+      "y": 1216,
+      "radius": 64,
+      "facing": "south",
+      "name": "Sân lò rèn 2",
+      "nameEn": "Forge yard",
+      "element": "hoa"
     }
   ]
 }

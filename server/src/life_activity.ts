@@ -367,7 +367,7 @@ function lifeEssence(s:LifeSession):InnerEssence[] {
   const done=s.completedCycles;
   if(s.type==="meditation"){const site=lifeSite(s.siteId);return done?[{vi:site.element||"tho",motes:done*LIFE_MEDITATION_MOTES,turbid:0}]:[];}
   if(s.type==="fishing") return Math.floor(done/4)?[{vi:"thuy",motes:Math.floor(done/4),turbid:0}]:[];
-  if(s.type==="mining") return Math.floor(done/3)?[{vi:"thach",motes:Math.floor(done/3),turbid:0}]:[];
+  if(s.type==="mining") return Math.floor(done/3)?[{vi:"kim",motes:Math.floor(done/3),turbid:0}]:[];
   if(s.type==="gardening"&&done) return LIFE_HARVEST_ESSENCE;
   return [];
 }

@@ -67,7 +67,22 @@ Lang thang ──thấy người chơi──► Cảnh giác ──► Báo đò
 
 Nội Giới người chơi càng lớn thì đánh càng mạnh và chịu đòn càng tốt, nên quái cấp cũ dễ dần đi; quái không tự mạnh lên theo người chơi.
 
-Hạ dị thú cho nhiều linh năng nhưng **đục**, mang vị theo loài (xem [07](07-power-system.md) §2). Mỗi dị thú cũng có Nội Giới riêng, mọc loạn: đầu đàn có Nội Giới to hơn, boss có vết nứt tím.
+Hạ dị thú cho nhiều linh năng nhưng **đục**, mang **hệ** theo loài (xem [07](07-power-system.md) §2). Hệ chính của người chơi **khắc** hệ của loài thì đòn mạnh hơn 25%, bị loài khắc thì yếu đi 15%.
+
+| Loài | Hệ | Vì sao | Khắc được bằng |
+| --- | --- | --- | --- |
+| Gà Rừng Mào Sét | Hỏa + Phong | Mào phóng sét, bay lượn | Thủy (khắc Hỏa), Thổ (khắc Phong) |
+| Lợn Gai | Thổ | Ủi đất, da như đá | Mộc |
+| Nhện Tơ Điện | Mộc + Hỏa | Tổ trong cây, tơ có điện | Kim, Phong, Thủy |
+| Rết Đá | Thổ | Vỏ đá | Mộc |
+| Dơi Vân Quặng | Kim + Phong | Sống trong vỉa quặng, bay | Hỏa, Thổ |
+| Nhện Mẹ | Mộc + Hỏa | Như Nhện Tơ Điện | Kim, Phong, Thủy |
+| Sói Rêu | Mộc | Lông mọc rêu | Kim, Phong |
+| Rắn Sương | Thủy | Thân hóa sương | Thổ |
+| Khỉ Vách Đá | Thổ + Phong | Leo vách, nhảy xa | Mộc, Thổ |
+| Cú Đêm Linh | Phong | Bay đêm | Thổ |
+| Chuột Tím | Kim (tạm, sau là Tím) | Gặm cáp, kim loại trong Trạm | Hỏa |
+| Thủ Lĩnh Mạch Gãy | Kim + Thổ (tạm, kèm Tím) | Lưng hóa tinh thể | Hỏa, Mộc | Mỗi dị thú cũng có Nội Giới riêng, mọc loạn: đầu đàn có Nội Giới to hơn, boss có vết nứt tím.
 
 ## 3. Hồ sơ từng quái
 
@@ -248,10 +263,10 @@ Mỗi quái có **một âm thanh báo đòn riêng**, nhận ra được khi kh
 
 ## 8. Ghi chú backend
 
-**Đã có (13/10/2026):** `server/data/world_population.json` là nguồn duy nhất cho quái và NPC trên map. File khai báo 14 loài (máu = số nhát × 16, sát thương %, hồi sinh, giờ xuất hiện, vị linh năng), lãnh địa theo bảng §6 (tọa độ ở [05](05-map-layouts.md)), điểm an toàn và NPC. `node scripts/build-life-world.cjs` biên dịch file này vào `server/src/life_world_generated.ts` và **từ chối build** nếu một con quái đứng trên nước, trong điểm an toàn, cách điểm đến của cổng dưới 12 ô hoặc cách điểm hoạt động dưới 6 ô (§4 ở [05](05-map-layouts.md)). Có 117 quái ở 5 map rừng. Cụm map prototype cũ không còn quái.
+**Đã có (13/10/2026):** `server/data/world_population.json` là nguồn duy nhất cho quái và NPC trên map. File khai báo 14 loài (máu = số nhát × 16, sát thương %, hồi sinh, giờ xuất hiện, hệ linh năng), lãnh địa theo bảng §6 (tọa độ ở [05](05-map-layouts.md)), điểm an toàn và NPC. `node scripts/build-life-world.cjs` biên dịch file này vào `server/src/life_world_generated.ts` và **từ chối build** nếu một con quái đứng trên nước, trong điểm an toàn, cách điểm đến của cổng dưới 12 ô hoặc cách điểm hoạt động dưới 6 ô (§4 ở [05](05-map-layouts.md)). Có 117 quái ở 5 map rừng. Cụm map prototype cũ không còn quái.
 - Gà Rừng và Khỉ chỉ hiện ban ngày, Cú chỉ hiện ban đêm (theo đồng hồ đời sống).
 - Đầu đàn và boss đã khai báo nhưng **chưa xuất hiện** (`storyGate`), chờ hệ thống cốt truyện.
-- Loài chưa có vật phẩm rơi trong catalog thì chỉ cho linh năng. Vị của Gà Rừng (Phong) và Chuột Tím/boss (Thạch, tạm thay cho Tím) là giá trị tạm.
+- Loài chưa có vật phẩm rơi trong catalog thì chỉ cho linh năng. Hệ của Chuột Tím và boss (Kim, tạm thay cho Tím) là giá trị tạm.
 - `world_map_get` trả thêm `territories` và `safeZones`; NPC có tên trả lời qua `world_interact`.
 
 **Còn thiếu:**

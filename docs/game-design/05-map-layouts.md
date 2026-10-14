@@ -54,7 +54,7 @@ y0 ╔═══════════════════ TƯỜNG RÀO �
 | **Xóm nhà** | x 8–62, y 34–84 | ~14 nhà, ngõ, sân phơi, giếng; **nhà bà Nora** x 34–40, y 65–70; **Cửa nhà** (47,78): một dãy cổng ngõ dẫn vào nhà riêng | **[BE]** `ln_lang_nha` (47,78) → Nhà riêng; Nora (37,70) |
 | **Quảng trường Cổng** | x 68–94, y 49–72 | **Cổng Ẩn Giới** tâm (80,57), khung thép, chốt gác (Đội Tuần Tra (75,60)), lồng đèn lá, góc chợ Tinh Linh x 69–76, y 62–70, ghế đá | Điểm vào mặc định ★ **[BE]** (81,69) |
 | **Chợ phiên** | x 94–106, y 57–72 | Sạp rau, cá, đồ khô | **[BE]** `lq.shop.market` (98,64) |
-| **Thị trấn** | x 94–141, y 22–82 | Xưởng rèn Doran x 106–114, y 29–36; Trạm Viện x 119–128, y 29–38; cửa hàng tiện lợi, quán cà phê, nhà 2–3 tầng | **[BE]** Doran (110,33), Tiến sĩ Theo (123,33) |
+| **Thị trấn** | x 94–141, y 22–82 | Xưởng rèn Doran x 106–114, y 29–36 (**[BE]** 2 chỗ thiền Hỏa ở sân lò rèn `lq_med_lo_ren`, `_02` tại (108,38), (112,38)); Trạm Viện x 119–128, y 29–38; cửa hàng tiện lợi, quán cà phê, nhà 2–3 tầng | **[BE]** Doran (110,33), Tiến sĩ Theo (123,33) |
 | **Sông đông** | dọc x ≈ 142–153, rộng 2,5 ô | Bờ kè; ranh giới phía đông. Chảy vào làng qua cống lưới dưới tường rào ở (148,0), từ Bìa Rừng | **[BE]** nước; cầu x 145–152, y 64–67 |
 | **Trạm buýt** | x 152–158, y 62–69 | Trạm chờ, biển "Tuyến về thành phố — tạm ngưng" | **[BE]** `ln_lang_thang` (156,66) **khóa** ở chương 1 |
 | **Kênh** | (66,76) → (88,120), rộng 1,8 ô | Kênh tưới | **[BE]** nước; cầu x 69–75, y 84–87 |
@@ -177,7 +177,7 @@ y0 ▓▓▓▓▓▓▓▓▓ hàng cây rừng ▓▓▓▓[▲(95,5) lối m�
 
 | Khu | Phạm vi ô | Có gì | Quái **[BE]** |
 | --- | --- | --- | --- |
-| **Trạm gác + lều thợ săn** | x 67–110, y 107–128 | Trạm gác bê tông, lều, đống lửa, bảng hợp đồng săn; Thợ săn (81,113), Đội Tuần Tra (95,113). Điểm xuất phát ★ (88,112) | Không; **an toàn** tâm (88,116) bán kính 10 |
+| **Trạm gác + lều thợ săn** | x 67–110, y 107–128 | Trạm gác bê tông, lều, đống lửa, bảng hợp đồng săn; Thợ săn (81,113), Đội Tuần Tra (95,113). Điểm xuất phát ★ (88,112) | **an toàn** tâm (88,116) bán kính 10; **[BE]** 4 chỗ thiền Hỏa bên đống lửa `vd_med_lua…_04` (84, 87, 90, 93; y 119) |
 | **Ruộng hoang** | x 55–160, y 69–107 | Ruộng bỏ, bù nhìn đổ, hàng rào gãy | Gà Rừng ×4 tại (66,92), (104,98), (140,104), (150,80) |
 | **Tháp cảm biến** | x 120–126, y 77–84 | Tháp có đèn trạng thái nhấp nháy theo nhịp 47; 4 chỗ thiền dưới chân | **[BE]** thiền Phong `vd_med_thap…_04` (122–125, 86–89) |
 | **Đồng cỏ cao** | x 55–160, y 18–74 | Cỏ cao che nửa người, vết cày, cây đơn lẻ | Lợn Gai ×2 tại (62,30), (98,46), (124,24), (140,52), (158,30), (72,60); **Lợn Gai Đầu Đàn** (112,66) 🔒 hồi B |
@@ -213,7 +213,7 @@ y0 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓ vách đá đỏ ▓▓▓▓▓�
 | Khu | Phạm vi ô | Có gì | Quái **[BE]** |
 | --- | --- | --- | --- |
 | **Lán thợ** | x 103–123, y 82–106 | Lán chú Bram (110,91), đèn mỏ, ao nhỏ (113,104). Điểm xuất phát ★ (112,96) | Không; **an toàn** tâm (112,94) bán kính 8 |
-| **Hố Tây** | x 16–53, y 36–64 | Bậc khai thác hình bậc thang, **8 vỉa sắt**, giếng thang máy, mỏm đá thiền | **[BE]** vỉa `ml_iron_01…08` tại (18,44), (24,41), (30,43), (36,40), (20,53), (26,56), (32,53), (38,57); giếng `ln_mo_ngam` (49,47); thiền Thạch `mb_med_ho_tay…_04` (44–47, 60–63). Quái không vào trong 6 ô quanh vỉa |
+| **Hố Tây** | x 16–53, y 36–64 | Bậc khai thác hình bậc thang, **8 vỉa sắt**, giếng thang máy, mỏm đá thiền | **[BE]** vỉa `ml_iron_01…08` tại (18,44), (24,41), (30,43), (36,40), (20,53), (26,56), (32,53), (38,57); giếng `ln_mo_ngam` (49,47); thiền Kim `mb_med_ho_tay…_04` (44–47, 60–63). Quái không vào trong 6 ô quanh vỉa |
 | **Bãi máy hỏng** | x 63–103, y 18–70 | Máy xúc gỉ, băng chuyền đứt, kho sập | Nhện Tơ Điện ×3 tại (72,24), (96,44), (76,66) |
 | **Bậc đá** | x 11–90, y 70–108 | Bậc đá đỏ rộng, đá vụn | Rết Đá ×3 tại (14,84), (38,100), (62,86), (86,102) |
 | **Đường núi** | x 103–128, y 18–32 | Đường dốc men vách đá sang phía đông, lên Rừng Sâu | **[BE]** `ln_mo_rung` (123,25) → Rừng Sâu. Mép đông phần trên của Mỏ giáp mép tây Rừng Sâu |

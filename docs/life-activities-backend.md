@@ -25,7 +25,7 @@ Theo [game-design/08](game-design/08-life-yields.md). Tỉ lệ dưới đây l�
 
 - **Mảnh Tím:** `profile.lifeLoot = {b1Cycles, shardFound}` đếm lượt đào B1; mảnh đầu tiên bảo đảm ở lượt thứ 40.
 - **Đồng hồ server:** một ngày game = 2 giờ thật, chia 5 pha bằng nhau (`sang_som`, `trua`, `chieu_vang`, `toi`, `khuya`); `toi`/`khuya` là đêm. Trời linh xét theo cửa sổ 30 phút bằng hash, khoảng 1/8 số cửa sổ; mỗi lượt câu được xét theo thời điểm lượt đó kết thúc. `life_get` trả `clock`.
-- **Hấp:** `inner_world_absorb_item {operationId,itemId,quantity?}` (1–20) đổi vật phẩm Linh thành hạt linh tinh: Cá Lấp Lánh → Thủy 1, Đá Vân Sáng → Thạch 1, Tinh Thể Linh Mạch → Thạch 4, Cam Lộ/Ích Khí Dạ Quang → Thổ 1, Tĩnh Tâm Dạ Quang → Mộc 1. Cần đã học Hấp Linh và không có phiên hoạt động chưa nhận.
+- **Hấp:** `inner_world_absorb_item {operationId,itemId,quantity?}` (1–20) đổi vật phẩm Linh thành hạt linh tinh: Cá Lấp Lánh → Thủy 1, Đá Vân Sáng → Kim 1, Tinh Thể Linh Mạch → Kim 4, Cam Lộ/Ích Khí Dạ Quang → Thổ 1, Tĩnh Tâm Dạ Quang → Mộc 1. Cần đã học Hấp Linh và không có phiên hoạt động chưa nhận.
 - Giá bán prototype cho vật phẩm mới; Mảnh Tím không bán được.
 
 Không có minigame, không cấp XP tu luyện hoặc thưởng từ việc người dùng tự khai hoạt động ngoài đời. Một lệnh trực tiếp chạy 1 lượt; tự động chạy 1–120 lượt. Trồng cây chạy 1 chu kỳ sinh trưởng. Các con số là cân bằng prototype để chạy thử.

@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const source = JSON.parse(fs.readFileSync(path.join(root, 'server/data/game_content.json'), 'utf8'));
-const ID = /^[a-z0-9_:]{2,60}$/, RARITY = ['thuong','linh','hiem','la'], VI = ['tho','thuy','thach','moc','phong'];
+const ID = /^[a-z0-9_:]{2,60}$/, RARITY = ['thuong','linh','hiem','la'], VI = ['kim','moc','thuy','hoa','tho','phong'];
 const int = (v, min, max) => Number.isInteger(v) && v >= min && v <= max;
 function check(ok, message) { if (!ok) throw Error('Invalid game content: ' + message); }
 check(source.schema_version === 1, 'schema_version');

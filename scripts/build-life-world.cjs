@@ -13,7 +13,7 @@ const ids = new Set();
 for (const site of sites) {
   if (!maps[site.mapId] || ids.has(site.id) || !Number.isFinite(site.x) || !Number.isFinite(site.y) ||
       !['fishing','gardening','mining','meditation'].includes(site.type) ||
-      (site.type === 'meditation') !== ['tho','thuy','thach','moc','phong'].includes(site.element)) throw Error('Invalid/duplicate activity anchor: '+site.id);
+      (site.type === 'meditation') !== ['kim','moc','thuy','hoa','tho','phong'].includes(site.element)) throw Error('Invalid/duplicate activity anchor: '+site.id);
   ids.add(site.id);
 }
 for (const map of Object.values(maps)) map.navEdges=navigation(map);
@@ -29,7 +29,7 @@ for (const [id, e] of Object.entries(enemies)) {
       !['normal','elite','boss'].includes(e.kind) || !['always','day','night'].includes(e.active) ||
       !Number.isInteger(e.hits) || e.hits < 1 || !Number.isInteger(e.damagePct) || e.damagePct < 1 || e.damagePct > 100 ||
       !Number.isInteger(e.respawnSec) || e.respawnSec < 1 || !Array.isArray(e.essence) || !e.essence.length ||
-      !e.essence.every(v => ['tho','thuy','thach','moc','phong'].includes(v)) ||
+      !e.essence.every(v => ['kim','moc','thuy','hoa','tho','phong'].includes(v)) ||
       (e.storyGate !== undefined && !/^act_[a-z]$/.test(e.storyGate))) throw Error('Invalid enemy: '+id);
   enemyOut[id] = {name: e.name, tier: e.tier, kind: e.kind, active: e.active, essence: e.essence};
   if (e.storyGate) enemyOut[id].storyGate = e.storyGate;

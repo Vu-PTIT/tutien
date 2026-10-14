@@ -9,7 +9,7 @@ Số liệu ở đây là **đơn vị thiết kế** để chơi thử, chưa c
 - **Nơi chốn quyết định sản lượng.** Mỗi bến, vỉa, luống có bảng riêng theo map và mức linh năng ([04](04-map-art.md) §6). Đi xa hơn, vào chỗ linh năng dày hơn thì gặp thứ mới; không cần nâng cấp dụng cụ.
 - **Hiếm là biến thể, không phải thứ phải cày.** Không món nào chặn tiến trình chính, trừ một mốc truyện (Mảnh Tím, §4.2) có bảo đảm.
 - **Trực tiếp và tự động cho cùng bảng, cùng tỉ lệ.** Thao tác trực tiếp chỉ khác cảm giác. Không minigame bắt buộc.
-- **Mỗi lượt vẫn cho hạt linh tinh của đúng vị:** câu cho Thủy, đào cho Thạch, thu hoạch cho Thổ + Mộc. Lượng ít, như backend hiện có.
+- **Mỗi lượt vẫn cho hạt linh tinh của đúng vị:** câu cho Thủy, đào cho Kim, thu hoạch cho Thổ + Mộc. Lượng ít, như backend hiện có.
 - **Cùng một bảng cho Người và Tinh Linh** ở cùng một điểm. Khác nhau ở chỗ mỗi role vào được điểm nào trước.
 
 ## 2. Bậc độ hiếm
@@ -121,8 +121,8 @@ Thứ **Linh** trở lên đều **Hấp** được: ngồi thiền với món �
 | Vảy Ngọc | Thủy | Chế tạo đặc biệt (để sau) |
 | Thiết quặng | — | Rèn Thanh Thiết Kiếm (đã có: 6 thiết + 2 trúc) |
 | Đồng quặng | — | Chế tạo sau (dây, đèn mỏ) |
-| Đá Vân Sáng | Thạch | Bùa Hộ Thân; Hấp |
-| Tinh Thể Linh Mạch | Thạch | Chế tạo đặc biệt (để sau) |
+| Đá Vân Sáng | Kim | Bùa Hộ Thân; Hấp |
+| Tinh Thể Linh Mạch | Kim | Chế tạo đặc biệt (để sau) |
 | Mảnh Tím | — (không Hấp được) | Đưa Tiến sĩ Theo ở Trạm Viện: mở truyện hồi C |
 | Cam Lộ / Tĩnh Tâm / Ích Khí | — | Dược: Hồi Nguyên Hoàn, Thoát Thân Phù (đã có: 2 Tĩnh Tâm + 1 trúc), Ích Khí Tán |
 | Thảo dược Dạ Quang | Thổ / Mộc | Dược mạnh hơn (để sau); Hấp |
@@ -148,7 +148,7 @@ Thứ **Linh** trở lên đều **Hấp** được: ngồi thiền với món �
 | Câu Hồ Lặng theo bảng, trời linh | ✅ `life_loot.ts` | — |
 | Đào Mỏ Bỏ Hoang + Hầm B1 theo bảng, bảo đảm Mảnh Tím | ✅ `life_loot.ts` | — |
 | Đồng hồ ngày/đêm + trời linh phía server | ✅ `lifeClockView` (ngày game 2 giờ, trời linh ~1/8 cửa sổ 30 phút) | Chỉnh nhịp khi dựng client |
-| Hạt linh tinh mỗi hoạt động | ✅ Thủy 1/4 lượt câu, Thạch 1/3 lượt đào, thu hoạch Thổ 2 + Mộc 1 | Giữ nguyên |
+| Hạt linh tinh mỗi hoạt động | ✅ Thủy 1/4 lượt câu, Kim 1/3 lượt đào, thu hoạch Thổ 2 + Mộc 1 | Giữ nguyên |
 | Suối Hấp Linh, Vườn nấm | ❌ Map `m_an_gioi` chưa có | Thêm map, 6 bến, 6 luống nấm riêng, 3 nấm/cây mới |
 | Hấp vật phẩm Linh | ✅ RPC `inner_world_absorb_item` | — |
 | Vật phẩm mới | ✅ 9 ID, catalog v4 | 7 ID của Ẩn Giới làm cùng map `m_an_gioi`; Hạt Sương Đọng tưới nhanh làm sau |

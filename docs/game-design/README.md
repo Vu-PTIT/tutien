@@ -29,6 +29,7 @@ Có code backend nhưng chưa thiết kế lại: **kinh tế**, **nhiệm vụ*
 | 08 | [Sản lượng đời sống](08-life-yields.md) | Trồng, câu, đào được gì, ở đâu? |
 | 09 | [Hiện trạng các map](09-map-hien-trang.md) | Dữ liệu map hiện có gì, lệch thiết kế chỗ nào? |
 | 10 | [Kích thước map cho online](10-kich-thuoc-map-online.md) | Map bao to để chứa tối đa 30 người một kênh? |
+| 11 | [Tỉ lệ map mới](11-ti-le-map.md) | *(đề xuất)* Map nhỏ lại, đi nhanh hơn, nhà to hơn, mật độ dày hơn |
 
 ## Quyết định đã chốt
 

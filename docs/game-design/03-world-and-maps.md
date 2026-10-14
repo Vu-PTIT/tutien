@@ -211,7 +211,8 @@ Bố cục chi tiết từng map (tọa độ, khu, đường đi): [05](05-map-
 
 - **Mép map phải khớp** với map bên cạnh theo bảng "Ghép map thành một thế giới" ở §3: sông, đường, tường, rừng chảy liền qua mép; dải 3–4 ô sát mép dùng chung tile ([04](04-map-art.md) §3.3). Kiểm tra bằng cách ghép các map theo tọa độ thế giới.
 
-- **Nền vẽ theo lớp, không ghép toàn bộ từ tile.** Tile chỉ dùng cho mặt đường, sàn, luống lặp.
+- **Nền vẽ theo lớp, không ghép toàn bộ từ tile.** Mỗi map là chồng lớp PNG vẽ tay (nền, decal, bóng, linh năng, đối tượng, tán, hạt, ánh sáng, không khí); tile chỉ dùng cho mặt đường, sàn, luống lặp. Chi tiết ở [04](04-map-art.md) §11.
+- **Mỗi map có lớp linh năng** (mạch, điểm tụ, hạt, linh vật, vết Linh Chấn) theo [04](04-map-art.md) §6; điểm tụ trùng điểm thiền.
 - Mỗi vật tương tác (cây, ghế, cửa, bến câu, luống, cổng) là **đối tượng riêng** có ID, trạng thái và điểm đứng.
 - Collision và đường đi lưu thành dữ liệu riêng, đồng bộ với `server/data/life_world.json`.
 - **Lối mòn ẩn** trong Rừng Sâu là lớp collision riêng: chặn khi đi bộ, mở khi Hóa Thú.

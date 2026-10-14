@@ -38,60 +38,72 @@ Người chưa học thì mọi linh năng đi qua mà không đọng lại (`in
   "next": {"id": "dao_lon", "name": "Đảo lớn", "cells": 60, "need": "Có Núi hoặc Rừng; đục dưới 50%", "locked": false, "met": false},
   "cells": [{"x": 0, "y": 0, "kind": "an", "height": 1, "turbid": false}],
   "sky": 0, "pending": {"thuy": 2, "tho_d": 3},
-  "summary": {"area": 21, "turbid": 0, "height": 0, "clean": {"an":1,"tho":10,"thuy":10,"thach":0,"moc":0}, "dominant": "tho", "lech": false},
+  "summary": {"area": 21, "turbid": 0, "height": 0, "clean": {"an":1,"tho":10,"thuy":10,"kim":0,"moc":0,"hoa":0}, "dominant": "tho", "lech": false,
+    "element": "tho", "sinh": 0, "khac": 9},
+  "elements": {"list": ["kim","moc","thuy","hoa","tho","phong"], "sinh": {"moc":["hoa"], "...": []}, "khac": {"moc":["tho"], "...": []}},
   "formations": [{"id": "suoi", "name": "Suối", "active": true}],
-  "stats": {"attackBonus": 0, "defenseBonus": 0, "maxHpBonus": 5, "linhLuc": 20, "regenPerMinute": 0, "speedPercent": 0},
+  "stats": {"attackBonus": 0, "defenseBonus": 0, "maxHpBonus": 5, "linhLuc": 10, "regenPerMinute": 0, "speedPercent": 0, "critPercent": 0},
   "lastLeap": {"shape": 1, "at": 1800000000000},
   "limits": {"radius": 30, "maxCells": 1600, "motesPerCell": 4, "stageCap": 3},
   "stages": [...]
 }
 ```
 
-Tọa độ thửa từ −30 đến 30. `kind`: `an`, `tho`, `thuy`, `thach`, `moc`; chỉ `thach` có `height` 1–4. Phong không chiếm ô mà là `sky` (mây phủ trên đất, tối đa bằng số thửa). `lastLeap` cho client biết vừa có bước nhảy để chiếu cảnh biến đổi.
+Tọa độ thửa từ −30 đến 30. `kind`: `an`, `tho`, `thuy`, `kim`, `moc`, `hoa`; chỉ `tho` có `height` 1–4 (cao ≥ 3 là núi). Phong không chiếm ô mà là `sky` (mây phủ trên đất, tối đa bằng số thửa). `lastLeap` cho client biết vừa có bước nhảy để chiếu cảnh biến đổi.
 
 ## Nguồn linh năng
 
-Mỗi **4 đơn vị linh năng** cùng vị thì mọc 1 thửa. Linh năng **đục** mọc thửa đục: vẫn tính diện tích, không tạo hình thái, không cộng chỉ số.
+Linh năng có **sáu hệ** `kim`, `moc`, `thuy`, `hoa`, `tho`, `phong` (trường `vi` trong API). Mỗi **4 đơn vị linh năng** cùng hệ thì mọc 1 thửa. Linh năng **đục** mọc thửa đục: vẫn tính diện tích, không tạo hình thái, không cộng chỉ số.
 
-| Nguồn | Vị | Lượng | Đục |
+| Nguồn | Hệ | Lượng | Đục |
 | --- | --- | --- | --- |
 | Hấp Linh, mỗi lượt 60 giây | Theo điểm (bảng dưới) | 3 | 0; mỗi lượt còn lọc sạch 1 thửa đục |
 | Câu cá | Thủy | 1 mỗi 4 lượt | 0 |
-| Đào khoáng | Thạch | 1 mỗi 3 lượt | 0 |
+| Đào khoáng | Kim | 1 mỗi 3 lượt | 0 |
 | Thu hoạch (trực tiếp hoặc qua phiên) | Thổ 2 + Mộc 1 | | 0 |
 | Hạ Sơn Trư ngoài map | Thổ | 8 | 6 |
-| Hạ Độc Chu ngoài map | Mộc | 8 | 6 |
+| Hạ quái khác ngoài map | Theo loài; loài hai hệ chia đôi (4 + 4, đục 3 + 3) | 8 | 6 |
 
-Thạch sạch có 45% làm một ngọn núi có sẵn cao thêm thay vì mọc thửa mới. Chỗ mọc được chọn theo hash của `characterId` và bộ đếm `grown`, ưu tiên sát thửa cùng loại và gần tâm, nên retry/replay luôn ra đúng cùng một Nội Giới.
+Thổ sạch có 30% làm một thửa Thổ **sâu trong đất liền** (bốn phía đều có thửa) cao thêm thay vì mọc thửa mới. Chỗ mọc được chọn theo hash của `characterId` và bộ đếm `grown`, ưu tiên sát thửa cùng loại và gần tâm, nên retry/replay luôn ra đúng cùng một Nội Giới.
 
 ### Điểm Hấp Linh
 
-| siteId | Map | Vị |
+| siteId | Map | Hệ |
 | --- | --- | --- |
 | `lq_med_mieu` | Làng Hồ Lặng, sân miếu | Thổ |
 | `lq_med_ho` | Làng Hồ Lặng, bờ hồ | Thủy |
-| `mb_med_ho_tay` | Mỏ Bỏ Hoang, Hố Tây | Thạch |
+| `lq_med_lo_ren` | Làng Hồ Lặng, sân lò rèn | Hỏa |
+| `mb_med_ho_tay` | Mỏ Bỏ Hoang, Hố Tây | Kim |
+| `vd_med_lua` | Bìa Rừng, đống lửa trại | Hỏa |
 | `vd_med_thap` | Bìa Rừng, chân tháp | Phong |
 | `rs_med_goc_nam`, `rs_med_goc_bac` | Rừng Sâu, gốc cây Tinh Linh | Mộc |
 
-Vị Ẩn chưa có nguồn vì map Ẩn Giới chưa có trong backend.
+Ẩn chưa có nguồn vì map Ẩn Giới chưa có trong backend.
 
 ## Hình thái, chỉ số và bước nhảy
 
-Hình thái được tính lại sau mỗi thay đổi: Suối (3 Thủy nối), Sông (≥ 6 Thủy chạm Núi), Hồ (Thủy giáp ≥ 3 Thổ), Biển (≥ 12 Thủy nối), Bờ biển, Núi (Thạch cao ≥ 3), Dãy núi (3 Núi nối), Rừng (6 Mộc nối), Thung lũng, Gió lộng (Núi + ≥ 3 mây), Rừng Ẩn.
+Hình thái được tính lại sau mỗi thay đổi: Suối (3 Thủy nối), Sông (≥ 6 Thủy chạm Núi), Hồ (Thủy giáp ≥ 3 Thổ), Biển (≥ 12 Thủy nối), Bờ biển, Núi (Thổ cao ≥ 3), Dãy núi (3 Núi nối), Rừng (6 Mộc nối), Thung lũng (Thổ thấp kẹp giữa hai Núi), Gió lộng (Núi + ≥ 3 mây), Rừng Ẩn, Mạch Kim (≥ 3 Kim nối chạm Núi), Núi Lửa (Hỏa chạm Núi).
+
+**Sinh khắc giữa thửa:** với mỗi thửa sạch, nếu chạm thửa sạch của hệ sinh ra nó thì tính 1,5; chạm hệ khắc nó thì 0,5; cả hai thì 1. Tổng theo hệ là `eff` (dùng cho chỉ số). `summary.sinh`/`summary.khac` đếm số cặp thửa chạm nhau có quan hệ sinh/khắc. Bảng quan hệ trả trong `elements`:
+
+- Sinh: Mộc→Hỏa→Thổ→Kim→Thủy→Mộc; Thủy→Phong→Hỏa.
+- Khắc: Mộc⊣Thổ⊣Thủy⊣Hỏa⊣Kim⊣Mộc; Thổ⊣Phong⊣Mộc.
+
+**Hệ chính** (`summary.element`): hệ có nhiều thửa sạch nhất (Phong tính bằng `sky`), cần ít nhất 3; không đủ thì rỗng.
 
 | Chỉ số | Công thức |
 | --- | --- |
-| `attackBonus` | ⌊tổng độ cao Thạch sạch / 4⌋ + 2 nếu có Dãy núi |
+| `attackBonus` | ⌊tổng độ cao Thổ sạch / 4⌋ + ⌊eff Kim / 3⌋ + 2 mỗi hình thái Dãy núi, Mạch Kim, Núi Lửa |
 | `defenseBonus` | ⌊tổng độ cao / 2⌋ + 3 nếu có Núi + 2 nếu có Thung lũng |
 | `maxHpBonus` | ⌊thửa sạch / 4⌋ |
-| `linhLuc` | 2 × Thủy sạch |
-| `regenPerMinute` | ⌊Mộc sạch / 3⌋ |
+| `linhLuc` | ⌊2 × eff Thủy⌋ |
+| `regenPerMinute` | ⌊eff Mộc / 3⌋ |
 | `speedPercent` | min(30, mây) |
+| `critPercent` | min(25, ⌊eff Hỏa⌋) |
 
-**Đang áp dụng vào chiến đấu:** `attackBonus` cộng vào `world_attack`, trận Sơn Trư và săn chung khế ước; `defenseBonus` cộng vào trận Sơn Trư và săn chung. Máu, linh lực, hồi máu và tốc độ mới được tính và trả về, chưa dùng trong luật chiến đấu (máu hồ sơ vẫn trần 100).
+**Đang áp dụng vào chiến đấu:** `attackBonus` cộng vào `world_attack`, trận Sơn Trư và săn chung khế ước; `defenseBonus` cộng vào trận Sơn Trư và săn chung. **Sinh khắc trong trận:** hệ chính khắc một hệ của quái thì sức đánh × 1,25; một hệ của quái khắc hệ chính thì × 0,85 (áp dụng ở `world_attack`, trận Sơn Trư và săn chung; Lợn Gai là Thổ). Máu, linh lực, hồi máu, tốc độ và chí mạng mới được tính và trả về, chưa dùng trong luật chiến đấu (máu hồ sơ vẫn trần 100).
 
-Bước nhảy tự xảy ra khi đủ thửa và đủ chất: Hạt → Đảo (20, có Thổ và Thủy sạch) → Đảo lớn (60, có Núi hoặc Rừng, đục < 50%) → Quần đảo (150, 3 hình thái, Thủy ≥ 25%, đục < 35%). Nội Giới **lệch** (một loại > 80%, từ 10 thửa) thì không nhảy. Hình dạng chỉ tiến, không lùi. Chương 1 dừng ở Quần đảo (`stageCap: 3`); các hình dạng sau đã có điều kiện nhưng đang khóa. Trần 1.600 thửa.
+Bước nhảy tự xảy ra khi đủ thửa và đủ chất: Hạt → Đảo (20, có Thổ và Thủy sạch) → Đảo lớn (60, có Núi hoặc Rừng, đục < 50%) → Quần đảo (150, 3 hình thái, Thủy ≥ 25%, đục < 35%, số cặp sinh ≥ số cặp khắc). Nội Giới **lệch** (một loại > 80%, từ 10 thửa) thì không nhảy. Hình dạng chỉ tiến, không lùi. Chương 1 dừng ở Quần đảo (`stageCap: 3`); các hình dạng sau đã có điều kiện nhưng đang khóa. Trần 1.600 thửa.
 
 ## Xếp lại
 
@@ -99,6 +111,7 @@ Bước nhảy tự xảy ra khi đủ thửa và đủ chất: Hạt → Đảo
 
 ## Tương thích
 
+- **Nội Giới phiên bản 1** (có hệ Thạch) tự nâng lên phiên bản 2 khi đọc: thửa Thạch thành thửa Thổ giữ nguyên độ cao, linh năng Thạch đang chờ thành Thổ. Vật phẩm quặng trong bảng `game_items` đổi `absorb_vi` từ `thach` sang `kim` khi server khởi động.
 - Cảnh giới đã bỏ. `realm`, `realmStage`, `cultivationXp` chỉ còn là trường cũ bị đóng băng: không nguồn thưởng nào cộng XP hay nâng cảnh giới (kể cả nhiệm vụ mở đầu). Phần thưởng cũ đang chờ còn ghi XP vẫn nhận được, nhưng XP thực nhận là 0.
 - Vì vậy chỉ hồ sơ **đã phát hành** ở Luyện Khí mới được chuyển thành `teacher: "legacy"`. Trước 13/10/2026, Người chưa học có thể tự biết Hấp Linh khi đánh quái đủ 100 XP hoặc làm xong nhiệm vụ mở đầu; lỗi này đã được chặn và có test.
 - Hồ sơ cũ không có `innerWorld`: đọc thì suy ra (không ghi), lần ghi đầu tiên có Nội Giới mới lưu.

@@ -257,6 +257,7 @@ const contractHuntAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payloa
       if(!skill||profile.learnedSkills.indexOf(skill.id)<0) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Equip a learned active skill first");
       attack+=Number(skill.powerBonus||0);
     }
+    attack=Math.floor(attack*innerElementPercent(profile,innerEnemyVis("en_boar"))/100);
     const combo=!!hunt.lastActor&&hunt.lastActor!==userId&&now-hunt.lastHitAt<=5000;
     const damage=Math.min(hunt.mobHp,Math.max(1,Math.floor(attack*100/105))+(combo?4:0));
     hunt.mobHp-=damage; hunt.damage[userId]+=damage; hunt.lastActor=userId; hunt.lastHitAt=now;

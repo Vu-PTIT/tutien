@@ -159,7 +159,7 @@ Không có cấp độ hay cảnh giới. Linh năng hấp thụ vào người l
 - **Lượng** (Nội Giới to bao nhiêu) quyết định máu, linh lực, phòng thủ, tốc độ.
 - **Chất** (gồm địa hình gì, sạch hay đục, xếp ra sao) quyết định kỹ năng.
 - **Người và Tinh Linh lên giống hệt nhau.** Người phải được Tinh Linh dạy Hấp Linh mới bắt đầu được (xem [07](07-power-system.md) §9).
-- **Nguồn:** Hấp Linh (ít, sạch), hoạt động đời sống (rất ít, sạch vừa, tích cả khi tự hoạt động), hạ dị thú (nhiều, đục). Mỗi nơi cho một **vị** linh năng khác nhau: hồ cho Thủy, mỏ cho Thạch, rừng cho Mộc...
+- **Nguồn:** Hấp Linh (ít, sạch), hoạt động đời sống (rất ít, sạch vừa, tích cả khi tự hoạt động), hạ dị thú (nhiều, đục). Linh năng chia **sáu hệ** Kim, Mộc, Thủy, Hỏa, Thổ, Phong, chính là các yếu tố tạo nên thế giới; mỗi nơi cho hệ của vật chất ở đó: hồ cho Thủy, mỏ cho Kim, lửa trại cho Hỏa, rừng cho Mộc... Các hệ tương sinh, tương khắc với nhau trong Nội Giới và khi đánh dị thú ([07](07-power-system.md) §2.1).
 - **Bước nhảy:** khi lượng đủ và chất đủ điều kiện, Nội Giới đổi hình dạng, mở kỹ năng mới và cho vào vùng linh năng dày hơn.
 - Việc ngoài đời thật không cho sức mạnh trong game.
 

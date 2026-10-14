@@ -369,6 +369,8 @@ const worldAttackRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,payload) {
       const item=profile.inventory[i],definition=catalogItem(item.itemId);
       if(item.instanceId===profile.equipped.weapon&&definition.equipSlot==="weapon") attack+=Number(definition.attackBonus||0);
     }
+    // Sinh khắc: the player's main hệ against the species' vị.
+    attack=Math.floor(attack*innerElementPercent(profile,innerEnemyVis(target.enemyId))/100);
     const damage=Math.max(1,Math.floor(attack*100/(100+target.defense)));
     target.hp=Math.max(0,target.hp-damage); target.mode=target.hp===0?"dead":"hit";
     session.attackReadyAt=now+(activeSkill?Number(activeSkill.cooldownMs||700):700);
