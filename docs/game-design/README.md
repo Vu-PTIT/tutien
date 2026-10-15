@@ -26,7 +26,7 @@
 | 09 | [Hiện trạng](09-map-hien-trang.md) | So sánh thiết kế với code |
 | 10 | [Online](10-kich-thuoc-map-online.md) | Mục tiêu kênh và mật độ |
 | 11 | [Kích thước](11-ti-le-map.md) | Kích thước map chuẩn |
-| 12 | [Danh mục map](12-ban-do-cac-khu.md) | 3 nơi an toàn + 24 khu quái |
+| 12 | [Danh mục map](12-ban-do-cac-khu.md) | 3 nơi an toàn + 24 khu quái |\n| 13 | [Bố cục 27 khu](13-bo-cuc-27-khu.md) | Vật thể, cách sắp xếp, màu sắc và mật độ quái từng khu |
 
 ## Những phần chưa chốt
 

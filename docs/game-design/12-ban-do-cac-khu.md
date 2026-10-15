@@ -43,3 +43,8 @@ Các nhãn là tên làm việc, không phải địa danh hay ID cuối. Tổng
 3. Dựng hai khu Rìa, một Trung, một Cao cho từng vùng.
 4. Thiết kế địa hình, quái, tài nguyên, tên và ID.
 5. Duyệt blockout liên kết rồi mới migration backend.
+
+
+## 5. Bố cục và phong cách từng khu
+
+Thiết kế vật thể, cách sắp xếp, palette và mật độ quái cho toàn bộ 27 khu: [13 — Bố cục 27 khu](13-bo-cuc-27-khu.md).
