@@ -22,7 +22,7 @@
 ## Chiến đấu trực tuyến
 
 - Thêm đấu tập hai người với mô phỏng authoritative 20 Hz, reconnect và xử lý rời trận.
-- Thêm encounter Sơn Trư với snapshot server, animation báo đòn và xử lý kết quả.
+- Thêm encounter Lợn Gai với snapshot server, animation báo đòn và xử lý kết quả.
 - CI chạy unit test server, smoke backend và kiểm tra scene/resource Godot.
 
 ## Lát cắt client hiện tại

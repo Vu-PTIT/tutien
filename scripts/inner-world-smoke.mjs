@@ -18,7 +18,7 @@ async function rejected(player,name,input){
 }
 const human=await actor('ngh_'),spirit=await actor('ngs_');
 await human.rpc('character_select_form',{operationId:op(),kind:'human',speciesId:'human'});
-await spirit.rpc('character_select_form',{operationId:op(),kind:'spirit_beast',speciesId:'cat'});
+await spirit.rpc('character_select_form',{operationId:op(),kind:'spirit',speciesId:'cat'});
 
 // A spirit beast knows Hấp Linh; a human must be taught by one.
 let world=(await spirit.rpc('inner_world_get')).innerWorld;
@@ -34,8 +34,8 @@ await rejected(human,'inner_world_learn',{operationId:op(),contractId:contract.i
 await human.rpc('contract_release',{contractId:contract.id});
 
 // Two autonomous Hấp Linh cycles at the lake on real server time grow one clean Thủy cell.
-await spirit.rpc('world_get',{preferredMapId:'m_lang_que'});
-const start=await spirit.rpc('activity_start',{operationId:op(),siteId:'lq_med_ho',controlMode:'autonomous',cycles:2});
+await spirit.rpc('world_get',{preferredMapId:'m_k1_01'});
+const start=await spirit.rpc('activity_start',{operationId:op(),siteId:'k1_01_med_09',controlMode:'autonomous',cycles:2});
 let session=start.session;assert.equal(session.activityType,'meditation');
 const deadline=Date.now()+Math.max(0,session.expectedEndAt-session.serverNow)+20000;
 while(session.state!=='completed'){

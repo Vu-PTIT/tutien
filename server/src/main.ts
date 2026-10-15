@@ -35,8 +35,8 @@ function InitModule(_ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkrun
   initializer.registerRpc("activity_claim", activityClaimRpc);
   initializer.registerRpc("activity_cancel", activityCancelRpc);
   initializer.registerRpc("activity_control", activityControlRpc);
-  initializer.registerRpc("pve_son_tru_create", pveSonTruCreateRpc);
-  initializer.registerRpc("pve_son_tru_claim_pending", pveSonTruClaimPendingRpc);
+  initializer.registerRpc("pve_lon_gai_create", pveLonGaiCreateRpc);
+  initializer.registerRpc("pve_lon_gai_claim_pending", pveLonGaiClaimPendingRpc);
   initializer.registerRpc("inner_world_get", innerWorldGetRpc);
   initializer.registerRpc("inner_world_learn", innerWorldLearnRpc);
   initializer.registerRpc("inner_world_arrange", innerWorldArrangeRpc);
@@ -53,7 +53,7 @@ function InitModule(_ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkrun
     matchLeave: combatLeave, matchLoop: combatLoop, matchTerminate: combatTerminate,
     matchSignal: combatSignal
   });
-  initializer.registerMatch("pve_son_tru", pveSonTruMatch);
+  initializer.registerMatch("pve_lon_gai", pveLonGaiMatch);
   initializer.registerRpc("social_find_player", socialFindPlayerRpc);
   initializer.registerRpc("social_group_create", groupCreateRpc);
   initializer.registerRpc("social_group_action", groupActionRpc);

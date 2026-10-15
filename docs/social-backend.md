@@ -98,17 +98,17 @@ Trạng thái bạn bè: `0` đã kết bạn, `1` lời mời đã gửi, `2` l
 Mỗi lần thay đổi tối đa 10 người; không được tự kết bạn. Bỏ chặn không khôi phục
 quan hệ bạn bè. Thông báo kết bạn dùng hệ thống notifications gốc của Nakama.
 
-## Tông môn và bang phái
+## Đội và Hội
 
-Ở bản này, cả hai đều là tổ chức do người chơi tạo: `sect` = tông môn,
-`guild` = bang phái. Hai loại dùng chung cơ chế phân quyền và có metadata khác nhau.
+Ở bản này, cả hai đều là tổ chức do người chơi tạo: `party` = Đội (nhóm Khai Phá Giả nhỏ đi cùng nhau),
+`guild` = Hội; nhóm tạo trước khi đổi tên còn lưu kind `sect` và được coi là `party`. Hai loại dùng chung cơ chế phân quyền và có metadata khác nhau.
 Chưa áp đặt luật mỗi người chỉ được tham gia một nhóm; có thể thuộc nhiều nhóm,
-kể cả nhiều nhóm cùng loại. Tông môn NPC và liên minh liên bang sẽ là hệ thống khác.
+kể cả nhiều nhóm cùng loại. Tổ chức NPC (Hội Khai Phá, Tháp Học) và liên minh giữa các hội sẽ là hệ thống khác.
 
 | Vai trò | State | Quyền |
 |---|---|---|
-| Tông chủ / bang chủ | `0` | Duyệt/từ chối, cập nhật giới thiệu, đuổi cấp dưới, bổ nhiệm/hạ chức trưởng lão, giải tán |
-| Trưởng lão / quản lý | `1` | Duyệt/từ chối đơn, cập nhật giới thiệu, đuổi thành viên |
+| Đội trưởng / hội trưởng | `0` | Duyệt/từ chối, cập nhật giới thiệu, đuổi cấp dưới, bổ nhiệm/hạ chức phó, giải tán |
+| Phó đội / quản lý hội | `1` | Duyệt/từ chối đơn, cập nhật giới thiệu, đuổi thành viên |
 | Thành viên | `2` | Xem thành viên, chat nội bộ, rời nhóm |
 | Đang xin gia nhập | `3` | Hủy đơn bằng `leave`; chưa có quyền chat hoặc xem danh sách thành viên |
 
@@ -119,8 +119,8 @@ giải tán, không dùng `leave` để xóa nhầm nhóm. Giải tán phải g�
 
 | RPC | Payload mẫu |
 |---|---|
-| `social_group_create` | `{"kind":"sect","name":"Thanh Vân Môn","description":"Cùng nhau tu luyện"}` |
-| `social_groups` | `{"kind":"sect","query":"Thanh","limit":30,"cursor":""}` |
+| `social_group_create` | `{"kind":"party","name":"Đội Hồ Lặng","description":"Cùng nhau đi săn ở Bìa Rừng"}` |
+| `social_groups` | `{"kind":"party","query":"Đội","limit":30,"cursor":""}` |
 | `social_groups` (nhóm của mình, gồm cả đơn đang chờ) | `{"mine":true,"limit":30,"cursor":""}` |
 | `social_group_members` | `{"groupId":"<id>","limit":30,"cursor":""}` |
 | `social_group_members` (đơn xin vào, chỉ quản lý) | `{"groupId":"<id>","state":3}` |
@@ -149,7 +149,7 @@ bộ lọc khi dùng cursor. Tìm nhóm theo tiền tố, không nhận wildcard
 |---|---|---|---|
 | Thế giới | `world` | Bỏ trống | type `1`, target `world:vi:1` |
 | Riêng giữa bạn bè | `direct` | ID người kia | type `2`, target ID người kia |
-| Tông môn / bang | `group` | ID nhóm | type `3`, target ID nhóm |
+| Đội / Hội | `group` | ID nhóm | type `3`, target ID nhóm |
 
 - Gửi: RPC `social_chat_send`, `{"type":"direct","targetId":"<id>","text":"Chào đạo hữu"}`.
 - Lịch sử: RPC `social_chat_history`, `{"type":"group","targetId":"<id>","limit":30,"cursor":""}`.
@@ -214,7 +214,7 @@ khi phát hành tài khoản công khai.
 
 ### Typography cho giao diện xã hội
 
-Client hiện có adapter/backend xã hội, chưa có scene bạn bè, chat hoặc tông môn/bang
+Client hiện có adapter/backend xã hội, chưa có scene bạn bè, chat hoặc Đội/Hội
 hội. Theme dùng chung đã có sẵn các biến thể để màn hình mới không tự đặt cỡ chữ:
 
 | Vai trò | Desktop | Mobile |
@@ -243,8 +243,8 @@ Các bản ghi IP hết hạn cần chính sách dọn khi triển khai lâu dà
 Đây là backend phát triển chạy một Nakama node trên localhost. Trước khi đưa lên
 Internet cần cấu hình TLS/WSS, khóa ký phiên/server và mật khẩu DB riêng, tắt guest,
 xác minh/khôi phục email, chính sách lưu/xóa chat, công cụ báo cáo/quản trị và
-kiểm thử tải. Chưa tích hợp chiến đấu, PvP, liên server, tài sản bang, đóng góp,
-chuyển bang chủ hay triển khai công khai.
+kiểm thử tải. Chưa tích hợp chiến đấu, PvP, liên server, tài sản hội, đóng góp,
+chuyển hội trưởng hay triển khai công khai.
 
 ## Nguồn đối chiếu
 

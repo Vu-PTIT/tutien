@@ -20,7 +20,7 @@ interface WorldMapDefinition {
 }
 // Species data compiled from server/data/world_population.json.
 interface WorldEnemy {
-  name: string; tier: number; kind: string; active: string; essence: string[]; storyGate?: string;
+  name: string; tier: number; kind: string; active: string; essence: string[];
 }
 interface WorldWaterRegion {
   shape: string; points?: number[][]; center_cell?: number[]; radii_cells?: number[]; width_cells?: number;
@@ -36,7 +36,8 @@ const WORLD_SPEED = 72;
 const WORLD_RADIUS = 8;
 // Filled from the generated life world manifest (installLifeWorldMaps).
 const WORLD_MAPS: {[key: string]: WorldMapDefinition} = {};
-const WORLD_START_MAP = "m_lang_que";
+const WORLD_START_MAP = "m_k1_01";
+const WORLD_SPIRIT_START_MAP = "m_k0_01";
 function worldObject(userId: string): nkruntime.StorageReadRequest {
   return {collection:"world_sessions",key:"main",userId:userId};
 }
@@ -73,9 +74,11 @@ function worldFindPoint(map: WorldMapDefinition, id: string): WorldPoint | undef
 function worldMapReachable(targetId: string): boolean {
   const target=WORLD_MAPS[targetId];
   if (!target || !worldWalkable(target,[target.spawnX,target.spawnY])) return false;
-  const pending: string[] = [WORLD_START_MAP];
+  const roots: string[] = [WORLD_START_MAP];
+  if (WORLD_MAPS[WORLD_SPIRIT_START_MAP]) roots.push(WORLD_SPIRIT_START_MAP);
+  const pending: string[] = roots.slice();
   const visited: {[mapId: string]: boolean} = {};
-  visited[WORLD_START_MAP] = true;
+  for (let i = 0; i < roots.length; i++) visited[roots[i]] = true;
   while (pending.length > 0) {
     const mapId = pending[0];
     pending.splice(0, 1);
@@ -107,7 +110,7 @@ function worldEnsureFieldMobs(session: WorldSession, mapId: string, now: number)
   // stats, position and drops always follow the current definitions. Mobs no
   // longer defined (or still story-gated) are dropped.
   const previous = session.fieldMobsByMap[mapId] || [];
-  const definitions = (WORLD_MAPS[mapId].fieldMobs || []).filter(worldMobSpawnable);
+  const definitions = WORLD_MAPS[mapId].fieldMobs || [];
   const mobs = definitions.map(function (def): WorldFieldMobState {
     let live: WorldFieldMobState | undefined;
     for (let i = 0; i < previous.length; i++) if (previous[i].id === def.id) { live = previous[i]; break; }
@@ -131,11 +134,6 @@ function worldEnsureFieldMobs(session: WorldSession, mapId: string, now: number)
   session.fieldMobsByMap[mapId] = mobs;
   return changed;
 }
-// Elites and the boss wait for the story system; until then they never spawn.
-function worldMobSpawnable(def: WorldFieldMobDefinition): boolean {
-  const enemy = WORLD_ENEMIES[def.enemyId];
-  return !enemy || !enemy.storyGate;
-}
 // Day-only and night-only species are hidden (and untargetable) outside their hours.
 function worldMobActive(mob: WorldFieldMobDefinition, now: number): boolean {
   const enemy = WORLD_ENEMIES[mob.enemyId];
@@ -155,6 +153,36 @@ function worldFieldMobSnapshot(session: WorldSession, mapId: string): WorldField
       equipmentDropPityMisses:mob.equipmentDropItemId ? Number(pity[mob.equipmentDropItemId] || 0) : 0};
   });
 }
+function worldDefaultStartMap(nk: nkruntime.Nakama, userId: string): string {
+  try {
+    const character = loadCharacter(nk, userId);
+    if (character && character.state && character.state.form && character.state.form.kind === "spirit") {
+      if (WORLD_MAPS[WORLD_SPIRIT_START_MAP]) return WORLD_SPIRIT_START_MAP;
+    }
+  } catch (_e) {}
+  return WORLD_START_MAP;
+}
+function worldRelocateSpiritSpawn(nk: nkruntime.Nakama, userId: string): void {
+  if (!WORLD_MAPS[WORLD_SPIRIT_START_MAP]) return;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const row = nk.storageRead([worldObject(userId)])[0];
+    if (!row) return;
+    const v = row.value as WorldSession;
+    if (v.seq === 0) {
+      const spiritMap = WORLD_MAPS[WORLD_SPIRIT_START_MAP];
+      const relocated = JSON.parse(JSON.stringify(v)) as WorldSession;
+      relocated.mapId = WORLD_SPIRIT_START_MAP;
+      relocated.x = spiritMap.spawnX;
+      relocated.y = spiritMap.spawnY;
+      relocated.updatedAt = Date.now();
+      try {
+        nk.storageWrite([worldSessionWriteRequest(userId, relocated, row.version)]);
+        return;
+      } catch (_e) { continue; }
+    }
+    return;
+  }
+}
 function worldReadSession(nk: nkruntime.Nakama,userId: string,preferredMapId: string = ""): {session:WorldSession,version:string} {
   for(let attempt=0;attempt<5;attempt++) {
     const row=nk.storageRead([worldObject(userId)])[0];
@@ -162,11 +190,23 @@ function worldReadSession(nk: nkruntime.Nakama,userId: string,preferredMapId: st
       const v=row.value;
       if(typeof v.mapId!=="string"||typeof v.x!=="number"||typeof v.y!=="number"||typeof v.seq!=="number"||typeof v.updatedAt!=="number")
         return fail(nkruntime.Codes.FAILED_PRECONDITION,"World position requires review");
+      if(legacyMapId(v.mapId)!==v.mapId) {
+        // Saved under a pre-renumbering map ID: same map and coordinates, new key.
+        const renamed=JSON.parse(JSON.stringify(v)) as WorldSession,mobs: {[mapId: string]: WorldFieldMobState[]} = {};
+        renamed.mapId=legacyMapId(v.mapId);
+        for(const id in renamed.fieldMobsByMap||{}) mobs[legacyMapId(id)]=renamed.fieldMobsByMap![id];
+        renamed.fieldMobsByMap=mobs;
+        try {
+          const version=nk.storageWrite([worldSessionWriteRequest(userId,renamed,row.version)])[0].version;
+          return {session:renamed,version:version};
+        } catch(_error) { continue; }
+      }
       if(!WORLD_MAPS[v.mapId]) {
-        // The map was retired (e.g. the old An Khê prototype route): move the player
-        // to the village spawn and forget field state kept for maps that are gone.
-        const moved=JSON.parse(JSON.stringify(v)) as WorldSession,start=WORLD_MAPS[WORLD_START_MAP];
-        moved.mapId=WORLD_START_MAP; moved.x=start.spawnX; moved.y=start.spawnY; moved.seq=v.seq+1; moved.updatedAt=Date.now();
+        // The map was retired (an earlier prototype route): move the player
+        // to their origin spawn and forget field state kept for maps that are gone.
+        const defaultMap = worldDefaultStartMap(nk, userId);
+        const moved=JSON.parse(JSON.stringify(v)) as WorldSession,start=WORLD_MAPS[defaultMap]||WORLD_MAPS[WORLD_START_MAP];
+        moved.mapId=defaultMap; moved.x=start.spawnX; moved.y=start.spawnY; moved.seq=v.seq+1; moved.updatedAt=Date.now();
         const kept: {[mapId: string]: WorldFieldMobState[]} = {};
         for(const id in moved.fieldMobsByMap||{}) if(WORLD_MAPS[id]) kept[id]=moved.fieldMobsByMap![id];
         moved.fieldMobsByMap=kept;
@@ -176,8 +216,18 @@ function worldReadSession(nk: nkruntime.Nakama,userId: string,preferredMapId: st
         } catch(_error) { continue; }
       }
       if(!worldWalkable(WORLD_MAPS[v.mapId],[v.x,v.y])) return fail(nkruntime.Codes.FAILED_PRECONDITION,"World position requires review");
-      const startingMap=WORLD_MAPS[WORLD_START_MAP];
-      if(preferredMapId&&preferredMapId!==WORLD_START_MAP&&v.mapId===WORLD_START_MAP&&v.x===startingMap.spawnX&&v.y===startingMap.spawnY&&v.seq===0) {
+      const defaultOriginMap = worldDefaultStartMap(nk, userId);
+      if(v.mapId===WORLD_START_MAP&&v.seq===0&&defaultOriginMap!==WORLD_START_MAP&&WORLD_MAPS[defaultOriginMap]) {
+        const spiritMap=WORLD_MAPS[defaultOriginMap];
+        const adopted=JSON.parse(JSON.stringify(v)) as WorldSession;
+        adopted.mapId=defaultOriginMap; adopted.x=spiritMap.spawnX; adopted.y=spiritMap.spawnY; adopted.updatedAt=Date.now();
+        try {
+          const version=nk.storageWrite([worldSessionWriteRequest(userId,adopted,row.version)])[0].version;
+          return {session:adopted,version:version};
+        } catch(_error) { continue; }
+      }
+      const startingMap=WORLD_MAPS[v.mapId];
+      if(preferredMapId&&preferredMapId!==v.mapId&&startingMap&&v.x===startingMap.spawnX&&v.y===startingMap.spawnY&&v.seq===0) {
         const preferredMap=WORLD_MAPS[preferredMapId];
         if(preferredMap&&worldMapReachable(preferredMapId)) {
           const adopted=JSON.parse(JSON.stringify(v)) as WorldSession;
@@ -190,8 +240,9 @@ function worldReadSession(nk: nkruntime.Nakama,userId: string,preferredMapId: st
       }
       return {session:v as WorldSession,version:row.version};
     }
-    const initialMapId=preferredMapId&&worldMapReachable(preferredMapId)?preferredMapId:WORLD_START_MAP;
-    const map=WORLD_MAPS[initialMapId];
+    const defaultStartMap=worldDefaultStartMap(nk,userId);
+    const initialMapId=preferredMapId&&worldMapReachable(preferredMapId)?preferredMapId:defaultStartMap;
+    const map=WORLD_MAPS[initialMapId]||WORLD_MAPS[WORLD_START_MAP];
     const value:WorldSession={mapId:initialMapId,x:map.spawnX,y:map.spawnY,seq:0,updatedAt:Date.now(),fieldMobsByMap:{},attackReadyAt:0};
     try {
       const version=nk.storageWrite([{collection:"world_sessions",key:"main",userId:userId,value:value,version:"*",permissionRead:0,permissionWrite:0}])[0].version;

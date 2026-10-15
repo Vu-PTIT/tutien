@@ -35,7 +35,7 @@ function fixture(a,value) { storageFixture(a,'characters','main',value,1,0); }
 try {
   const a=await account();
   const initial=await Promise.all(Array.from({length:8},()=>good(a,'inventory_get')));
-  initial.forEach(v=>{assert.equal(v.profile.schemaVersion,4);assert.deepEqual(v.profile.equippedSkills,{active_1:''});assert.equal(v.profile.realm,'mortal');assert.equal(v.profile.hp,100);assert.equal(v.profile.cultivationXp,0);assert.equal(v.capacity,24);assert.equal(v.catalogVersion,4);assert.equal(v.catalog.length,40);assert.match(v.catalogRevision,/^[0-9a-f]{16}$/);});
+  initial.forEach(v=>{assert.equal(v.profile.schemaVersion,5);assert.deepEqual(v.profile.equippedSkills,{active_1:''});assert.equal(v.profile.realm,undefined);assert.equal(v.profile.hp,100);assert.equal(v.profile.cultivationXp,undefined);assert.equal(v.capacity,24);assert.equal(v.catalogVersion,4);assert.equal(v.catalog.length,40);assert.match(v.catalogRevision,/^[0-9a-f]{16}$/);});
   const claims=await Promise.all(Array.from({length:12},()=>rpc(a,'inventory_claim_starter',{operationId:'same_operation_001'})));
   claims.forEach(r=>assert.equal(r.status,200,JSON.stringify(r.data)));
   assert.equal(claims.filter(r=>!r.value.replayed).length,1);
@@ -57,11 +57,11 @@ try {
   assert.equal((await good(b,'inventory_get')).profile.revision,1);
   const legacy=await account();fixture(legacy,{schemaVersion:1,realm:'luyen_khi',level:2,spiritStones:57,note:'preserve'});
   const migrated=await Promise.all(Array.from({length:8},()=>good(legacy,'get_profile')));
-  migrated.forEach(v=>{assert.equal(v.realmStage,2);assert.equal(v.spiritStones,57);assert.equal(v.note,'preserve');});
+  migrated.forEach(v=>{assert.equal(v.realmStage,undefined);assert.equal(v.spiritStones,57);assert.equal(v.note,'preserve');});
   const legacy2=await account();fixture(legacy2,{schemaVersion:2,characterId:legacy2.id,realm:'luyen_khi',realmStage:2,spiritStones:57,revision:9,inventory:[{itemId:'it_water',quantity:3}],note:'preserve'});
   const migrated2=await good(legacy2,'get_profile');
-  assert.equal(migrated2.schemaVersion,4);assert.deepEqual(migrated2.equippedSkills,{active_1:''});assert.equal(migrated2.realmStage,2);assert.equal(migrated2.spiritStones,57);assert.equal(migrated2.revision,9);
-  assert.equal(migrated2.hp,100);assert.equal(migrated2.cultivationXp,0);assert.deepEqual(migrated2.equipped,{weapon:'',armor:''});
+  assert.equal(migrated2.schemaVersion,5);assert.deepEqual(migrated2.equippedSkills,{active_1:''});assert.equal(migrated2.realmStage,undefined);assert.equal(migrated2.spiritStones,57);assert.equal(migrated2.revision,9);
+  assert.equal(migrated2.hp,100);assert.equal(migrated2.cultivationXp,undefined);assert.deepEqual(migrated2.equipped,{weapon:'',armor:''});
   assert.equal(migrated2.inventory[0].quantity,3);assert.equal(migrated2.note,'preserve');
   const invalid=await account();fixture(invalid,{schemaVersion:1,realm:'pham_nhan',level:99,spiritStones:8});
   assert.notEqual((await rpc(invalid,'get_profile')).status,200);
@@ -86,14 +86,14 @@ try {
 
   const pending=await account();
   const pendingProfile=await good(pending,'get_profile');
-  fixture(pending,{...pendingProfile,realm:'luyen_khi',realmStage:1,hp:50,inventory:Array.from({length:24},()=>({itemId:'it_water',quantity:99}))});
+  fixture(pending,{...pendingProfile,hp:50,inventory:Array.from({length:24},()=>({itemId:'it_water',quantity:99}))});
   const encounterId=randomUUID(),outcomeKey=`outcome:${encounterId}:1`;
-  const outcome={encounterId,generation:1,enemyId:'en_boar',operationId:`pve_son_tru_${encounterId}_1`,
-    sourceId:`pve:son_tru:${encounterId}:1:${pending.id}`,reward:{spiritStones:0,cultivationXp:10,items:[{itemId:'it_boar_hide',quantity:1}]},status:'pending',createdAt:Date.now()};
+  const outcome={encounterId,generation:1,enemyId:'en_boar',operationId:`pve_lon_gai_${encounterId}_1`,
+    sourceId:`pve:lon_gai:${encounterId}:1:${pending.id}`,reward:{spiritStones:0,cultivationXp:10,items:[{itemId:'it_boar_hide',quantity:1}]},status:'pending',createdAt:Date.now()};
   storageFixture(pending,'pve_settlements',outcomeKey,outcome);
   storageFixture(pending,'pve_settlements','pending',{status:'pending',outcomeKey});
   assert.equal((await good(pending,'inventory_get')).pendingSettlement.encounterId,encounterId);
-  assert.notEqual((await rpc(pending,'pve_son_tru_claim_pending')).status,200);
+  assert.notEqual((await rpc(pending,'pve_lon_gai_claim_pending')).status,200);
   await good(pending,'inventory_discard',{operationId:'clear_pending_stack_001',itemId:'it_water',quantity:99});
   // Discard a successful response, restart Nakama, authenticate again and replay.
   await good(a,'inventory_claim_starter',{operationId:'same_operation_001'});
@@ -112,12 +112,12 @@ try {
   const pendingLogin=await request('/v2/account/authenticate/device?create=false',basic,{id:pending.device});
   assert.equal(pendingLogin.status,200,JSON.stringify(pendingLogin.data));pending.auth='Bearer '+pendingLogin.data.token;
   assert.equal((await good(pending,'inventory_get')).pendingSettlement.encounterId,encounterId);
-  const settlement=await good(pending,'pve_son_tru_claim_pending');
-  // A pending outcome saved before realms were retired still offers XP; it is claimed for 0.
-  assert.equal(settlement.profile.cultivationXp,0);assert.equal(settlement.receipt.granted.cultivationXp,0);assert.equal(settlement.profile.hp,50);
+  const settlement=await good(pending,'pve_lon_gai_claim_pending');
+  // A pending outcome saved before schema 5 still offers XP; it grants nothing.
+  assert.equal(settlement.profile.cultivationXp,undefined);assert.equal(settlement.receipt.granted.cultivationXp,undefined);assert.equal(settlement.profile.hp,50);
   assert.equal(settlement.profile.inventory.at(-1).itemId,'it_boar_hide');
   assert.equal((await good(pending,'inventory_get')).pendingSettlement,null);
-  assert.equal((await good(pending,'pve_son_tru_claim_pending')).pending,false);
+  assert.equal((await good(pending,'pve_lon_gai_claim_pending')).pending,false);
   assert.equal(sql(`SELECT value->>'status' FROM storage WHERE user_id='${pending.id}' AND collection='pve_settlements' AND key='${outcomeKey}';`),'settled');
   assert.equal(sql(`SELECT count(*) FROM storage WHERE user_id='${pending.id}' AND collection='asset_receipts' AND value->>'sourceId'='${outcome.sourceId}';`),'2');
   console.log('PASS inventory/P2: concurrency, schema migrations, equip/use/discard, full-bag rollback, pending settlement restart/reclaim');

@@ -53,6 +53,11 @@ function lifeRequirePosition(world:WorldSession,id:string):void {
     return fail(nkruntime.Codes.FAILED_PRECONDITION,"Move to the activity's access point first");
 }
 function lifeValidateSession(s:LifeSession):void {
+  if(s&&typeof s.siteId==="string"&&typeof s.mapId==="string") {
+    // Sessions saved before maps and sites were renumbered (legacy_ids.ts).
+    s.siteId=legacySiteId(s.siteId);s.mapId=legacyMapId(s.mapId);
+    if(Array.isArray(s.route)) for(let i=0;i<s.route.length;i++) if(s.route[i]&&typeof s.route[i].mapId==="string") s.route[i].mapId=legacyMapId(s.route[i].mapId);
+  }
   if(!s||s.schemaVersion!==1||typeof s.sessionId!=="string"||typeof s.avatarId!=="string"||
       ["fishing","mining","gardening","meditation"].indexOf(s.type)<0||["direct","autonomous"].indexOf(s.controlMode)<0||
       ["active","cancelled","completed"].indexOf(s.state)<0||["pending","settled"].indexOf(s.settlement)<0||

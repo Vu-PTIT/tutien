@@ -1,5 +1,5 @@
 // Nội Giới: absorbed linh năng settles into a small server-owned world inside
-// the character. Its size (lượng) and composition (chất) replace realm levels
+// the character. Its size (lượng) and composition (chất) are
 // as the source of power. Growth is deterministic from the character ID and a
 // growth counter, so CAS retries and receipt replays rebuild the same world.
 interface InnerEssence { vi: string; motes: number; turbid: number; }
@@ -62,14 +62,15 @@ const INNER_FORMS: {id: string; name: string}[] = [
 const INNER_NEIGHBORS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 
 function innerSeedCells(): number[] { return [INNER_RADIUS, INNER_RADIUS, 0, 1, 0]; }
-// A missing world is derived from the saved profile: spirit beasts know Hấp Linh
-// natively; released Luyện Khí humans keep their progress as learned Thổ motes.
-function innerNew(state: CharacterState): InnerWorld {
-  const spirit = !!state.form && state.form.kind === "spirit_beast" && state.form.selected === true;
-  const legacy = state.realm === "luyen_khi";
+// A missing world is derived from the saved profile: Tinh Linh know Hấp Linh
+// natively. A human who reached Luyện Khí stage 1–4 before schema 5 (realmStage)
+// keeps that progress once, as learned Thổ motes.
+function innerNew(state: CharacterState, realmStage: number = 0): InnerWorld {
+  const spirit = !!state.form && state.form.kind === "spirit" && state.form.selected === true;
+  const legacy = realmStage > 0;
   const w: InnerWorld = {v: INNER_VERSION, learned: spirit || legacy, teacher: spirit ? "native" : legacy ? "legacy" : "",
     cells: spirit || legacy ? innerSeedCells() : [], sky: 0, pending: {}, grown: 0, shape: 0, lastLeap: null};
-  if (legacy && !spirit) w.pending.tho = Number(state.realmStage) * 20;
+  if (legacy && !spirit) w.pending.tho = realmStage * 20;
   return w;
 }
 function innerInvalid(): never { return fail(nkruntime.Codes.FAILED_PRECONDITION, "Inner world requires review; no assets were changed"); }
@@ -450,7 +451,7 @@ const innerWorldLearnRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, pa
     return fail(nkruntime.Codes.INVALID_ARGUMENT, "Expected operationId and contractId only");
   const contract = spiritActive(nk, input.contractId, userId).value, teacherId = spiritOther(contract, userId);
   const teacherForm = peekCharacterForm(nk, teacherId);
-  if (teacherForm.kind !== "spirit_beast" || !teacherForm.selected)
+  if (teacherForm.kind !== "spirit" || !teacherForm.selected)
     return fail(nkruntime.Codes.FAILED_PRECONDITION, "Only a Tinh Linh can teach Hấp Linh");
   const result = commitAssetMutation(nk, userId, input.operationId, "inner_learn", {contractId: input.contractId}, function (next) {
     if (next.form.kind !== "human" || !next.form.selected) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Choose the human form before learning");
@@ -477,7 +478,7 @@ const innerWorldArrangeRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, 
 // world_interact at a teacher point (Bé Mơ at the shrine) teaches a human player.
 function innerLearnFromNpc(nk: nkruntime.Nakama, userId: string, pointId: string): JsonObject {
   const profile = loadCharacter(nk, userId).state, current = innerView(profile);
-  if (profile.form.kind === "spirit_beast") return {innerWorld: current, message: "Bé Mơ vẫy đuôi: \"Cậu biết Hấp Linh từ bé rồi mà!\""};
+  if (profile.form.kind === "spirit") return {innerWorld: current, message: "Bé Mơ vẫy đuôi: \"Cậu biết Hấp Linh từ bé rồi mà!\""};
   if (current.learned) return {innerWorld: current, message: "Bé Mơ: \"Nhớ thở chậm, để linh năng tự lắng xuống nhé.\""};
   if (!profile.form.selected) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Choose a character form first");
   const result = commitAssetMutation(nk, userId, "inner_learn_" + pointId.replace(/[^a-zA-Z0-9_-]/g, "_"), "inner_learn_npc", {pointId: pointId}, function (next) {

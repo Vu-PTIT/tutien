@@ -11,7 +11,7 @@ Ngày: 13/10/2026. Nakama lưu mọi dữ liệu game trong bảng `storage` c�
 | `world_sessions/main` | người chơi | Vị trí, quái ngoài map, pity | Mãi |
 | `asset_receipts` | người chơi | Receipt nhận thưởng: `op:<operationId>` và `source:<sourceId>` | 7 ngày, trừ source một lần (xem dưới) |
 | `asset_mutations` | người chơi | Receipt thao tác túi, Nội Giới, activity | 7 ngày |
-| `pve_settlements` | người chơi | Outcome trận Sơn Trư và con trỏ `pending` | Outcome đã `settled`: 7 ngày |
+| `pve_settlements` | người chơi | Outcome trận Lợn Gai và con trỏ `pending` | Outcome đã `settled`: 7 ngày |
 | `spirit_members/main`, `spirit_hunt_rewards/pending` | người chơi | Hộp thư khế ước, thưởng săn chung đang chờ | Mãi (mỗi người một row) |
 | `spirit_contracts` | dùng chung | Hợp đồng và trận săn hiện tại | Đã kết thúc/huỷ/từ chối/hết hạn: 30 ngày |
 | `social_limits` | cả hai | Bộ đếm giới hạn tần suất | Bộ đếm đăng nhập theo IP: xoá khi hết cửa sổ |
@@ -26,7 +26,7 @@ Ngày: 13/10/2026. Nakama lưu mọi dữ liệu game trong bảng `storage` c�
 | --- | --- | --- |
 | `game_items` | `id` | Tên, bậc (`thuong`/`linh`/`hiem`/`la`), `stack_max`, `instance`, `bound`, trang bị (`equip_slot`, `attack_bonus`, `defense_bonus`), `heal_amount`, giá `buy_price`/`sell_price` (NULL = cửa hàng không mua/bán), Hấp (`absorb_vi`, `absorb_motes`), `sort_order` |
 | `game_crops` | `id` | Hạt, sản phẩm, bản Dạ Quang, `duration_ms`, `yield_count`, `seed_back_percent`, `glow_percent`, `glow_night_percent` |
-| `game_loot` | `table_id, item_id` | Bảng rơi: `weight` (tương đối, không cần cộng đủ 100), `quantity`. `table_id` là `fishing:<mapId>`, `mining:<mapId>`, `<…>:spirit_sky` (thay bảng thường khi trời linh), `legacy:fishing`/`legacy:mining` (phiên bắt đầu trước v2) |
+| `game_loot` | `table_id, item_id` | Bảng rơi: `weight` (tương đối, không cần cộng đủ 100), `quantity`. `table_id` là `fishing:<mapId>`, `mining:<mapId>`, `<…>:linh_trieu` (thay bảng thường trong Đêm Linh Triều), `legacy:fishing`/`legacy:mining` (phiên bắt đầu trước v2) |
 | `game_recipes`, `game_recipe_ingredients` | `id` / `recipe_id, item_id` | Công thức chế tạo: sản phẩm, phí, nguyên liệu |
 
 - **Tạo và seed:** `InitModule` chạy `CREATE TABLE IF NOT EXISTS` rồi chèn seed từ `server/data/game_content.json` bằng `INSERT … ON CONFLICT DO NOTHING`. Seed chỉ **thêm dòng còn thiếu**; sau lần khởi động đầu, **database là nguồn sự thật**: sửa trong DB không bị deploy ghi đè. Sửa JSON thì chạy `node scripts/build-game-content.cjs` (CI kiểm tra bằng `--check`); thay đổi JSON với dòng đã có trong DB phải sửa thẳng trong DB.
@@ -34,13 +34,13 @@ Ngày: 13/10/2026. Nakama lưu mọi dữ liệu game trong bảng `storage` c�
 - **Kiểm tra khi nạp:** toàn bộ bảng được kiểm tra trước khi thay cache (ID, bậc, số nguyên trong khoảng, vật phẩm tham chiếu phải tồn tại, vị Hấp hợp lệ…). Một dòng sai làm cả lần nạp bị bỏ qua, server tiếp tục dùng nội dung hợp lệ gần nhất; nếu VM chưa từng nạp được thì RPC trả `UNAVAILABLE`.
 - **Không xoá** vật phẩm hoặc cây mà người chơi đang giữ/đang trồng: hồ sơ chứa ID đó sẽ bị khoá để rà soát. Muốn ngừng bán thì đặt giá về NULL; muốn ngừng rơi thì xoá dòng `game_loot`.
 - `inventory_get` trả `catalog` từ DB và `catalogRevision` (hash nội dung) để client biết khi nào cần làm mới.
-- Quy tắc trò chơi vẫn trong code: nhịp ngày/đêm, trời linh, mốc bảo đảm Mảnh Tím, gói quà khởi đầu, quái và vị trí map.
+- Quy tắc trò chơi vẫn trong code: nhịp ngày/đêm, Đêm Linh Triều, mốc bảo đảm Mảnh Tím, gói quà khởi đầu, quái và vị trí map.
 
 ## Hồ sơ và Nội Giới
 
 Hồ sơ và Nội Giới là hai row nhưng được đọc cùng nhau (`loadCharacter`) và ghi trong cùng batch (`characterWrites`). Row hồ sơ **luôn** được ghi khi hồ sơ đổi, nên nó vẫn là điểm tuần tự hoá mọi thao tác trên nhân vật. Row Nội Giới chỉ được ghi khi nội dung thật sự khác lúc đọc. Di chuyển, lưu HP, đổi túi đồ không còn ghi lại Nội Giới.
 
-`validateCharacter` kiểm tra cả các trường tuỳ chọn: `activitySession`, `gardenPlots`. Các trường của tuyến An Khê đã xóa (`worldQuests`, `insightFlags`, `learnedTechniques`, `resourceGatheredAt`) bị bỏ khi đọc hồ sơ. Dữ liệu hỏng bị khoá để rà soát (`FAILED_PRECONDITION`), không bị reset. Key lạ không thuộc schema vẫn được giữ, vì các migration đã phát hành cam kết giữ chúng.
+`validateCharacter` kiểm tra cả các trường tuỳ chọn: `activitySession`, `gardenPlots`. Các trường của tuyến prototype đã xóa (`worldQuests`, `insightFlags`, `learnedTechniques`, `resourceGatheredAt`) bị bỏ khi đọc hồ sơ. Dữ liệu hỏng bị khoá để rà soát (`FAILED_PRECONDITION`), không bị reset. Key lạ không thuộc schema vẫn được giữ, vì các migration đã phát hành cam kết giữ chúng.
 
 Muốn xem hình dạng của người khác (khế ước) thì dùng `peekCharacterForm`: chỉ đọc, không tạo hay migrate hồ sơ của họ.
 

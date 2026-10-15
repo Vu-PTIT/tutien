@@ -18,9 +18,9 @@ Theo [game-design/08](game-design/08-life-yields.md). Tỉ lệ dưới đây l�
 
 | Điểm | Bảng (trọng số %) |
 | --- | --- |
-| Hồ Lặng (`new_fish_*`) | Cá chép 40, Cá rô phi 45, Rong hồ 8, Đồ rơi 5, Cá Lấp Lánh 2. Khi trời linh: 35 / 37 / 8 / 5 / 15 |
-| Mỏ Lộ Thiên (`ml_iron_*`) | Sắt 70 (×2), Đồng 25 (×2), Đá Vân Sáng 5 |
-| Hầm B1 (`ng_iron_b1_*`) | Sắt 50 (×2), Đồng 30 (×2), Đá Vân Sáng 15, Tinh Thể Linh Mạch 4, Mảnh Tím 1 |
+| Hồ Lặng (`k1_01_fish_*`) | Cá chép 40, Cá rô 45, Rong đầm 8, Đồ rơi 5, Cá Lấp Lánh 2. Trong Đêm Linh Triều: 35 / 37 / 8 / 5 / 15 |
+| Mỏ Lộ Thiên (`k1_03_ore_*`) | Sắt 70 (×2), Đồng 25 (×2), Đá Vân Sáng 5 |
+| Hầm B1 (`k1_04_ore_*`) | Sắt 50 (×2), Đồng 30 (×2), Đá Vân Sáng 15, Tinh Thể Linh Mạch 4, Mảnh Tím 1 |
 | Luống làng | 15% một cây là bản Dạ Quang (30% nếu thu ban đêm); 25% thêm 1 hạt. Seed lưu ở `plot.lootSeed` lúc gieo |
 
 - **Mảnh Tím:** `profile.lifeLoot = {b1Cycles, shardFound}` đếm lượt đào B1; mảnh đầu tiên bảo đảm ở lượt thứ 40.
@@ -36,17 +36,17 @@ Không có minigame, không cấp XP tu luyện hoặc thưởng từ việc ng�
 
 | Map | Slot | Số lượng | Nguồn |
 | --- | --- | --- | --- |
-| `m_nha` (nhà riêng) | `new_plot_01`…`new_plot_12` | 12 luống cá nhân | `server/data/life_world.json` |
-| `m_lang_que` | `new_fish_01`…`new_fish_12` | 12 bến câu | `server/data/life_world.json` |
-| `m_mo_lo_thien` | `ml_iron_01`…`ml_iron_08` | 8 vỉa | `server/data/life_world.json` |
-| `m_mo_ngam`, B1 | `ng_iron_b1_01`…`ng_iron_b1_06` | 6 vỉa | `server/data/life_world.json` |
+| `m_nha` (nhà riêng) | `nha_plot_01`…`nha_plot_12` | 12 luống cá nhân | `server/data/life_world.json` |
+| `m_k1_01` | `k1_01_fish_01`…`k1_01_fish_12` | 12 bến câu | `server/data/life_world.json` |
+| `m_k1_03` | `k1_03_ore_01`…`k1_03_ore_08` | 8 vỉa | `server/data/life_world.json` |
+| `m_k1_04`, B1 | `k1_04_ore_01`…`k1_04_ore_06` | 6 vỉa | `server/data/life_world.json` |
 | 5 map | `*_med_*` | 26 điểm thiền | `server/data/life_world.json` |
 
 Kích thước map và số điểm theo [10 — kích thước map cho online](game-design/10-kich-thuoc-map-online.md); tọa độ ở [05](game-design/05-map-layouts.md).
 
-Các điểm đào trong blockout là điểm làm việc an toàn để nối scene quặng khi dựng client. B2 và Trạm Thiên Mạch vẫn khóa theo topology hiện tại. Luống là tiến trình riêng của từng tài khoản và nằm trong nhà riêng `m_nha`, nên lease luống khóa theo từng người chơi (`m_nha:new_plot_NN:<userId>`); mọi slot khác có capacity 1 dùng chung server. Cây mẫu `initial_stage` trong layout không tạo vật phẩm hoặc tiến trình thật.
+Các điểm đào trong blockout là điểm làm việc an toàn để nối scene quặng khi dựng client. B2 và Đài Thiên Mạch vẫn khóa theo topology hiện tại. Luống là tiến trình riêng của từng tài khoản và nằm trong nhà riêng `m_nha`, nên lease luống khóa theo từng người chơi (`m_nha:new_plot_NN:<userId>`); mọi slot khác có capacity 1 dùng chung server. Cây mẫu `initial_stage` trong layout không tạo vật phẩm hoặc tiến trình thật.
 
-`server/data/life_world.json` lưu hợp đồng backend tối thiểu: điểm đứng, mặt nước, cầu và cổng. Ngày 13/10/2026 toàn bộ map được thu nhỏ cho 30 người/map và bỏ footprint cũ của làng; collision bên trong map sẽ thêm lại khi có art. Không chứa hình ảnh, cây mẫu hay runtime client. `scripts/build-life-world.cjs` biên dịch cấu hình này thành `server/src/life_world_generated.ts`. Chạy lại generator khi sửa JSON; CI kiểm tra manifest khớp nguồn. Khi map mới có geometry khác, cần cập nhật cùng hợp đồng này trước khi bật tương tác online. Làng (`m_lang_que`) là gốc thế giới và điểm xuất phát mặc định; tuyến An Khê prototype cũ đã bị xóa, người chơi còn đứng ở đó được đưa về điểm vào của làng. Quái và NPC khai báo riêng trong `server/data/world_population.json`. `world_get({preferredMapId})` chọn map cho phiên đầu tiên; tài khoản đã có vị trí dùng `world_travel`.
+`server/data/life_world.json` lưu hợp đồng backend tối thiểu: điểm đứng, mặt nước, cầu và cổng. Ngày 13/10/2026 toàn bộ map được thu nhỏ cho 30 người/map và bỏ footprint cũ của làng; collision bên trong map sẽ thêm lại khi có art. Không chứa hình ảnh, cây mẫu hay runtime client. `scripts/build-life-world.cjs` biên dịch cấu hình này thành `server/src/life_world_generated.ts`. Chạy lại generator khi sửa JSON; CI kiểm tra manifest khớp nguồn. Khi map mới có geometry khác, cần cập nhật cùng hợp đồng này trước khi bật tương tác online. Làng (`m_k1_01`) là gốc thế giới và điểm xuất phát mặc định; tuyến An Khê prototype cũ đã bị xóa, người chơi còn đứng ở đó được đưa về điểm vào của làng. Quái và NPC khai báo riêng trong `server/data/world_population.json`. `world_get({preferredMapId})` chọn map cho phiên đầu tiên; tài khoản đã có vị trí dùng `world_travel`.
 
 Đường đi tự động được tìm qua cổng mở và các cạnh đi được, không xuyên nước/chân nhà. Mask các cạnh đi được được biên dịch trước và nén theo hàng; RPC chỉ tìm trên mask, không quét hàng nghìn footprint khi nhận lệnh. Dữ liệu tĩnh được nạp khi bundle chạy trong từng VM của Nakama. Điểm đứng cuối, hướng và ID slot do server sở hữu. Thời gian đi dựa trên tốc độ server, không tính vào số lượt hoạt động.
 
@@ -72,7 +72,7 @@ Mọi RPC cần session token. `operationId` dài 8–80 ký tự, dùng chữ/s
 
 ### Luồng nối client
 
-1. Đăng nhập, gọi `world_get({preferredMapId:"m_lang_que"})` cho tài khoản mới và `life_get`; nếu chưa nhận đồ, mở action gọi `life_claim_starter`.
+1. Đăng nhập, gọi `world_get({preferredMapId:"m_k1_01"})` cho tài khoản mới và `life_get`; nếu chưa nhận đồ, mở action gọi `life_claim_starter`.
 2. Direct: đi đến điểm đứng, gửi `world_move`; bấm F/nút cảm ứng mở `world_interact`, rồi gọi garden/`activity_start`.
 3. Auto: gọi `activity_start` với `controlMode:"autonomous"`, slot hợp lệ và số lượt. Game/sảnh hiển thị `travelling` rồi `active` từ `activity_get`/`world_get`.
 4. Đóng ứng dụng không xóa phiên. Khi mở lại, dựng cùng avatar từ snapshot và hiển thị `completedCycles`/`remainingMs`.
@@ -82,7 +82,7 @@ Mọi RPC cần session token. `operationId` dài 8–80 ký tự, dùng chữ/s
 Ví dụ giao 10 lượt câu:
 
 ```json
-{"operationId":"fish_command_20261012_001","siteId":"new_fish_01","controlMode":"autonomous","cycles":10}
+{"operationId":"fish_command_20261012_001","siteId":"k1_01_fish_01","controlMode":"autonomous","cycles":10}
 ```
 
 ## Lưu tiến trình và nhận thưởng

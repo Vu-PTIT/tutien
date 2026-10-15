@@ -93,7 +93,7 @@ function acceptedFriend(nk: nkruntime.Nakama, userId: string, otherId: string): 
 
 function socialGroup(nk: nkruntime.Nakama, groupId: string): nkruntime.Group {
   const group = nk.groupsGetId([groupId])[0];
-  if (!group || !group.metadata || (group.metadata.kind !== "sect" && group.metadata.kind !== "guild")) {
+  if (!group || !group.metadata || socialGroupKind(group.metadata.kind) === "") {
     return fail(nkruntime.Codes.NOT_FOUND, "Group not found");
   }
   return group;

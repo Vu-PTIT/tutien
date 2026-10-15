@@ -1,6 +1,6 @@
 # 10 — Kích thước map cho game online (tối đa 30 người/map)
 
-**Trạng thái:** **đã chốt 13/10/2026** (chủ dự án giao Claude quyết toàn bộ, §7). Đã áp dụng vào [03](03-world-and-maps.md), [05](05-map-layouts.md), [06](06-monsters.md), [08](08-life-yields.md), [09](09-map-hien-trang.md) và `server/data/*.json`. Phần backend kênh/quái chung ở §6 chưa làm.
+**Trạng thái:** **Đã cập nhật 15/10/2026** (Kích thước map và tốc độ di chuyển trong tài liệu này **được thay thế bằng quy chuẩn chuẩn ở [11](11-ti-le-map.md)**). Các nguyên tắc thiết kế hệ thống online ở đây (kênh tối đa 30 người, quái dùng chung, mở rộng điểm hoạt động, map nhà riêng `m_nha`) **vẫn giữ nguyên giá trị cốt lõi**.
 
 **Yêu cầu:** mỗi map chứa **tối đa 30 người chơi online** cùng lúc. Người thứ 31 vào thì sang **kênh** khác của cùng map (bản sao map, xem §5).
 
@@ -21,12 +21,12 @@
 | Map | Cũ (ô) | Tổng ô | Số màn | Đi ngang hết map | Số màn / người khi đủ 30 người |
 | --- | --- | --- | --- | --- | --- |
 | Làng Hồ Lặng | 256×192 | 49 152 | 96 | 114 s | 3,2 |
-| Ẩn Giới *(đề xuất cũ)* | 160×128 | 20 480 | 40 | 71 s | 1,3 |
+| Vườn Cây Mẹ *(đề xuất trước)* | 160×128 | 20 480 | 40 | 71 s | 1,3 |
 | Bìa Rừng | 288×224 | 64 512 | 126 | 128 s | 4,2 |
 | Mỏ Bỏ Hoang | 224×192 | 43 008 | 84 | 100 s | 2,8 |
 | Hầm Mỏ | 192×160 | 30 720 | 60 | 85 s | 2,0 |
 | Rừng Sâu | 320×256 | 81 920 | 160 | 142 s | 5,3 |
-| Trạm Thiên Mạch | 160×128 | 20 480 | 40 | 71 s | 1,3 |
+| Đài Thiên Mạch | 160×128 | 20 480 | 40 | 71 s | 1,3 |
 
 **Kết luận:** map hiện tại quá to cho 30 người.
 - **Làng đủ 30 người** thì trung bình mỗi màn chỉ có khoảng 0,3 người. Lúc chỉ 8–10 người online, phần lớn thời gian người chơi sẽ **không thấy ai** trên màn hình, mất cảm giác online.
@@ -39,29 +39,32 @@ Một map 30 người phải trông **đông khi đủ người**, và vẫn **c
 
 | Loại map | Ví dụ | Mật độ khi đủ 30 người | Diện tích cho 1 người | Tổng diện tích |
 | --- | --- | --- | --- | --- |
-| **Trung tâm / xã hội** | Làng, Ẩn Giới | ~0,8–1 người/màn; chỗ tụ họp (chợ, cổng) 3–6 người/màn | 400–650 ô | 12 000–20 000 ô |
+| **Trung tâm / xã hội** | Làng, Vườn Cây Mẹ | ~0,8–1 người/màn; chỗ tụ họp (chợ, cổng) 3–6 người/màn | 400–650 ô | 12 000–20 000 ô |
 | **Săn ngoài trời** | Bìa Rừng, Rừng Sâu | ~0,6–0,7 người/màn (cần chỗ kéo quái, né) | 700–950 ô | 20 000–28 000 ô |
-| **Hầm / hành lang** | Mỏ, Hầm Mỏ, Trạm | đông hơn vì đường hẹp | 250–500 ô | 7 500–15 000 ô |
+| **Hầm / hành lang** | Mỏ, Hầm Mỏ, Đài | đông hơn vì đường hẹp | 250–500 ô | 7 500–15 000 ô |
 
 Thời gian đi bộ hết map nên nằm trong khoảng **45–85 s**.
 
-## 4. Kích thước đã chốt
+## 4. Kích thước map (Lưu ý: Đã được nâng cấp tại [11-ti-le-map.md](11-ti-le-map.md))
 
-| Map | Cũ | **Mới** | Tổng ô | Số màn | Đi ngang | Ô / người (30) | Giảm còn |
+> [!IMPORTANT]
+> Bảng dưới đây là kích thước ở đợt chốt 13/10/2026 (hiện tại trong dữ liệu code backend `server/data/*.json`). **Từ 15/10/2026, dự án chính thức chuyển sang kích thước và tỉ lệ mới tại [11](11-ti-le-map.md)** (Làng 96×72, tốc độ 4 ô/s). Bảng dưới đây giữ lại làm mốc tham chiếu cho dữ liệu hiện tại [09](09-map-hien-trang.md).
+
+| Map | Cũ | Đợt 1 (13/10) | **Chuẩn mới [11]** | Tổng ô (Chuẩn [11]) | Số màn [11] | Đi ngang (4 ô/s) | Ô / người (30) |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Làng Hồ Lặng | 256×192 | **160×120** | 19 200 | 38 | 71 s | 640 | 39% |
-| Ẩn Giới | 160×128 | **128×96** | 12 288 | 24 | 57 s | 410 | 60% |
-| Bìa Rừng | 288×224 | **176×128** | 22 528 | 44 | 78 s | 750 | 35% |
-| Mỏ Bỏ Hoang | 224×192 | **128×112** | 14 336 | 28 | 57 s | 480 | 33% |
-| Hầm Mỏ (B1) | 192×160 | **112×80** | 8 960 | 18 | 50 s | 300 | 29% |
-| Rừng Sâu | 320×256 | **192×144** | 27 648 | 54 | 85 s | 920 | 34% |
-| Trạm Thiên Mạch | 160×128 | **96×80** | 7 680 | 15 | 43 s | 256 | 38% |
-| Nhà riêng *(mới)* | — | **32×24** | 768 | 1,5 | 14 s | 1 người | — |
+| Làng Hồ Lặng | 256×192 | 160×120 | **96×72** | 6 912 | 13,5 | 24 s | 230 |
+| Vườn Cây Mẹ | 160×128 | 128×96 | **80×60** | 4 800 | 9,4 | 20 s | 160 |
+| Bìa Rừng | 288×224 | 176×128 | **112×80** | 8 960 | 17,6 | 28 s | 300 |
+| Mỏ Bỏ Hoang | 224×192 | 128×112 | **80×64** | 5 120 | 10,0 | 20 s | 170 |
+| Hầm Mỏ (B1) | 192×160 | 112×80 | **72×48** | 3 456 | 6,8 | 18 s | 115 |
+| Rừng Sâu | 320×256 | 192×144 | **128×96** | 12 288 | 24,0 | 32 s | 410 |
+| Đài Thiên Mạch | 160×128 | 96×80 | **64×48** | 3 072 | 6,0 | 16 s | 100 |
+| Nhà riêng | — | 32×24 | **28×20** | 560 | 1,1 | 7 s | 1 người |
 
 Ghi chú:
-- **Làng 160×120**: vẫn đủ chỗ cho cả 7 khu (Đồi Miếu, Xóm nhà, Quảng trường Cổng, Chợ, Thị trấn, Vườn/Ruộng, Hồ Lặng), nhưng khu nào cũng nằm trong khoảng 1–2 màn tính từ Quảng trường Cổng. Từ điểm xuất phát đi tới bất kỳ khu nào mất dưới 35 s.
-- **Ẩn Giới nhỏ hơn làng**: là nơi Tinh Linh xuất phát nhưng sau đó họ sẽ sang làng. Map nhỏ giúp Ẩn Giới trông không vắng. Rìa Phai ở viền map cũng là cách "thu nhỏ" hợp với cốt truyện.
-- **Trạm 96×80**: map chung 30 người như các map khác. Đấu trường boss tròn khoảng 24×20 ô vừa 30 người; máu boss nhân theo số người trong phòng ([06](06-monsters.md) B1).
+- **Làng 160×120**: vẫn đủ chỗ cho cả 7 khu (Đồi Miếu, Xóm nhà, Sân Hội Khai Phá, Chợ và Phố chợ, Vườn/Ruộng, Đầm Hồ Lặng; thêm Cổng Rễ và bãi biển ở viền), nhưng khu nào cũng nằm trong khoảng 1–2 màn tính từ Sân Hội Khai Phá. Từ điểm xuất phát đi tới bất kỳ khu nào mất dưới 35 s.
+- **Vườn Cây Mẹ nhỏ hơn làng**: là nơi Tinh Linh xuất phát nhưng sau đó họ sẽ sang làng. Map nhỏ giúp Vườn Cây Mẹ trông không vắng. Viền giao thoa không đi qua được (rễ dày, nước sâu) cũng làm map gọn lại.
+- **Đài 96×80**: map chung 30 người như các map khác. Đấu trường boss tròn khoảng 24×20 ô vừa 30 người; máu boss nhân theo số người trong phòng ([06](06-monsters.md) B1).
 - **Rừng Sâu 192×144** thay vì phương án 224×160: giữ đi ngang dưới 90 s và mật độ gần Bìa Rừng.
 
 ## 5. Những thứ phải đổi theo, ngoài kích thước
@@ -83,7 +86,7 @@ Ghi chú:
 | Mỏ Bỏ Hoang | 13 | **21** | 8 |
 | Hầm Mỏ | 18 | **18** | 8 |
 | Rừng Sâu | 28 | **40** | 15 |
-| Trạm Thiên Mạch | 24 | **24** | 12 |
+| Đài Thiên Mạch | 24 | **24** | 12 |
 
 Mật độ vẫn giữ quy tắc tối đa 6 quái/màn ([05 §4](05-map-layouts.md)). Map nhỏ lại mà quái tăng thì lãnh địa cần **nhiều nhóm nhỏ hơn** thay vì ít nhóm lớn.
 
@@ -98,7 +101,7 @@ Mỗi điểm hoạt động chỉ cho **1 người dùng một lúc** trên to�
 | Vỉa (Mỏ) | 2 | **8** | Rải theo bậc khai thác Hố Tây |
 | Vỉa (Hầm B1) | 2 | **6** | Vỉa Đông |
 | Điểm thiền | 6 | **26**: sân miếu 8, bờ hồ 4, tháp gió 4, Hố Tây 4, Rừng Sâu 6 | Thiền đông người là hình ảnh đẹp |
-| Ẩn Giới (chưa dựng) | 0 | 8 Hấp Linh, 6 bến câu linh, 6 luống nấm riêng | Làm cùng map `m_an_gioi` |
+| Vườn Cây Mẹ (chưa dựng) | 0 | 8 Hấp Linh, 6 bến câu linh, 6 luống nấm riêng | Làm cùng map `m_k1_07` |
 
 Khóa chỗ nên tính **theo kênh**, không phải toàn server. Nếu không, 30 kênh vẫn chỉ dùng chung 4 bến câu.
 
@@ -111,7 +114,7 @@ Khóa chỗ nên tính **theo kênh**, không phải toàn server. Nếu không,
 ## 6. Đã làm và còn lại
 
 **Đã làm (13/10/2026):**
-1. `server/data/life_world.json`, `world_population.json`: kích thước mới, toàn bộ cổng, điểm hoạt động, lãnh địa, vùng an toàn, NPC đặt lại; thêm map `m_nha` và cổng `ln_lang_nha`; thêm đầu `ln_ngam_rung` trong Hầm Mỏ; khóa `ln_lang_thang`, `ln_vanh_thang` (thành phố để sau chương 1); bỏ 459 footprint cũ của làng.
+1. `server/data/life_world.json`, `world_population.json`: kích thước mới, toàn bộ cổng, điểm hoạt động, lãnh địa, vùng an toàn, NPC đặt lại; thêm map `m_nha` và cổng `ln_k1_01_nha`; thêm đầu `ln_k1_04_k1_05` trong Hầm Mỏ; mở `ln_k1_01_k1_08`, `ln_vanh_thang` (Kinh thành mới có khung); bỏ 459 footprint cũ của làng.
 2. Server: lease luống trồng khóa theo từng người chơi (`lifeSlotRequest` trong `server/src/life_activity.ts`).
 3. Test server cập nhật theo tọa độ mới; 183/183 đạt. Không màn nào quá 6 quái.
 4. Tài liệu 03, 05, 06, 08, 09 và `docs/life-activities-backend.md`.
@@ -120,8 +123,8 @@ Khóa chỗ nên tính **theo kênh**, không phải toàn server. Nếu không,
 - Kênh tối đa 30 người mỗi map, đồng bộ người chơi theo thời gian thực.
 - Quái dùng chung theo kênh, số quái co giãn theo số người (mức sàn ở §5.2).
 - Khóa điểm hoạt động theo kênh thay vì toàn server.
-- Map Ẩn Giới (`m_an_gioi`) theo [05 §3](05-map-layouts.md).
-- Trạm Thiên Mạch: máu boss nhân theo số người trong Phòng Lõi; trạng thái lõi chung cho cả kênh (Ngắt lõi → tối 47 phút); lưu lựa chọn hồi E (Ngắt/Sao dữ liệu) vào hồ sơ từng người.
+- Map Vườn Cây Mẹ (`m_k1_07`) theo [05 §3](05-map-layouts.md).
+- Đài Thiên Mạch: máu boss nhân theo số người trong Phòng Lõi; trạng thái lõi chung cho cả kênh (Phá lõi trận → tối 47 phút); lưu lựa chọn hồi E (Phá lõi trận/Chép trận văn) vào hồ sơ từng người.
 
 ## 7. Các quyết định đã chốt
 
@@ -131,6 +134,6 @@ Khóa chỗ nên tính **theo kênh**, không phải toàn server. Nếu không,
 | Avatar offline có tính vào 30 chỗ không? | **Không tính.** Avatar offline hiện ở kênh ít người nhất của map | Người online không bị chặn vì người vắng mặt; kênh vắng vẫn có sức sống |
 | Nhà và vườn | **Map nhà riêng** `m_nha` 32×24, mỗi người một bản, 12 luống riêng. Ruộng làng chỉ để trang trí | Map chung không thể chứa nhà cho mọi người chơi; vườn riêng không phải tranh chỗ |
 | Ghép bạn bè/nhóm vào cùng kênh? | **Có.** Vào map thì ưu tiên kênh có bạn bè/nhóm, sau đó kênh còn chỗ đông nhất | Chơi cùng nhau là lý do làm game online |
-| Bé Mơ ở đâu? | Giữ ở làng (sân miếu) làm điểm dạy Hấp Linh; thêm điểm dạy thứ hai khi có Ẩn Giới | Người chơi Người học Hấp Linh ngay từ làng |
-| Tuyến đi thành phố | **Khóa** ở chương 1 | Đúng phạm vi chương 1 ở [03](03-world-and-maps.md) |
-| Trạm Thiên Mạch | **Map chung 30 người** (chủ dự án chọn). Lõi luôn chạy trong thế giới chung; lựa chọn hồi E là của riêng từng người; Ngắt lõi làm cả kênh thấy lõi tối 47 phút; gấu quay lại sau 47 phút | Trận boss đông người; lựa chọn cá nhân không phá thế giới chung ([02](02-story.md) hồi E) |
+| Bé Mơ ở đâu? | Giữ ở làng (sân miếu) làm điểm dạy Hấp Linh; thêm điểm dạy thứ hai khi có Vườn Cây Mẹ | Người chơi Người học Hấp Linh ngay từ làng |
+| Đường đi Kinh thành | **Mở** (thế giới mở); map mới có khung | [12](12-ban-do-cac-khu.md) §1 |
+| Đài Thiên Mạch | **Map chung 30 người** (chủ dự án chọn). Lõi luôn chạy trong thế giới chung; lựa chọn hồi E là của riêng từng người; Phá lõi trận làm cả kênh thấy lõi tối 47 phút; gấu quay lại sau 47 phút | Trận boss đông người; lựa chọn cá nhân không phá thế giới chung ([02](02-story.md) hồi E) |

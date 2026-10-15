@@ -26,7 +26,7 @@ func _run() -> void:
 	_ok(await a.login(name_a, "smoke-passphrase-" + suffix, true, name_a + "@tutien.test"))
 	_ok(await b.login(name_b, "smoke-passphrase-" + suffix, true, name_b + "@tutien.test"))
 	var form_a := _ok(await a.request_rpc("character_select_form", {"operationId": a.operation_id(), "kind": "human", "speciesId": "human"}))
-	var form_b := _ok(await b.request_rpc("character_select_form", {"operationId": b.operation_id(), "kind": "spirit_beast", "speciesId": "cat"}))
+	var form_b := _ok(await b.request_rpc("character_select_form", {"operationId": b.operation_id(), "kind": "spirit", "speciesId": "cat"}))
 	assert(form_a.profile.form.selected and form_b.profile.form.speciesId == "cat")
 	var target := _ok(await a.request_rpc("social_find_player", {"username": name_b}))
 	assert(target.userId == b.user_id)
@@ -47,7 +47,7 @@ func _run() -> void:
 	assert(won)
 	for actor in [a, b]:
 		var claim := _ok(await actor.request_rpc("contract_hunt_claim"))
-		assert(int(claim.profile.cultivationXp) == 0)
+		assert(not claim.profile.has("cultivationXp"))
 		assert(claim.receipt.granted.linhNang.size() == 1)
 		assert(_ok(await actor.request_rpc("contract_hunt_claim")).replayed)
 	_ok(await a.request_rpc("contract_release", {"contractId": contract_id}))

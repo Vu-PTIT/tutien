@@ -3,7 +3,7 @@
   "source_ref": "d40ae4d1c3bdd71bfbd140fe3ec40cd3e8863d4d",
   "description": "Minimal backend collision/portal/activity contract, resized for 30 online players per map (docs/game-design/10-kich-thuoc-map-online.md). No art or client runtime is included; collision inside maps is not drawn yet. m_nha is the private home (one copy per player) holding the 12 garden plots.",
   "maps": {
-    "m_lang_que": {
+    "m_k1_01": {
       "width": 160,
       "height": 120,
       "spawnX": 2592,
@@ -36,27 +36,37 @@
       ],
       "points": [
         {
-          "id": "ln_lang_thang",
-          "kind": "locked",
+          "id": "ln_k1_01_k0_01",
+          "kind": "gate",
+          "x": 192,
+          "y": 1536,
+          "radius": 2,
+          "destination": "m_k0_01",
+          "arrivalX": 2048,
+          "arrivalY": 2720
+        },
+        {
+          "id": "ln_k1_01_k1_08",
+          "kind": "gate",
           "x": 4992,
           "y": 2112,
           "radius": 2,
-          "destination": "m_thang_long",
+          "destination": "m_k1_08",
           "arrivalX": 448,
           "arrivalY": 1920
         },
         {
-          "id": "ln_lang_vanh",
+          "id": "ln_k1_01_k1_02",
           "kind": "gate",
           "x": 2944,
           "y": 160,
           "radius": 2,
-          "destination": "m_vanh_dai_tay",
+          "destination": "m_k1_02",
           "arrivalX": 2784,
           "arrivalY": 3808
         },
         {
-          "id": "ln_lang_nha",
+          "id": "ln_k1_01_nha",
           "kind": "gate",
           "x": 1504,
           "y": 2496,
@@ -66,182 +76,182 @@
           "arrivalY": 608
         },
         {
-          "id": "lq.shop.market",
+          "id": "k1_01.shop.market",
           "kind": "shop",
           "x": 3136,
           "y": 2048,
           "radius": 3
         },
         {
-          "id": "lq.npc.be_mo",
+          "id": "k1_01.npc.be_mo",
           "kind": "teacher",
           "x": 1056,
           "y": 768,
           "radius": 2
         },
         {
-          "id": "new_fish_01",
+          "id": "k1_01_fish_01",
           "x": 3136,
           "y": 2976,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_fish_02",
+          "id": "k1_01_fish_02",
           "x": 3264,
           "y": 2976,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_fish_03",
+          "id": "k1_01_fish_03",
           "x": 3392,
           "y": 2976,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_fish_04",
+          "id": "k1_01_fish_04",
           "x": 3520,
           "y": 2976,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_fish_05",
+          "id": "k1_01_fish_05",
           "x": 3648,
           "y": 2976,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_fish_06",
+          "id": "k1_01_fish_06",
           "x": 3776,
           "y": 2976,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_fish_07",
+          "id": "k1_01_fish_07",
           "x": 3424,
           "y": 3392,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_fish_08",
+          "id": "k1_01_fish_08",
           "x": 3424,
           "y": 3504,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_fish_09",
+          "id": "k1_01_fish_09",
           "x": 3424,
           "y": 3616,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_fish_10",
+          "id": "k1_01_fish_10",
           "x": 4144,
           "y": 3200,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_fish_11",
+          "id": "k1_01_fish_11",
           "x": 4144,
           "y": 3328,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_fish_12",
+          "id": "k1_01_fish_12",
           "x": 4112,
           "y": 3456,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_mieu",
+          "id": "k1_01_med_01",
           "x": 640,
           "y": 672,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_mieu_02",
+          "id": "k1_01_med_02",
           "x": 736,
           "y": 672,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_mieu_03",
+          "id": "k1_01_med_03",
           "x": 832,
           "y": 672,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_mieu_04",
+          "id": "k1_01_med_04",
           "x": 928,
           "y": 672,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_mieu_05",
+          "id": "k1_01_med_05",
           "x": 640,
           "y": 768,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_mieu_06",
+          "id": "k1_01_med_06",
           "x": 736,
           "y": 768,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_mieu_07",
+          "id": "k1_01_med_07",
           "x": 832,
           "y": 768,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_mieu_08",
+          "id": "k1_01_med_08",
           "x": 928,
           "y": 768,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_ho",
+          "id": "k1_01_med_09",
           "x": 3072,
           "y": 3712,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_ho_02",
+          "id": "k1_01_med_10",
           "x": 3200,
           "y": 3728,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_ho_03",
+          "id": "k1_01_med_11",
           "x": 3648,
           "y": 3728,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "lq_med_ho_04",
+          "id": "k1_01_med_12",
           "x": 3776,
           "y": 3696,
           "radius": 2,
@@ -510,94 +520,94 @@
       ],
       "points": [
         {
-          "id": "ln_lang_nha",
+          "id": "ln_k1_01_nha",
           "kind": "gate",
           "x": 512,
           "y": 704,
           "radius": 2,
-          "destination": "m_lang_que",
+          "destination": "m_k1_01",
           "arrivalX": 1504,
           "arrivalY": 2592
         },
         {
-          "id": "new_plot_01",
+          "id": "nha_plot_01",
           "x": 224,
           "y": 192,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_plot_02",
+          "id": "nha_plot_02",
           "x": 416,
           "y": 192,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_plot_03",
+          "id": "nha_plot_03",
           "x": 608,
           "y": 192,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_plot_04",
+          "id": "nha_plot_04",
           "x": 800,
           "y": 192,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_plot_05",
+          "id": "nha_plot_05",
           "x": 224,
           "y": 320,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_plot_06",
+          "id": "nha_plot_06",
           "x": 416,
           "y": 320,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_plot_07",
+          "id": "nha_plot_07",
           "x": 608,
           "y": 320,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_plot_08",
+          "id": "nha_plot_08",
           "x": 800,
           "y": 320,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_plot_09",
+          "id": "nha_plot_09",
           "x": 224,
           "y": 448,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_plot_10",
+          "id": "nha_plot_10",
           "x": 416,
           "y": 448,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_plot_11",
+          "id": "nha_plot_11",
           "x": 608,
           "y": 448,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "new_plot_12",
+          "id": "nha_plot_12",
           "x": 800,
           "y": 448,
           "radius": 2,
@@ -608,7 +618,7 @@
       "bridges": [],
       "footprints": []
     },
-    "m_vanh_dai_tay": {
+    "m_k1_02": {
       "width": 176,
       "height": 128,
       "spawnX": 2816,
@@ -641,58 +651,58 @@
       ],
       "points": [
         {
-          "id": "ln_lang_vanh",
+          "id": "ln_k1_01_k1_02",
           "kind": "gate",
           "x": 2784,
           "y": 3936,
           "radius": 2,
-          "destination": "m_lang_que",
+          "destination": "m_k1_01",
           "arrivalX": 2944,
           "arrivalY": 256
         },
         {
-          "id": "ln_vanh_mo",
+          "id": "ln_k1_02_k1_03",
           "kind": "gate",
           "x": 160,
           "y": 992,
           "radius": 2,
-          "destination": "m_mo_lo_thien",
+          "destination": "m_k1_03",
           "arrivalX": 3840,
           "arrivalY": 2880
         },
         {
-          "id": "ln_vanh_rung",
+          "id": "ln_k1_02_k1_05",
           "kind": "gate",
           "x": 3040,
           "y": 160,
           "radius": 2,
-          "destination": "m_ba_vi",
+          "destination": "m_k1_05",
           "arrivalX": 2976,
           "arrivalY": 4352
         },
         {
-          "id": "vd_med_thap",
+          "id": "k1_02_med_01",
           "x": 3904,
           "y": 2752,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "vd_med_thap_02",
+          "id": "k1_02_med_02",
           "x": 4000,
           "y": 2752,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "vd_med_thap_03",
+          "id": "k1_02_med_03",
           "x": 3904,
           "y": 2848,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "vd_med_thap_04",
+          "id": "k1_02_med_04",
           "x": 4000,
           "y": 2848,
           "radius": 2,
@@ -763,7 +773,7 @@
       ],
       "footprints": []
     },
-    "m_mo_lo_thien": {
+    "m_k1_03": {
       "width": 128,
       "height": 112,
       "spawnX": 3584,
@@ -796,114 +806,114 @@
       ],
       "points": [
         {
-          "id": "ln_vanh_mo",
+          "id": "ln_k1_02_k1_03",
           "kind": "gate",
           "x": 3936,
           "y": 2880,
           "radius": 2,
-          "destination": "m_vanh_dai_tay",
+          "destination": "m_k1_02",
           "arrivalX": 256,
           "arrivalY": 992
         },
         {
-          "id": "ln_mo_rung",
+          "id": "ln_k1_03_k1_05",
           "kind": "gate",
           "x": 3936,
           "y": 800,
           "radius": 2,
-          "destination": "m_ba_vi",
+          "destination": "m_k1_05",
           "arrivalX": 256,
           "arrivalY": 3520
         },
         {
-          "id": "ln_mo_ngam",
+          "id": "ln_k1_03_k1_04",
           "kind": "gate",
           "x": 1568,
           "y": 1504,
           "radius": 2,
-          "destination": "m_mo_ngam",
+          "destination": "m_k1_04",
           "arrivalX": 1728,
           "arrivalY": 2304
         },
         {
-          "id": "ml_iron_01",
+          "id": "k1_03_ore_01",
           "x": 576,
           "y": 1408,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ml_iron_02",
+          "id": "k1_03_ore_02",
           "x": 768,
           "y": 1312,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ml_iron_03",
+          "id": "k1_03_ore_03",
           "x": 960,
           "y": 1376,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ml_iron_04",
+          "id": "k1_03_ore_04",
           "x": 1152,
           "y": 1280,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ml_iron_05",
+          "id": "k1_03_ore_05",
           "x": 640,
           "y": 1696,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ml_iron_06",
+          "id": "k1_03_ore_06",
           "x": 832,
           "y": 1792,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ml_iron_07",
+          "id": "k1_03_ore_07",
           "x": 1024,
           "y": 1696,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ml_iron_08",
+          "id": "k1_03_ore_08",
           "x": 1216,
           "y": 1824,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "mb_med_ho_tay",
+          "id": "k1_03_med_01",
           "x": 1408,
           "y": 1920,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "mb_med_ho_tay_02",
+          "id": "k1_03_med_02",
           "x": 1504,
           "y": 1920,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "mb_med_ho_tay_03",
+          "id": "k1_03_med_03",
           "x": 1408,
           "y": 2016,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "mb_med_ho_tay_04",
+          "id": "k1_03_med_04",
           "x": 1504,
           "y": 2016,
           "radius": 2,
@@ -926,7 +936,7 @@
       "bridges": [],
       "footprints": []
     },
-    "m_mo_ngam": {
+    "m_k1_04": {
       "width": 112,
       "height": 80,
       "spawnX": 1728,
@@ -959,62 +969,62 @@
       ],
       "points": [
         {
-          "id": "ln_mo_ngam",
+          "id": "ln_k1_03_k1_04",
           "kind": "gate",
           "x": 1728,
           "y": 2432,
           "radius": 2,
-          "destination": "m_mo_lo_thien",
+          "destination": "m_k1_03",
           "arrivalX": 1568,
           "arrivalY": 1600
         },
         {
-          "id": "ln_ngam_rung",
-          "kind": "locked",
+          "id": "ln_k1_04_k1_05",
+          "kind": "gate",
           "x": 3424,
           "y": 640,
           "radius": 2,
-          "destination": "m_ba_vi",
+          "destination": "m_k1_05",
           "arrivalX": 256,
           "arrivalY": 3840
         },
         {
-          "id": "ng_iron_b1_01",
+          "id": "k1_04_ore_01",
           "x": 2624,
           "y": 1344,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ng_iron_b1_02",
+          "id": "k1_04_ore_02",
           "x": 2816,
           "y": 1216,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ng_iron_b1_03",
+          "id": "k1_04_ore_03",
           "x": 2688,
           "y": 1024,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ng_iron_b1_04",
+          "id": "k1_04_ore_04",
           "x": 2944,
           "y": 960,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ng_iron_b1_05",
+          "id": "k1_04_ore_05",
           "x": 3072,
           "y": 1344,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "ng_iron_b1_06",
+          "id": "k1_04_ore_06",
           "x": 3200,
           "y": 1088,
           "radius": 2,
@@ -1037,7 +1047,7 @@
       "bridges": [],
       "footprints": []
     },
-    "m_ba_vi": {
+    "m_k1_05": {
       "width": 192,
       "height": 144,
       "spawnX": 2976,
@@ -1070,82 +1080,82 @@
       ],
       "points": [
         {
-          "id": "ln_vanh_rung",
+          "id": "ln_k1_02_k1_05",
           "kind": "gate",
           "x": 2976,
           "y": 4448,
           "radius": 2,
-          "destination": "m_vanh_dai_tay",
+          "destination": "m_k1_02",
           "arrivalX": 3040,
           "arrivalY": 256
         },
         {
-          "id": "ln_mo_rung",
+          "id": "ln_k1_03_k1_05",
           "kind": "gate",
           "x": 160,
           "y": 3520,
           "radius": 2,
-          "destination": "m_mo_lo_thien",
+          "destination": "m_k1_03",
           "arrivalX": 3840,
           "arrivalY": 800
         },
         {
-          "id": "ln_ngam_rung",
-          "kind": "locked",
+          "id": "ln_k1_04_k1_05",
+          "kind": "gate",
           "x": 160,
           "y": 3840,
           "radius": 2,
-          "destination": "m_mo_ngam",
+          "destination": "m_k1_04",
           "arrivalX": 3328,
           "arrivalY": 672
         },
         {
-          "id": "ln_rung_tram",
-          "kind": "locked",
+          "id": "ln_k1_05_k1_06",
+          "kind": "gate",
           "x": 3232,
           "y": 160,
           "radius": 2,
-          "destination": "m_tram_thien_mach",
+          "destination": "m_k1_06",
           "arrivalX": 1504,
           "arrivalY": 2272
         },
         {
-          "id": "rs_med_goc_nam",
+          "id": "k1_05_med_01",
           "x": 2784,
           "y": 3584,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "rs_med_goc_nam_02",
+          "id": "k1_05_med_02",
           "x": 2880,
           "y": 3584,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "rs_med_goc_nam_03",
+          "id": "k1_05_med_03",
           "x": 2976,
           "y": 3584,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "rs_med_goc_bac",
+          "id": "k1_05_med_04",
           "x": 2208,
           "y": 1248,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "rs_med_goc_bac_02",
+          "id": "k1_05_med_05",
           "x": 2304,
           "y": 1248,
           "radius": 2,
           "kind": "life"
         },
         {
-          "id": "rs_med_goc_bac_03",
+          "id": "k1_05_med_06",
           "x": 2400,
           "y": 1248,
           "radius": 2,
@@ -1230,7 +1240,7 @@
       "bridges": [],
       "footprints": []
     },
-    "m_tram_thien_mach": {
+    "m_k1_06": {
       "width": 96,
       "height": 80,
       "spawnX": 1504,
@@ -1263,12 +1273,12 @@
       ],
       "points": [
         {
-          "id": "ln_rung_tram",
-          "kind": "locked",
+          "id": "ln_k1_05_k1_06",
+          "kind": "gate",
           "x": 1504,
           "y": 2400,
           "radius": 2,
-          "destination": "m_ba_vi",
+          "destination": "m_k1_05",
           "arrivalX": 3232,
           "arrivalY": 256
         }
@@ -1277,7 +1287,7 @@
       "bridges": [],
       "footprints": []
     },
-    "m_thang_long": {
+    "m_k1_08": {
       "width": 320,
       "height": 256,
       "spawnX": 4992,
@@ -1310,22 +1320,22 @@
       ],
       "points": [
         {
-          "id": "ln_lang_thang",
-          "kind": "locked",
+          "id": "ln_k1_01_k1_08",
+          "kind": "gate",
           "x": 320,
           "y": 1920,
           "radius": 2,
-          "destination": "m_lang_que",
+          "destination": "m_k1_01",
           "arrivalX": 4896,
           "arrivalY": 1920
         },
         {
-          "id": "ln_thang_cang",
+          "id": "ln_k1_08_k2_01",
           "kind": "gate",
           "x": 9952,
           "y": 2976,
           "radius": 2,
-          "destination": "m_cang_dong_bac",
+          "destination": "m_k2_01",
           "arrivalX": 416,
           "arrivalY": 2976
         }
@@ -1346,7 +1356,7 @@
       "bridges": [],
       "footprints": []
     },
-    "m_cang_dong_bac": {
+    "m_k2_01": {
       "width": 256,
       "height": 192,
       "spawnX": 1376,
@@ -1379,12 +1389,12 @@
       ],
       "points": [
         {
-          "id": "ln_thang_cang",
+          "id": "ln_k1_08_k2_01",
           "kind": "gate",
           "x": 288,
           "y": 2976,
           "radius": 2,
-          "destination": "m_thang_long",
+          "destination": "m_k1_08",
           "arrivalX": 9824,
           "arrivalY": 2976
         }
@@ -1446,12 +1456,59 @@
       ],
       "bridges": [],
       "footprints": []
+    },
+    "m_k0_01": {
+      "width": 128,
+      "height": 96,
+      "spawnX": 2048,
+      "spawnY": 1536,
+      "solids": [
+        [
+          0,
+          0,
+          128,
+          1
+        ],
+        [
+          0,
+          95,
+          128,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          96
+        ],
+        [
+          127,
+          0,
+          1,
+          96
+        ]
+      ],
+      "points": [
+        {
+          "id": "ln_k1_01_k0_01",
+          "kind": "gate",
+          "x": 2048,
+          "y": 2880,
+          "radius": 2,
+          "destination": "m_k1_01",
+          "arrivalX": 256,
+          "arrivalY": 1536
+        }
+      ],
+      "waters": [],
+      "bridges": [],
+      "footprints": []
     }
   },
   "sites": [
     {
-      "id": "new_fish_01",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_01",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 3136,
       "y": 2976,
@@ -1461,8 +1518,8 @@
       "nameEn": "Fishing spot 01"
     },
     {
-      "id": "new_fish_02",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_02",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 3264,
       "y": 2976,
@@ -1472,8 +1529,8 @@
       "nameEn": "Fishing spot 02"
     },
     {
-      "id": "new_fish_03",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_03",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 3392,
       "y": 2976,
@@ -1483,8 +1540,8 @@
       "nameEn": "Fishing spot 03"
     },
     {
-      "id": "new_fish_04",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_04",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 3520,
       "y": 2976,
@@ -1494,8 +1551,8 @@
       "nameEn": "Fishing spot 04"
     },
     {
-      "id": "new_fish_05",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_05",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 3648,
       "y": 2976,
@@ -1505,8 +1562,8 @@
       "nameEn": "Fishing spot 05"
     },
     {
-      "id": "new_fish_06",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_06",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 3776,
       "y": 2976,
@@ -1516,8 +1573,8 @@
       "nameEn": "Fishing spot 06"
     },
     {
-      "id": "new_fish_07",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_07",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 3424,
       "y": 3392,
@@ -1527,8 +1584,8 @@
       "nameEn": "Fishing spot 07"
     },
     {
-      "id": "new_fish_08",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_08",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 3424,
       "y": 3504,
@@ -1538,8 +1595,8 @@
       "nameEn": "Fishing spot 08"
     },
     {
-      "id": "new_fish_09",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_09",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 3424,
       "y": 3616,
@@ -1549,8 +1606,8 @@
       "nameEn": "Fishing spot 09"
     },
     {
-      "id": "new_fish_10",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_10",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 4144,
       "y": 3200,
@@ -1560,8 +1617,8 @@
       "nameEn": "Fishing spot 10"
     },
     {
-      "id": "new_fish_11",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_11",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 4144,
       "y": 3328,
@@ -1571,8 +1628,8 @@
       "nameEn": "Fishing spot 11"
     },
     {
-      "id": "new_fish_12",
-      "mapId": "m_lang_que",
+      "id": "k1_01_fish_12",
+      "mapId": "m_k1_01",
       "type": "fishing",
       "x": 4112,
       "y": 3456,
@@ -1582,7 +1639,7 @@
       "nameEn": "Fishing spot 12"
     },
     {
-      "id": "new_plot_01",
+      "id": "nha_plot_01",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 224,
@@ -1594,7 +1651,7 @@
       "plotId": 0
     },
     {
-      "id": "new_plot_02",
+      "id": "nha_plot_02",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 416,
@@ -1606,7 +1663,7 @@
       "plotId": 1
     },
     {
-      "id": "new_plot_03",
+      "id": "nha_plot_03",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 608,
@@ -1618,7 +1675,7 @@
       "plotId": 2
     },
     {
-      "id": "new_plot_04",
+      "id": "nha_plot_04",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 800,
@@ -1630,7 +1687,7 @@
       "plotId": 3
     },
     {
-      "id": "new_plot_05",
+      "id": "nha_plot_05",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 224,
@@ -1642,7 +1699,7 @@
       "plotId": 4
     },
     {
-      "id": "new_plot_06",
+      "id": "nha_plot_06",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 416,
@@ -1654,7 +1711,7 @@
       "plotId": 5
     },
     {
-      "id": "new_plot_07",
+      "id": "nha_plot_07",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 608,
@@ -1666,7 +1723,7 @@
       "plotId": 6
     },
     {
-      "id": "new_plot_08",
+      "id": "nha_plot_08",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 800,
@@ -1678,7 +1735,7 @@
       "plotId": 7
     },
     {
-      "id": "new_plot_09",
+      "id": "nha_plot_09",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 224,
@@ -1690,7 +1747,7 @@
       "plotId": 8
     },
     {
-      "id": "new_plot_10",
+      "id": "nha_plot_10",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 416,
@@ -1702,7 +1759,7 @@
       "plotId": 9
     },
     {
-      "id": "new_plot_11",
+      "id": "nha_plot_11",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 608,
@@ -1714,7 +1771,7 @@
       "plotId": 10
     },
     {
-      "id": "new_plot_12",
+      "id": "nha_plot_12",
       "mapId": "m_nha",
       "type": "gardening",
       "x": 800,
@@ -1726,8 +1783,8 @@
       "plotId": 11
     },
     {
-      "id": "ml_iron_01",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_ore_01",
+      "mapId": "m_k1_03",
       "type": "mining",
       "x": 576,
       "y": 1408,
@@ -1737,8 +1794,8 @@
       "nameEn": "Open-pit vein 01"
     },
     {
-      "id": "ml_iron_02",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_ore_02",
+      "mapId": "m_k1_03",
       "type": "mining",
       "x": 768,
       "y": 1312,
@@ -1748,8 +1805,8 @@
       "nameEn": "Open-pit vein 02"
     },
     {
-      "id": "ml_iron_03",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_ore_03",
+      "mapId": "m_k1_03",
       "type": "mining",
       "x": 960,
       "y": 1376,
@@ -1759,8 +1816,8 @@
       "nameEn": "Open-pit vein 03"
     },
     {
-      "id": "ml_iron_04",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_ore_04",
+      "mapId": "m_k1_03",
       "type": "mining",
       "x": 1152,
       "y": 1280,
@@ -1770,8 +1827,8 @@
       "nameEn": "Open-pit vein 04"
     },
     {
-      "id": "ml_iron_05",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_ore_05",
+      "mapId": "m_k1_03",
       "type": "mining",
       "x": 640,
       "y": 1696,
@@ -1781,8 +1838,8 @@
       "nameEn": "Open-pit vein 05"
     },
     {
-      "id": "ml_iron_06",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_ore_06",
+      "mapId": "m_k1_03",
       "type": "mining",
       "x": 832,
       "y": 1792,
@@ -1792,8 +1849,8 @@
       "nameEn": "Open-pit vein 06"
     },
     {
-      "id": "ml_iron_07",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_ore_07",
+      "mapId": "m_k1_03",
       "type": "mining",
       "x": 1024,
       "y": 1696,
@@ -1803,8 +1860,8 @@
       "nameEn": "Open-pit vein 07"
     },
     {
-      "id": "ml_iron_08",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_ore_08",
+      "mapId": "m_k1_03",
       "type": "mining",
       "x": 1216,
       "y": 1824,
@@ -1814,8 +1871,8 @@
       "nameEn": "Open-pit vein 08"
     },
     {
-      "id": "ng_iron_b1_01",
-      "mapId": "m_mo_ngam",
+      "id": "k1_04_ore_01",
+      "mapId": "m_k1_04",
       "type": "mining",
       "x": 2624,
       "y": 1344,
@@ -1826,8 +1883,8 @@
       "floorId": "b1"
     },
     {
-      "id": "ng_iron_b1_02",
-      "mapId": "m_mo_ngam",
+      "id": "k1_04_ore_02",
+      "mapId": "m_k1_04",
       "type": "mining",
       "x": 2816,
       "y": 1216,
@@ -1838,8 +1895,8 @@
       "floorId": "b1"
     },
     {
-      "id": "ng_iron_b1_03",
-      "mapId": "m_mo_ngam",
+      "id": "k1_04_ore_03",
+      "mapId": "m_k1_04",
       "type": "mining",
       "x": 2688,
       "y": 1024,
@@ -1850,8 +1907,8 @@
       "floorId": "b1"
     },
     {
-      "id": "ng_iron_b1_04",
-      "mapId": "m_mo_ngam",
+      "id": "k1_04_ore_04",
+      "mapId": "m_k1_04",
       "type": "mining",
       "x": 2944,
       "y": 960,
@@ -1862,8 +1919,8 @@
       "floorId": "b1"
     },
     {
-      "id": "ng_iron_b1_05",
-      "mapId": "m_mo_ngam",
+      "id": "k1_04_ore_05",
+      "mapId": "m_k1_04",
       "type": "mining",
       "x": 3072,
       "y": 1344,
@@ -1874,8 +1931,8 @@
       "floorId": "b1"
     },
     {
-      "id": "ng_iron_b1_06",
-      "mapId": "m_mo_ngam",
+      "id": "k1_04_ore_06",
+      "mapId": "m_k1_04",
       "type": "mining",
       "x": 3200,
       "y": 1088,
@@ -1886,8 +1943,8 @@
       "floorId": "b1"
     },
     {
-      "id": "lq_med_mieu",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_01",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 640,
       "y": 672,
@@ -1898,8 +1955,8 @@
       "element": "tho"
     },
     {
-      "id": "lq_med_mieu_02",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_02",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 736,
       "y": 672,
@@ -1910,8 +1967,8 @@
       "element": "tho"
     },
     {
-      "id": "lq_med_mieu_03",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_03",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 832,
       "y": 672,
@@ -1922,8 +1979,8 @@
       "element": "tho"
     },
     {
-      "id": "lq_med_mieu_04",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_04",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 928,
       "y": 672,
@@ -1934,8 +1991,8 @@
       "element": "tho"
     },
     {
-      "id": "lq_med_mieu_05",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_05",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 640,
       "y": 768,
@@ -1946,8 +2003,8 @@
       "element": "tho"
     },
     {
-      "id": "lq_med_mieu_06",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_06",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 736,
       "y": 768,
@@ -1958,8 +2015,8 @@
       "element": "tho"
     },
     {
-      "id": "lq_med_mieu_07",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_07",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 832,
       "y": 768,
@@ -1970,8 +2027,8 @@
       "element": "tho"
     },
     {
-      "id": "lq_med_mieu_08",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_08",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 928,
       "y": 768,
@@ -1982,104 +2039,104 @@
       "element": "tho"
     },
     {
-      "id": "lq_med_ho",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_09",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 3072,
       "y": 3712,
       "radius": 64,
       "facing": "south",
-      "name": "Bờ hồ Lặng",
+      "name": "Bờ đầm Hồ Lặng",
       "nameEn": "Still Lake shore",
       "element": "thuy"
     },
     {
-      "id": "lq_med_ho_02",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_10",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 3200,
       "y": 3728,
       "radius": 64,
       "facing": "south",
-      "name": "Bờ hồ Lặng 2",
+      "name": "Bờ đầm Hồ Lặng 2",
       "nameEn": "Still Lake shore",
       "element": "thuy"
     },
     {
-      "id": "lq_med_ho_03",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_11",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 3648,
       "y": 3728,
       "radius": 64,
       "facing": "south",
-      "name": "Bờ hồ Lặng 3",
+      "name": "Bờ đầm Hồ Lặng 3",
       "nameEn": "Still Lake shore",
       "element": "thuy"
     },
     {
-      "id": "lq_med_ho_04",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_12",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 3776,
       "y": 3696,
       "radius": 64,
       "facing": "south",
-      "name": "Bờ hồ Lặng 4",
+      "name": "Bờ đầm Hồ Lặng 4",
       "nameEn": "Still Lake shore",
       "element": "thuy"
     },
     {
-      "id": "vd_med_thap",
-      "mapId": "m_vanh_dai_tay",
+      "id": "k1_02_med_01",
+      "mapId": "m_k1_02",
       "type": "meditation",
       "x": 3904,
       "y": 2752,
       "radius": 64,
       "facing": "south",
-      "name": "Chân tháp gió",
+      "name": "Chân tháp canh",
       "nameEn": "Wind tower foot",
       "element": "phong"
     },
     {
-      "id": "vd_med_thap_02",
-      "mapId": "m_vanh_dai_tay",
+      "id": "k1_02_med_02",
+      "mapId": "m_k1_02",
       "type": "meditation",
       "x": 4000,
       "y": 2752,
       "radius": 64,
       "facing": "south",
-      "name": "Chân tháp gió 2",
+      "name": "Chân tháp canh 2",
       "nameEn": "Wind tower foot",
       "element": "phong"
     },
     {
-      "id": "vd_med_thap_03",
-      "mapId": "m_vanh_dai_tay",
+      "id": "k1_02_med_03",
+      "mapId": "m_k1_02",
       "type": "meditation",
       "x": 3904,
       "y": 2848,
       "radius": 64,
       "facing": "south",
-      "name": "Chân tháp gió 3",
+      "name": "Chân tháp canh 3",
       "nameEn": "Wind tower foot",
       "element": "phong"
     },
     {
-      "id": "vd_med_thap_04",
-      "mapId": "m_vanh_dai_tay",
+      "id": "k1_02_med_04",
+      "mapId": "m_k1_02",
       "type": "meditation",
       "x": 4000,
       "y": 2848,
       "radius": 64,
       "facing": "south",
-      "name": "Chân tháp gió 4",
+      "name": "Chân tháp canh 4",
       "nameEn": "Wind tower foot",
       "element": "phong"
     },
     {
-      "id": "vd_med_lua",
-      "mapId": "m_vanh_dai_tay",
+      "id": "k1_02_med_05",
+      "mapId": "m_k1_02",
       "type": "meditation",
       "x": 2688,
       "y": 3808,
@@ -2090,8 +2147,8 @@
       "element": "hoa"
     },
     {
-      "id": "vd_med_lua_02",
-      "mapId": "m_vanh_dai_tay",
+      "id": "k1_02_med_06",
+      "mapId": "m_k1_02",
       "type": "meditation",
       "x": 2784,
       "y": 3808,
@@ -2102,8 +2159,8 @@
       "element": "hoa"
     },
     {
-      "id": "vd_med_lua_03",
-      "mapId": "m_vanh_dai_tay",
+      "id": "k1_02_med_07",
+      "mapId": "m_k1_02",
       "type": "meditation",
       "x": 2880,
       "y": 3808,
@@ -2114,8 +2171,8 @@
       "element": "hoa"
     },
     {
-      "id": "vd_med_lua_04",
-      "mapId": "m_vanh_dai_tay",
+      "id": "k1_02_med_08",
+      "mapId": "m_k1_02",
       "type": "meditation",
       "x": 2976,
       "y": 3808,
@@ -2126,8 +2183,8 @@
       "element": "hoa"
     },
     {
-      "id": "mb_med_ho_tay",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_med_01",
+      "mapId": "m_k1_03",
       "type": "meditation",
       "x": 1408,
       "y": 1920,
@@ -2138,8 +2195,8 @@
       "element": "kim"
     },
     {
-      "id": "mb_med_ho_tay_02",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_med_02",
+      "mapId": "m_k1_03",
       "type": "meditation",
       "x": 1504,
       "y": 1920,
@@ -2150,8 +2207,8 @@
       "element": "kim"
     },
     {
-      "id": "mb_med_ho_tay_03",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_med_03",
+      "mapId": "m_k1_03",
       "type": "meditation",
       "x": 1408,
       "y": 2016,
@@ -2162,8 +2219,8 @@
       "element": "kim"
     },
     {
-      "id": "mb_med_ho_tay_04",
-      "mapId": "m_mo_lo_thien",
+      "id": "k1_03_med_04",
+      "mapId": "m_k1_03",
       "type": "meditation",
       "x": 1504,
       "y": 2016,
@@ -2174,8 +2231,8 @@
       "element": "kim"
     },
     {
-      "id": "rs_med_goc_nam",
-      "mapId": "m_ba_vi",
+      "id": "k1_05_med_01",
+      "mapId": "m_k1_05",
       "type": "meditation",
       "x": 2784,
       "y": 3584,
@@ -2186,8 +2243,8 @@
       "element": "moc"
     },
     {
-      "id": "rs_med_goc_nam_02",
-      "mapId": "m_ba_vi",
+      "id": "k1_05_med_02",
+      "mapId": "m_k1_05",
       "type": "meditation",
       "x": 2880,
       "y": 3584,
@@ -2198,8 +2255,8 @@
       "element": "moc"
     },
     {
-      "id": "rs_med_goc_nam_03",
-      "mapId": "m_ba_vi",
+      "id": "k1_05_med_03",
+      "mapId": "m_k1_05",
       "type": "meditation",
       "x": 2976,
       "y": 3584,
@@ -2210,8 +2267,8 @@
       "element": "moc"
     },
     {
-      "id": "rs_med_goc_bac",
-      "mapId": "m_ba_vi",
+      "id": "k1_05_med_04",
+      "mapId": "m_k1_05",
       "type": "meditation",
       "x": 2208,
       "y": 1248,
@@ -2222,8 +2279,8 @@
       "element": "moc"
     },
     {
-      "id": "rs_med_goc_bac_02",
-      "mapId": "m_ba_vi",
+      "id": "k1_05_med_05",
+      "mapId": "m_k1_05",
       "type": "meditation",
       "x": 2304,
       "y": 1248,
@@ -2234,8 +2291,8 @@
       "element": "moc"
     },
     {
-      "id": "rs_med_goc_bac_03",
-      "mapId": "m_ba_vi",
+      "id": "k1_05_med_06",
+      "mapId": "m_k1_05",
       "type": "meditation",
       "x": 2400,
       "y": 1248,
@@ -2246,8 +2303,8 @@
       "element": "moc"
     },
     {
-      "id": "lq_med_lo_ren",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_13",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 3456,
       "y": 1216,
@@ -2258,8 +2315,8 @@
       "element": "hoa"
     },
     {
-      "id": "lq_med_lo_ren_02",
-      "mapId": "m_lang_que",
+      "id": "k1_01_med_14",
+      "mapId": "m_k1_01",
       "type": "meditation",
       "x": 3584,
       "y": 1216,

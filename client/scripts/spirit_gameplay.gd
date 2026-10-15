@@ -121,7 +121,7 @@ func _build_ui() -> void:
 	ui.mode = _label("CHẾ ĐỘ THỬ", side, 15)
 	_label("Nhân vật của bạn", side, 21)
 	ui.human = _button("Người • Linh Trảm", side, func(): _select_form("human", "human"))
-	ui.cat = _button("Mèo linh thú • Linh Trảo", side, func(): _select_form("spirit_beast", "cat"))
+	ui.cat = _button("Tinh Linh Mèo • Linh Trảo", side, func(): _select_form("spirit", "cat"))
 	ui.form_note = _label("Có thể đổi hình dạng khi chơi thử. Khi online, chọn một lần cho nhân vật.", side, 13)
 	_label("Bạn đồng khế ước", side, 21)
 	ui.contract_info = _label("Đăng nhập để mời một người chơi.", side, 14)
@@ -167,10 +167,10 @@ func _refresh_labels() -> void:
 		ui.mode.text = "ONLINE • " + api.username
 		var inner: Dictionary = profile.get("innerWorld", {})
 		var hap_linh := "Hấp Linh %d thửa" % (inner.get("cells", []).size() / 5) if bool(inner.get("learned", false)) else "Chưa học Hấp Linh"
-		ui.stats.text = "%s  •  %s  •  Túi %d/24" % ["Mèo linh thú" if field.form == "spirit_beast" else "Người", hap_linh, profile.get("inventory", []).size()]
+		ui.stats.text = "%s  •  %s  •  Túi %d/24" % ["Tinh Linh Mèo" if field.form == "spirit" else "Người", hap_linh, profile.get("inventory", []).size()]
 	else:
 		ui.mode.text = "CHƠI THỬ • PHẦN THƯỞNG CHƯA LƯU"
-		ui.stats.text = "%s  •  HP %d  •  Linh năng thử %d  •  Vật liệu %d" % ["Mèo linh thú" if field.form == "spirit_beast" else "Người", demo_hp, demo_xp, demo_loot]
+		ui.stats.text = "%s  •  HP %d  •  Linh năng thử %d  •  Vật liệu %d" % ["Tinh Linh Mèo" if field.form == "spirit" else "Người", demo_hp, demo_xp, demo_loot]
 	ui.human.disabled = busy or selected
 	ui.cat.disabled = busy or selected
 	ui.login.text = "Đăng xuất" if online else "Đăng nhập"
@@ -193,7 +193,7 @@ func _refresh_labels() -> void:
 func _hunt_text(h: Variant) -> String:
 	if not h is Dictionary:
 		return "Cùng tham gia để bắt đầu săn."
-	return {"waiting": "Đang chờ người còn lại tham gia.", "active": "Sơn Trư: %d/%d HP • Ra đòn luân phiên để phối hợp." % [int(h.mobHp), int(h.maxHp)], "victory": "Đã thắng! Mỗi người nhận phần thưởng riêng.", "abandoned": "Trận săn đã kết thúc.", "expired": "Trận săn đã hết thời gian.", "defeat": "Thử lại trong trận săn mới."}.get(str(h.phase), str(h.phase))
+	return {"waiting": "Đang chờ người còn lại tham gia.", "active": "Lợn Gai: %d/%d HP • Ra đòn luân phiên để phối hợp." % [int(h.mobHp), int(h.maxHp)], "victory": "Đã thắng! Mỗi người nhận phần thưởng riêng.", "abandoned": "Trận săn đã kết thúc.", "expired": "Trận săn đã hết thời gian.", "defeat": "Thử lại trong trận săn mới."}.get(str(h.phase), str(h.phase))
 
 func _select_form(kind: String, species: String) -> void:
 	if busy:
@@ -201,14 +201,21 @@ func _select_form(kind: String, species: String) -> void:
 	if not online:
 		field.form = kind
 		_refresh_labels()
-		_message("Đã chọn " + ("mèo linh thú. Linh Trảo [R] để vồ quái." if kind == "spirit_beast" else "người. Linh Trảm [R] để đánh quái."))
+		_message("Đã chọn " + ("Tinh Linh Mèo. Linh Trảo [R] để vồ quái." if kind == "spirit" else "người. Linh Trảm [R] để đánh quái."))
 		return
 	busy = true
 	_refresh_labels()
 	var result: Dictionary = await api.request_rpc("character_select_form", {"operationId": api.operation_id(), "kind": kind, "speciesId": species})
 	busy = false
 	if _result(result):
-		_message("Đã lưu hình dạng và linh thuật vào nhân vật.")
+		profile = await api.request_rpc("get_profile")
+		var world: Dictionary = await api.request_rpc("world_get")
+		if _result(world):
+			_apply_world(world)
+			var geometry: Dictionary = await api.request_rpc("world_map_get")
+			if _result(geometry):
+				field.geometry = geometry
+		_message("Đã lưu hình dạng và xuất phát tại cội nguồn sinh mệnh.")
 	_refresh_labels()
 
 func _open_login() -> void:
@@ -285,7 +292,7 @@ func _load_online() -> void:
 		busy = false
 		_result(profile)
 		return
-	var world: Dictionary = await api.request_rpc("world_get", {"preferredMapId": "m_vanh_dai_tay"})
+	var world: Dictionary = await api.request_rpc("world_get")
 	if _result(world):
 		_apply_world(world)
 		var geometry: Dictionary = await api.request_rpc("world_map_get")
@@ -372,7 +379,7 @@ func _attack(skill: bool) -> void:
 			_message("Hạ " + str(mob.name) + " • +10 linh năng thử • +1 vật liệu. Đăng nhập để chơi có lưu.")
 		else:
 			demo_hp = maxi(0, demo_hp - 6)
-			_message(("Linh Trảo" if field.form == "spirit_beast" else "Linh Trảm") + " • " + str(damage) + " sát thương.")
+			_message(("Linh Trảo" if field.form == "spirit" else "Linh Trảm") + " • " + str(damage) + " sát thương.")
 			if demo_hp == 0:
 				demo_hp = 100
 				field.player_position = Vector2(640, 520)

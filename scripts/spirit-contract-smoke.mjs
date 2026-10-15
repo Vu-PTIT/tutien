@@ -14,7 +14,7 @@ async function actor(prefix){
 }
 const a=await actor('sph_'),b=await actor('spc_');
 await a.rpc('character_select_form',{operationId:op(),kind:'human',speciesId:'human'});
-await b.rpc('character_select_form',{operationId:op(),kind:'spirit_beast',speciesId:'cat'});
+await b.rpc('character_select_form',{operationId:op(),kind:'spirit',speciesId:'cat'});
 const {contract}=await a.rpc('contract_invite',{operationId:op(),userId:b.id});
 assert.equal((await b.rpc('contract_get')).incoming[0].id,contract.id);
 await b.rpc('contract_respond',{contractId:contract.id,accept:true});
@@ -31,7 +31,7 @@ for(let i=0;i<12;i++){
 }
 assert.equal(victory,true);
 for(const player of [a,b]){
-  const claim=await player.rpc('contract_hunt_claim');assert.equal(claim.profile.cultivationXp,0);
+  const claim=await player.rpc('contract_hunt_claim');assert.equal(claim.profile.cultivationXp,undefined);
   assert.deepEqual(claim.receipt.granted.linhNang,[{vi:'tho',motes:8,turbid:6}]);
   assert.equal(claim.profile.inventory.find(item=>item.itemId==='it_boar_hide').quantity,1);
   assert.equal((await player.rpc('contract_hunt_claim')).replayed,true);

@@ -11,12 +11,12 @@ async function login() {return post('/v2/account/authenticate/device?create=true
 let auth='Bearer '+(await login()).token;
 async function rpc(name,input={}) {return JSON.parse((await post('/v2/rpc/'+name,auth,JSON.stringify(input))).payload);}
 const quantity=(profile,id)=>profile.inventory.filter(p=>p.itemId===id).reduce((n,p)=>n+p.quantity,0);
-await rpc('world_get',{preferredMapId:'m_lang_que'});
+await rpc('world_get',{preferredMapId:'m_k1_01'});
 const commandId=op(),starter=await rpc('life_claim_starter',{operationId:commandId});
 assert.equal(quantity(starter.profile,'it_fishing_rod'),1);
 assert.equal((await rpc('life_claim_starter',{operationId:commandId})).replayed,true);
 const catalog=await rpc('life_get');assert.equal(catalog.sites.length,26);assert.equal(catalog.garden.plots.length,12);
-const started=(await rpc('activity_start',{operationId:op(),siteId:'new_fish_01',controlMode:'autonomous',cycles:2})).session;
+const started=(await rpc('activity_start',{operationId:op(),siteId:'k1_01_fish_01',controlMode:'autonomous',cycles:2})).session;
 assert.equal(started.activityType,'fishing');
 // Poll through travel, then exercise a mode change and a partial cancellation.
 const deadline=Date.now()+180000;
@@ -43,8 +43,8 @@ assert.equal(['it_fish_carp','it_fish_tilapia','it_lake_weed','it_lake_junk','it
 assert.equal(quantity(claimed.profile,'it_bait'),30-cancelled.completedCycles);
 // Exercise the real mining lease/tool gate and garden reservation/refund without
 // accelerating production timers. Unit tests cover their completed yields.
-for(const job of [{mapId:'m_mo_lo_thien',siteId:'ml_iron_01'},
-                 {mapId:'m_nha',siteId:'new_plot_01',cropId:'crop_cam_lo'}]) {
+for(const job of [{mapId:'m_k1_03',siteId:'k1_03_ore_01'},
+                 {mapId:'m_nha',siteId:'nha_plot_01',cropId:'crop_cam_lo'}]) {
   await rpc('world_travel',{mapId:job.mapId});
   const input={operationId:op(),siteId:job.siteId,controlMode:'autonomous',...(job.cropId?{cropId:job.cropId}:{})};
   const session=(await rpc('activity_start',input)).session;

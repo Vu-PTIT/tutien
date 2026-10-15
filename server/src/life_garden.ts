@@ -30,7 +30,7 @@ function lifePlots(state: CharacterState): GardenPlot[] {
 function lifeGardenView(state: CharacterState,now:number): JsonObject {
   const copy=JSON.parse(JSON.stringify(state)) as CharacterState;
   const plots=lifePlots(copy).map(function(p) {
-    return {plotId:p.plotId,siteId:"new_plot_"+(p.plotId<9?"0":"")+(p.plotId+1),
+    return {plotId:p.plotId,siteId:"nha_plot_"+(p.plotId<9?"0":"")+(p.plotId+1),
       state:p.state==="growing"&&now>=Number(p.readyAt)?"ready":p.state,version:p.version,
       cropId:p.cropId||"",plantedAt:p.plantedAt||0,readyAt:p.readyAt||0,
       remainingMs:p.state==="growing"?Math.max(0,Number(p.readyAt)-now):0};
@@ -71,7 +71,7 @@ function lifeGardenAction(ctx:nkruntime.Context,nk:nkruntime.Nakama,payload:stri
   else if(input.cropId!==undefined) return fail(nkruntime.Codes.INVALID_ARGUMENT,"Harvest does not accept cropId");
   return JSON.stringify(lifeMutation(nk,userId,operationId,"garden_"+action,{plotId:plotId,cropId:cropId},function(next,world,writes,now) {
     lifeEnsureIdle(next,now);
-    const site=lifeSite("new_plot_"+(plotId<9?"0":"")+(plotId+1));
+    const site=lifeSite("nha_plot_"+(plotId<9?"0":"")+(plotId+1));
     lifeRequirePosition(world,site.id);lifeCheckSlot(nk,site,userId,now);
     let granted:RewardBundle={spiritStones:0,items:[]};
     if(action==="plant") lifePlant(next,plotId,cropId,operationId,now,nk);

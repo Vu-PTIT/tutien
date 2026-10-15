@@ -29,10 +29,8 @@ for (const [id, e] of Object.entries(enemies)) {
       !['normal','elite','boss'].includes(e.kind) || !['always','day','night'].includes(e.active) ||
       !Number.isInteger(e.hits) || e.hits < 1 || !Number.isInteger(e.damagePct) || e.damagePct < 1 || e.damagePct > 100 ||
       !Number.isInteger(e.respawnSec) || e.respawnSec < 1 || !Array.isArray(e.essence) || !e.essence.length ||
-      !e.essence.every(v => ['kim','moc','thuy','hoa','tho','phong'].includes(v)) ||
-      (e.storyGate !== undefined && !/^act_[a-z]$/.test(e.storyGate))) throw Error('Invalid enemy: '+id);
+      !e.essence.every(v => ['kim','moc','thuy','hoa','tho','phong'].includes(v))) throw Error('Invalid enemy: '+id);
   enemyOut[id] = {name: e.name, tier: e.tier, kind: e.kind, active: e.active, essence: e.essence};
-  if (e.storyGate) enemyOut[id].storyGate = e.storyGate;
 }
 const arrivals = {};
 for (const map of Object.values(maps)) for (const p of map.points) if (p.destination)
@@ -41,7 +39,7 @@ const dist = (ax, ay, bx, by) => Math.hypot(ax - bx, ay - by);
 let mobTotal = 0, npcTotal = 0;
 for (const [mapId, pop] of Object.entries(population.maps)) {
   const map = maps[mapId];
-  if (!map || !/^[a-z]+$/.test(pop.prefix) || !Array.isArray(pop.safeZones) || !Array.isArray(pop.territories) || !Array.isArray(pop.npcs))
+  if (!map || !/^[a-z0-9_]+$/.test(pop.prefix) || !Array.isArray(pop.safeZones) || !Array.isArray(pop.territories) || !Array.isArray(pop.npcs))
     throw Error('Invalid population for map: '+mapId);
   const where = mapId+': ';
   map.safeZones = pop.safeZones.map(z => {

@@ -7,7 +7,7 @@ Ngày: 13/10/2026. Runtime: Nakama 3.37.0, TypeScript ES5. Mọi RPC yêu cầu 
 Hồ sơ schema 4 được bổ sung `form`. Thiếu trường ở dữ liệu đã phát hành sẽ được bổ sung qua CAS; form hỏng bị giữ lại để kiểm tra, không reset tiền/đồ. Ví dụ:
 
 ```json
-{"kind":"spirit_beast","speciesId":"cat","selected":true}
+{"kind":"spirit","speciesId":"cat","selected":true}
 ```
 
 | RPC | Payload | Kết quả chính |
@@ -16,7 +16,7 @@ Hồ sơ schema 4 được bổ sung `form`. Thiếu trường ở dữ liệu �
 | `character_select_form` | `{operationId,kind,speciesId}` | `profile`, `receipt`, `replayed` |
 | `world_map_get` | `{}` | Geometry map hiện tại: width/height theo px, solids theo ô 32 px, footprints theo px, waters/bridges theo ô, points, speed/radius |
 
-Hai lựa chọn hợp lệ là `human/human` và `spirit_beast/cat`. Chọn hình dạng cấp Linh Trảm hoặc Linh Trảo. `operationId` dài 8–80 ký tự thuộc `[a-zA-Z0-9_-]`; retry cùng payload dùng lại cùng ID. Chọn lần thứ hai bằng operation khác bị từ chối.
+Hai lựa chọn hợp lệ là `human/human` và `spirit/cat`. Chọn hình dạng cấp Linh Trảm hoặc Linh Trảo. `operationId` dài 8–80 ký tự thuộc `[a-zA-Z0-9_-]`; retry cùng payload dùng lại cùng ID. Chọn lần thứ hai bằng operation khác bị từ chối.
 
 ## Khế ước
 
@@ -46,7 +46,7 @@ Mỗi người tự tham gia; hai người cùng joined mới được tấn cô
 
 Trận dùng HP riêng, vị trí trình diễn cố định và hành động RPC. Đi lại trong đấu trường chưa là authoritative real-time co-op; chuyển sang match là milestone sau. `world_attack` ngoài rừng vẫn xác minh vị trí/đường đi server và dùng kill receipts hiện có.
 
-Hạ quái ghi thắng, gắn kết và pending reward của người có đóng góp vào cùng transaction. Claim dùng source `contract_hunt:<huntId>:<userId>` và operation ID do server tạo. Tiền thưởng luôn 0, không có XP; vật liệu một Da Sơn Trư và linh năng Thổ (8, trong đó 6 đục) cho Nội Giới. Người chưa học Hấp Linh để linh năng đi qua. Không mở hộp thưởng cho người chưa đóng góp.
+Hạ quái ghi thắng, gắn kết và pending reward của người có đóng góp vào cùng transaction. Claim dùng source `contract_hunt:<huntId>:<userId>` và operation ID do server tạo. Tiền thưởng luôn 0, không có XP; vật liệu một Da Lợn Gai và linh năng Thổ (8, trong đó 6 đục) cho Nội Giới. Người chưa học Hấp Linh để linh năng đi qua. Không mở hộp thưởng cho người chưa đóng góp.
 
 Túi đầy không mất thưởng. Pending reward là dữ liệu của tài khoản, tiếp tục claim được khi đã kết thúc khế ước. Mỗi người có một pending reward slot; phải giải quyết thưởng trước khi mở trận săn mới. Mất phản hồi hoặc retry không tăng bond/linh năng/đồ thêm lần nữa. Một đòn chỉ ghi hồ sơ của người ra đòn; hồ sơ bạn đồng hành không bị ghi nên hành động của họ không bị xung đột. Lịch sử replay của trận chỉ giữ 32 đòn gần nhất.
 

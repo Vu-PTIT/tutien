@@ -12,7 +12,7 @@ func _run() -> void:
 	assert(game.ui.invite.disabled and game.ui.claim.disabled)
 	assert(game.field.form == "human")
 	game.ui.cat.pressed.emit()
-	assert(game.field.form == "spirit_beast")
+	assert(game.field.form == "spirit")
 	game.ui.human.pressed.emit()
 	assert(game.field.form == "human")
 	game.ui.cat.pressed.emit()

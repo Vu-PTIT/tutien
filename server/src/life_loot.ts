@@ -3,16 +3,16 @@
 interface LifeLootState { b1Cycles: number; shardFound: boolean; }
 // Sessions started before loot v2 keep the table they were assigned with.
 const LIFE_LOOT_VERSION = 2;
-// Loot tables are rows of game_loot keyed "type:mapId"; "type:mapId:spirit_sky"
-// replaces it while trời linh is active. Sessions started before v2 use "legacy:type".
-// The first Mảnh Tím is a chapter 1 story beat: guaranteed within 40 B1 cycles.
+// Loot tables are rows of game_loot keyed "type:mapId"; "type:mapId:linh_trieu"
+// replaces it during Đêm Linh Triều. Sessions started before v2 use "legacy:type".
+// The first Mảnh Tím is an arc 1 story beat: guaranteed within 40 B1 cycles.
 const LIFE_SHARD_PITY = 40;
 // One game day is two real hours, in five equal phases (doc 04 §5); Tối and
-// Khuya are night. "Trời linh" is decided per 30-minute window from a hash,
+// Khuya are night. Đêm Linh Triều is decided per 30-minute window from a hash,
 // about one window in eight, so every VM agrees without stored weather.
 const LIFE_DAY_MS = 7200000;
 const LIFE_PHASES = ["sang_som", "trua", "chieu_vang", "toi", "khuya"];
-const LIFE_SKY_WINDOW_MS = 1800000;
+const LIFE_LINH_TRIEU_WINDOW_MS = 1800000;
 function lifeRoll(nk: nkruntime.Nakama, seed: string): number {
   return parseInt(nk.sha256Hash(seed).substring(0, 8), 16) % 100;
 }
@@ -29,14 +29,15 @@ function lifePhase(now: number): number {
   return Math.floor((now % LIFE_DAY_MS) / (LIFE_DAY_MS / LIFE_PHASES.length));
 }
 function lifeIsNight(now: number): boolean { return lifePhase(now) >= 3; }
-function lifeSpiritSky(nk: nkruntime.Nakama, now: number): boolean {
-  return lifeRoll(nk, "troi_linh:" + Math.floor(now / LIFE_SKY_WINDOW_MS)) % 8 === 0;
+function lifeLinhTrieu(nk: nkruntime.Nakama, now: number): boolean {
+  // The hash salt keeps its first name so past windows replay identically.
+  return lifeRoll(nk, "troi_linh:" + Math.floor(now / LIFE_LINH_TRIEU_WINDOW_MS)) % 8 === 0;
 }
 function lifeClockView(nk: nkruntime.Nakama, now: number): JsonObject {
   const phaseMs = LIFE_DAY_MS / LIFE_PHASES.length, phase = lifePhase(now);
   return {dayMs: LIFE_DAY_MS, phase: LIFE_PHASES[phase], night: lifeIsNight(now),
-    phaseEndsAt: (Math.floor(now / phaseMs) + 1) * phaseMs, spiritSky: lifeSpiritSky(nk, now),
-    skyEndsAt: (Math.floor(now / LIFE_SKY_WINDOW_MS) + 1) * LIFE_SKY_WINDOW_MS};
+    phaseEndsAt: (Math.floor(now / phaseMs) + 1) * phaseMs, linhTrieu: lifeLinhTrieu(nk, now),
+    linhTrieuEndsAt: (Math.floor(now / LIFE_LINH_TRIEU_WINDOW_MS) + 1) * LIFE_LINH_TRIEU_WINDOW_MS};
 }
 function lifeLootOf(state: CharacterState): LifeLootState {
   const loot = state.lifeLoot as LifeLootState | undefined;
@@ -56,12 +57,12 @@ function lifeReward(s: LifeSession, nk: nkruntime.Nakama, state: CharacterState)
   const placed = s.lootVersion === LIFE_LOOT_VERSION && contentHas(all, key);
   const legacy = all["legacy:" + s.type];
   if (!placed && !legacy) return fail(nkruntime.Codes.FAILED_PRECONDITION, "No loot table for " + key);
-  const loot = placed && s.mapId === "m_mo_ngam" ? lifeLootOf(state) : undefined;
+  const loot = placed && s.mapId === "m_k1_04" ? lifeLootOf(state) : undefined;
   for (let i = 0; i < s.completedCycles; i++) {
     const seed = s.rewardSeed + ":" + i, endedAt = s.activeAt + (i + 1) * s.intervalMs;
     let entry: LifeLootEntry;
     if (!placed) entry = lifePick(nk, legacy, seed);
-    else entry = lifePick(nk, contentHas(all, key + ":spirit_sky") && lifeSpiritSky(nk, endedAt) ? all[key + ":spirit_sky"] : all[key], seed);
+    else entry = lifePick(nk, contentHas(all, key + ":linh_trieu") && lifeLinhTrieu(nk, endedAt) ? all[key + ":linh_trieu"] : all[key], seed);
     if (loot) {
       loot.b1Cycles = Math.min(ASSET_LIMIT, loot.b1Cycles + 1);
       if (!loot.shardFound && loot.b1Cycles >= LIFE_SHARD_PITY) entry = {itemId: "it_purple_shard", weight: 0, quantity: 1};

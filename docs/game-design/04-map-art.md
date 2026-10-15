@@ -2,13 +2,13 @@
 
 ## 1. Một câu định hướng
 
-> **Pixel art 32 px, người chơi nhìn từ góc camera 3/4; nơi Người ấm như một buổi chiều ngoại ô, nơi Tinh Linh dịu như nắng xuyên tán lá; linh năng là ánh sáng của chính đất, nước, lửa, cây, quặng và gió, và map nào cũng thấy nó chảy.**
+> **Pixel art 32 px, người chơi nhìn từ góc camera 3/4; nơi Người ấm như một buổi chiều ở làng chài ven biển, nơi Tinh Linh dịu như nắng xuyên tán lá trên mặt đầm; linh năng là ánh sáng của chính đất, nước, lửa, cây, quặng và gió, và map nào cũng thấy nó chảy.**
 
 Map dựng **theo lớp PNG vẽ tay** (nền, decal, bóng, linh năng, đối tượng, tán, hạt, ánh sáng, không khí), không ghép toàn bộ từ tileset (§11).
 
-Tham chiếu tinh thần, không sao chép: **Eastward** (ánh sáng động, đồ vật kể chuyện, thiên nhiên đan vào đô thị), **Stardew Valley** (đời sống cozy, góc nhìn), **Sea of Stars** (pixel + ánh sáng), phim **Ghibli** (thiên nhiên trùm lên công nghệ, tinh linh rừng).
+Tham chiếu tinh thần, không sao chép: **Eastward** (ánh sáng động, đồ vật kể chuyện), **Stardew Valley** (đời sống cozy, góc nhìn), **Sea of Stars** (pixel + ánh sáng, biển và đảo), phim **Ghibli** (thiên nhiên sống, tinh linh rừng).
 
-Mượn từ Eastward **phần hình ảnh**, không mượn lối chơi phiêu lưu cutscene. Không gắn với kiến trúc hay biểu tượng của một quốc gia thật.
+Mượn từ Eastward **phần hình ảnh**, không mượn lối chơi phiêu lưu cutscene. Thế giới là **fantasy cổ**: không máy móc, không điện, không nhựa, không bê tông. Không gắn với kiến trúc hay biểu tượng của một quốc gia thật.
 
 ## 2. Góc nhìn và tỉ lệ
 
@@ -23,8 +23,8 @@ Mượn từ Eastward **phần hình ảnh**, không mượn lối chơi phiêu 
 - **Phóng to số nguyên**, không scale lẻ, không xoay sprite.
   - Khám phá: ×2 (màn 1080p thấy ≈ 30×17 ô).
   - Sinh hoạt/tương tác: ×3.
-  - Điện thoại: hệ số nguyên lớn nhất mà vẫn thấy ≥ 11 ô chiều cao.
-- **Kiến trúc nén:** 1 tầng nhà = 64 px; mặt tiền chỉ thấy tầng trệt + 1 tầng; tầng cao hơn thể hiện bằng mái, bồn nước, giàn phơi nhìn từ trên.
+  - Màn hình điện thoại: hệ số nguyên lớn nhất mà vẫn thấy ≥ 11 ô chiều cao.
+- **Kiến trúc nén:** 1 tầng nhà = 64 px; mặt tiền chỉ thấy tầng trệt + 1 tầng; tầng cao hơn thể hiện bằng mái, gác, giàn phơi lưới nhìn từ trên.
 - **Mặt đất ≥ 55% khung hình** ở zoom mặc định.
 - Nhân vật đi sau nhà hoặc tán cây thì phần che mờ đi.
 
@@ -36,13 +36,13 @@ Mượn từ Eastward **phần hình ảnh**, không mượn lối chơi phiêu 
 | Ghế | 20 px |
 | Dị thú nhỏ / vừa / boss | 32×32 / 48–64 px / ≤ 128 px |
 
-## 3. Thống nhất giữa các map, khác biệt theo vùng
+## 3. Thống nhất giữa các map, khác biệt theo khu
 
-Mọi map phải trông như **cùng một thế giới, cùng một tay vẽ**. Vùng nào cũng chỉ được khác nhau ở **hình khối, màu và đồ vật**. Góc nhìn, tỉ lệ, ánh sáng và cách vẽ thì giống nhau ở mọi map.
+Mọi map phải trông như **cùng một thế giới, cùng một tay vẽ**. Các khu chỉ được khác nhau ở **hình khối, màu và đồ vật**. Góc nhìn, tỉ lệ, ánh sáng và cách vẽ thì giống nhau ở mọi map.
 
 ### 3.1 Luật chung cho mọi map
 
-- **Cùng góc camera, cùng tỉ lệ.** Một cái cây ở Ẩn Giới và một cái cây ở Làng Hồ Lặng phải vẽ cùng độ chếch: tỉ lệ thân/tán như nhau, gốc cây chạm đất ở cùng cách. Không map nào được "phẳng" hơn hay "nghiêng" hơn map khác.
+- **Cùng góc camera, cùng tỉ lệ.** Một cái cây ở Vườn Cây Mẹ và một cái cây ở Làng Hồ Lặng phải vẽ cùng độ chếch: tỉ lệ thân/tán như nhau, gốc cây chạm đất ở cùng cách. Không map nào được "phẳng" hơn hay "nghiêng" hơn map khác.
 - **Nhân vật là thước đo.** Mọi vật đều đo theo chiều cao nhân vật (~42 px):
 
 | Vật | Cao (px) | So với nhân vật |
@@ -51,48 +51,49 @@ Mọi map phải trông như **cùng một thế giới, cùng một tay vẽ**.
 | Bụi cây, hàng rào | 24–32 | Tới hông / ngực |
 | Cây thường | 64–96 | 1,5–2,5 người |
 | Cây lớn, cây cổ thụ | 128–160 | 3–4 người |
-| Cột điện | 128 | 3 người |
+| Cột đèn lồng, cột buồm thuyền nhỏ | 96–128 | 2,5–3 người |
 | Cây Mẹ | Ngoại lệ duy nhất; không bao giờ thấy trọn trong một khung hình | — |
 
 - **Cùng mật độ chi tiết.** Cùng độ phân giải pixel, cùng số mảng sáng–tối trên một vật (3–4 mảng), cùng kiểu outline 1 px màu theo chất liệu. Không map nào vẽ mịn hơn hay thô hơn hẳn.
-- **Cùng ánh sáng.** Sáng từ trên-trái, bóng ngả phải-dưới, bóng là sprite riêng màu tím mờ, ở mọi map. Ánh sáng riêng của từng vùng (tia nắng xiên ở Ẩn Giới, đèn mỏ...) chỉ **cộng thêm** vào, không đổi hướng sáng chính.
-- **Chung lõi màu.** Mỗi vùng có palette riêng nhưng bắt buộc dùng chung: màu bóng `#2E2A4A`, linh năng, tím vật thể lạ, màu UI, bộ màu da/tóc nhân vật.
+- **Cùng ánh sáng.** Sáng từ trên-trái, bóng ngả phải-dưới, bóng là sprite riêng màu tím mờ, ở mọi map. Ánh sáng riêng của từng khu (tia nắng xiên ở Vườn Cây Mẹ, đèn linh thạch dưới hầm...) chỉ **cộng thêm** vào, không đổi hướng sáng chính.
+- **Chung lõi màu.** Mỗi khu có palette riêng nhưng bắt buộc dùng chung: màu bóng `#2E2A4A`, màu sáu hệ linh năng, tím đá lạ, màu UI, bộ màu da/tóc nhân vật.
 - **Nhân vật nổi trên mọi nền.** Nhân vật, NPC, Tinh Linh, dị thú phải tách khỏi mặt đất ở mọi map và mọi giờ (đặc biệt ở Rừng Sâu và ban đêm). Nếu không tách được thì chỉnh màu nền chứ không vẽ lại nhân vật cho riêng map đó.
 
 ### 3.2 Đồ vật và cây theo họ
 
-- **Một loại vật = một họ asset.** Cây, đá, hàng rào, đèn, ghế... vẽ một **mẫu gốc** rồi tạo biến thể theo vùng (đổi màu, thêm rêu/gỉ/dây leo/hoa văn), không vẽ lại từ đầu. Ví dụ: cột điện ở làng → bản gỉ có dây leo ở Bìa Rừng; cây sồi ở làng → bản tán dày, tối hơn ở Rừng Sâu → bản có lá phát sáng ở Ẩn Giới.
-- Tên file thể hiện họ: `hl_flora_cay_soi_a` → `rs_flora_cay_soi_toi` → `ag_flora_cay_soi_linh`.
-- **Người và Tinh Linh khác nhau theo quy tắc hai tộc** (mục 3.4), nhưng vẫn cùng góc nhìn, tỉ lệ và cách tô bóng. Nhìn ghế gỗ sống của Tinh Linh cạnh ghế nhựa của Người phải thấy đó là hai món đồ trong cùng một game.
+- **Một loại vật = một họ asset.** Cây, đá, hàng rào, đèn, ghế... vẽ một **mẫu gốc** rồi tạo biến thể theo khu (đổi màu, thêm rêu/muối/dây leo/hoa văn), không vẽ lại từ đầu. Ví dụ: cột đèn lồng ở làng → bản mục có dây leo ở Bìa Rừng; cây sồi ở làng → bản tán dày, tối hơn ở Rừng Sâu → bản đứng giữa nước, lá phát sáng ở Vườn Cây Mẹ.
+- Tên file thể hiện họ: `k1_01_flora_cay_soi_a` → `k1_05_flora_cay_soi_toi` → `k1_07_flora_cay_soi_dam`.
+- **Người và Tinh Linh khác nhau theo quy tắc hai tộc** (mục 3.4), nhưng vẫn cùng góc nhìn, tỉ lệ và cách tô bóng. Nhìn ghế gỗ sống của Tinh Linh cạnh ghế gỗ đóng đinh của Người phải thấy đó là hai món đồ trong cùng một game.
 
 ### 3.3 Chỗ nối giữa các map
 
-- **Mép map nối liền.** Hai map cạnh nhau dùng chung tile ở dải mép (khoảng 3–4 ô): đường, cỏ, tường rào nhìn từ hai phía phải khớp nhau.
-- **Chuyển dần, không cắt cụt.** Càng gần ranh giới, đồ của vùng bên kia càng xuất hiện nhiều hơn: gần tường rào thì cỏ cao và gỉ sét lấn vào làng; quanh Cổng Ẩn Giới thì lồng đèn lá, dây leo lẫn vào Quảng trường; phía Ẩn Giới gần Cổng có vài món đồ của Người (biển báo, ghế nhựa).
-- Một vật mốc lớn nên **thấy được từ map bên cạnh** (ví dụ ngọn Cây Mẹ ló sau Cổng, tháp Trạm nhô sau rừng) để người chơi cảm thấy các map là một thế giới liền mạch.
+- **Mép map nối liền.** Hai map cạnh nhau dùng chung tile ở dải mép (khoảng 3–4 ô): đường, cỏ, tường cọc nhìn từ hai phía phải khớp nhau.
+- **Chuyển dần, không cắt cụt.** Càng gần ranh giới, đồ của bên kia càng xuất hiện nhiều hơn: gần tường cọc thì cỏ cao và rễ lấn vào làng; quanh Cổng Rễ thì lồng đèn lá, dây leo lẫn vào chợ làng; ở Vườn Cây Mẹ có vài món đồ của Người mà Bé Mơ lượm về.
+- **Giao thoa chuyển theo dải:** map giao thoa luôn có một phía đậm hệ A, phía kia đậm hệ B, giữa là vật pha cả hai (cây mọc giữa nước, đá vân lửa, suối chảy qua quặng).
+- Một vật mốc lớn nên **thấy được từ map bên cạnh** (ví dụ ngọn núi trên Đài Thiên Mạch nhô sau Rừng Sâu, hải đăng làng thấy từ Bìa Rừng) để người chơi cảm thấy các map là một thế giới liền mạch.
 
-### 3.4 Hình khối theo vùng
+### 3.4 Hình khối theo nơi
 
-| Vùng | Hình khối chủ đạo |
+| Nơi | Hình khối chủ đạo |
 | --- | --- |
-| Làng Hồ Lặng | Ngang, thấp, mềm: mái dốc, ruộng, hàng rào, bờ hồ cong |
-| Thị trấn trong làng | Khối cao hơn xóm nhà, cửa kính, biển hiệu, dây điện chéo |
-| Tường rào, Bìa Rừng | Khối dài thấp: tường bê tông, trạm gác, cỏ cao; khoảng trống lớn |
-| Mỏ | Bậc thang đá, đường chéo của băng chuyền, hố sâu |
-| Ẩn Giới (Vườn Cây Mẹ) | Tròn, cong, mọc lên từ rễ; nhà là hốc cây, cành, tổ lớn; không có góc vuông |
+| Làng Hồ Lặng (Vành Biển) | Ngang, thấp, mềm: mái ngói/mái rạ dốc, bến gỗ, cồn cát, bờ đầm cong, thuyền nằm nghiêng trên bãi |
+| Chợ làng, chi hội | Khối cao hơn xóm nhà, mái vải căng, biển gỗ treo, sân đá |
+| Tường cọc, Bìa Rừng | Khối dài thấp: hàng cọc gỗ trên kè đá, chòi canh, cỏ cao; khoảng trống lớn |
+| Mỏ | Bậc thang đá, đường chéo của ray goòng và tời gỗ, hố sâu |
+| Vườn Cây Mẹ (giao thoa) | Tròn, cong, mọc lên từ rễ và nước; nhà là hốc cây, cành, tổ lớn; không có góc vuông |
 | Rừng Sâu | Tròn hữu cơ nhưng rối, tán chồng tầng, tối |
-| Trạm Thiên Mạch | Vuông lạnh; vật thể lạ là lục giác, đường thẳng tuyệt đối |
+| Đài Thiên Mạch | Đá đẽo vuông lạnh, trận văn khắc thẳng; đá lạ là lục giác, đường thẳng tuyệt đối |
 
-**Quy tắc hai tộc** (vẫn theo luật chung ở 3.1)**:** đồ của Người có **góc vuông, kim loại, nhựa, chữ in**. Đồ của Tinh Linh có **đường cong, gỗ sống, lá, dây leo, ký hiệu vẽ tay**. Ở vùng giữa, hai kiểu này đặt cạnh nhau để kể chuyện.
+**Quy tắc hai tộc** (vẫn theo luật chung ở 3.1)**:** đồ của Người có **góc vuông, gỗ xẻ, đá đẽo, sắt rèn, chữ khắc**. Đồ của Tinh Linh có **đường cong, gỗ sống, lá, dây leo, vỏ ốc, ký hiệu vẽ tay**. Ở chỗ hai tộc gặp nhau (Cổng Rễ, chợ), hai kiểu đặt cạnh nhau để kể chuyện.
 
 ## 4. Màu
 
 ### 4.1 Quy tắc
 
-- Mỗi vùng 24–32 màu; toàn game ≤ 96 màu. Lưu palette `.gpl` trong repo khi bắt đầu vẽ.
+- Mỗi khu 24–32 màu; toàn game ≤ 96 màu. Lưu palette `.gpl` trong repo khi bắt đầu vẽ.
 - **Bóng không đen/xám:** bóng ngả tím-xanh mát, chỗ sáng ngả vàng ấm.
-- **Ánh sáng linh năng dùng màu của sáu hệ** (§6.1), chỉ ở dạng phát sáng, không làm màu vật liệu. **Ngọc lam chỉ dành cho Ẩn** (linh năng thuần của Ẩn Giới). **Tím chỉ dành cho vật thể ngoài thế giới.** Nước, đèn, UI không dùng ngọc lam và tím.
-- Tinh Linh có hoa văn ngọc lam trên người (vì là cư dân Ẩn Giới); Người thì không, trừ aura lúc thiền (màu và dáng theo hệ chính trong Nội Giới).
+- **Ánh sáng linh năng dùng màu của sáu hệ** (§6.1), chỉ ở dạng phát sáng, không làm màu vật liệu. **Ngọc lam chỉ dành cho Ẩn** (linh năng của Tâm Ẩn, gần như không thấy ở rìa các khu). **Tím chỉ dành cho đá lạ.** Nước, đèn, UI không dùng ngọc lam và tím.
+- Tinh Linh có hoa văn sáng **hai màu** của hai hệ nơi sinh (Tinh Linh Đầm Sen: xanh lá Mộc + lam Thủy); Người thì không, trừ aura lúc thiền (màu và dáng theo hệ chính trong Nội Giới).
 - UI tương tác dùng vàng kem.
 
 ### 4.2 Palette khởi điểm
@@ -101,59 +102,61 @@ Mọi map phải trông như **cùng một thế giới, cùng một tay vẽ**.
 | --- | --- |
 | Ẩn (ngọc lam / lõi sáng) | `#3FD6B8` `#B8FFF0` |
 | Sáu hệ, lõi sáng: Kim, Mộc, Thủy, Hỏa, Thổ, Phong | `#E8EDF2` `#B8F08E` `#8FD8F0` `#FFC27A` `#F2DC8A` `#EEF9FF` |
-| Vật thể lạ (tím) | `#8F6BFF` |
+| Đá lạ (tím) | `#8F6BFF` |
 | Bóng chung | `#2E2A4A` |
-| Làng Hồ Lặng: lúa chín, rơm, ngói, cỏ, nước hồ, đất | `#D9B65A` `#E8D49A` `#B5573A` `#6E9A45` `#5C8FA0` `#8A6A4A` |
-| Thị trấn: kính xanh, bê tông ấm, biển hiệu đỏ, thép, lá, nhựa đường | `#8FB8C8` `#C9B79C` `#D8443A` `#6F8FA8` `#5E9E4A` `#4A4E5C` |
-| Tường rào, Bìa Rừng: bụi, bê tông, gỉ, cỏ, vàng cảnh báo | `#CDBB96` `#9C9A90` `#A1552F` `#93C254` `#F2C230` |
-| Mỏ: đất đỏ, đá, đèn mỏ | `#A4553A` `#7A6E66` `#F0B860` |
-| Ẩn Giới: lá trong, vỏ cây ấm, rêu sáng, nắng xiên, hoa, trời ngọc nhạt | `#9CCB5E` `#8C6440` `#5FA36A` `#FFE9B0` `#F2A7B8` `#CFEFEA` |
+| Làng Hồ Lặng: cát, biển, nước đầm, ngói, gỗ thuyền, cỏ, rơm | `#E8D9A8` `#3F7FA0` `#5C8FA0` `#B5573A` `#7A5A3E` `#6E9A45` `#E8D49A` |
+| Chợ làng: vải mái đỏ, vải mái chàm, đá sân, gỗ quầy, sắt rèn | `#C8483A` `#3E5A8A` `#B9AE98` `#9A7048` `#4E5560` |
+| Tường cọc, Bìa Rừng: gỗ cọc, kè đá, cỏ, đất, lửa đuốc | `#8A6440` `#8E8A80` `#93C254` `#A08058` `#F2A040` |
+| Mỏ: đất đỏ, đá, đèn linh thạch | `#A4553A` `#7A6E66` `#F0B860` |
+| Vườn Cây Mẹ: lá trong, vỏ cây ấm, mặt đầm, sen, nắng xiên, hoa | `#9CCB5E` `#8C6440` `#6FAEB8` `#F2A7B8` `#FFE9B0` `#CFEFEA` |
 | Rừng Sâu: rêu, lục tối, đá ướt, sương | `#2F5E3B` `#3E5A2E` `#56685F` `#CFE3DD` |
-| Trạm: trắng lab, thép, đỏ khẩn, nền tối | `#E6ECF0` `#58636E` `#E0484A` `#15171D` |
+| Đài Thiên Mạch: đá xám lạnh, trận văn, đèn linh thạch, nền tối | `#7C8088` `#C8C0A8` `#E8C878` `#15171D` |
 | UI: vàng kem, giấy, mực | `#FFE7A8` `#F7F1E3` `#2B2735` |
+
+Các khu khác ([12](12-ban-do-cac-khu.md)) lấy màu chủ đạo theo hệ trội của khu ([03](03-world-and-maps.md) §1.1) và thêm palette riêng khi dựng khu đó.
 
 ## 5. Ánh sáng, giờ, thời tiết
 
 Ánh sáng là ưu tiên số 1 vì cho nhiều không khí nhất trên mỗi giờ công.
 
-- Đèn điểm cho đèn đường, quán, đèn mỏ, lồng đèn lá của Tinh Linh, linh năng; nắng nhẹ có hướng.
-- Ẩn Giới dùng **tia nắng xiên** (god rays) qua tán lá làm dấu ấn riêng.
+- Đèn điểm cho đèn lồng, đuốc, quán, đèn linh thạch, lồng đèn lá của Tinh Linh, hải đăng, linh năng; nắng nhẹ có hướng.
+- Vườn Cây Mẹ dùng **tia nắng xiên** (god rays) qua tán lá xuống mặt đầm làm dấu ấn riêng.
 - Normal map cho nhà, đồ lớn, Cây Mẹ và mặt đất vùng nhà; nhân vật chỉ dùng viền sáng đơn giản.
 - Màu phủ theo giờ, không vẽ lại asset:
 
 | Giờ | Màu phủ | Ghi chú |
 | --- | --- | --- |
-| Sáng sớm | `#E8EEF5` | Sương |
+| Sáng sớm | `#E8EEF5` | Sương trên đầm, thuyền ra khơi |
 | Trưa | `#FFFFFF` | Bóng ngắn |
-| Chiều vàng | `#FFD9A8` | Giờ đẹp nhất của làng |
-| Tối | `#6A6FA8` | Đèn vàng bật; Cây Mẹ và hoa văn Tinh Linh sáng lên |
+| Chiều vàng | `#FFD9A8` | Giờ đẹp nhất của làng; biển sáng vàng |
+| Tối | `#6A6FA8` | Đèn lồng bật; hải đăng quét; Cây Mẹ và hoa văn Tinh Linh sáng lên |
 | Khuya | `#3C3F6E` | Ít người |
 
-- **Thời tiết:** nắng, mưa phùn, mưa rào, sương, **"trời linh"** (dải sáng ngọc lam trên trời).
+- **Thời tiết:** nắng, mưa phùn, mưa rào, sương, gió biển, **Đêm Linh Triều** (linh năng dâng, cả map sáng theo màu hệ).
 - Hướng sáng chính: trên-trái; bóng ngả phải-dưới, là sprite riêng mờ tím.
 
 ## 6. Linh năng trên map
 
 > **Linh năng là chính các yếu tố tạo nên thế giới**: Kim, Mộc, Thủy, Hỏa, Thổ, Phong ([07](07-power-system.md) §2). Trên map, **mỗi hệ hiện ra qua vật chất của nó**: nước có Thủy thì nước sáng, lửa có Hỏa thì lửa bốc đốm, cây có Mộc thì lá sáng và mọc dày, quặng có Kim thì vân kim lóe, đất đá có Thổ thì bụi vàng ửng, gió có Phong thì thành vệt gió. Nhìn ánh sáng là biết chỗ đó có hệ gì, và biết thiền ở đó sẽ mọc ra gì trong Nội Giới.
 >
-> Sáu năm sau Linh Chấn, linh năng đã dày lên trong mọi vật, nên map nào cũng phải thấy nó **cả ban ngày**, không chỉ lúc tối hay lúc "trời linh".
+> Linh năng có từ thuở khai thiên trong mọi vật, nên map nào cũng phải thấy nó **cả ban ngày**. Nó loãng nhất ở Vành Biển (biển làm tan), đặc dần vào đất hoang, và đậm nhất ở lõi khu và vùng giao thoa ([03](03-world-and-maps.md) §1).
 
 ### 6.1 Màu và dáng của từng hệ
 
 | Hệ | Lõi / viền | Hiện qua | Dáng chuyển động |
 | --- | --- | --- | --- |
-| **Kim** | `#E8EDF2` / `#A9B6C4` | Vân quặng, kim loại, đồ thép cũ, mũi đá vỡ | Tia lóe hình sao 4 cánh, sắc, gần như đứng yên |
+| **Kim** | `#E8EDF2` / `#A9B6C4` | Vân quặng, sắt rèn, mũi đá vỡ | Tia lóe hình sao 4 cánh, sắc, gần như đứng yên |
 | **Mộc** | `#B8F08E` / `#5FA36A` | Lá, rễ, rêu, nấm, cỏ | Phấn sáng xoắn bay lên; cây quanh điểm tụ mọc dày, xanh hơn |
-| **Thủy** | `#8FD8F0` / `#3F86B8` | Mặt hồ, suối, sương, mưa, cá | Gợn sáng chạy trên mặt nước; giọt bay lên rồi rơi |
-| **Hỏa** | `#FFC27A` / `#E0503A` | Lửa trại, lò rèn, than, sét, máy nóng | Đốm lửa bay lên; không khí gợn nóng; than ửng theo nhịp |
+| **Thủy** | `#8FD8F0` / `#3F86B8` | Biển, đầm, suối, sương, mưa, cá | Gợn sáng chạy trên mặt nước; giọt bay lên rồi rơi |
+| **Hỏa** | `#FFC27A` / `#E0503A` | Lửa trại, lò rèn, than, sét | Đốm lửa bay lên; không khí gợn nóng; than ửng theo nhịp |
 | **Thổ** | `#F2DC8A` / `#B08A3A` | Đất ruộng, đá, vách núi, bậc miếu | Bụi vàng lắng thấp; đá ửng ấm; mặt đất rung nhẹ theo nhịp 47 |
-| **Phong** | `#EEF9FF` / `#9CCFE6` | Gió, mây, đỉnh cao, tháp | Vệt sáng dài theo gió; cỏ rạp theo vệt |
-| **Ẩn** | `#B8FFF0` / `#3FD6B8` | Cổng Ẩn Giới, vết Linh Chấn, Ẩn Giới, hoa văn Tinh Linh | Trôi chậm, ấm; **sáu hệ hòa làm một** |
-| **Tím** | `#8F6BFF` | Lõi máy Trạm, vật thể lạ | Lục giác đứng yên, cạnh cứng, không bóng; nhấp nháy theo nhịp 47 |
+| **Phong** | `#EEF9FF` / `#9CCFE6` | Gió, mây, đỉnh cao, cánh buồm | Vệt sáng dài theo gió; cỏ rạp theo vệt |
+| **Ẩn** | `#B8FFF0` / `#3FD6B8` | Gần Tâm Ẩn, di vật Thời Khai Phá, hạt Ẩn trong Nội Giới | Trôi chậm, ấm; **sáu hệ hòa làm một** |
+| **Tím** | `#8F6BFF` | Đá lạ, lõi trận ở Đài | Lục giác đứng yên, cạnh cứng, không bóng; nhấp nháy theo nhịp 47 |
 
-- **Màu hệ chỉ dùng cho ánh sáng linh năng** (lớp hòa trộn cộng, L4/L7), không dùng làm màu vật liệu. Nước hồ vẫn là `#5C8FA0` của palette làng; chỉ chỗ có Thủy mới có gợn sáng `#8FD8F0` chạy trên đó.
-- **Ngọc lam là Ẩn**: linh năng thuần của Ẩn Giới, chưa tách hệ. Ở thế giới Người, ngọc lam chỉ thấy ở Cổng, ở vết Linh Chấn (chỗ màn che rách) và trên người Tinh Linh.
-- **Ẩn tách thành sáu hệ khi chạm vào thế giới Người.** Quanh Cổng Ẩn Giới, ánh ngọc lam tràn ra rồi tách dần thành sáu màu: chảy vào hồ thì thành Thủy, chạm ruộng thành Thổ, chạm thép cổng thành Kim. Đây là hình ảnh then chốt nối linh năng với thế giới.
+- **Màu hệ chỉ dùng cho ánh sáng linh năng** (lớp hòa trộn cộng, L4/L7), không dùng làm màu vật liệu. Nước đầm vẫn là `#5C8FA0` của palette làng; chỉ chỗ có Thủy mới có gợn sáng `#8FD8F0` chạy trên đó.
+- **Ngọc lam là Ẩn**, hiếm: ở rìa các khu gần như không thấy, trừ hạt khởi đầu trong Nội Giới và vài di vật cổ. Càng gần Tâm Ẩn càng nhiều.
+- **Giao thoa = hai màu đan vào nhau.** Ở vùng giao thoa, hai màu hệ xen nhau theo dải và xoắn vào nhau ở điểm tụ; đây là dấu nhận ra đất Tinh Linh từ xa.
 - Hỏa phân biệt với đèn thường bằng dáng: đèn là điểm sáng đứng yên; Hỏa có đốm bay lên và nhịp 47.
 
 ### 6.2 Năm thành phần (dùng ở mọi map)
@@ -164,54 +167,53 @@ Mọi map phải trông như **cùng một thế giới, cùng một tay vẽ**.
 | **Điểm tụ** | Chỗ nhiều mạch gặp nhau. **Mọi điểm thiền ở [05](05-map-layouts.md) nằm trên điểm tụ, màu đúng hệ của điểm thiền đó** | Vũng sáng tròn; vật chất quanh đó biểu hiện hệ rõ nhất (đá ửng, nước gợn, lửa bốc...) | L4 glow + L7 hạt |
 | **Hạt linh** | Hạt sáng trôi trong không khí | 1–2 px, dáng theo hệ (§6.1); mật độ theo mức (§6.4) | L7 hạt |
 | **Linh vật** | Vật đã thấm linh năng: bậc **Linh** ở [08](08-life-yields.md) §2 | Viền sáng **màu hệ của nó**: cá lấp lánh Thủy, thảo dược Mộc, Đá Vân Sáng Kim | Trên sprite (L5) |
-| **Vết Linh Chấn** | Dấu tích đêm màn che rách | Đường nứt như kính vỡ trên đường, tường, mặt hồ; Người trám xi măng nhưng vẫn rỉ **ngọc lam** (Ẩn) | L2 decal + L4 glow |
+| **Vết sẹo mạch** | Chỗ Người đào, đốn, đắp đè lên linh mạch | Mạch bị cắt ngang, đầu mạch rỉ sáng yếu và nhòe; quanh đó cây cỏ héo. Ở làng ít, ở mỏ và chỗ qua ranh Giao Ước nhiều | L2 decal + L4 glow |
 
-Thêm **nhịp 47 giây** ([02](02-story.md) hồi B): mọi linh năng trên map **sáng lên cùng lúc** khoảng 1 giây rồi dịu lại, như nhịp tim. Ở làng chỉ thấy rõ quanh Cổng và trên mạch; càng gần Trạm nhịp càng mạnh và gắt.
+Thêm **nhịp 47 giây** ([02](02-story.md) hồi B): mọi linh năng trên map **sáng lên cùng lúc** khoảng 1 giây rồi dịu lại, như nhịp tim. Ở làng chỉ thấy rõ quanh Cổng Rễ và trên mạch; càng gần Đài Thiên Mạch nhịp càng mạnh và gắt.
 
 ### 6.3 Sinh khắc thấy được trên map
 
 Tương sinh, tương khắc ([07](07-power-system.md) §2.1) không chỉ là số trong Nội Giới; người chơi **thấy** nó ngoài thế giới:
 
-- **Sinh:** chỗ mạch Thủy chảy qua rễ cây, cây xanh và dày hơn hẳn; than trong lò rèn ửng thêm khi có gió (Phong sinh Hỏa); quanh vỉa quặng trên vách đá, vân Kim sáng hơn (Thổ sinh Kim).
-- **Khắc:** mạch Hỏa đi tới bờ hồ thì tắt thành hơi nước (Thủy khắc Hỏa); cỏ không mọc trên mạch Kim (Kim khắc Mộc); vệt gió dừng lại ở chân vách đá (Thổ khắc Phong).
+- **Sinh:** chỗ mạch Thủy chảy qua rễ cây, cây xanh và dày hơn hẳn (cả Vườn Cây Mẹ là một chỗ như vậy); than trong lò rèn ửng thêm khi có gió biển (Phong sinh Hỏa); quanh vỉa quặng trên vách đá, vân Kim sáng hơn (Thổ sinh Kim).
+- **Khắc:** mạch Hỏa đi tới mép nước thì tắt thành hơi (Thủy khắc Hỏa); cỏ không mọc trên mạch Kim (Kim khắc Mộc); vệt gió dừng lại ở chân vách đá (Thổ khắc Phong).
 - Bố cục map nên đặt ít nhất một chỗ sinh và một chỗ khắc gần đường đi, để người chơi tự nhận ra quy luật trước khi game giải thích.
 
-### 6.4 Hệ và mức theo map
+### 6.4 Hệ và mức theo map (rìa khu Mộc)
 
-| Mức | Map | Hệ chính | Ban ngày | Ban đêm / trời linh | Người và Tinh Linh làm gì với nó |
+| Mức | Map | Hệ chính | Ban ngày | Ban đêm / Linh Triều | Người và Tinh Linh làm gì với nó |
 | --- | --- | --- | --- | --- | --- |
-| **0 — sống chung** | Làng Hồ Lặng | Thủy (hồ), Thổ (miếu, ruộng), Hỏa (lò rèn), Mộc (vườn) | Gợn Thủy trên mặt hồ; bụi Thổ ở sân miếu; đốm Hỏa ở lò rèn; thảo dược viền Mộc; 1–2 vết Linh Chấn trám xi măng; hạt linh thưa (3–5 hạt mỗi màn hình) | Mạch dưới Đồi Miếu và bờ hồ hiện rõ; cá sáng | Cảm biến trên cột điện, **màn LED chỉ số linh năng** theo từng hệ ở thị trấn, rào quanh vết nứt; Tinh Linh treo lồng đèn lá trên điểm tụ |
-| **0+ — tràn** | Quảng trường Cổng | Ẩn, tách dần thành sáu hệ | Ngọc lam tỏa ra từ Cổng như rễ cây rồi đổi màu theo thứ nó chạm vào; cỏ trong dần về phía Cổng | Cổng chớp theo nhịp 47, mạch sáu màu chạy ra mọi hướng | Khung thép, chốt gác, máy đo của Viện đặt sát mạch; chợ Tinh Linh bày trên rễ sáng |
-| **1 — hiện tượng** | Bìa Rừng | Phong (tháp gió, đồng trống), Hỏa (lửa trại), Mộc | Vệt gió sáng trên đồng cỏ; đốm lửa ở trại thợ săn; mạch lộ ở vết sạt bờ sông | Dải sáng trên trời; sương sáng thành dải | Trạm gác có cột đo; cờ đánh dấu vùng dày; thợ săn đi theo mạch để tìm dị thú |
-| **1 — hiện tượng** | Mỏ Bỏ Hoang | Kim (vỉa sắt), Thổ (bậc đá) | Vân Kim lóe trên vách; nhát đào bật tia sao; bụi Thổ ở bậc khai thác | Vỉa sáng như chòm sao trên vách | Máy xúc gỉ đứng ngay trên mạch Kim |
-| **2 — dày, dịu** | Ẩn Giới | Ẩn + đủ sáu hệ, dịu và cân bằng | Rễ Cây Mẹ là sông ngọc lam; suối Thủy, vườn Mộc, đá Thổ sống chung hài hòa | Đom đóm, cả vườn phát sáng dịu | Nhà, đường, cầu của Tinh Linh **mọc dọc theo mạch**, đặt các hệ tương sinh cạnh nhau |
-| **2 — dày, hoang** | Rừng Sâu | Mộc, Thủy (suối, thác), Phong (đỉnh) | Nấm, rêu sáng Mộc; mạch rối và đứt; thác có gợn Thủy | Rừng tối, chỉ còn mạch và mắt dị thú sáng | — |
-| **2 — dày, hoang** | Hầm Mỏ | Kim, Thổ | Vân sáng trên đá; **vân Kim chạy thẳng như kẻ thước** về hướng bắc, dấu hiệu có thứ đang hút | — | — |
-| **3 — cộng hưởng** | Trạm Thiên Mạch | Mạch của mọi hệ bị kéo về lõi máy | Càng gần lõi, sáu màu càng **bị kéo lệch về tím**; vật nhỏ lơ lửng | Nhịp 47 gắt, cả trạm chớp theo | Ống, cáp của Viện cắm thẳng vào mạch |
+| **0 — loãng** | Làng Hồ Lặng | Thủy (biển, đầm), Thổ (miếu, ruộng), Hỏa (lò rèn), Mộc (vườn) | Gợn Thủy trên mặt đầm, rất nhạt ngoài biển; bụi Thổ ở sân miếu; đốm Hỏa ở lò rèn; thảo dược viền Mộc; hạt linh thưa (3–5 hạt mỗi màn hình) | Mạch dưới Đồi Miếu và bờ đầm hiện rõ; cá sáng | Trạm Tháp Học có la bàn linh lớn đo mạch; Tinh Linh treo lồng đèn lá trên điểm tụ |
+| **0+ — chạm giao thoa** | Quanh Cổng Rễ | Mộc + Thủy (từ Đầm Sen theo Lối Rễ ra) | Hai màu xanh lá và lam tỏa ra từ vòm rễ như rễ cây, nhạt dần vào làng | Cổng chớp theo nhịp 47 | Chòi gác của Người đặt sát mạch; chợ Tinh Linh bày trên rễ sáng |
+| **1 — đất hoang rìa** | Bìa Rừng | Mộc, Phong (đồng trống), Hỏa (lửa trại) | Vệt gió sáng trên đồng cỏ; đốm lửa ở trại thợ săn; mạch lộ ở vết sạt bờ sông | Dải sáng trên trời; sương sáng thành dải | Chòi canh có cờ đánh dấu vùng dày; thợ săn đi theo mạch để tìm dị thú |
+| **1 — đất hoang rìa** | Mỏ Bỏ Hoang | Kim (vỉa sắt), Thổ (bậc đá) | Vân Kim lóe trên vách; nhát đào bật tia sao; nhiều vết sẹo mạch | Vỉa sáng như chòm sao trên vách | Tời gỗ đứng ngay trên mạch Kim |
+| **2 — giao thoa, dịu** | Vườn Cây Mẹ | Mộc + Thủy, cân bằng | Rễ Cây Mẹ dưới mặt đầm là sông sáng hai màu; suối Thủy, vườn Mộc hòa vào nhau | Đom đóm, cả vườn phát sáng dịu | Nhà, đường, cầu của Tinh Linh **mọc dọc theo mạch**, đặt các hệ tương sinh cạnh nhau |
+| **2 — đất hoang sâu** | Rừng Sâu | Mộc, Thủy (suối, thác), Phong (đỉnh) | Nấm, rêu sáng Mộc; mạch rối và đứt; thác có gợn Thủy | Rừng tối, chỉ còn mạch và mắt dị thú sáng | — |
+| **2 — đất hoang sâu** | Hầm Mỏ | Kim, Thổ | Vân sáng trên đá; **vân Kim chạy thẳng như kẻ thước** về hướng bắc, dấu hiệu có thứ đang hút | — | — |
+| **3 — cộng hưởng** | Đài Thiên Mạch | Mạch của mọi hệ bị kéo về lõi trận | Càng gần lõi, các màu càng **bị kéo lệch về tím**; vật nhỏ lơ lửng | Nhịp 47 gắt, cả đài chớp theo | Trận văn của Tháp Học khắc thẳng lên mạch |
 | **X — ngoài chuẩn** | Hiếm | Tím | Lục giác tím, không bóng, nhấp nháy đều 47 giây | — | — |
 
 ### 6.5 Luật để linh năng "là ánh sáng, không phải sơn"
 
 - **Mọi khung hình ở zoom ×2 có ít nhất 1 dấu linh năng** (mạch, điểm tụ, linh vật hoặc hạt), ở mọi map, mọi giờ.
-- Nhưng ban ngày phần pixel phát sáng linh năng **≤ 8% khung hình ở làng, ≤ 15% ở rừng và mỏ, ≤ 25% ở Ẩn Giới và Trạm**. Ban đêm được gấp đôi.
-- Một khung hình thường chỉ có **1–3 hệ**, theo đúng vật chất đang thấy; không rải đủ sáu màu cho đẹp. Chỗ có đủ sáu hệ là chỗ đặc biệt (quanh Cổng, Ẩn Giới).
-- Linh năng **không có outline**, vẽ bằng lớp hòa trộn cộng (additive) và quầng sáng mềm. Vật thể lạ (tím) thì ngược lại: cạnh cứng, không quầng.
-- Linh năng đi theo địa hình thật: chảy theo dốc, gom ở nước và rễ, bị đường nhựa và bê tông chặn (chỉ rỉ sáng qua kẽ). Không rải ngẫu nhiên.
-- Mạch và điểm tụ là **một lớp dữ liệu riêng** của map (§11.3), cùng nguồn với điểm thiền và hệ trong `server/data/`, để hình ảnh khớp với lối chơi (Máy Quét / Linh Cảm, sản lượng theo mức).
+- Nhưng ban ngày phần pixel phát sáng linh năng **≤ 8% khung hình ở thị trấn ven biển, ≤ 15% ở đất hoang, ≤ 25% ở giao thoa và lõi**. Ban đêm được gấp đôi.
+- Một khung hình thường chỉ có **1–3 hệ**, theo đúng vật chất đang thấy; không rải đủ sáu màu cho đẹp.
+- Linh năng **không có outline**, vẽ bằng lớp hòa trộn cộng (additive) và quầng sáng mềm. Đá lạ (tím) thì ngược lại: cạnh cứng, không quầng.
+- Linh năng đi theo địa hình thật: chảy theo dốc, gom ở nước và rễ, bị nền đá lát và tường chặn (chỉ rỉ sáng qua kẽ). Không rải ngẫu nhiên.
+- Mạch và điểm tụ là **một lớp dữ liệu riêng** của map (§11.3), cùng nguồn với điểm thiền và hệ trong `server/data/`, để hình ảnh khớp với lối chơi (La bàn linh / Linh Cảm, sản lượng theo mức).
 
-Linh năng: mềm, trôi, hữu cơ. Vật thể lạ: cứng, hình học, đứng yên.
+Linh năng: mềm, trôi, hữu cơ. Đá lạ: cứng, hình học, đứng yên.
 
 ## 7. Đồ vật kể chuyện
 
 Mỗi map dùng ít nhất 3 mục trong nhóm phù hợp:
 
-- **Làng:** giếng, đống rơm, bù nhìn, xe đạp dựng cổng, thùng tưới, gà vịt, trạm xe buýt, cửa hàng tiện lợi, máy bán hàng tự động.
-- **Thị trấn:** xe máy, xe buýt, quán cà phê vỉa hè, cột điện bó dây, cửa cuốn, bồn nước trên mái, cục nóng điều hòa, màn LED.
-- **Ven đô, mỏ:** đê, cống, trạm bơm, container, barrier bê tông, xe tải bỏ dở có dây leo, máy xúc.
-- **Tinh Linh:** nhà trong hốc cây, cầu thang rễ, lồng đèn lá, bùa vẽ tay, tổ chim lớn làm ghế, chuông gió bằng vỏ ốc, vườn nấm, vòng đá.
-- **Lớp hậu Linh Chấn:** vết nứt Linh Chấn trám xi măng còn rỉ sáng, cột đo linh năng của Viện, rào quanh điểm tụ, cảm biến trên cột điện, biển "CẢNH BÁO LINH NĂNG", nhà kính dược liệu, drone giao hàng, chốt kiểm soát, biển "Không săn".
+- **Làng chài:** thuyền nằm trên bãi, lưới phơi, giỏ cá, hải đăng đá, giếng, đống rơm, bù nhìn, xe bò, chuồng gà vịt, giàn phơi cá.
+- **Chợ, chi hội:** quầy gỗ mái vải, biển gỗ khắc, xe kéo tay, đèn lồng giấy, lò rèn, bảng hợp đồng Hội Khai Phá, trạm Tháp Học với la bàn linh lớn.
+- **Đất hoang, mỏ:** cột mốc Giao Ước phủ rêu (có cái bị nhổ), lán thợ săn, xe bò bỏ dở có dây leo, tời gỗ, ray goòng gỗ, cờ đánh dấu, gốc cây bị đốn ngay sau cột mốc.
+- **Tinh Linh:** nhà trong hốc cây, cầu thang rễ, lồng đèn lá, bùa vẽ tay, tổ chim lớn làm ghế, chuông gió bằng vỏ ốc, vườn nấm, vòng đá, đồ Người lượm về treo làm trang trí.
 
-Không dùng: kiến trúc, trang phục, chữ viết hay biểu tượng nhận ra ngay là của một quốc gia thật; mái cong cung điện; cổ phục; núi tiên.
+Không dùng: máy móc, điện, nhựa, bê tông, kính lớn; kiến trúc, trang phục, chữ viết hay biểu tượng nhận ra ngay là của một quốc gia thật; mái cong cung điện; núi tiên.
 
 Đồ có trạng thái (cửa đóng/mở, đèn tắt/bật, luống trống/đang lớn/chín) phải vẽ đủ khung trạng thái ngay từ đầu.
 
@@ -223,7 +225,7 @@ Không dùng: kiến trúc, trang phục, chữ viết hay biểu tượng nhậ
 - 4 hướng. Bộ chuyển động tối thiểu: đứng, đi, ngồi, câu, làm vườn, đào, thiền, tương tác, vẫy, đánh, né.
 - Màu da/tóc/áo/lông đổi bằng palette swap, không vẽ lại.
 - Chân dung thoại 96×96 với 6 biểu cảm.
-- Trang phục hiện đại: áo phông, áo khoác, quần jean, giày thể thao; thợ săn mặc áo khoác kỹ thuật. Sức mạnh thể hiện qua tư thế và aura, không qua cổ phục.
+- Trang phục fantasy cổ, gọn: áo vải, áo len thô, áo da, áo choàng, ủng, khăn quấn; Khai Phá Giả mặc giáp da nhẹ, túi đeo chéo, la bàn ở thắt lưng. Sức mạnh thể hiện qua tư thế và aura, không qua giáp to.
 - Nhân vật đang tự hoạt động: viền mờ + icon nhỏ trên đầu.
 - Outline 1 px tối màu theo chất liệu, không đen thuần.
 
@@ -237,72 +239,73 @@ Thứ tự lớp: bóng → thân → **đuôi sau** → quần áo → đầu �
 | Mèo | Tam giác nhỏ | Dài, mảnh | Chấm trên trán | Mèo |
 | Hươu | Tai dài + gạc nhỏ | Ngắn | Đốm trên vai | Hươu con |
 
+- Hoa văn sáng **hai màu** theo hai hệ nơi sinh (Tinh Linh Đầm Sen: xanh lá + lam).
 - Tai và đuôi có animation riêng: vẫy khi vui, cụp khi buồn, dựng khi cảnh giác. Đây là chỗ thể hiện cảm xúc rẻ nhất.
 - Quần áo của Người mặc được cho Tinh Linh; mũ có lỗ tai là biến thể riêng.
-- **Hóa Thú:** hiệu ứng tan thành hạt ngọc lam rồi tụ lại thành dạng thú (≤ 6 khung). Dạng thú có đứng, chạy, lẩn.
+- **Hóa Thú:** hiệu ứng tan thành hạt sáng hai màu rồi tụ lại thành dạng thú (≤ 6 khung). Dạng thú có đứng, chạy, lẩn.
 
 ### 8.3 Người và Tinh Linh phải phân biệt được ở ×2
 
 - Tinh Linh có silhouette tai/đuôi rõ ở mọi hướng.
-- Hoa văn ngọc lam của Tinh Linh luôn thấy được ban đêm.
+- Hoa văn của Tinh Linh luôn thấy được ban đêm.
 
 ## 9. Dị thú
 
 - Bắt đầu từ loài quen thuộc, phóng to một đặc điểm (Lợn Gai = gai lưng; Nhện Tơ Điện = chân dài + tơ sáng; Khỉ Vách Đá = tay dài; Rắn Sương = thân mờ vào sương).
 - Tròn, mắt rõ: là động vật, không phải quỷ.
-- **Khác Tinh Linh:** dị thú đi bốn chân, mắt không có tròng, hoa văn linh năng rối và nhòe; Tinh Linh có hình gần người, mắt có tròng, hoa văn gọn và đối xứng.
-- **Khung báo đòn luôn có ánh ngọc lam.**
+- **Khác Tinh Linh:** dị thú đi bốn chân, mắt không có tròng, hoa văn linh năng rối và nhòe; Tinh Linh có hình gần người, mắt có tròng, hoa văn gọn, đối xứng, hai màu.
+- **Khung báo đòn luôn có ánh sáng màu hệ của loài** ([06](06-monsters.md) §2.1).
 - Không máu; hạ gục thì ngã và tan sương.
-- Boss Thủ Lĩnh Mạch Gãy: gấu núi khổng lồ, lưng mọc tinh thể tím lục giác, là con dị thú duy nhất có cả ngọc lam lẫn tím.
+- Boss Thủ Lĩnh Mạch Gãy: gấu núi khổng lồ, lưng mọc tinh thể tím lục giác.
 
 ## 10. Art test — làm trước khi vẽ thêm
 
 Một góc **Làng Hồ Lặng** khoảng 30×17 ô (1 khối nền 1024×1024 px là đủ), chạy trong Godot, **dựng đủ chồng lớp L0–L9** (§11):
 
-1. Nhà người chơi (cửa đóng/mở), vườn 4 luống ở 3 trạng thái, bờ hồ có 1 bến câu, **Quảng trường Cổng với Cổng Ẩn Giới** (vòng sáng xoay, khung thép, chốt gác, lồng đèn lá, góc chợ Tinh Linh), một đoạn tường rào có chốt, cột điện + dây, một xe máy.
+1. Nhà người chơi (cửa đóng/mở), vườn 4 luống ở 3 trạng thái, bờ đầm có 1 bến câu, một dải bãi biển với thuyền và lưới phơi, **Cổng Rễ** (vòm rễ, màn sáng xanh, chòi gác, lồng đèn lá, góc chợ Tinh Linh), một đoạn tường cọc có chốt, cột đèn lồng, một xe bò.
 2. **Một avatar Người** và **một avatar Tinh Linh Cáo**, dùng chung 2 bộ quần áo; đi/đứng/ngồi/câu 4 hướng; Tinh Linh có thêm dạng thú.
-3. Chu kỳ sáng → chiều → tối với 3–4 đèn điểm và normal map cho nhà.
-4. Linh năng đủ năm thành phần (§6.2), ít nhất 3 hệ (Thủy ở hồ, Thổ ở sân, Hỏa hoặc Mộc) và Ẩn ở Cổng tách dần thành các hệ: mạch tỏa ra từ Cổng, 1 điểm tụ có điểm thiền, hạt linh, 1 linh vật (thảo dược hoặc cá), 1 vết Linh Chấn trám xi măng; nhịp 47 giây; ban ngày và ban đêm; hoa văn Tinh Linh sáng lên.
-5. Một Lợn Gai đứng ở mép đê để thấy tương phản làng ↔ ngoài.
+3. Chu kỳ sáng → chiều → tối với 3–4 đèn điểm (đèn lồng, đuốc, hải đăng) và normal map cho nhà.
+4. Linh năng đủ năm thành phần (§6.2), ít nhất 3 hệ (Thủy ở đầm, Thổ ở sân, Hỏa hoặc Mộc) và dải Mộc + Thủy hai màu tỏa ra từ Cổng Rễ: 1 điểm tụ có điểm thiền, hạt linh, 1 linh vật (thảo dược hoặc cá), 1 vết sẹo mạch; nhịp 47 giây; ban ngày và ban đêm; hoa văn Tinh Linh sáng lên.
+5. Một Lợn Gai đứng ngoài tường cọc để thấy tương phản làng ↔ đất hoang.
 
 **Đạt khi:**
 - 5 người chưa biết dự án nhìn ảnh chụp nói được "Người" và "Tinh Linh" là ai trong ≤ 3 giây.
 - Phân biệt được Tinh Linh với dị thú ngay lần đầu nhìn.
 - Avatar đọc rõ ở ×2 trên điện thoại 6".
-- **Linh năng:** người xem chỉ ảnh chụp ban ngày nói được "chỗ này có năng lượng lạ" và đoán đúng hệ của ít nhất 2 chỗ (nước, lửa, đất...) mà không cần giải thích, nhưng không thấy map bị phủ màu (§6.4). Tắt lớp L4 + L7 thì làng trông như làng bình thường.
+- **Linh năng:** người xem chỉ ảnh chụp ban ngày nói được "chỗ này có năng lượng lạ" và đoán đúng hệ của ít nhất 2 chỗ (nước, lửa, đất...) mà không cần giải thích, nhưng không thấy map bị phủ màu (§6.4). Tắt lớp L4 + L7 thì làng trông như làng chài bình thường.
 - **Theo lớp:** bật/tắt từng lớp không làm lộ đường ráp ô ở nền; dời một cái cây hay ngôi nhà chỉ cần sửa `layout.json`, không vẽ lại nền.
-- **Ghép thử:** đặt cạnh nhau trên một ảnh 1 cây, 1 đồ vật, 1 nhân vật của làng và bản biến thể Ẩn Giới / Rừng Sâu (vẽ phác). Người xem phải thấy chúng thuộc cùng một game, khác vùng chứ không khác tay vẽ.
+- **Ghép thử:** đặt cạnh nhau trên một ảnh 1 cây, 1 đồ vật, 1 nhân vật của làng và bản biến thể Vườn Cây Mẹ / Rừng Sâu (vẽ phác). Người xem phải thấy chúng thuộc cùng một game, khác nơi chứ không khác tay vẽ.
 - Ảnh chụp buổi tối đặt cạnh ảnh Eastward: thấy "cùng họ ánh sáng" nhưng là một thế giới riêng.
 - Ghi lại thời gian vẽ 1 nhà + normal map, 1 bộ quần áo, 1 bộ tai/đuôi/dạng thú để ước tính chi phí cả game.
 
 ## 11. Dựng map theo lớp và quy ước file
 
-> **Map không ghép toàn bộ từ tileset.** Mỗi map là một chồng **lớp PNG** đặt tự do lên lưới logic vuông (§2). Tile chỉ dùng ở chỗ thật sự lặp: mặt đường dài, sàn nhà, luống vườn. Còn lại (mặt đất, bờ hồ, vách đá, nhà, cây, đồ vật, linh năng) là **PNG vẽ tay**, đặt theo pixel.
+> **Map không ghép toàn bộ từ tileset.** Mỗi map là một chồng **lớp PNG** đặt tự do lên lưới logic vuông (§2). Tile chỉ dùng ở chỗ thật sự lặp: mặt đường lát dài, sàn nhà, luống vườn. Còn lại (mặt đất, bờ đầm, bãi biển, vách đá, nhà, cây, đồ vật, linh năng) là **PNG vẽ tay**, đặt theo pixel.
 
 ### 11.1 Chồng lớp (từ dưới lên)
 
 | Lớp | Tên | Dạng | Ghi chú |
 | --- | --- | --- | --- |
-| L0 | **Nền vẽ** | PNG lớn theo **khối 1024×1024 px** (32×32 ô) | Đất, cỏ, cát, bờ hồ, sườn đồi vẽ liền một mảng như tranh; không thấy đường ráp ô |
-| L1 | Nước | PNG mặt nước + shader (gợn, phản chiếu, lấp lánh) | Hình nước khớp dữ liệu nước trong `life_world.json` |
-| L2 | **Decal mặt đất** | PNG rời nhỏ, đặt tự do | Vết bánh xe, vũng nước, rêu, lá rụng, ổ gà, **mạch linh và vết Linh Chấn** (§6.2). Tile (nếu dùng) nằm cùng lớp này |
+| L0 | **Nền vẽ** | PNG lớn theo **khối 1024×1024 px** (32×32 ô) | Đất, cỏ, cát, bờ đầm, sườn đồi vẽ liền một mảng như tranh; không thấy đường ráp ô |
+| L1 | Nước | PNG mặt nước + shader (gợn, sóng, phản chiếu, lấp lánh) | Hình nước khớp dữ liệu nước trong `life_world.json` |
+| L2 | **Decal mặt đất** | PNG rời nhỏ, đặt tự do | Vết bánh xe bò, vũng nước, rêu, lá rụng, vỏ sò, **mạch linh và vết sẹo mạch** (§6.2). Tile (nếu dùng) nằm cùng lớp này |
 | L3 | Bóng | PNG bóng riêng, màu `#2E2A4A` mờ | Bóng nhà, cây, đồ; ngả phải-dưới (§5) |
-| L4 | **Linh năng mặt đất** | PNG quầng sáng, hòa trộn cộng | Ánh sáng của mạch, điểm tụ, vết nứt; sáng theo nhịp 47 và theo giờ |
-| L5 | **Đối tượng (Y-sort)** | Mỗi vật một PNG + điểm neo ở chân | Nhà, cây, cột điện, xe, NPC, người chơi, dị thú. Vật lớn tách **thân** (L5) và **phần trên cao** (L6) |
+| L4 | **Linh năng mặt đất** | PNG quầng sáng, hòa trộn cộng | Ánh sáng của mạch, điểm tụ, vết sẹo; sáng theo nhịp 47 và theo giờ |
+| L5 | **Đối tượng (Y-sort)** | Mỗi vật một PNG + điểm neo ở chân | Nhà, cây, cột đèn, thuyền, NPC, người chơi, dị thú. Vật lớn tách **thân** (L5) và **phần trên cao** (L6) |
 | L6 | Mái, tán cây | PNG phần trên cao | Mờ đi khi nhân vật đi sau (§2) |
-| L7 | **Hạt và hiệu ứng** | Particle | Hạt linh, đom đóm, lá bay, khói bếp, bụi |
+| L7 | **Hạt và hiệu ứng** | Particle | Hạt linh, đom đóm, lá bay, khói bếp, bụi, bọt sóng |
 | L8 | Ánh sáng | Đèn điểm, normal map, màu phủ theo giờ | §5 |
-| L9 | Không khí | PNG hoặc shader phủ toàn màn | Sương, bóng mây trôi, tia nắng xiên (Ẩn Giới), dải "trời linh" |
+| L9 | Không khí | PNG hoặc shader phủ toàn màn | Sương, bóng mây trôi, tia nắng xiên (Vườn Cây Mẹ), sóng sáng Đêm Linh Triều |
 
 Ngoài phần nhìn, mỗi map có **lớp dữ liệu** không vẽ ra: va chạm, đường đi, điểm tương tác, vùng an toàn, **mạch và điểm tụ linh năng** (§11.3).
 
 ### 11.2 Luật cho PNG
 
 - **Một pixel PNG = một pixel game** ở zoom ×1. Không scale, không xoay, đặt ở tọa độ nguyên (snap 1 px; lưới phụ 16 px chỉ để gợi ý).
-- Mọi PNG vẫn theo luật chung §3.1: cùng góc camera, cùng ánh sáng, cùng palette vùng (§4). Vẽ theo lớp không có nghĩa là mỗi map một kiểu vẽ.
-- **Nền vẽ (L0) là riêng cho từng khối**, nhưng vẽ bằng bộ cọ/mẫu chung của vùng (mảng cỏ, đất, đá) để giữ cùng tay vẽ và đỡ công.
-- **Đồ vật (L5) vẫn theo họ asset** (§3.2): một PNG gốc, biến thể theo vùng; đặt lại ở nhiều chỗ, không vẽ lại.
-- Vật có trạng thái là sprite sheet PNG (§7). Vật động (nước, cờ, lồng đèn, lá) là sprite sheet hoặc shader, không vẽ chết vào nền.
+- Mọi PNG vẫn theo luật chung §3.1: cùng góc camera, cùng ánh sáng, cùng palette khu (§4). Vẽ theo lớp không có nghĩa là mỗi map một kiểu vẽ.
+- **Nền vẽ (L0) là riêng cho từng khối**, nhưng vẽ bằng bộ cọ/mẫu chung của khu (mảng cỏ, đất, cát, đá) để giữ cùng tay vẽ và đỡ công.
+- **Đồ vật (L5) vẫn theo họ asset** (§3.2): một PNG gốc, biến thể theo khu; đặt lại ở nhiều chỗ, không vẽ lại.
+- Vật có trạng thái là sprite sheet PNG (§7). Vật động (nước, sóng, cờ, lồng đèn, lá, lưới phơi) là sprite sheet hoặc shader, không vẽ chết vào nền.
 - Chỗ nối giữa hai map (§3.3): dải 3–4 ô sát mép vẽ trên **một file chung** rồi cắt cho cả hai map.
 - Bộ nhớ: chỉ nạp các khối L0 quanh camera (3×3 khối). Map 160×120 ô = 5×4 khối.
 
@@ -311,13 +314,13 @@ Ngoài phần nhìn, mỗi map có **lớp dữ liệu** không vẽ ra: va ch�
 - Mỗi khối map vẽ trong **một file Aseprite nhiều layer** đặt tên đúng L0–L9; script xuất mỗi layer ra một PNG.
 - Đối tượng đặt trên map lưu ở `client/data/maps/<map_id>/layout.json`: `id`, `png`, `x`, `y` (px), `layer`, `anchor`, `state`, `collision`. Điểm tương tác dùng ID của `server/data/life_world.json`.
 - Linh năng lưu ở `client/data/maps/<map_id>/linh_nang.json`: danh sách **mạch** (đường gấp khúc + hệ + độ sáng) và **điểm tụ** (tâm, bán kính, hệ). Điểm tụ phải trùng điểm thiền của server; script kiểm tra báo lỗi nếu lệch.
-- Nguồn khối map: `client/art/<vùng>/map/<map_id>/khoi_<x>_<y>.aseprite` → `client/assets/<vùng>/map/<map_id>/khoi_<x>_<y>_<lớp>.png`. Asset rời: `client/art/<vùng>/<loại>/<tên>.aseprite` → `client/assets/<vùng>/<loại>/<tên>.png`.
+- Nguồn khối map: `client/art/<khu>/map/<map_id>/khoi_<x>_<y>.aseprite` → `client/assets/<khu>/map/<map_id>/khoi_<x>_<y>_<lớp>.png`. Asset rời: `client/art/<khu>/<loại>/<tên>.aseprite` → `client/assets/<khu>/<loại>/<tên>.png`.
 - Godot 4: lọc Nearest, không mipmap, snap pixel; thế giới vẽ trong `SubViewport` theo hệ số zoom nguyên; UI ngoài viewport ở độ phân giải gốc. Mỗi lớp là một `Node2D` riêng theo `z_index`; L5 bật Y-sort; L4 và L7 dùng `CanvasItemMaterial` blend Add.
 - Đèn: `PointLight2D`, `DirectionalLight2D`, `LightOccluder2D`, `CanvasModulate`; normal map qua `CanvasTexture`.
-- Tiền tố vùng: `hl` (Làng Hồ Lặng), `ag` (Ẩn Giới), `br` (Bìa Rừng), `rs` (Rừng Sâu), `mb` (Mỏ Bỏ Hoang), `hm` (Hầm Mỏ), `tm` (Trạm Thiên Mạch), `char`, `spirit`, `beast`, `ln` (linh năng dùng chung).
-- Tên: `vung_loai_ten_bienthe`, chữ thường, không dấu. Ví dụ `hl_prop_ghe_go`, `rs_flora_nam_phat_quang_a`, `spirit_ear_cao_a`, `ln_mach_tho_a`, `ln_vet_nut_tram_b`.
+- Tiền tố là ID map bỏ `m_` (vd. `k1_01` Làng Hồ Lặng, `k1_05` Rừng Sâu, `k1_07` Vườn Cây Mẹ); asset dùng chung cả một khu dùng số khu (`k1`); dùng chung toàn game: `char`, `spirit`, `beast`, `ln` (linh năng). Đổi tên nơi không phải đổi tên file.
+- Tên: `tiento_loai_ten_bienthe`, chữ thường, không dấu. Ví dụ `k1_01_prop_thuyen_a`, `k1_05_flora_nam_phat_quang_a`, `spirit_ear_cao_a`, `ln_mach_tho_a`, `ln_seo_mach_b`.
 - Mỗi asset kèm điểm neo (chân), vùng va chạm và điểm đứng nếu tương tác được.
-- Font: Be Vietnam Pro cho UI (đã có, hỗ trợ dấu tiếng Việt); font pixel cho biển hiệu.
+- Font: Be Vietnam Pro cho UI (đã có, hỗ trợ dấu tiếng Việt); font pixel cho biển gỗ.
 
 ## 12. Nguồn asset và AI
 
@@ -327,42 +330,43 @@ Ngoài phần nhìn, mỗi map có **lớp dữ liệu** không vẽ ra: va ch�
 
 ## 13. Bộ mô tả phong cách (concept AI và brief họa sĩ)
 
-Dùng chung cho mọi ảnh concept tạo bằng AI (§12: chỉ làm moodboard nội bộ) và để giao việc cho họa sĩ. **Không ghi tên game hay tên studio vào lệnh tạo ảnh**; chỉ tả đặc điểm muốn mượn từ các tham chiếu ở §1. Lệnh viết bằng tiếng Anh vì model hiểu tốt hơn. Ảnh lưu ở `docs/game-design/concept/` và trang "Concept AI" trong Figma.
+Dùng chung cho mọi ảnh concept tạo bằng AI (§12: chỉ làm moodboard nội bộ) và để giao việc cho họa sĩ. **Không ghi tên game hay tên studio vào lệnh tạo ảnh**; chỉ tả đặc điểm muốn mượn từ các tham chiếu ở §1. Lệnh viết bằng tiếng Anh vì model hiểu tốt hơn. Ảnh lưu ở `docs/game-design/concept/`.
 
-**Đã chốt (14/10/2026):** chủ dự án chọn hướng nhìn của ảnh [`concept/lang-ho-lang-toan-canh-v2.png`](concept/lang-ho-lang-toan-canh-v2.png) (tạo bằng bộ mô tả này) làm mốc cho mọi map: chi tiết dày, dây điện chằng chịt, cửa sổ sáng đèn, màu dịu và đều. Bản v1 chỉ để tham khảo.
+Chưa có ảnh mốc cho bối cảnh fantasy; ảnh đầu tiên cần tạo là toàn cảnh Làng Hồ Lặng theo khối dưới đây.
 
 ### 13.1 Khối chung (đặt đầu mọi lệnh)
 
 ```text
-Detailed hand-painted layered pixel art game map on a 32px grid, ground painted as one continuous image, not repeating tiles. Straight top-down 3/4 camera:
-rooftops seen from above with a short front facade, everything on a square grid,
-no isometric diamond, no side view. Light from the top-left, soft cool purple shadows
-falling to the bottom-right, 1px dark outlines tinted by material (never pure black),
-3-4 tone shading per object, dense lived-in detail, harmonious limited palette.
-Spirit energy is the elements of the land glowing from within, in the color of
-each element: blue ripples on water, orange embers rising from fires, green motes
-from plants, white-silver star glints on ore, golden dust over earth and stone,
-pale streaks in the wind. Turquoise only for pure otherworld energy (the gate, old
-glass-like cracks patched with cement still leaking light); purple hexagons only for
-the unknown material. Additive glow, no outlines, subtle in daylight.
+Detailed hand-painted layered pixel art game map on a 32px grid, ground painted as one
+continuous image, not repeating tiles. Straight top-down 3/4 camera: rooftops seen from
+above with a short front facade, everything on a square grid, no isometric diamond, no
+side view. Light from the top-left, soft cool purple shadows falling to the bottom-right,
+1px dark outlines tinted by material (never pure black), 3-4 tone shading per object,
+dense lived-in detail, harmonious limited palette. Ancient fantasy world: wood, stone,
+thatch, tile, wrought iron, cloth; no machines, no electricity, no plastic, no concrete.
+Spirit energy is the elements of the land glowing from within, in the color of each
+element: blue ripples on water, orange embers rising from fires, green motes from plants,
+white-silver star glints on ore, golden dust over earth and stone, pale streaks in the
+wind. Where two elements meet, their two colors braid together. Purple hexagons only for
+the unknown stone. Additive glow, no outlines, subtle in daylight.
 No text, no UI, no logos, no real-country architecture, no palace roofs.
 ```
 
-### 13.2 Khối theo vùng
+### 13.2 Khối theo nơi (rìa khu Mộc)
 
-| Vùng | Mượn tinh thần từ (§1) | Khối mô tả |
+| Nơi | Mượn tinh thần từ (§1) | Khối mô tả |
 | --- | --- | --- |
-| Làng Hồ Lặng | đời sống ấm cúng; đồ vật kể chuyện | `golden afternoon, warm cozy rural-suburban life, orange and red tiled roofs, fenced yards with vegetable patches, laundry lines, scooters, bundled power lines on utility poles, vending machines, soft warm point lights, turquoise light spreading like roots from a glowing gate in the plaza and changing color as it touches water, soil and steel, blue ripples on the lake, embers over a forge, cement-patched turquoise cracks in the road, a spirit-energy LED index board` |
-| Thị trấn trong làng | phố chật, đồ đời sống, đèn điểm | `dense small-town streets, 2-3 storey flat-roof buildings with water tanks and AC units, striped awnings, shop signs as colored blocks, tangled overhead wires, warm window glow, sensor boxes on poles, a faint vein leaking light through cracks in the pavement` |
-| Bìa Rừng | thiên nhiên nuốt công nghệ | `wild windy buffer zone beyond a concrete wall, tall grass, abandoned rice fields, rusted trucks and containers swallowed by vines, broken highway, a hunters' camp, pale glowing wind streaks over the grass, orange embers over a hunters' campfire, exposed spirit veins in eroded riverbanks, cooler palette than the village` |
-| Rừng Sâu | thiên nhiên nuốt công nghệ, tinh linh rừng | `ancient layered forest, giant ferns, mossy boulders, dense fog in hollows, faintly glowing mushrooms, cliffs and waterfalls, tangled broken green root-veins, glowing moss and mushrooms, blue glow along streams, dark greens with cold highlights` |
-| Mỏ, Hầm Mỏ | — | `terraced red-rock open pit, rusted excavators and conveyor belts, miners' shack with warm lamps; underground: dark tunnels, yellow mine lamps, silver star glints on ore veins, golden dust on the terraces; underground: silver ore-light veins running unnaturally straight like ruled lines` |
-| Ẩn Giới | thiên nhiên trùm công nghệ; pixel + ánh sáng | `dreamlike spirit garden around a colossal mother tree, translucent leaves, slanted god rays through the canopy, fireflies, homes inside tree hollows and on branches, rope bridges, no straight lines or right angles, giant glowing roots of the mother tree as rivers of light across the ground, motes rising from streams, soft jade sky` |
-| Trạm Thiên Mạch | pixel + ánh sáng | `sealed underground research station, cold concrete corridors, flickering emergency lights, empty cages, a humming machine core, veins of every element color converging into the core and bending toward purple, small objects floating, hexagonal purple crystals casting no shadow` |
+| Làng Hồ Lặng | đời sống ấm cúng; đồ vật kể chuyện | `golden afternoon in a cozy seaside fishing village, beach and sea along the south edge, fishing boats pulled up on the sand, drying nets and fish racks, a small stone lighthouse, a brackish lagoon behind dunes with wooden fishing piers, orange tiled and thatched roofs, fenced yards with herb patches, paper lanterns, a wooden stake wall with a watchtower on the north side facing a dark ancient forest, blue ripples on the lagoon, embers over a forge, a giant arch of living roots on the west edge glowing green and blue` |
+| Chợ làng | chợ đông, đồ đời sống, đèn điểm | `busy village market square, cloth-roofed wooden stalls in red and indigo, carved wooden signs, a blacksmith forge, a stone guild hall with a contract board, a scholars' outpost with a large brass spirit compass, lantern glow, spirit stalls of mushrooms and leaf charms laid on glowing roots` |
+| Bìa Rừng | thiên nhiên lấn đất người | `wild windy borderland just beyond a wooden stake wall, tall grass, abandoned fields, an old ox cart swallowed by vines, mossy boundary stones, a hunters' camp with a campfire, pale glowing wind streaks over the grass, exposed green spirit veins in eroded riverbanks, cooler palette than the village` |
+| Rừng Sâu | thiên nhiên hoang, rừng cổ | `ancient layered forest, giant ferns, mossy boulders, dense fog in hollows, faintly glowing mushrooms, cliffs and waterfalls, tangled broken green root-veins, blue glow along streams, dark greens with cold highlights` |
+| Mỏ, Hầm Mỏ | — | `terraced red-rock open pit, wooden winches and mine cart rails, miners' shack with warm lamps; underground: dark tunnels, warm spirit-stone lamps, silver star glints on ore veins running unnaturally straight like ruled lines` |
+| Vườn Cây Mẹ | thiên nhiên sống; pixel + ánh sáng | `dreamlike spirit village in a flooded forest around a colossal mother tree standing in a mirror-still lagoon, lotus pads, translucent leaves, slanted god rays onto the water, fireflies, homes inside tree hollows and on branches, rope bridges, no straight lines or right angles, giant roots under the water glowing in braided green and blue, soft jade sky` |
+| Đài Thiên Mạch | pixel + ánh sáng | `sealed underground stone observatory of a scholars' order, cold carved corridors etched with straight glyph lines, flickering spirit-stone lamps, empty cages, a ritual circle around a humming core of purple hexagonal crystals casting no shadow, spirit veins of every color bending toward purple, small objects floating` |
 
 ### 13.3 Cách viết một lệnh
 
 1. Khối chung (13.1).
-2. Khối vùng (13.2).
+2. Khối nơi (13.2).
 3. Bố cục lấy từ [05](05-map-layouts.md), tả theo hướng bắc–nam–đông–tây, kèm những gì phải khớp qua mép map ([03](03-world-and-maps.md) §3: sông, tường, đường).
 4. Giờ và thời tiết theo §5 nếu cần.

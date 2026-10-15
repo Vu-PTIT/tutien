@@ -2,7 +2,7 @@ interface PlayerForm { kind: string; speciesId: string; selected: boolean; }
 interface PlayerFormDefinition { kind: string; speciesId: string; name: string; starterSkillId: string; }
 const PLAYER_FORMS: PlayerFormDefinition[] = [
   {kind:"human",speciesId:"human",name:"Người",starterSkillId:"sk_linh_tram"},
-  {kind:"spirit_beast",speciesId:"cat",name:"Mèo linh thú",starterSkillId:"sk_linh_trao"}
+  {kind:"spirit",speciesId:"cat",name:"Tinh Linh Mèo",starterSkillId:"sk_linh_trao"}
 ];
 function defaultPlayerForm(): PlayerForm { return {kind:"human",speciesId:"human",selected:false}; }
 function playerFormDefinition(form: PlayerForm): PlayerFormDefinition | undefined {
@@ -23,15 +23,17 @@ const characterSelectFormRpc:nkruntime.RpcFunction=function(ctx,_logger,nk,paylo
     return fail(nkruntime.Codes.INVALID_ARGUMENT,"Expected operationId, kind and speciesId only");
   const selected={kind:input.kind,speciesId:input.speciesId,selected:true} as PlayerForm;
   const definition=playerFormDefinition(selected);
-  if(!definition) return fail(nkruntime.Codes.INVALID_ARGUMENT,"Choose human/human or spirit_beast/cat");
-  return JSON.stringify(commitAssetMutation(nk,userId,input.operationId,"select_form",
+  if(!definition) return fail(nkruntime.Codes.INVALID_ARGUMENT,"Choose human/human or spirit/cat");
+  const result = commitAssetMutation(nk,userId,input.operationId,"select_form",
     {kind:selected.kind,speciesId:selected.speciesId},function(next) {
       lifeEnsureIdle(next,Date.now());
       if(next.form.selected) return fail(nkruntime.Codes.FAILED_PRECONDITION,"Character form has already been selected");
       next.form=selected;
       // Spirit beasts know Hấp Linh from birth; humans must be taught by one.
-      if(selected.kind==="spirit_beast") innerLearn(next,"native");
+      if(selected.kind==="spirit") innerLearn(next,"native");
       if(next.learnedSkills.indexOf(definition.starterSkillId)<0) next.learnedSkills.push(definition.starterSkillId);
       next.equippedSkills.active_1=definition.starterSkillId;
-    }));
+    });
+  if(selected.kind==="spirit") worldRelocateSpiritSpawn(nk,userId);
+  return JSON.stringify(result);
 };

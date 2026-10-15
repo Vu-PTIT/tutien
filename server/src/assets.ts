@@ -2,14 +2,16 @@ interface InventorySlot { itemId: string; quantity: number; instanceId?: string;
 interface CharacterState {
   [key: string]: any;
   form: PlayerForm;
-  schemaVersion: number; characterId: string; realm: string; realmStage: number;
-  cultivationXp: number; hp: number; equipped: {[slot: string]: string};
+  schemaVersion: number; characterId: string; hp: number; equipped: {[slot: string]: string};
   equippedSkills: {[slot: string]: string}; learnedSkills: string[];
   spiritStones: number; revision: number; inventory: InventorySlot[];
 }
 // innerJson is the Nội Giới exactly as loaded ("" when it has no row yet).
 interface LoadedCharacter { state: CharacterState; version: string; innerVersion: string; innerJson: string; }
 const ASSET_LIMIT = 1000000000;
+// Schema 5 dropped the cultivation-realm fields (realm, realmStage, cultivationXp):
+// power comes only from the Nội Giới.
+const CHARACTER_SCHEMA = 5;
 const BAG_SIZE = 24;
 
 function assetInteger(value: unknown, min: number, max: number): boolean {
@@ -19,10 +21,8 @@ function invalidCharacter(): never {
   return fail(nkruntime.Codes.FAILED_PRECONDITION, "Character data requires review; no assets were changed");
 }
 function validateCharacter(state: CharacterState): void {
-  if (state.schemaVersion !== 4 || !validPlayerForm(state.form) || typeof state.characterId !== "string" || !state.characterId ||
-      !((state.realm === "mortal" && state.realmStage === 0) ||
-        (state.realm === "luyen_khi" && assetInteger(state.realmStage, 1, 4))) ||
-      !assetInteger(state.cultivationXp, 0, ASSET_LIMIT) || !assetInteger(state.hp, 0, 100) ||
+  if (state.schemaVersion !== CHARACTER_SCHEMA || !validPlayerForm(state.form) || typeof state.characterId !== "string" || !state.characterId ||
+      state.realm !== undefined || state.realmStage !== undefined || state.cultivationXp !== undefined || !assetInteger(state.hp, 0, 100) ||
       !state.equipped || typeof state.equipped.weapon !== "string" || typeof state.equipped.armor !== "string" ||
       !assetInteger(state.spiritStones, 0, ASSET_LIMIT) || !assetInteger(state.revision, 0, ASSET_LIMIT) ||
       !Array.isArray(state.learnedSkills) || !state.equippedSkills || typeof state.equippedSkills.active_1 !== "string" ||
@@ -73,11 +73,14 @@ function uniqueStrings(value: unknown): boolean {
 }
 // Shape checks for fields owned by later systems. Unknown extra keys are kept
 // (released migrations preserve them); each module still validates deeply on use.
-// Progress kept only for the retired An Khê prototype route (quest chain, its
+// Progress kept only for a retired prototype route (quest chain, its
 // insight/technique rewards and resource nodes); dropped on load.
 const RETIRED_CHARACTER_FIELDS = ["worldQuests", "insightFlags", "learnedTechniques", "resourceGatheredAt"];
 function dropRetiredFields(state: CharacterState): void {
   for (let i = 0; i < RETIRED_CHARACTER_FIELDS.length; i++) delete state[RETIRED_CHARACTER_FIELDS[i]];
+  if (Array.isArray(state.inventory)) state.inventory = state.inventory.filter(function (slot) {
+    return !slot || RETIRED_ITEM_IDS.indexOf(slot.itemId) < 0;
+  });
 }
 function validateOptionalFields(state: CharacterState): void {
   const session = state.activitySession;
@@ -86,16 +89,40 @@ function validateOptionalFields(state: CharacterState): void {
   if (plots !== undefined && (!Array.isArray(plots) || (plots.length !== 6 && plots.length !== 12))) invalidCharacter();
 }
 function initialCharacter(userId: string): CharacterState {
-  return { schemaVersion: 4, form:defaultPlayerForm(), characterId: userId, realm: "mortal", realmStage: 0,
-    cultivationXp: 0, hp: 100, equipped: {weapon: "", armor: ""},
+  return { schemaVersion: CHARACTER_SCHEMA, form:defaultPlayerForm(), characterId: userId, hp: 100, equipped: {weapon: "", armor: ""},
     equippedSkills: {active_1: ""}, learnedSkills: [],
     spiritStones: 0, revision: 0, inventory: [] };
 }
+// Luyện Khí stage (1–4) a pre-schema-5 profile reached; 0 for anyone else. It seeds
+// the Nội Giới once (innerNew) when that profile has no Nội Giới yet.
+function legacyRealmStage(value: {[key: string]: any}): number {
+  if (!value || value.realm !== "luyen_khi") return 0;
+  const stage = value.schemaVersion === 1 ? value.level : value.realmStage;
+  return assetInteger(stage, 1, 4) ? stage : 0;
+}
 function migrateCharacter(value: {[key: string]: any}, userId: string): CharacterState {
+  if (value.schemaVersion === CHARACTER_SCHEMA) {
+    const next=JSON.parse(JSON.stringify(value)) as CharacterState;
+    legacyFormKind(next.form); dropRetiredFields(next); validateCharacter(next); return next;
+  }
+  const next = migrateCharacterV4(value, userId);
+  dropRetiredFields(next);
+  // Realm fields of a pre-schema-5 save must still be well formed before they go.
+  if (value.schemaVersion !== 1 && (!((next.realm === "mortal" && next.realmStage === 0) ||
+      (next.realm === "luyen_khi" && assetInteger(next.realmStage, 1, 4))) ||
+      (next.cultivationXp !== undefined && !assetInteger(next.cultivationXp, 0, ASSET_LIMIT)))) invalidCharacter();
+  next.schemaVersion = CHARACTER_SCHEMA;
+  legacyFormKind(next.form);
+  delete next.realm; delete next.realmStage; delete next.cultivationXp;
+  validateCharacter(next);
+  return next;
+}
+// Brings schemas 1–4 to the schema-4 shape; validation happens after schema 5.
+function migrateCharacterV4(value: {[key: string]: any}, userId: string): CharacterState {
   if (value.schemaVersion === 4) {
     const next=JSON.parse(JSON.stringify(value)) as CharacterState;
     if(next.form===undefined) next.form=defaultPlayerForm();
-    dropRetiredFields(next); validateCharacter(next); return next;
+    dropRetiredFields(next); return next;
   }
   if (value.schemaVersion === 3) {
     const next = JSON.parse(JSON.stringify(value)) as CharacterState;
@@ -103,17 +130,16 @@ function migrateCharacter(value: {[key: string]: any}, userId: string): Characte
     next.form = defaultPlayerForm();
     next.equippedSkills = next.equippedSkills || {active_1: ""};
     next.learnedSkills = next.learnedSkills || [];
-    dropRetiredFields(next); validateCharacter(next);
+    dropRetiredFields(next);
     return next;
   }
   if (value.schemaVersion === 2) {
     const next = JSON.parse(JSON.stringify(value)) as CharacterState;
-    next.schemaVersion = 4; next.cultivationXp = 0; next.hp = 100;
+    next.schemaVersion = 4; next.hp = 100;
     next.form = defaultPlayerForm();
     next.equipped = {weapon: "", armor: ""};
     next.equippedSkills = {active_1: ""};
     next.learnedSkills = next.learnedSkills || [];
-    validateCharacter(next);
     return next;
   }
   // Only migrate the actually released schema. Unknown versions/invalid progress
@@ -126,14 +152,11 @@ function migrateCharacter(value: {[key: string]: any}, userId: string): Characte
   next.schemaVersion = 4;
   next.form = defaultPlayerForm();
   next.characterId = userId;
-  next.realmStage = value.realm === "pham_nhan" ? 0 : value.level;
-  next.realm = value.realm === "pham_nhan" ? "mortal" : "luyen_khi";
-  next.cultivationXp = 0; next.hp = 100; next.equipped = {weapon: "", armor: ""};
+  next.hp = 100; next.equipped = {weapon: "", armor: ""};
   next.equippedSkills = {active_1: ""}; next.learnedSkills = [];
   delete next.level;
   next.inventory = [];
   next.revision = 0;
-  validateCharacter(next);
   return next;
 }
 function characterId(userId: string): nkruntime.StorageReadRequest {
@@ -166,6 +189,7 @@ function loadCharacter(nk: nkruntime.Nakama, userId: string): LoadedCharacter {
       if (rows[i].collection === "characters") row = rows[i]; else innerRow = rows[i];
     }
     const state = row ? migrateCharacter(row.value, userId) : initialCharacter(userId);
+    const realmStage = row ? legacyRealmStage(row.value) : 0;
     // A Nội Giới still embedded in the profile predates the split and wins.
     const embedded = !!row && row.value.innerWorld !== undefined;
     let innerJson = "";
@@ -174,9 +198,10 @@ function loadCharacter(nk: nkruntime.Nakama, userId: string): LoadedCharacter {
       state.innerWorld = JSON.parse(innerJson);
       innerValidate(state.innerWorld);
     }
+    if (!embedded && !innerRow && realmStage > 0 && state.innerWorld === undefined) state.innerWorld = innerNew(state, realmStage);
     const loaded: LoadedCharacter = { state: state, version: row ? row.version : "*",
       innerVersion: innerRow ? innerRow.version : "*", innerJson: innerJson };
-    if (row && row.value.schemaVersion === 4 && row.value.form !== undefined && !embedded) return loaded;
+    if (row && row.value.schemaVersion === CHARACTER_SCHEMA && !embedded) return loaded;
     try {
       const writes = characterWrites(userId, state, loaded), acks = nk.storageWrite(writes);
       loaded.version = acks[0].version;
@@ -190,14 +215,14 @@ function loadCharacter(nk: nkruntime.Nakama, userId: string): LoadedCharacter {
 function peekCharacterForm(nk: nkruntime.Nakama, userId: string): PlayerForm {
   const row = nk.storageRead([characterId(userId)])[0];
   const form = row && row.value.form ? JSON.parse(JSON.stringify(row.value.form)) as PlayerForm : defaultPlayerForm();
+  legacyFormKind(form);
   return validPlayerForm(form) ? form : defaultPlayerForm();
 }
 
 // Pure preparation: the loaded state is never mutated, including on bag overflow.
-function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Nakama): {state: CharacterState; cultivationXp: number; inner?: InnerAbsorbResult} {
+function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Nakama): {state: CharacterState; inner?: InnerAbsorbResult} {
   validateCharacter(state);
-  const offeredXp = bundle.cultivationXp === undefined ? 0 : bundle.cultivationXp;
-  if (!assetInteger(bundle.spiritStones, 0, ASSET_LIMIT) || !assetInteger(offeredXp, 0, ASSET_LIMIT) ||
+  if (!assetInteger(bundle.spiritStones, 0, ASSET_LIMIT) || !assetInteger(legacyRewardXp(bundle), 0, ASSET_LIMIT) ||
       !Array.isArray(bundle.items) || bundle.items.length > BAG_SIZE) {
     return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid reward");
   }
@@ -205,11 +230,6 @@ function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Na
   if (next.spiritStones + bundle.spiritStones > ASSET_LIMIT || next.revision >= ASSET_LIMIT) {
     return fail(nkruntime.Codes.RESOURCE_EXHAUSTED, "Asset limit reached");
   }
-  // Realm levels are retired: power comes only from the Nội Giới. realm/realmStage/
-  // cultivationXp stay frozen as legacy fields so released Luyện Khí progress can
-  // migrate once. Old pending rewards that still offer XP are claimable for 0 XP;
-  // nothing may promote a realm, or an untaught human would learn Hấp Linh.
-  const grantedXp = 0;
   next.spiritStones += bundle.spiritStones;
   for (let i = 0; i < bundle.items.length; i++) {
     const reward = bundle.items[i];
@@ -238,7 +258,13 @@ function addReward(state: CharacterState, bundle: RewardBundle, nk: nkruntime.Na
   const inner = bundle.linhNang && bundle.linhNang.length ? innerAbsorb(next, nk, bundle.linhNang) : undefined;
   next.revision++;
   validateCharacter(next);
-  return inner ? {state: next, cultivationXp: grantedXp, inner: inner} : {state: next, cultivationXp: grantedXp};
+  return inner ? {state: next, inner: inner} : {state: next};
+}
+// Rewards saved before schema 5 may still offer cultivation XP. It grants nothing,
+// but it stays part of the receipt fingerprint so their replays still match.
+function legacyRewardXp(bundle: RewardBundle): number {
+  const xp = (bundle as {[key: string]: any}).cultivationXp;
+  return xp === undefined ? 0 : xp;
 }
 
 interface AssetReceipt {
@@ -266,7 +292,7 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
   // Canonical field order and sorted item list: fingerprint includes exact amounts.
   const items = bundle.items.map(function (item) { return { itemId: item.itemId, quantity: item.quantity }; });
   items.sort(function (a, b) { return a.itemId < b.itemId ? -1 : a.itemId > b.itemId ? 1 : a.quantity - b.quantity; });
-  const offeredXp = bundle.cultivationXp === undefined ? 0 : bundle.cultivationXp;
+  const offeredXp = legacyRewardXp(bundle);
   const fingerprintInput: {[key: string]: unknown} = { sourceId: sourceId, spiritStones: bundle.spiritStones, items: items };
   // Preserve schema-2 starter receipt replays: the original fingerprint had no zero-XP field.
   if (offeredXp > 0) fingerprintInput.cultivationXp = offeredXp;
@@ -298,8 +324,7 @@ function grantReward(nk: nkruntime.Nakama, userId: string, operationId: string, 
     if(additionalWrites.some(function(w){return w.collection==="world_sessions";})) lifeEnsureIdle(loaded.state,Date.now());
     const applied = addReward(loaded.state, bundle, nk);
     const next = applied.state;
-    const granted: RewardBundle = { spiritStones: bundle.spiritStones, items: bundle.items,
-      cultivationXp: applied.cultivationXp };
+    const granted: RewardBundle = { spiritStones: bundle.spiritStones, items: bundle.items };
     if (bundle.linhNang && bundle.linhNang.length) { granted.linhNang = bundle.linhNang; if (applied.inner) granted.inner = applied.inner; }
     const receipt: AssetReceipt = { operationId: operationId, sourceId: sourceId, fingerprint: fingerprint,
       revision: next.revision, granted: granted, committedAt: Date.now() };
@@ -346,7 +371,7 @@ const inventoryClaimStarterRpc: nkruntime.RpcFunction = function (ctx, _logger, 
   return JSON.stringify(grantReward(nk, userId, input.operationId, "starter:v1", STARTER_REWARD));
 };
 
-interface PveSonTruOutcome {
+interface PveLonGaiOutcome {
   encounterId: string; generation: number; enemyId: string; operationId: string; sourceId: string;
   reward: RewardBundle; status: string; createdAt: number;
 }
@@ -357,7 +382,7 @@ function pvePendingRequest(userId: string): nkruntime.StorageReadRequest {
 function pveOutcomeRequest(userId: string, key: string): nkruntime.StorageReadRequest {
   return {collection: "pve_settlements", key: key, userId: userId};
 }
-function pveOutcomeWrite(userId: string, key: string, value: PveSonTruOutcome, version: string): nkruntime.StorageWriteRequest {
+function pveOutcomeWrite(userId: string, key: string, value: PveLonGaiOutcome, version: string): nkruntime.StorageWriteRequest {
   return {collection: "pve_settlements", key: key, userId: userId, value: value,
     version: version, permissionRead: 0, permissionWrite: 0};
 }
@@ -368,25 +393,25 @@ function pvePendingWrite(userId: string, value: PvePendingPointer, version: stri
 function pveOutcomeKey(encounterId: string, generation: number): string {
   return "outcome:" + encounterId + ":" + generation;
 }
-function pveOutcomeSame(a: PveSonTruOutcome, b: PveSonTruOutcome): boolean {
+function pveOutcomeSame(a: PveLonGaiOutcome, b: PveLonGaiOutcome): boolean {
   return a.encounterId === b.encounterId && a.generation === b.generation && a.enemyId === b.enemyId &&
     a.operationId === b.operationId && a.sourceId === b.sourceId && JSON.stringify(a.reward.items) === JSON.stringify(b.reward.items);
 }
 // The authoritative encounter calls this before announcing a kill. Outcome and pending pointer commit together.
-function recordPveSonTruOutcome(nk: nkruntime.Nakama, userId: string, encounterId: string,
-    generation: number, rewardEligible: boolean): PveSonTruOutcome {
+function recordPveLonGaiOutcome(nk: nkruntime.Nakama, userId: string, encounterId: string,
+    generation: number, rewardEligible: boolean): PveLonGaiOutcome {
   if (!/^[0-9a-f-]{36}$/i.test(encounterId) || !assetInteger(generation, 1, ASSET_LIMIT)) {
     return fail(nkruntime.Codes.INVALID_ARGUMENT, "Invalid encounter result");
   }
-  const operationId = "pve_son_tru_" + encounterId + "_" + generation;
-  const sourceId = "pve:son_tru:" + encounterId + ":" + generation + ":" + userId;
-  const value: PveSonTruOutcome = {encounterId: encounterId, generation: generation, enemyId: "en_boar",
+  const operationId = "pve_lon_gai_" + encounterId + "_" + generation;
+  const sourceId = "pve:lon_gai:" + encounterId + ":" + generation + ":" + userId;
+  const value: PveLonGaiOutcome = {encounterId: encounterId, generation: generation, enemyId: "en_boar",
     operationId: operationId, sourceId: sourceId,
     reward: rewardEligible ? {spiritStones: 0, items: [{itemId: "it_boar_hide", quantity: 1}], linhNang: innerMobEssence("en_boar")}
       : {spiritStones: 0, items: []},
     status: "pending", createdAt: Date.now()};
   const key = pveOutcomeKey(encounterId, generation);
-  const sessionRequest = {collection: "pve_son_tru_sessions", key: "active", userId: userId};
+  const sessionRequest = {collection: "pve_lon_gai_sessions", key: "active", userId: userId};
   for (let attempt = 0; attempt < 5; attempt++) {
     const rows = nk.storageRead([pvePendingRequest(userId), pveOutcomeRequest(userId, key), sessionRequest]);
     let pendingRow: nkruntime.StorageObject | undefined, outcomeRow: nkruntime.StorageObject | undefined;
@@ -397,7 +422,7 @@ function recordPveSonTruOutcome(nk: nkruntime.Nakama, userId: string, encounterI
       else if (rows[i].collection === sessionRequest.collection) sessionRow = rows[i];
     }
     if (outcomeRow) {
-      const old = outcomeRow.value as PveSonTruOutcome;
+      const old = outcomeRow.value as PveLonGaiOutcome;
       if (!pveOutcomeSame(old, value)) return fail(nkruntime.Codes.ALREADY_EXISTS, "Encounter result conflicts with saved outcome");
       if (old.status === "settled") return old;
       if (pendingRow && pendingRow.value.status === "pending" && pendingRow.value.outcomeKey === key) return old;
@@ -421,24 +446,24 @@ function recordPveSonTruOutcome(nk: nkruntime.Nakama, userId: string, encounterI
   }
   const saved = nk.storageRead([pvePendingRequest(userId), pveOutcomeRequest(userId, key)]);
   for (let i = 0; i < saved.length; i++) {
-    if (saved[i].key === key && pveOutcomeSame(saved[i].value as PveSonTruOutcome, value) && saved[i].value.status === "pending") {
-      return saved[i].value as PveSonTruOutcome;
+    if (saved[i].key === key && pveOutcomeSame(saved[i].value as PveLonGaiOutcome, value) && saved[i].value.status === "pending") {
+      return saved[i].value as PveLonGaiOutcome;
     }
   }
   return fail(nkruntime.Codes.UNAVAILABLE, "Encounter result could not be saved; retrying");
 }
-function getPvePendingSettlement(nk: nkruntime.Nakama, userId: string): PveSonTruOutcome | null {
+function getPvePendingSettlement(nk: nkruntime.Nakama, userId: string): PveLonGaiOutcome | null {
   const pointer = nk.storageRead([pvePendingRequest(userId)])[0];
   if (!pointer || pointer.value.status !== "pending") return null;
   const key = pointer.value.outcomeKey;
   if (typeof key !== "string" || key.indexOf("outcome:") !== 0) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Pending settlement requires review");
   const row = nk.storageRead([pveOutcomeRequest(userId, key)])[0];
   if (!row || row.value.status !== "pending") return fail(nkruntime.Codes.FAILED_PRECONDITION, "Pending settlement requires review");
-  const value = row.value as PveSonTruOutcome;
+  const value = row.value as PveLonGaiOutcome;
   if (value.enemyId !== "en_boar" || value.reward.spiritStones !== 0 || value.reward.items.length > 1 ||
       (value.reward.items.length === 1 && (value.reward.items[0].itemId !== "it_boar_hide" || value.reward.items[0].quantity !== 1)) ||
-      // Outcomes saved before realms were retired still carry 0/10 XP; it is ignored on claim.
-      (value.reward.cultivationXp !== undefined && value.reward.cultivationXp !== 0 && value.reward.cultivationXp !== 10) ||
+      // Outcomes saved before schema 5 still carry 0/10 cultivation XP; it grants nothing.
+      (legacyRewardXp(value.reward) !== 0 && legacyRewardXp(value.reward) !== 10) ||
       (value.reward.linhNang !== undefined && JSON.stringify(value.reward.linhNang) !== JSON.stringify(innerMobEssence("en_boar")))) {
     return fail(nkruntime.Codes.FAILED_PRECONDITION, "Pending settlement requires review");
   }
@@ -459,7 +484,7 @@ function pveClaimPending(nk: nkruntime.Nakama, userId: string): JsonObject {
     if (!outcomeRow || outcomeRow.value.status === "settled" || !pendingRow || pendingRow.value.status !== "pending" || pendingRow.value.outcomeKey !== key) {
       return {pending: false, replayed: result.replayed, receipt: result.receipt, profile: result.profile};
     }
-    const settled = JSON.parse(JSON.stringify(outcomeRow.value)) as PveSonTruOutcome;
+    const settled = JSON.parse(JSON.stringify(outcomeRow.value)) as PveLonGaiOutcome;
     settled.status = "settled";
     try {
       nk.storageWrite([pveOutcomeWrite(userId, key, settled, outcomeRow.version),
@@ -618,13 +643,13 @@ const economyActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payl
   if (!assetInteger(quantity, 1, 10)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Quantity must be 1–10");
   const details: {[key: string]: unknown} = {itemId: itemId, quantity: quantity};
   if (action === "buy" || action === "sell") {
-    requireServicePosition(nk, userId, "lq.shop.market");
+    requireServicePosition(nk, userId, "k1_01.shop.market");
     const content = contentEnsure(nk), prices = action === "buy" ? content.buy : content.sell;
     const price = contentHas(prices, itemId) ? prices[itemId] : undefined;
     if (price === undefined || (action === "buy" && catalogItem(itemId).instance) || catalogItem(itemId).bound) return fail(nkruntime.Codes.FAILED_PRECONDITION, "This item is not available at the shop");
     details.price = price;
     return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "shop_" + action, details, function (next) {
-      lifeEnsureIdle(next,Date.now());requireServicePosition(nk,userId,"lq.shop.market");
+      lifeEnsureIdle(next,Date.now());requireServicePosition(nk,userId,"k1_01.shop.market");
       const total = price * (quantity as number);
       if (action === "buy") {
         if (next.spiritStones < total) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Not enough linh thạch");
@@ -637,12 +662,12 @@ const economyActionRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payl
     }));
   }
   if (action === "craft") {
-    requireServicePosition(nk, userId, "lq.npc.doran");
+    requireServicePosition(nk, userId, "k1_01.npc.doran");
     const recipes = contentEnsure(nk).recipes;
     if (!contentHas(recipes, input.recipeId)) return fail(nkruntime.Codes.INVALID_ARGUMENT, "Unknown recipe");
     const recipe = recipes[input.recipeId as string]; details.recipeId = input.recipeId;
     return JSON.stringify(commitAssetMutation(nk, userId, input.operationId, "craft", details, function (next) {
-      lifeEnsureIdle(next,Date.now());requireServicePosition(nk,userId,"lq.npc.doran");
+      lifeEnsureIdle(next,Date.now());requireServicePosition(nk,userId,"k1_01.npc.doran");
       if (next.spiritStones < recipe.fee * (quantity as number)) return fail(nkruntime.Codes.FAILED_PRECONDITION, "Not enough linh thạch for crafting");
       for (const ingredient in recipe.ingredients) economyRemove(next, ingredient, recipe.ingredients[ingredient] * (quantity as number));
       next.spiritStones -= recipe.fee * (quantity as number);
@@ -667,12 +692,12 @@ function saveCharacterHp(nk: nkruntime.Nakama, userId: string, hp: number): Char
   }
   return fail(nkruntime.Codes.UNAVAILABLE, "Checkpoint health storage unavailable; retry");
 }
-const pveSonTruClaimPendingRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payload) {
+const pveLonGaiClaimPendingRpc: nkruntime.RpcFunction = function (ctx, _logger, nk, payload) {
   const userId = authenticated(ctx), input = objectPayload(payload);
   if (Object.keys(input).length !== 0) return fail(nkruntime.Codes.INVALID_ARGUMENT, "No reward fields are accepted");
   const result = pveClaimPending(nk, userId) as {[key: string]: any};
   if (result.receipt) {
-    const request = {collection: "pve_son_tru_sessions", key: "active", userId: userId};
+    const request = {collection: "pve_lon_gai_sessions", key: "active", userId: userId};
     const session = nk.storageRead([request])[0];
     if (session && session.value.status === "active" && typeof session.value.matchId === "string") {
       try { nk.matchSignal(session.value.matchId, JSON.stringify({action: "reward_claimed",

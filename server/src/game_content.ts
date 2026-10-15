@@ -38,9 +38,11 @@ let GAME_CONTENT: GameContent | null = null;
 let GAME_CONTENT_LOADED_AT = 0;
 // Runs from InitModule: idempotent DDL plus seed rows that do not exist yet.
 function contentMigrate(nk: nkruntime.Nakama): void {
+  for (let t = 0; t < GAME_CONTENT_TABLES.length; t++)
+    nk.sqlExec("CREATE TABLE IF NOT EXISTS " + GAME_CONTENT_TABLES[t].name + " (" + GAME_CONTENT_TABLES[t].ddl + ")");
+  contentRenameLegacy(nk);
   for (let t = 0; t < GAME_CONTENT_TABLES.length; t++) {
     const table = GAME_CONTENT_TABLES[t], seed = GAME_CONTENT_SEED[table.name] || [];
-    nk.sqlExec("CREATE TABLE IF NOT EXISTS " + table.name + " (" + table.ddl + ")");
     for (let r = 0; r < seed.length; r++) {
       const columns = Object.keys(seed[r]), args: unknown[] = [], marks: string[] = [];
       for (let c = 0; c < columns.length; c++) { args.push(seed[r][columns[c]]); marks.push("$" + (c + 1)); }
@@ -50,6 +52,21 @@ function contentMigrate(nk: nkruntime.Nakama): void {
   }
   // Thạch was split into Thổ (stone) and Kim (ore); ore items now carry Kim.
   nk.sqlExec("UPDATE game_items SET absorb_vi = 'kim' WHERE absorb_vi = 'thach'");
+}
+// Rows written under old IDs follow the renumbered maps (legacy_ids.ts). A row
+// whose new key already exists is a duplicate and is dropped.
+function contentRenameLegacy(nk: nkruntime.Nakama): void {
+  const loot = nk.sqlQuery("SELECT * FROM game_loot") as {[column: string]: any}[], have: {[key: string]: boolean} = {};
+  for (let i = 0; i < loot.length; i++) have[loot[i].table_id + "|" + loot[i].item_id] = true;
+  for (let i = 0; i < loot.length; i++) {
+    const from = String(loot[i].table_id), to = legacyLootTableId(from), item = String(loot[i].item_id);
+    if (to === from) continue;
+    if (have[to + "|" + item]) nk.sqlExec("DELETE FROM game_loot WHERE table_id = $1 AND item_id = $2", [from, item]);
+    else { nk.sqlExec("UPDATE game_loot SET table_id = $1 WHERE table_id = $2 AND item_id = $3", [to, from, item]); have[to + "|" + item] = true; }
+  }
+  for (const id in LEGACY_ITEM_NAMES)
+    nk.sqlExec("UPDATE game_items SET name = $1 WHERE id = $2 AND name = $3", [LEGACY_ITEM_NAMES[id][1], id, LEGACY_ITEM_NAMES[id][0]]);
+  for (let i = 0; i < RETIRED_ITEM_IDS.length; i++) nk.sqlExec("DELETE FROM game_items WHERE id = $1", [RETIRED_ITEM_IDS[i]]);
 }
 function contentRows(nk: nkruntime.Nakama, table: string): {[column: string]: any}[] {
   const rows = nk.sqlQuery("SELECT * FROM " + table) as {[column: string]: any}[];

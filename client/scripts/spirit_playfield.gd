@@ -23,7 +23,7 @@ func _ready() -> void:
 func reset_demo() -> void:
 	player_position = Vector2(640, 520)
 	hunt = {}
-	mobs = [{"id": "demo_boar", "name": "Sơn Trư", "enemyId": "en_boar", "x": 724, "y": 520, "hp": 60, "maxHp": 60, "respawnAt": 0.0}, {"id": "demo_spider", "name": "Độc Chu", "enemyId": "en_spider", "x": 610, "y": 700, "hp": 45, "maxHp": 45, "respawnAt": 0.0}]
+	mobs = [{"id": "demo_boar", "name": "Lợn Gai", "enemyId": "en_boar", "x": 724, "y": 520, "hp": 60, "maxHp": 60, "respawnAt": 0.0}, {"id": "demo_spider", "name": "Nhện Tơ Điện", "enemyId": "en_spider", "x": 610, "y": 700, "hp": 45, "maxHp": 45, "respawnAt": 0.0}]
 
 func _process(delta: float) -> void:
 	time += delta
@@ -108,7 +108,7 @@ func _avatar(at: Vector2, kind: String, tint: Color, walking: bool = false) -> v
 	var p := world_to_screen(at)
 	var step := roundf(sin(time * 12.0)) if walking else 0.0
 	draw_ellipse_shadow(p)
-	if kind == "spirit_beast":
+	if kind == "spirit":
 		_box(p, Rect2(-14, -17 + step, 26, 15), tint)
 		_box(p, Rect2(-11, -28 + step, 18, 15), tint.lightened(0.2))
 		_box(p, Rect2(-11, -33 + step, 5, 8), tint)
@@ -155,7 +155,7 @@ func _monster(mob: Dictionary, at: Vector2) -> void:
 	var ratio := float(mob.hp) / maxf(1.0, float(mob.maxHp))
 	draw_rect(Rect2(p + Vector2(-25, -54), Vector2(50, 5)), Color("243e45"))
 	draw_rect(Rect2(p + Vector2(-25, -54), Vector2(50 * ratio, 5)), Color("d99b84"))
-	draw_string(get_theme_default_font(), p + Vector2(-35, -64), str(mob.get("name", "Sơn Trư")), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("e6e9cf"))
+	draw_string(get_theme_default_font(), p + Vector2(-35, -64), str(mob.get("name", "Lợn Gai")), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("e6e9cf"))
 
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), Color("365b51"))
@@ -168,7 +168,7 @@ func _draw() -> void:
 		draw_circle(size * 0.5, 145, Color("41675b"))
 		draw_arc(size * 0.5, 147, 0, TAU, 48, Color("9db995"), 2.0)
 		if int(hunt.get("mobHp", 0)) > 0:
-			_monster({"hp": hunt.mobHp, "maxHp": hunt.maxHp, "name": "Sơn Trư • Săn chung"}, player_position + Vector2(0, -65))
+			_monster({"hp": hunt.mobHp, "maxHp": hunt.maxHp, "name": "Lợn Gai • Săn chung"}, player_position + Vector2(0, -65))
 		if hunt.get("joined", {}).get(partner_id, false):
 			_avatar(player_position + Vector2(64, 12), partner_form, Color("d7b775"))
 			draw_string(get_theme_default_font(), size * 0.5 + Vector2(60, 53), partner_name, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("eee5c8"))
@@ -191,5 +191,5 @@ func _draw() -> void:
 		for point in geometry.get("points", []):
 			var p := world_to_screen(Vector2(float(point.x), float(point.y)))
 			draw_rect(Rect2(p - Vector2(7, 7), Vector2(14, 14)), Color("caaf79"))
-	_avatar(player_position, form, Color("d8ad81") if form == "spirit_beast" else Color("8dc9bc"), moving)
+	_avatar(player_position, form, Color("d8ad81") if form == "spirit" else Color("8dc9bc"), moving)
 	draw_string(get_theme_default_font(), Vector2(20, 30), "Đấu trường khế ước" if not hunt.is_empty() else "Rừng thử nghiệm • Di chuyển và đánh quái", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("dae5c9"))

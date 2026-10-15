@@ -1,6 +1,6 @@
-# 11 — Tỉ lệ map mới (đề xuất)
+# 11 — Tỉ lệ và kích thước map chuẩn
 
-**Trạng thái:** đề xuất 14/10/2026, **chờ chủ dự án duyệt**. Chưa đổi `server/data/*.json`. Khi duyệt, tài liệu này thay §4 của [10](10-kich-thuoc-map-online.md) và kéo theo [05](05-map-layouts.md), [09](09-map-hien-trang.md).
+**Trạng thái:** **Đã chốt 15/10/2026** (Chủ dự án duyệt chính thức). Tài liệu này là quy chuẩn tỉ lệ, kích thước map và tốc độ di chuyển chính thức thay thế bảng §4 của [10](10-kich-thuoc-map-online.md), làm căn cứ cập nhật [05](05-map-layouts.md), [09](09-map-hien-trang.md) và lộ trình di chuyển dữ liệu `server/data/*.json`.
 
 **Vấn đề:** dựng Làng Hồ Lặng 160×120 trong game thì map trông quá to: nhà nhỏ xíu giữa những mảng cỏ trống, đường dài, hồ và ruộng cách nhau xa. Đo trên ảnh chụp toàn map: nhà chỉ khoảng 4–5 ô ngang, phần có nội dung (nhà, đường, nước, ruộng) chiếm khoảng một phần tư diện tích, còn lại là cỏ trống.
 
@@ -39,17 +39,29 @@ Rút ra ba điều:
 | Map | Hiện tại | **Mới** | Số màn | Đi ngang (4 ô/s) | Ô / người (30) |
 | --- | --- | --- | --- | --- | --- |
 | Làng Hồ Lặng | 160×120 | **96×72** | 13,5 | 24 s | 230 |
-| Ẩn Giới | 128×96 | **80×60** | 9,4 | 20 s | 160 |
+| Vườn Cây Mẹ | 128×96 | **80×60** | 9,4 | 20 s | 160 |
 | Bìa Rừng | 176×128 | **112×80** | 17,6 | 28 s | 300 |
 | Rừng Sâu | 192×144 | **128×96** | 24 | 32 s | 410 |
 | Mỏ Bỏ Hoang | 128×112 | **80×64** | 10 | 20 s | 170 |
 | Hầm Mỏ (B1) | 112×80 | **72×48** | 6,8 | 18 s | 115 |
-| Trạm Thiên Mạch | 96×80 | **64×48** | 6 | 16 s | 100 |
+| Đài Thiên Mạch | 96×80 | **64×48** | 6 | 16 s | 100 |
 | Nhà riêng | 32×24 | **28×20** | 1,1 | 7 s | 1 người |
 
 Gộp cả tốc độ: đi ngang làng từ **71 s còn 24 s**, tức cảm giác nhỏ đi khoảng 3 lần.
 
 Vẫn hợp với 30 người/kênh ([10](10-kich-thuoc-map-online.md)): làng đủ 30 người là ~2 người mỗi màn, chỉ 10 người online vẫn có ~0,7 người mỗi màn. Map săn đông hơn trước nên quái cần **nhóm nhỏ, nhiều nhóm** (giữ tối đa 6 quái/màn).
+
+**Quy chuẩn theo phân loại map áp dụng cho toàn bộ 50 map lục địa** (danh sách chi tiết xem tại [12-ban-do-cac-khu.md](12-ban-do-cac-khu.md)):
+- **Thị trấn lớn (Kinh thành):** **128×96** (32 s đi ngang)
+- **Thị trấn chuẩn (Làng, Cảng cả lục địa):** **96×72** (24 s đi ngang)
+- **Thị trấn nhỏ / Trạm dừng chân:** **80×64** (20 s đi ngang)
+- **Làng Tinh Linh & Tâm Ẩn (`m_k0_01`):** **80×60** (20 s đi ngang, không gian ấm cúng, không loãng)
+- **Đất hoang lớn (Bãi săn chính mỗi khu):** **128×96** (32 s đi ngang, sức chứa 40 quái)
+- **Đất hoang vừa (Bìa rừng, sườn núi, vùng giao thoa):** **112×80** (28 s đi ngang)
+- **Hầm mỏ / Dungeon tầng 1:** **80×64** (20 s đi ngang)
+- **Hầm mỏ / Dungeon tầng sâu:** **72×48** (18 s đi ngang)
+- **Lõi / Boss vùng:** **80×80** (riêng Đài Thiên Mạch **64×48**)
+- **Nhà riêng (`m_nha`):** **28×20** (7 s đi ngang, 12 luống riêng biệt)
 
 ### 2.4 Kích thước vật (theo ô, đo trên mặt bằng)
 
@@ -61,11 +73,11 @@ Vẫn hợp với 30 người/kênh ([10](10-kich-thuoc-map-online.md)): làng �
 | Ngõ, lối mòn | 1,5–2 rộng | |
 | Nhà nhỏ | **6×4** + mái | Kèm sân/hàng rào ~ 9×7 |
 | Nhà 2 tầng, cửa hàng | **8×5** | Mặt tiền 2 tầng, biển hiệu |
-| Công trình lớn (miếu, Trạm Viện, xưởng rèn) | **10–12 × 6–8** | Là vật mốc của khu |
+| Công trình lớn (miếu, Trạm Tháp Học, xưởng rèn) | **10–12 × 6–8** | Là vật mốc của khu |
 | Cây thường | tán 3×3, gốc 1 ô | |
 | Cây cổ thụ | tán 5×5 | |
-| Quảng trường Cổng | **16×12** | Cổng Ẩn Giới ~ 5 ô ngang |
-| Hồ Lặng | **26×14** | 12 bến câu quanh sàn gỗ và cầu |
+| Sân Hội Khai Phá | **16×12** | Chi hội Khai Phá ~ 8 ô ngang |
+| Đầm Hồ Lặng | **26×14** | 12 bến câu quanh sàn gỗ và cầu |
 | Ruộng/luống | ô ruộng 6×4; luống 1×2 | |
 
 Nhà và công trình **to hơn** trước (nhà nhỏ 4–5 ô → 6 ô), trong khi map nhỏ đi: hai thay đổi này cùng làm map bớt trống.
@@ -82,24 +94,25 @@ Nhà và công trình **to hơn** trước (nhà nhỏ 4–5 ô → 6 ô), trong
 
 ```text
 x→ 0        16        32        48        64        80      96
-y0 ╔════════════════════ TƯỜNG RÀO ════[CHỐT]══════════════╦≈≈╗
-   ║ ┌─ ĐỒI MIẾU ─┐                       │  ┌─ THỊ TRẤN ───┐≈  ║
- 8 ║ │ miếu ☯☯☯☯  │                       │  │ rèn  Trạm Viện│≈  ║
-   ║ │ Bé Mơ ☯☯☯☯ │                       │  │ tiện lợi càphê│≈  ║
+y0 ╔════════════════════ TƯỜNG CỌC ════[CHỐT]══════════════╦≈≈╗
+   ║ ┌─ ĐỒI MIẾU ─┐                       │  ┌─ PHỐ CHỢ ────┐≈  ║
+ 8 ║ │ miếu ☯☯☯☯  │                       │  │ rèn  Tháp Học│≈  ║
+   ║ │ Bé Mơ ☯☯☯☯ │                       │  │ tạp hóa  trọ │≈  ║
 16 ║ └────────────┘                       │  └──────────────┘≈  ║
-   ║ ┌──── XÓM NHÀ ─────┐ ┌─ QUẢNG TRƯỜNG ─┐┌ CHỢ ┐             ≈  ║
-24 ║ │ ⌂ ⌂ ⌂  giếng     │ │    ◎ CỔNG      ││     │═════════cầu═╪═► buýt
-   ║ │ ⌂ ⌂ ⌂  sân phơi  │ │  chợ TL  ★     │└─────┘             ≈  ║
+ ┌─╢ ┌──── XÓM NHÀ ─────┐ ┌─ SÂN HỘI ──────┐┌ CHỢ ┐             ≈  ║
+ │◎║ │ ⌂ ⌂ ⌂  giếng     │ │  ⌂ CHI HỘI     ││     │═════════cầu═╪═► xe ngựa
+ │RỄ │ ⌂ ⌂ ⌂  sân phơi  │ │  sân thi  ★    │└─────┘             ≈  ║
 32 ║ │ ⌂ Nora ⌂ CỬA NHÀ │ └────────────────┘                    ≈  ║
    ║ └──────────────────┘ ~kênh                                 ≈  ║
-40 ║ ┌─ RUỘNG VƯỜN ─┐      ~   ┌═🎣🎣 sàn gỗ 🎣🎣═┐ quán nước    ≈  ║
-   ║ │ lúa, nhà kính│      ~   │     HỒ LẶNG      │🎣            ≈  ║
+40 ║ ┌─ RUỘNG VƯỜN ─┐      ~   ┌═🎣🎣 sàn gỗ 🎣🎣═┐ quán trà     ≈  ║
+   ║ │ lúa, thảo dược│     ~   │   ĐẦM HỒ LẶNG    │🎣            ≈  ║
 56 ║ │              │      ~   │  🎣║ cầu gỗ      │🎣            ≈  ║
    ║ └──────────────┘      ~   └──🎣╨─────────────┘             ≈  ║
-72 ╚═══════════════════════~═════☯☯═══☯☯═══════════════════════╩≈≈╝
+68 ║ ░░ cồn cát ░ thuyền ░ lạch ~ ☯☯ ░░ ☯☯ ░░ hải đăng ░░░░░░░░░ ≈  ║
+72 ╚≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈ BIỂN (nền) ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈╝
 ```
 
-Vẫn đủ 7 khu, 12 bến câu, 14 điểm thiền, chợ, Bé Mơ, cửa nhà riêng. Từ điểm xuất phát (Quảng trường) đi tới khu xa nhất mất **dưới 12 s**.
+Vẫn đủ các khu, 12 bến câu, 14 điểm thiền, chợ, Bé Mơ, cửa nhà riêng, Cổng Rễ ở mép tây và bãi biển ở mép nam. Từ điểm xuất phát (Sân Hội) đi tới khu xa nhất mất **dưới 12 s**.
 
 ## 4. Những gì phải làm nếu duyệt
 

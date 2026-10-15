@@ -11,7 +11,6 @@ Equipped"
  • +%d XP, • +%d XP, • +%d XP
  • Chưa mở, • Chưa mở, • Locked
  • đang ở, • đang ở, • Current location
-%d tu vi • %d HP • %d đá • %d/24 ô,%d tu vi • %d HP • %d đá • %d/24 ô,%d Qi • %d HP • %d Spirit Stones • %d/24 slots
 "%s
 
 Nguồn: %s
@@ -55,18 +54,17 @@ Bound quest items cannot be traded or crafted,Không thể giao dịch hoặc ch
 Buồng Cân Mạch,Buồng Cân Mạch,Meridian Balance Chamber
 BÃI SƠN TRƯ,BÃI SƠN TRƯ,BOAR GROUNDS
 BÌNH MINH,BÌNH MINH,DAWN
-Bài luyện phàm nhân hoàn tất • không có XP hoặc loot lặp.,Bài luyện phàm nhân hoàn tất • không có XP hoặc loot lặp.,Mortal training complete • no repeat XP or loot.
 Bàn Tĩnh Tâm,Bàn Tĩnh Tâm,Stillness Shrine
-Bán da Sơn Trư — 3 linh thạch,Bán da Sơn Trư — 3 linh thạch,Sell Boar Hide — 3 Spirit Stones
-Bãi Sơn Trư,Bãi Sơn Trư,Boar Grounds
-Bãi săn • Sơn Trư và Độc Chu,Bãi săn • Sơn Trư và Độc Chu,Hunting grounds • Boars and venom spiders
+Bán da Lợn Gai — 3 linh thạch,Bán da Lợn Gai — 3 linh thạch,Sell Boar Hide — 3 Spirit Stones
+Bãi Lợn Gai,Bãi Lợn Gai,Spiny Boar Grounds
+Bãi săn • Lợn Gai và Nhện Tơ Điện,Bãi săn • Lợn Gai và Nhện Tơ Điện,Hunting grounds • Boars and lightning silk spiders
 Bí cảnh instance • boss chương đầu,Bí cảnh instance • boss chương đầu,Instance dungeon • first chapter boss
 BẠN ĐÃ KIỆT SỨC • ĐANG HỒI PHỤC,BẠN ĐÃ KIỆT SỨC • ĐANG HỒI PHỤC,YOU ARE EXHAUSTED • RECOVERING
 Bạn thua,Bạn thua,You lose
 Bạn thắng,Bạn thắng,You win
 Bạn đang ở %s.,Bạn đang ở %s.,You are in %s.
 Bạn đang ở khu vực này.,Bạn đang ở khu vực này.,You are already in this area.
-Bạn đã gục ngã. Sơn Trư sẽ trở lại sau một lát.,Bạn đã gục ngã. Sơn Trư sẽ trở lại sau một lát.,You have fallen. The boar will return shortly.
+Bạn đã gục ngã. Lợn Gai sẽ trở lại sau một lát.,Bạn đã gục ngã. Lợn Gai sẽ trở lại sau một lát.,You have fallen. The boar will return shortly.
 BẢN XEM THỬ • OFFLINE,BẢN XEM THỬ • OFFLINE,PREVIEW • OFFLINE
 BẢN XEM THỬ • OFFLINE • KHÔNG PHẢI DỮ LIỆU TÀI KHOẢN,BẢN XEM THỬ • OFFLINE • KHÔNG PHẢI DỮ LIỆU TÀI KHOẢN,PREVIEW • OFFLINE • NOT ACCOUNT DATA
 Bảng trận Nhà Trận,Bảng trận Nhà Trận,Formation Board
@@ -82,7 +80,7 @@ Character storage busy or unavailable; retry,Bộ lưu nhân vật đang bận h
 Chuẩn bị đấu tập…,Chuẩn bị đấu tập…,Preparing sparring…
 Chưa có kỹ năng,Chưa có kỹ năng,No skill available
 Chưa có mô tả.,Chưa có mô tả.,No description available.
-Chưa có quái trong tầm đánh. Hãy lại gần một Sơn Trư hoặc Độc Chu.,Chưa có quái trong tầm đánh. Hãy lại gần một Sơn Trư hoặc Độc Chu.,No enemies are in range. Move closer to a boar or venom spider.
+Chưa có quái trong tầm đánh. Hãy lại gần một Lợn Gai hoặc Nhện Tơ Điện.,Chưa có quái trong tầm đánh. Hãy lại gần một Lợn Gai hoặc Nhện Tơ Điện.,No enemies are in range. Move closer to a boar or lightning silk spider.
 Chưa có ảnh preview,Chưa có ảnh preview,No preview image
 Chưa dùng được,Chưa dùng được,Cannot use yet
 Chưa mở khóa,Chưa mở khóa,Locked
@@ -95,8 +93,8 @@ Chưa đồng bộ được vị trí với máy chủ.,Chưa đồng bộ đư�
 Đánh","Chop
 Attack"
 Chế tác • chưa mở,Chế tác • chưa mở,Crafting • locked
-Chỉ số chiến đấu dùng trong săn Sơn Trư.,Chỉ số chiến đấu dùng trong săn Sơn Trư.,Combat stats used when hunting boars.
-Chọn Hồi Nguyên Hoàn trong Túi đồ để hồi tối đa 40 HP.,Chọn Hồi Nguyên Hoàn trong Túi đồ để hồi tối đa 40 HP.,Select a Rejuvenation Pill in your inventory to restore up to 40 HP.
+Chỉ số chiến đấu dùng trong săn Lợn Gai.,Chỉ số chiến đấu dùng trong săn Lợn Gai.,Combat stats used when hunting boars.
+Chọn Thuốc Hồi Sức trong Túi đồ để hồi tối đa 40 HP.,Chọn Thuốc Hồi Sức trong Túi đồ để hồi tối đa 40 HP.,Select a Rejuvenation Pill in your inventory to restore up to 40 HP.
 Chọn một kỹ năng,Chọn một kỹ năng,Select a skill
 Chọn một vật phẩm,Chọn một vật phẩm,Select an item
 Chờ đủ hai người. Cả hai bấm Sẵn sàng.,Chờ đủ hai người. Cả hai bấm Sẵn sàng.,Waiting for two players. Both players must select Ready.
@@ -110,11 +108,9 @@ Các vết nứt tập trung quanh chân trụ. Cơ chế đổi dòng linh mạ
 Công kích,Công kích,Attack
 Công kích • %d,Công kích • %d,Attack • %d
 Công kích • 16,Công kích • 16,Attack • 16
-Cảnh giới • %s,Cảnh giới • %s,Realm • %s
-Cảnh giới • Phàm nhân,Cảnh giới • Phàm nhân,Realm • Mortal
 Cửa Giếng,Cửa Giếng,Well Entrance
-Da Sơn Trư,Da Sơn Trư,Boar Hide
-Da Sơn Trư ×1,Da Sơn Trư ×1,Boar Hide ×1
+Da Lợn Gai,Da Lợn Gai,Boar Hide
+Da Lợn Gai ×1,Da Lợn Gai ×1,Boar Hide ×1
 Da thú dùng chế tác.,Da thú dùng chế tác.,Animal hide used for crafting.
 Discard must identify one inventory slot,Hãy chọn một ô túi đồ để bỏ vật phẩm.,Select one inventory slot to discard.
 Dán mã phòng tại đây,Dán mã phòng tại đây,Enter a room code here
@@ -126,11 +122,9 @@ Dùng • +40 HP,Dùng • +40 HP,Use • +40 HP
 Dược liệu Cam Lộ,Dược liệu Cam Lộ,Sweetdew Herb
 Dược liệu bồi bổ linh khí.,Dược liệu bồi bổ linh khí.,Herb that restores spiritual energy.
 Dược liệu thanh tâm.,Dược liệu thanh tâm.,A calming herb.
-Dấu móng còn mới. Sơn Trư đang đi lại đâu đó trong Bãi Sơn Trư.,Dấu móng còn mới. Sơn Trư đang đi lại đâu đó trong Bãi Sơn Trư.,The hoofprints are fresh. A boar is roaming somewhere in Boar Grounds.
-Dấu vết Sơn Trư,Dấu vết Sơn Trư,Boar Tracks
+Dấu móng còn mới. Lợn Gai đang đi lại đâu đó trong Bãi Lợn Gai.,Dấu móng còn mới. Lợn Gai đang đi lại đâu đó trong Bãi Lợn Gai.,The hoofprints are fresh. A boar is roaming somewhere in Spiny Boar Grounds.
+Dấu vết Lợn Gai,Dấu vết Lợn Gai,Boar Tracks
 Dấu vết này khớp với mẫu phía tây.,Dấu vết này khớp với mẫu phía tây.,This trace matches the western sample.
-Dẫn khí,Dẫn khí,Qi Channeling
-"Dẫn khí thành công: Luyện Khí 1, Tức Mạch Quyết và Phi Nhận đã mở.","Dẫn khí thành công: Luyện Khí 1, Tức Mạch Quyết và Phi Nhận đã mở.","Qi channeling complete: Qi Refining 1, Meridian Breath Art, and Flying Blade unlocked."
 Dịch vụ cần kết nối máy chủ để lưu giao dịch và vật phẩm.,Dịch vụ cần kết nối máy chủ để lưu giao dịch và vật phẩm.,Connect to the server to save trades and items.
 Dụng cụ dò linh mạch.,Dụng cụ dò linh mạch.,A tool for tracing spiritual meridians.
 DỮ LIỆU NHÂN VẬT • ĐÃ ĐỒNG BỘ TỪ MÁY CHỦ,DỮ LIỆU NHÂN VẬT • ĐÃ ĐỒNG BỘ TỪ MÁY CHỦ,CHARACTER DATA • SYNCED FROM SERVER
@@ -147,15 +141,7 @@ FX,FX,FX
 Farm,Săn quái,Hunt
 Ghi chép của người trong làng.,Ghi chép của người trong làng.,A villager's notes.
 Gieo Hạt Cam Lộ ở ô 1,Gieo Hạt Cam Lộ ở ô 1,Plant a Sweetdew Seed in plot 1
-"Gầm 0,75 giây • khóa hướng
-Né ngang rồi phản công
-Luyện Khí nhận XP + da","Gầm 0,75 giây • khóa hướng
-Né ngang rồi phản công
-Luyện Khí nhận XP + da","Roar windup: 0.75 sec • locks direction
-Dodge sideways, then counterattack
-Qi Refining grants XP + hide"
 HOÀNG HÔN,HOÀNG HÔN,DUSK
-"Hai khu: Ngoại Vi và Mỏ Cũ. Lối mỏ, vách đá và trụ chuyển dòng là blocker prototype; chưa có quái hoặc điều kiện quest phía server.","Hai khu: Ngoại Vi và Mỏ Cũ. Lối mỏ, vách đá và trụ chuyển dòng là blocker prototype; chưa có quái hoặc điều kiện quest phía server.","Two areas: Outskirts and Old Mine. Mine paths, cliffs, and the flow pillar are prototype blockers; server enemies and quest conditions are not implemented yet."
 Health is already full,Sinh lực đã đầy.,Health is already full.
 Hiện nút điều khiển cảm ứng,Hiện nút điều khiển cảm ứng,Show touch controls
 Hoàn thành nhiệm vụ để mở kỹ năng.,Hoàn thành nhiệm vụ để mở kỹ năng.,Complete a quest to unlock this skill.
@@ -174,8 +160,8 @@ Hạt giống linh thảo.,Hạt giống linh thảo.,Herb seed.
 Hạt giống Ích Khí.,Hạt giống Ích Khí.,Qi-restoring seed.
 Hạt Ích Khí,Hạt Ích Khí,Qi Seed
 Hồ sơ,Hồ sơ,Profile
-Hồi Nguyên Hoàn,Hồi Nguyên Hoàn,Rejuvenation Pill
-Hộ Thân Phù,Hộ Thân Phù,Warding Talisman
+Thuốc Hồi Sức,Thuốc Hồi Sức,Rejuvenation Pill
+Bùa Hộ Thân,Bùa Hộ Thân,Warding Talisman
 Instance: %s,Mã vật phẩm: %s,Item instance: %s
 Invalid discard quantity,Số lượng bỏ không hợp lệ.,Invalid discard quantity.
 Invalid discard request,Yêu cầu bỏ vật phẩm không hợp lệ.,Invalid discard request.
@@ -224,8 +210,7 @@ Linh thạch limit reached,Đã đạt giới hạn linh thạch.,Spirit Stone l
 Linh thạch • %d,Linh thạch • %d,Spirit Stones • %d
 Linh thạch • 0,Linh thạch • 0,Spirit Stones • 0
 Linh thảo dùng trong luyện đan.,Linh thảo dùng trong luyện đan.,Herb used in alchemy.
-Luyện Hồi Nguyên Hoàn — 2 Cam Lộ + 1 nước + 2 linh thạch,Luyện Hồi Nguyên Hoàn — 2 Cam Lộ + 1 nước + 2 linh thạch,Brew Rejuvenation Pill — 2 Sweetdew Herbs + 1 Water + 2 Spirit Stones
-Luyện Khí • tầng %d,Luyện Khí • tầng %d,Qi Refining • Stage %d
+Luyện Thuốc Hồi Sức — 2 Cam Lộ + 1 nước + 2 linh thạch,Luyện Thuốc Hồi Sức — 2 Cam Lộ + 1 nước + 2 linh thạch,Brew Rejuvenation Pill — 2 Sweetdew Herbs + 1 Water + 2 Spirit Stones
 Luyện đan • chưa mở,Luyện đan • chưa mở,Alchemy • locked
 Làm mới,Làm mới,Refresh
 Làng khởi đầu • an toàn,Làng khởi đầu • an toàn,Starting village • safe
@@ -234,7 +219,7 @@ Monster is down; wait for it to respawn,Quái vật đã bị hạ; hãy đợi 
 Move closer to the monster before attacking,Hãy đến gần quái vật hơn trước khi tấn công.,Move closer to the monster before attacking.
 Move to the matching village service before using it,Hãy đến đúng dịch vụ trong làng để sử dụng vật phẩm này.,Move to the correct village service to use this.
 Mua Hạt Cam Lộ — 3 linh thạch,Mua Hạt Cam Lộ — 3 linh thạch,Buy Sweetdew Seed — 3 Spirit Stones
-Mua Hồi Nguyên Hoàn — 8 linh thạch,Mua Hồi Nguyên Hoàn — 8 linh thạch,Buy Rejuvenation Pill — 8 Spirit Stones
+Mua Thuốc Hồi Sức — 8 linh thạch,Mua Thuốc Hồi Sức — 8 linh thạch,Buy Rejuvenation Pill — 8 Spirit Stones
 Mua nước — 1 linh thạch,Mua nước — 1 linh thạch,Buy Water — 1 Spirit Stone
 Máy chủ trả về trạng thái chiến đấu không hợp lệ.,Máy chủ trả về trạng thái chiến đấu không hợp lệ.,The server returned an invalid combat state.
 Máy chủ trả về vị trí thế giới không hợp lệ.,Máy chủ trả về vị trí thế giới không hợp lệ.,The server returned an invalid world position.
@@ -250,14 +235,12 @@ Mẫu giao diện • không lưu vào tài khoản,Mẫu giao diện • không
 Mẫu nước,Mẫu nước,Water Sample
 Mẫu nước cần khảo sát.,Mẫu nước cần khảo sát.,Water sample to be surveyed.
 Mẫu • %d / 24 ô,Mẫu • %d / 24 ô,Preview • %d / 24 slots
-Mỏ Cũ,Mỏ Cũ,Old Mine
 Một nơi yên tĩnh để thực hành dẫn khí sau khi khảo sát xong.,Một nơi yên tĩnh để thực hành dẫn khí sau khi khảo sát xong.,A quiet place to practice qi channeling after the survey.
 Một vệt khoáng chất mỏng bám dưới mặt nước.,Một vệt khoáng chất mỏng bám dưới mặt nước.,A thin mineral trace clings beneath the water.
 Mở Túi đồ để chọn %s,Mở Túi đồ để chọn %s,Open Inventory to choose %s
 Mở Túi đồ để trang bị,Mở Túi đồ để trang bị,Open Inventory to equip
 Mở sau nghi thức Hơi Thở Đầu Tiên.,Mở sau nghi thức Hơi Thở Đầu Tiên.,Unlocked after the First Breath ritual.
 NHÂN VẬT,NHÂN VẬT,CHARACTER
-Ngoại Vi,Ngoại Vi,Outskirts
 Nguyên liệu chế tác.,Nguyên liệu chế tác.,Crafting material.
 Nguyên liệu luyện chế.,Nguyên liệu luyện chế.,Alchemy ingredient.
 Nguyên liệu rèn trang bị.,Nguyên liệu rèn trang bị.,Material for forging equipment.
@@ -282,7 +265,6 @@ Operation ID already used for another reward,Mã thao tác này đã được d�
 PHÀM NHÂN,PHÀM NHÂN,MORTAL
 Pending settlement requires review,Phần thưởng đang chờ cần được kiểm tra.,Pending reward needs review.
 Phi Nhận,Phi Nhận,Flying Blade
-Phàm nhân,Phàm nhân,Mortal
 Phòng ngự,Phòng ngự,Defense
 Phòng ngự • %d,Phòng ngự • %d,Defense • %d
 Phòng ngự • 5,Phòng ngự • 5,Defense • 5
@@ -296,12 +278,12 @@ HP và vị trí từ server.","Q / J: đánh • Space: né
 HP và vị trí từ server.","Q / J: attack • Space: dodge
 HP and position are server-synced."
 Quan sát Tâm Giếng,Quan sát Tâm Giếng,Inspect the Well Heart
-Quan sát hướng gầm • né ngang • phản công lúc Sơn Trư hồi thế.,Quan sát hướng gầm • né ngang • phản công lúc Sơn Trư hồi thế.,Watch the roar direction • dodge sideways • counter while the boar recovers.
+Quan sát hướng gầm • né ngang • phản công lúc Lợn Gai hồi thế.,Quan sát hướng gầm • né ngang • phản công lúc Lợn Gai hồi thế.,Watch the roar direction • dodge sideways • counter while the boar recovers.
 Quan sát trận pháp,Quan sát trận pháp,Inspect the formation
 Quái vật,Quái vật,Monster
 R,R,R
 Reward source already claimed,Phần thưởng này đã được nhận.,This reward has already been claimed.
-Rèn Thanh Thiết Kiếm — 6 quặng + 2 trúc + 8 linh thạch,Rèn Thanh Thiết Kiếm — 6 quặng + 2 trúc + 8 linh thạch,Forge Iron Sword — 6 Iron Ore + 2 Bamboo + 8 Spirit Stones
+Rèn Kiếm Sắt — 6 quặng + 2 trúc + 8 linh thạch,Rèn Kiếm Sắt — 6 quặng + 2 trúc + 8 linh thạch,Forge Iron Sword — 6 Iron Ore + 2 Bamboo + 8 Spirit Stones
 Rìu trúng thân cây. Còn %d nhát.,Rìu trúng thân cây. Còn %d nhát.,The axe strikes the tree. %d hit(s) remaining.
 Rời bãi,Rời bãi,Leave grounds
 Rời trận,Rời trận,Leave match
@@ -313,28 +295,27 @@ Skill cannot be used in the active slot,Không thể dùng kỹ năng này trong
 Space,Space,Space
 Space: né trong đấu tập online,Space: né trong đấu tập online,Space: dodge in online sparring
 Sân làng,Sân làng,Village Square
-Sơn Trư,Sơn Trư,Boar
-Sơn Trư • chưa mở,Sơn Trư • chưa mở,Boar • locked
-"Sơn Trư: da/kiếm
-Độc Chu: tơ/áo
-J / Chạm: đánh.","Sơn Trư: da/kiếm
-Độc Chu: tơ/áo
+Lợn Gai,Lợn Gai,Boar
+Lợn Gai • chưa mở,Lợn Gai • chưa mở,Boar • locked
+"Lợn Gai: da/kiếm
+Nhện Tơ Điện: tơ/áo
+J / Chạm: đánh.","Lợn Gai: da/kiếm
+Nhện Tơ Điện: tơ/áo
 J / Chạm: đánh.","Boar: hide/sword
 Venom spider: silk/robe
 J / Tap: attack."
 Sẵn sàng,Sẵn sàng,Ready
 Sổ ghi chép,Sổ ghi chép,Ledger
 THÁM HIỂM,THÁM HIỂM,EXPLORATION
-THƯỞNG ĐANG CHỜ • Da Sơn Trư ×%d • %d tu vi • bỏ bớt vật tư rồi nhận,THƯỞNG ĐANG CHỜ • Da Sơn Trư ×%d • %d tu vi • bỏ bớt vật tư rồi nhận,REWARD PENDING • Boar Hide ×%d • %d Qi • free a slot to claim
 THƯỞNG ĐANG CHỜ • TÚI ĐẦY,THƯỞNG ĐANG CHỜ • TÚI ĐẦY,REWARD PENDING • INVENTORY FULL
 TRANG BỊ ĐANG MẶC,TRANG BỊ ĐANG MẶC,EQUIPPED GEAR
 TRỜI QUANG,TRỜI QUANG,CLEAR
 TU SĨ,TU SĨ,CULTIVATOR
-Thanh Thiết Kiếm,Thanh Thiết Kiếm,Iron Sword
+Kiếm Sắt,Kiếm Sắt,Iron Sword
 This item is not available at the shop,Cửa hàng không có vật phẩm này.,This item is not available in the shop.
 This plot is occupied,Ô đất này đang được sử dụng.,This garden plot is occupied.
-Thiết quặng,Thiết quặng,Iron Ore
-Thoát Thân Phù,Thoát Thân Phù,Escape Talisman
+Quặng sắt,Quặng sắt,Iron Ore
+Bùa Thoát Thân,Bùa Thoát Thân,Escape Talisman
 Thu hoạch ô 1 nếu đã chín,Thu hoạch ô 1 nếu đã chín,Harvest plot 1 when ready
 Tháo trang bị,Tháo trang bị,Unequip
 Thân trúc dùng chế tác.,Thân trúc dùng chế tác.,Bamboo stalk used for crafting.
@@ -345,15 +326,11 @@ Toàn màn hình,Toàn màn hình,Fullscreen
 Trang bị,Trang bị,Equip
 Trang bị trong Túi đồ để tăng 15 điểm thủ.,Trang bị trong Túi đồ để tăng 15 điểm thủ.,Equip from Inventory to gain 15 defense.
 Trúc,Trúc,Bamboo
-Trạm nghỉ Ngoại Vi,Trạm nghỉ Ngoại Vi,Outskirts Rest Stop
 Trạm nghỉ đã được khảo sát trong phiên thử. Checkpoint chưa được lưu trên máy chủ.,Trạm nghỉ đã được khảo sát trong phiên thử. Checkpoint chưa được lưu trên máy chủ.,The rest stop was surveyed in this preview. The checkpoint is not saved on the server.
 Trận đấu bắt đầu.,Trận đấu bắt đầu.,The match has started.
 Trụ chuyển dòng,Trụ chuyển dòng,Flow Pillar
 Tu Tien — Prototype,Tiên Đạo — Bản thử nghiệm,Tu Tien — Prototype
 Tu sĩ,Tu sĩ,Cultivator
-Tu vi • %d / %d XP,Tu vi • %d / %d XP,Qi • %d / %d XP
-Tu vi • 0 / 100 XP,Tu vi • 0 / 100 XP,Qi • 0 / 100 XP
-Tu vi • đã đạt cảnh giới cao nhất,Tu vi • đã đạt cảnh giới cao nhất,Qi • maximum realm reached
 TÚI TÀI KHOẢN • dữ liệu được xác nhận bởi server,TÚI TÀI KHOẢN • dữ liệu được xác nhận bởi server,ACCOUNT INVENTORY • SERVER CONFIRMED
 TÚI ĐỒ,TÚI ĐỒ,INVENTORY
 Tâm Giếng,Tâm Giếng,Well Heart
@@ -386,7 +363,7 @@ Xem sạp chợ,Xem sạp chợ,View market stall
 Xem tin làng,Xem tin làng,Read village notice
 Xem vườn,Xem vườn,View garden
 Xác nhận bỏ vật phẩm,Xác nhận bỏ vật phẩm,Confirm Item Discard
-Y Phục Tơ Độc,Y Phục Tơ Độc,Venom Silk Robe
+Áo Tơ Nhện,Áo Tơ Nhện,Venom Silk Robe
 chưa nối,chưa nối,not connected
 không có loot thêm,không có loot thêm,no extra loot
 lối nối,lối nối,connection
@@ -398,7 +375,7 @@ rơi %s và vật phẩm săn,rơi %s và vật phẩm săn,dropped %s and hunti
 Áo • Chưa trang bị,Áo • Chưa trang bị,Armor • Not equipped
 Âm lượng tổng,Âm lượng tổng,Master volume
 Ích Khí,Ích Khí,Qi Boost
-Ích Khí Tán,Ích Khí Tán,Qi Tonic
+Bột Ích Khí,Bột Ích Khí,Qi Tonic
 Ô này chưa có vật phẩm.,Ô này chưa có vật phẩm.,This slot is empty.
 Ô trang bị vũ khí,Ô trang bị vũ khí,Weapon slot
 Ô trống,Ô trống,Empty slot
@@ -406,7 +383,6 @@ rơi %s và vật phẩm săn,rơi %s và vật phẩm săn,dropped %s and hunti
 ĐANG CHỜ SERVER • chưa xác nhận,ĐANG CHỜ SERVER • chưa xác nhận,WAITING FOR SERVER • not confirmed
 ĐANG LƯU VÀ GHI NHẬN THƯỞNG…,ĐANG LƯU VÀ GHI NHẬN THƯỞNG…,SAVING AND RECORDING REWARDS…
 ĐANG TẢI HỒ SƠ TỪ MÁY CHỦ…,ĐANG TẢI HỒ SƠ TỪ MÁY CHỦ…,LOADING CHARACTER DATA FROM SERVER…
-Đan dược linh lực. Chưa hỗ trợ sử dụng.,Đan dược linh lực. Chưa hỗ trợ sử dụng.,Qi elixir. Use is not supported yet.
 Đang kết nối backend…,Đang kết nối backend…,Connecting to backend…
 Đang lưu bộ kỹ năng lên máy chủ…,Đang lưu bộ kỹ năng lên máy chủ…,Saving skill loadout to server…
 Đang nhận thưởng…,Đang nhận thưởng…,Claiming reward…
@@ -420,21 +396,20 @@ rơi %s và vật phẩm săn,rơi %s và vật phẩm săn,dropped %s and hunti
 Đã bỏ vật phẩm.,Đã bỏ vật phẩm.,Item discarded.
 Đã cập nhật trang bị hoặc hồi phục trên server.,Đã cập nhật trang bị hoặc hồi phục trên server.,Equipment or healing updated on the server.
 Đã cập nhật túi đồ và linh thạch.,Đã cập nhật túi đồ và linh thạch.,Inventory and Spirit Stones updated.
-Đã nhận %d tu vi và %s.,Đã nhận %d tu vi và %s.,Received %d Qi and %s.
 Đã nhận XP và vật phẩm đúng một lần.,Đã nhận XP và vật phẩm đúng một lần.,XP and items received once.
 Đã nhận vật tư,Đã nhận vật tư,Supplies received
-Đã đồng bộ vị trí. Hãy tới gần Sơn Trư hoặc Độc Chu rồi đánh.,Đã đồng bộ vị trí. Hãy tới gần Sơn Trư hoặc Độc Chu rồi đánh.,Position synced. Move close to a boar or venom spider and attack.
+Đã đồng bộ vị trí. Hãy tới gần Lợn Gai hoặc Nhện Tơ Điện rồi đánh.,Đã đồng bộ vị trí. Hãy tới gần Lợn Gai hoặc Nhện Tơ Điện rồi đánh.,Position synced. Move close to a boar or lightning silk spider and attack.
 Đăng nhập được một phần nhưng máy chủ chưa hoàn tất kết nối. Nhấn Kết nối để thử lại.,Đăng nhập được một phần nhưng máy chủ chưa hoàn tất kết nối. Nhấn Kết nối để thử lại.,"Partially signed in, but the server connection is incomplete. Press Connect to try again."
 ĐẤU TẬP,ĐẤU TẬP,SPARRING
 Đấu tập • không mất đồ,Đấu tập • không mất đồ,Sparring • no item loss
-Đến gần Sơn Trư hoặc Độc Chu rồi nhấn J để đánh.,Đến gần Sơn Trư hoặc Độc Chu rồi nhấn J để đánh.,"Move close to a boar or venom spider, then press J to attack."
-Đến gần Sơn Trư hoặc Độc Chu rồi nhấn R hoặc chạm Kỹ năng.,Đến gần Sơn Trư hoặc Độc Chu rồi nhấn R hoặc chạm Kỹ năng.,"Move close to a boar or venom spider, then press R or tap Skill."
+Đến gần Lợn Gai hoặc Nhện Tơ Điện rồi nhấn J để đánh.,Đến gần Lợn Gai hoặc Nhện Tơ Điện rồi nhấn J để đánh.,"Move close to a boar or lightning silk spider, then press J to attack."
+Đến gần Lợn Gai hoặc Nhện Tơ Điện rồi nhấn R hoặc chạm Kỹ năng.,Đến gần Lợn Gai hoặc Nhện Tơ Điện rồi nhấn R hoặc chạm Kỹ năng.,"Move close to a boar or lightning silk spider, then press R or tap Skill."
 "Đến sát một cây, quay mặt về phía cây rồi nhấn J để chặt.","Đến sát một cây, quay mặt về phía cây rồi nhấn J để chặt.","Move next to a tree, face it, then press J to chop."
 ĐỌC CÚ LAO,ĐỌC CÚ LAO,READ THE CHARGE
 Đọc trụ chuyển dòng,Đọc trụ chuyển dòng,Read the Flow Pillar
-Độc Chu,Độc Chu,Venom Spider
-Độc Chu • chưa mở,Độc Chu • chưa mở,Venom Spider • locked
-Độc dịch,Độc dịch,Venom
+Nhện Tơ Điện,Nhện Tơ Điện,Lightning Silk Spider
+Nhện Tơ Điện • chưa mở,Nhện Tơ Điện • chưa mở,Lightning Silk Spider • locked
+Nọc độc,Nọc độc,Venom
 Đột phá đầu tiên • %d / 100 XP,Đột phá đầu tiên • %d / 100 XP,First breakthrough • %d / 100 XP
 Cannot start request,Không thể bắt đầu yêu cầu.,Cannot start request.
 Connection failed or timed out,Kết nối thất bại hoặc quá thời gian chờ.,Connection failed or timed out.
@@ -500,7 +475,7 @@ Sparring consent required,Cần xác nhận trước khi tạo trận đấu t�
 PvE consent required; no client reward fields are accepted,Cần xác nhận trước khi vào trận PvE; phần thưởng do máy chủ quyết định.,Consent is required before starting PvE; rewards are controlled by the server.
 Claim the pending reward before another hunt,Hãy nhận phần thưởng đang chờ trước khi đi săn tiếp.,Claim the pending reward before starting another hunt.
 Encounter is being prepared; retry shortly,Trận săn đang được chuẩn bị; hãy thử lại sau ít phút.,The encounter is being prepared; retry shortly.
-Sơn Trư respawns in %d seconds,Sơn Trư hồi sinh sau %d giây.,Sơn Trư respawns in %d seconds.
+Lợn Gai respawns in %d seconds,Lợn Gai hồi sinh sau %d giây.,Sơn Trư respawns in %d seconds.
 Another encounter is already active; retry,Một trận săn khác đang diễn ra; hãy thử lại.,Another encounter is already active; retry.
 Encounter could not be started; retry,Không thể bắt đầu trận săn; hãy thử lại.,The encounter could not be started; retry.
 Encounter started; retry to resume it,Trận săn đã bắt đầu; hãy thử lại để tiếp tục.,The encounter has started; retry to resume it.
@@ -586,7 +561,6 @@ CỘNG ĐỒNG,CỘNG ĐỒNG,COMMUNITY
 Đang kiểm tra kết nối…,Đang kiểm tra kết nối…,Checking connection…
 Bạn bè,Bạn bè,Friends
 Trò chuyện,Trò chuyện,Chat
-Tông môn / Bang phái,Tông môn / Bang phái,Sects / Guilds
 Tên người chơi (3–20 ký tự),Tên người chơi (3–20 ký tự),Player name (3–20 characters)
 Tìm người chơi,Tìm người chơi,Find player
 Gửi lời mời,Gửi lời mời,Send invite
@@ -595,8 +569,6 @@ Viết tin nhắn…,Viết tin nhắn…,Write a message…
 Gửi,Gửi,Send
 Nhóm của tôi,Nhóm của tôi,My groups
 Tìm nhóm,Tìm nhóm,Find groups
-Tông môn,Tông môn,Sect
-Bang phái,Bang phái,Guild
 Tên nhóm cần tìm,Tên nhóm cần tìm,Group name to find
 Tìm theo tên,Tìm theo tên,Search by name
 Chọn một nhóm,Chọn một nhóm,Select a group
