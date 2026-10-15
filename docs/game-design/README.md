@@ -4,7 +4,7 @@
 
 ## Cấu trúc map đã chốt
 
-- Khu Người có hai trung tâm chính: **Làng** và **Thành phố**.
+- Khu Người có hai trung tâm chính: **Làng** và **Thành phố**, nằm giữa vùng Thủy và vùng Mộc.
 - **Tâm Ẩn là một ngôi làng**, trung tâm an toàn và nơi Tinh Linh bắt đầu.
 - **Lục Đại** gồm sáu vùng linh năng. Mỗi vùng có hai khu quái Rìa yếu, một khu Trung và một khu Cao.
 - Tổng cộng **27 khu chính**: ba khu cư trú + 24 khu quái.
@@ -30,4 +30,4 @@
 
 ## Những phần chưa chốt
 
-Tên địa danh, vị trí sáu vùng, hình dạng lục địa, mạng đường/cổng, bố cục chi tiết 24 khu và danh sách loài quái. Thiết kế các phần này từ khung mới, không lấy tên cũ làm mặc định.
+Tên địa danh, tọa độ/hướng chính xác và ranh giới vùng, hình dạng lục địa, mạng đường/cổng, bố cục chi tiết 24 khu và danh sách loài quái. Quan hệ vị trí đã chốt: khu Người nằm giữa Thủy và Mộc. Thiết kế các phần này từ khung mới, không lấy tên cũ làm mặc định.

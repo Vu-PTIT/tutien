@@ -1,6 +1,6 @@
 # 12 — Khung danh mục map Lục Đại
 
-**Chuẩn hiện hành 15/10/2026.** Nội dung này thay danh sách map và sơ đồ địa lý cũ. Địa danh, tọa độ và vị trí vùng chưa chốt.
+**Chuẩn hiện hành 15/10/2026.** Nội dung này thay danh sách map và sơ đồ địa lý cũ. Khu Người nằm giữa vùng Thủy và vùng Mộc. Đây là quan hệ vị trí tương đối; địa danh, tọa độ, hướng và ranh giới cụ thể chưa chốt.
 
 ## 1. Ba khu cư trú
 
@@ -29,10 +29,10 @@ Các nhãn là tên làm việc, không phải địa danh hay ID cuối. Tổng
 
 ## 3. Nguyên tắc nối map
 
-- Làng và Thành phố là hai trung tâm khu Người, nối bằng tuyến được ghi rõ.
+- Làng và Thành phố là hai trung tâm khu Người, cùng nằm giữa vùng Thủy và vùng Mộc; tuyến nối nội bộ được ghi rõ khi thiết kế layout.
 - Làng Tâm Ẩn là trung tâm cư trú của Tinh Linh, có lối tới sáu vùng.
 - Trong mỗi vùng, người chơi có thể chọn Rìa A hoặc Rìa B trước; hai tuyến hội về Khu Trung rồi dẫn tới Khu Cao.
-- Sáu vùng nối nhau theo hình dạng lục địa sẽ được thiết kế riêng. Chưa mặc định vòng đồng tâm, vòng biển/vòng trong hay sáu nan hoa.
+- Sáu vùng còn lại nối nhau theo hình dạng lục địa sẽ được thiết kế riêng. Chưa mặc định vòng đồng tâm, vòng biển/vòng trong hay sáu nan hoa; chỉ chốt khu Người nằm giữa Thủy và Mộc.
 - Cổng hai chiều có điểm đến an toàn. Đường cư trú không đi xuyên lãnh địa quái.
 - Ghi tọa độ, hướng, vật mốc qua mép và tuyến rút lui trong layout trước khi cập nhật server.
 

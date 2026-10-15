@@ -4,7 +4,7 @@
 
 ## 1. Làng Người — 96×72 ô logic
 
-Điểm bắt đầu, nơi ở và sinh hoạt của Người.
+Điểm bắt đầu, nơi ở và sinh hoạt của Người. Làng thuộc khu Người nằm giữa vùng Thủy và vùng Mộc.
 
 - Lối vào và vật mốc làng dễ thấy.
 - Cụm nhà, ngõ ngắn và sân chung.
@@ -18,7 +18,7 @@ Không có quái thù địch. Cửa, dịch vụ, NPC và hoạt động là đ
 
 ## 2. Thành phố Người — 128×96
 
-Trung tâm dân cư, dịch vụ và tổ chức quy mô lớn.
+Trung tâm dân cư, dịch vụ và tổ chức quy mô lớn. Trong sơ đồ tổng thể, khu Người (gồm Làng và Thành phố) nằm giữa vùng Thủy và vùng Mộc; hai khu này chưa có tọa độ hay hướng cụ thể.
 
 - Cổng vào, quảng trường định hướng và trục đường chính.
 - Khu dân cư và các cụm dịch vụ dễ tìm.

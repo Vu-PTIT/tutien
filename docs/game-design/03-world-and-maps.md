@@ -4,7 +4,7 @@
 
 ## 1. Cấu trúc lớn
 
-Thế giới có **khu Người** với hai trung tâm: **Làng** và **Thành phố**. Ở trung tâm lục địa là **Tâm Ẩn — một ngôi làng**. Bao quanh và nối với các trung tâm là **Lục Đại**, sáu vùng linh năng. Mỗi vùng có bốn khu quái theo cùng một mẫu: hai khu rìa quái yếu, một khu trung và một khu cao.
+Thế giới có **khu Người** với hai trung tâm chính là **Làng** và **Thành phố**. Khu Người nằm **giữa vùng Thủy và vùng Mộc** trên bố cục địa lý tổng thể. Ở trung tâm lục địa là **Tâm Ẩn — một ngôi làng**. Lục Đại gồm sáu vùng linh năng; mỗi vùng có bốn khu quái theo cùng một mẫu: hai khu rìa quái yếu, một khu trung và một khu cao.
 
 Lục Đại có **24 khu quái**. Cộng Làng, Thành phố và làng Tâm Ẩn là **27 khu chính**. Nhà cá nhân, phòng trong nhà, dungeon tầng phụ và đấu trường riêng chỉ thêm khi thiết kế; không đổi số khu chính.
 
@@ -18,7 +18,7 @@ Lục Đại có **24 khu quái**. Cộng Làng, Thành phố và làng Tâm Ẩ
 
 Cả ba là nơi cư trú an toàn, không có quái thù địch. **Tâm Ẩn không phải đấu trường, lõi boss hay vùng nguy hiểm bậc cao.** Linh năng nơi đây đậm nhưng hài hòa.
 
-Làng và Thành phố là hai khu chính của Người. Không thêm các map Người trung gian cho tới khi cần blockout tuyến nối.
+Làng và Thành phố là hai khu chính trong khu Người, nằm trong dải địa lý giữa Thủy và Mộc. Quan hệ này xác định vị trí tương đối; chưa chốt tọa độ, hướng bản đồ, đường biên hay tuyến nối cụ thể. Không thêm map Người trung gian cho tới khi cần blockout tuyến nối.
 
 ## 3. Quy chuẩn chung cho mỗi vùng Lục Đại
 

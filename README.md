@@ -4,10 +4,10 @@ Game pixel online fantasy cổ về Người, Tinh Linh và linh năng của L�
 
 ## Chuẩn map hiện hành — 15/10/2026
 
-- Khu Người có hai trung tâm: **Làng** và **Thành phố**.
+- Khu Người có hai trung tâm: **Làng** và **Thành phố**, nằm giữa vùng Thủy và vùng Mộc.
 - **Tâm Ẩn là một ngôi làng**, nơi Tinh Linh cư trú và bắt đầu.
 - Lục Đại có sáu vùng linh năng; mỗi vùng gồm **hai khu quái Rìa yếu, một khu Trung và một khu Cao**.
-- Tổng: **27 khu chính**. Bản đồ tọa độ chi tiết sẽ được thiết kế từ chuẩn này.
+- Tổng: **27 khu chính**. Khu Người nằm giữa Thủy và Mộc; tọa độ và tuyến cụ thể sẽ được thiết kế từ chuẩn này.
 - Map runtime và backend hiện có là dữ liệu legacy, chưa migration; xem [hiện trạng map](docs/game-design/09-map-hien-trang.md).
 
 ## Tài liệu thiết kế

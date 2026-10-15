@@ -1,6 +1,6 @@
 # 04 — Quy chuẩn hình ảnh map
 
-**Chuẩn hiện hành:** fantasy cổ trên một thế giới gồm hai khu chính của Người (Làng, Thành phố), làng Tâm Ẩn và Lục Đại. Mỗi vùng Lục Đại có hai khu quái Rìa, một Trung, một Cao. Không dùng bố cục địa danh cũ.
+**Chuẩn hiện hành:** fantasy cổ trên một thế giới gồm khu Người (Làng, Thành phố) nằm giữa vùng Thủy và vùng Mộc, làng Tâm Ẩn và Lục Đại. Mỗi vùng Lục Đại có hai khu quái Rìa, một Trung, một Cao. Không dùng bố cục địa danh cũ.
 
 ## 1. Góc nhìn và đơn vị
 

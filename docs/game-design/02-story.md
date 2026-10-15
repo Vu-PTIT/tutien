@@ -4,7 +4,7 @@
 
 Thế giới fantasy cổ được tạo nên bởi linh năng. Sáu hệ Mộc, Thủy, Kim, Phong, Thổ và Hỏa hiện diện trong **Lục Đại**. Người và Tinh Linh cùng khám phá thế giới, phát triển Nội Giới và đối mặt với các biến cố linh năng.
 
-Bản đồ hiện hành có hai trung tâm của Người — **Làng** và **Thành phố** — cùng một trung tâm của Tinh Linh: **làng Tâm Ẩn** ở giữa lục địa. Tâm Ẩn là nơi cư trú an toàn, không phải khu cuối/boss.
+Bản đồ hiện hành có hai trung tâm của Người — **Làng** và **Thành phố** — đặt trong khu Người nằm giữa vùng Thủy và vùng Mộc. Trung tâm của Tinh Linh là **làng Tâm Ẩn** ở giữa lục địa. Tâm Ẩn là nơi cư trú an toàn, không phải khu cuối/boss.
 
 ## 2. Nhịp khám phá
 
@@ -23,7 +23,7 @@ Tâm Ẩn là **một ngôi làng ở trung tâm lục địa**, nơi Tinh Linh 
 
 - Quan hệ giữa Làng Người và Thành phố Người.
 - Lịch sử và văn hóa của làng Tâm Ẩn.
-- Vị trí, địa lý và mối liên hệ giữa sáu vùng.
+- Hướng, ranh giới và tuyến nối chi tiết giữa các vùng (ngoài quan hệ đã chốt: khu Người nằm giữa Thủy và Mộc).
 - Nhân vật/biến cố trung tâm cho từng vùng.
 - Nguyên nhân và phân bố biến cố linh năng bất thường.
 
