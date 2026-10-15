@@ -300,9 +300,9 @@ Bố cục chi tiết từng map: [05](05-map-layouts.md). Quái: [06](06-monste
 
 ## 8. Quy tắc dựng map
 
-- **Mép map phải khớp** với map bên cạnh theo bảng "Ghép map thành một thế giới" ở §3; dải 3–4 ô sát mép dùng chung tile ([04](04-map-art.md) §3.3).
-- **Nền vẽ theo lớp, không ghép toàn bộ từ tile.** Mỗi map là chồng lớp PNG vẽ tay; tile chỉ dùng cho mặt đường, sàn, luống lặp. Chi tiết ở [04](04-map-art.md) §11.
-- **Mỗi map có lớp linh năng** (mạch, điểm tụ, hạt, linh vật) theo [04](04-map-art.md) §6, **màu theo hệ của vùng**; điểm tụ trùng điểm Hấp Linh.
+- **Mép map phải khớp** với map bên cạnh theo bảng "Ghép map thành một thế giới" ở §3; dải 3–4 ô sát mép dùng chung bản vẽ rồi cắt cho hai phía ([04](04-map-art.md) §3.3).
+- **Nền vẽ theo lớp, không ghép toàn bộ từ tile.** Mỗi map gồm 5 nhóm PNG/hiệu ứng: nền, nước, vật thể/nhân vật, phần che phía trên, hiệu ứng/ánh sáng; tile chỉ dùng cho mặt đường, sàn, luống lặp. Chi tiết ở [04](04-map-art.md) §11.
+- **Mỗi map có điểm nhấn linh năng, không bắt buộc mỗi khung hình có hiệu ứng** (mạch, điểm tụ, hạt, linh vật) theo [04](04-map-art.md) §6, **màu theo hệ của vùng**; điểm tụ trùng điểm Hấp Linh.
 - Mỗi vật tương tác (cây, ghế, cửa, bến câu, luống, cổng) là **đối tượng riêng** có ID, trạng thái và điểm đứng.
 - Collision và đường đi lưu thành dữ liệu riêng, đồng bộ với `server/data/life_world.json`.
 - **Lối mòn ẩn** trong Rừng Sâu là lớp collision riêng: chặn khi đi bộ, mở khi Hóa Thú.

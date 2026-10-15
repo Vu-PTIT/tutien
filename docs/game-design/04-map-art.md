@@ -1,8 +1,10 @@
 # 04 — Map art
 
+**Quy chuẩn 15/10/2026 — feat/fantasy-world:** 5 nhóm hình ảnh; 32 px là đơn vị logic, asset đặt tự do theo pixel. Giữ bối cảnh fantasy cổ và tỉ lệ đã duyệt ở [11](11-ti-le-map.md).
+
 ## 1. Một câu định hướng
 
-> **Pixel art 32 px, người chơi nhìn từ góc camera 3/4; nơi Người ấm như một buổi chiều ở làng chài ven biển, nơi Tinh Linh dịu như nắng xuyên tán lá trên mặt đầm; linh năng là ánh sáng của chính đất, nước, lửa, cây, quặng và gió, và map nào cũng thấy nó chảy.**
+> **Pixel art, đơn vị logic 32 px, người chơi nhìn từ góc camera 3/4; nơi Người ấm như một buổi chiều ở làng chài ven biển, nơi Tinh Linh dịu như nắng xuyên tán lá trên mặt đầm; linh năng là ánh sáng của chính đất, nước, lửa, cây, quặng và gió, và map nào cũng thấy nó chảy.**
 
 Map dựng **theo lớp PNG vẽ tay** (nền, decal, bóng, linh năng, đối tượng, tán, hạt, ánh sáng, không khí), không ghép toàn bộ từ tileset (§11).
 
@@ -19,7 +21,11 @@ Mượn từ Eastward **phần hình ảnh**, không mượn lối chơi phiêu 
 > - Vì vậy: người thiết kế map nghĩ bằng mặt bằng; họa sĩ vẽ asset theo góc 3/4; code giữ logic trên lưới vuông và chỉ xử lý 3/4 ở phần hiển thị (thứ tự vẽ theo trục Y, che khuất).
 
 - **Camera 3/4 thẳng:** chiếu lên lưới vuông, camera chếch từ trên, không xoay. Người chơi thấy mái nhà từ trên xuống, mặt tiền ngắn, mặt đất chiếm phần lớn khung hình. Không isometric hình thoi, không side-view.
-- **1 ô = 32 px ≈ 1 m.** Lưới phụ 16 px để đặt đồ.
+- **1 ô logic = 32 px**; quy đổi khoảng 1 m chỉ để ước lượng thế giới, không ép kiến trúc theo tỉ lệ thực. Đây là đơn vị đo bố cục, khoảng cách, tốc độ và tọa độ server, không phải kích thước tile/asset bắt buộc.
+- **Asset đặt tự do theo pixel nguyên**, không bắt buộc snap vào ô 32 px hoặc có kích thước là bội số của 32. Lưới phụ 16 px chỉ gợi ý căn bố cục. Cây rộng 85 px vẫn hợp lệ; collision theo gốc/footprint, không theo toàn khung ảnh.
+- Tọa độ ô đổi sang pixel bằng `px = ô × 32`; cho phép tọa độ ô phân số. Nhân vật di chuyển liên tục; chỉ làm tròn vị trí hiển thị khi cần pixel snap, không làm tròn trạng thái mô phỏng/server.
+- Quy đổi: 6 ô = 192 px; tốc độ 4 ô/giây = 128 px/giây theo [11](11-ti-le-map.md).
+
 - **Phóng to số nguyên**, không scale lẻ, không xoay sprite.
   - Khám phá: ×2 (màn 1080p thấy ≈ 30×17 ô).
   - Sinh hoạt/tương tác: ×3.
@@ -55,7 +61,7 @@ Mọi map phải trông như **cùng một thế giới, cùng một tay vẽ**.
 | Cây Mẹ | Ngoại lệ duy nhất; không bao giờ thấy trọn trong một khung hình | — |
 
 - **Cùng mật độ chi tiết.** Cùng độ phân giải pixel, cùng số mảng sáng–tối trên một vật (3–4 mảng), cùng kiểu outline 1 px màu theo chất liệu. Không map nào vẽ mịn hơn hay thô hơn hẳn.
-- **Cùng ánh sáng.** Sáng từ trên-trái, bóng ngả phải-dưới, bóng là sprite riêng màu tím mờ, ở mọi map. Ánh sáng riêng của từng khu (tia nắng xiên ở Vườn Cây Mẹ, đèn linh thạch dưới hầm...) chỉ **cộng thêm** vào, không đổi hướng sáng chính.
+- **Cùng ánh sáng.** Sáng từ trên-trái, bóng ngả phải-dưới, bóng màu tím mờ, chỉ tách riêng nếu cần thay đổi hoặc xử lý che khuất, ở mọi map. Ánh sáng riêng của từng khu (tia nắng xiên ở Vườn Cây Mẹ, đèn linh thạch dưới hầm...) chỉ **cộng thêm** vào, không đổi hướng sáng chính.
 - **Chung lõi màu.** Mỗi khu có palette riêng nhưng bắt buộc dùng chung: màu bóng `#2E2A4A`, màu sáu hệ linh năng, tím đá lạ, màu UI, bộ màu da/tóc nhân vật.
 - **Nhân vật nổi trên mọi nền.** Nhân vật, NPC, Tinh Linh, dị thú phải tách khỏi mặt đất ở mọi map và mọi giờ (đặc biệt ở Rừng Sâu và ban đêm). Nếu không tách được thì chỉnh màu nền chứ không vẽ lại nhân vật cho riêng map đó.
 
@@ -67,7 +73,7 @@ Mọi map phải trông như **cùng một thế giới, cùng một tay vẽ**.
 
 ### 3.3 Chỗ nối giữa các map
 
-- **Mép map nối liền.** Hai map cạnh nhau dùng chung tile ở dải mép (khoảng 3–4 ô): đường, cỏ, tường cọc nhìn từ hai phía phải khớp nhau.
+- **Mép map nối liền.** Hai map cạnh nhau dùng chung bản vẽ cắt cho hai phía ở dải mép (khoảng 3–4 ô): đường, cỏ, tường cọc nhìn từ hai phía phải khớp nhau.
 - **Chuyển dần, không cắt cụt.** Càng gần ranh giới, đồ của bên kia càng xuất hiện nhiều hơn: gần tường cọc thì cỏ cao và rễ lấn vào làng; quanh Cổng Rễ thì lồng đèn lá, dây leo lẫn vào chợ làng; ở Vườn Cây Mẹ có vài món đồ của Người mà Bé Mơ lượm về.
 - **Giao thoa chuyển theo dải:** map giao thoa luôn có một phía đậm hệ A, phía kia đậm hệ B, giữa là vật pha cả hai (cây mọc giữa nước, đá vân lửa, suối chảy qua quặng).
 - Một vật mốc lớn nên **thấy được từ map bên cạnh** (ví dụ ngọn núi trên Đài Thiên Mạch nhô sau Rừng Sâu, hải đăng làng thấy từ Bìa Rừng) để người chơi cảm thấy các map là một thế giới liền mạch.
@@ -117,7 +123,7 @@ Các khu khác ([12](12-ban-do-cac-khu.md)) lấy màu chủ đạo theo hệ tr
 
 ## 5. Ánh sáng, giờ, thời tiết
 
-Ánh sáng là ưu tiên số 1 vì cho nhiều không khí nhất trên mỗi giờ công.
+Ưu tiên đọc rõ nhân vật, đường đi và vật tương tác; ánh sáng bổ sung không khí, không làm mất nét pixel.
 
 - Đèn điểm cho đèn lồng, đuốc, quán, đèn linh thạch, lồng đèn lá của Tinh Linh, hải đăng, linh năng; nắng nhẹ có hướng.
 - Vườn Cây Mẹ dùng **tia nắng xiên** (god rays) qua tán lá xuống mặt đầm làm dấu ấn riêng.
@@ -133,7 +139,7 @@ Các khu khác ([12](12-ban-do-cac-khu.md)) lấy màu chủ đạo theo hệ tr
 | Khuya | `#3C3F6E` | Ít người |
 
 - **Thời tiết:** nắng, mưa phùn, mưa rào, sương, gió biển, **Đêm Linh Triều** (linh năng dâng, cả map sáng theo màu hệ).
-- Hướng sáng chính: trên-trái; bóng ngả phải-dưới, là sprite riêng mờ tím.
+- Hướng sáng chính: trên-trái; bóng ngả phải-dưới, màu tím mờ, có thể đi cùng vật khi tĩnh.
 
 ## 6. Linh năng trên map
 
@@ -154,7 +160,7 @@ Các khu khác ([12](12-ban-do-cac-khu.md)) lấy màu chủ đạo theo hệ tr
 | **Ẩn** | `#B8FFF0` / `#3FD6B8` | Gần Tâm Ẩn, di vật Thời Khai Phá, hạt Ẩn trong Nội Giới | Trôi chậm, ấm; **sáu hệ hòa làm một** |
 | **Tím** | `#8F6BFF` | Đá lạ, lõi trận ở Đài | Lục giác đứng yên, cạnh cứng, không bóng; nhấp nháy theo nhịp 47 |
 
-- **Màu hệ chỉ dùng cho ánh sáng linh năng** (lớp hòa trộn cộng, L4/L7), không dùng làm màu vật liệu. Nước đầm vẫn là `#5C8FA0` của palette làng; chỉ chỗ có Thủy mới có gợn sáng `#8FD8F0` chạy trên đó.
+- **Màu hệ chỉ dùng cho ánh sáng linh năng** (lớp hòa trộn cộng, G5), không dùng làm màu vật liệu. Nước đầm vẫn là `#5C8FA0` của palette làng; chỉ chỗ có Thủy mới có gợn sáng `#8FD8F0` chạy trên đó.
 - **Ngọc lam là Ẩn**, hiếm: ở rìa các khu gần như không thấy, trừ hạt khởi đầu trong Nội Giới và vài di vật cổ. Càng gần Tâm Ẩn càng nhiều.
 - **Giao thoa = hai màu đan vào nhau.** Ở vùng giao thoa, hai màu hệ xen nhau theo dải và xoắn vào nhau ở điểm tụ; đây là dấu nhận ra đất Tinh Linh từ xa.
 - Hỏa phân biệt với đèn thường bằng dáng: đèn là điểm sáng đứng yên; Hỏa có đốm bay lên và nhịp 47.
@@ -163,11 +169,11 @@ Các khu khác ([12](12-ban-do-cac-khu.md)) lấy màu chủ đạo theo hệ tr
 
 | Thành phần | Là gì | Vẽ thế nào | Lớp (§11) |
 | --- | --- | --- | --- |
-| **Mạch linh** | Đường linh năng chảy trong đất, đá, rễ, lòng sông | Vệt sáng mảnh, đứt quãng, nằm **dưới** mặt đất; mang **hệ của nơi nó chảy qua** (qua lòng sông là Thủy, qua rễ là Mộc, qua vỉa quặng là Kim) và đổi màu dần ở chỗ chuyển | L2 decal + L4 glow |
-| **Điểm tụ** | Chỗ nhiều mạch gặp nhau. **Mọi điểm thiền ở [05](05-map-layouts.md) nằm trên điểm tụ, màu đúng hệ của điểm thiền đó** | Vũng sáng tròn; vật chất quanh đó biểu hiện hệ rõ nhất (đá ửng, nước gợn, lửa bốc...) | L4 glow + L7 hạt |
-| **Hạt linh** | Hạt sáng trôi trong không khí | 1–2 px, dáng theo hệ (§6.1); mật độ theo mức (§6.4) | L7 hạt |
-| **Linh vật** | Vật đã thấm linh năng: bậc **Linh** ở [08](08-life-yields.md) §2 | Viền sáng **màu hệ của nó**: cá lấp lánh Thủy, thảo dược Mộc, Đá Vân Sáng Kim | Trên sprite (L5) |
-| **Vết sẹo mạch** | Chỗ Người đào, đốn, đắp đè lên linh mạch | Mạch bị cắt ngang, đầu mạch rỉ sáng yếu và nhòe; quanh đó cây cỏ héo. Ở làng ít, ở mỏ và chỗ qua ranh Giao Ước nhiều | L2 decal + L4 glow |
+| **Mạch linh** | Đường linh năng chảy trong đất, đá, rễ, lòng sông | Vệt sáng mảnh, đứt quãng, nằm **dưới** mặt đất; mang **hệ của nơi nó chảy qua** (qua lòng sông là Thủy, qua rễ là Mộc, qua vỉa quặng là Kim) và đổi màu dần ở chỗ chuyển | G1 dấu tĩnh + G5 ánh sáng |
+| **Điểm tụ** | Chỗ nhiều mạch gặp nhau. **Mọi điểm thiền ở [05](05-map-layouts.md) nằm trên điểm tụ, màu đúng hệ của điểm thiền đó** | Vũng sáng tròn; vật chất quanh đó biểu hiện hệ rõ nhất (đá ửng, nước gợn, lửa bốc...) | G5 ánh sáng + hạt |
+| **Hạt linh** | Hạt sáng trôi trong không khí | 1–2 px, dáng theo hệ (§6.1); mật độ theo mức (§6.4) | G5 hạt |
+| **Linh vật** | Vật đã thấm linh năng: bậc **Linh** ở [08](08-life-yields.md) §2 | Viền sáng **màu hệ của nó**: cá lấp lánh Thủy, thảo dược Mộc, Đá Vân Sáng Kim | Sprite G3 + ánh sáng G5 |
+| **Vết sẹo mạch** | Chỗ Người đào, đốn, đắp đè lên linh mạch | Mạch bị cắt ngang, đầu mạch rỉ sáng yếu và nhòe; quanh đó cây cỏ héo. Ở làng ít, ở mỏ và chỗ qua ranh Giao Ước nhiều | G1 dấu tĩnh + G5 ánh sáng |
 
 Thêm **nhịp 47 giây** ([02](02-story.md) hồi B): mọi linh năng trên map **sáng lên cùng lúc** khoảng 1 giây rồi dịu lại, như nhịp tim. Ở làng chỉ thấy rõ quanh Cổng Rễ và trên mạch; càng gần Đài Thiên Mạch nhịp càng mạnh và gắt.
 
@@ -195,10 +201,12 @@ Tương sinh, tương khắc ([07](07-power-system.md) §2.1) không chỉ là s
 
 ### 6.5 Luật để linh năng "là ánh sáng, không phải sơn"
 
-- **Mọi khung hình ở zoom ×2 có ít nhất 1 dấu linh năng** (mạch, điểm tụ, linh vật hoặc hạt), ở mọi map, mọi giờ.
-- Nhưng ban ngày phần pixel phát sáng linh năng **≤ 8% khung hình ở thị trấn ven biển, ≤ 15% ở đất hoang, ≤ 25% ở giao thoa và lõi**. Ban đêm được gấp đôi.
+- **Không bắt buộc mọi khung hình có linh năng.** Tập trung ở điểm tụ, linh vật, mạch đặc trưng và dấu nhiễm tím; đường đi và khu sinh hoạt có khoảng nghỉ thị giác.
+- Nhưng ban ngày phần pixel phát sáng linh năng **≤ 8% khung hình ở thị trấn ven biển, ≤ 15% ở đất hoang, ≤ 25% ở giao thoa và lõi**. Đây là trần, không phải chỉ tiêu. Ban đêm chỉ tăng sáng cục bộ nếu vẫn đọc rõ cảnh.
 - Một khung hình thường chỉ có **1–3 hệ**, theo đúng vật chất đang thấy; không rải đủ sáu màu cho đẹp.
-- Linh năng **không có outline**, vẽ bằng lớp hòa trộn cộng (additive) và quầng sáng mềm. Đá lạ (tím) thì ngược lại: cạnh cứng, không quầng.
+- Linh năng không có viền tối: lõi pixel sắc nét, quầng nhỏ và nhẹ. Chỉ phần phát sáng dùng additive; không blur/bloom toàn cảnh. Đá tím giữ cạnh cứng, không quầng.
+- Sương, hạt, ánh sáng không được che dấu tương tác, đường đi và biên nhân vật; shader nước không làm méo bờ và sprite.
+- Chi tiết dày quanh nhà, chợ, điểm hoạt động; không rải đều gây nhiễu toàn map.
 - Linh năng đi theo địa hình thật: chảy theo dốc, gom ở nước và rễ, bị nền đá lát và tường chặn (chỉ rỉ sáng qua kẽ). Không rải ngẫu nhiên.
 - Mạch và điểm tụ là **một lớp dữ liệu riêng** của map (§11.3), cùng nguồn với điểm thiền và hệ trong `server/data/`, để hình ảnh khớp với lối chơi (La bàn linh / Linh Cảm, sản lượng theo mức).
 
@@ -260,7 +268,7 @@ Thứ tự lớp: bóng → thân → **đuôi sau** → quần áo → đầu �
 
 ## 10. Art test — làm trước khi vẽ thêm
 
-Một góc **Làng Hồ Lặng** khoảng 30×17 ô (1 khối nền 1024×1024 px là đủ), chạy trong Godot, **dựng đủ chồng lớp L0–L9** (§11):
+Một góc **Làng Hồ Lặng** khoảng 30×17 ô (1 khối nền 1024×1024 px là đủ), chạy trong Godot, **dựng 5 nhóm G1–G5, chỉ tạo thành phần cần thiết** (§11):
 
 1. Nhà người chơi (cửa đóng/mở), vườn 4 luống ở 3 trạng thái, bờ đầm có 1 bến câu, một dải bãi biển với thuyền và lưới phơi, **Cổng Rễ** (vòm rễ, màn sáng xanh, chòi gác, lồng đèn lá, góc chợ Tinh Linh), một đoạn tường cọc có chốt, cột đèn lồng, một xe bò.
 2. **Một avatar Người** và **một avatar Tinh Linh Cáo**, dùng chung 2 bộ quần áo; đi/đứng/ngồi/câu 4 hướng; Tinh Linh có thêm dạng thú.
@@ -272,7 +280,8 @@ Một góc **Làng Hồ Lặng** khoảng 30×17 ô (1 khối nền 1024×1024 p
 - 5 người chưa biết dự án nhìn ảnh chụp nói được "Người" và "Tinh Linh" là ai trong ≤ 3 giây.
 - Phân biệt được Tinh Linh với dị thú ngay lần đầu nhìn.
 - Avatar đọc rõ ở ×2 trên điện thoại 6".
-- **Linh năng:** người xem chỉ ảnh chụp ban ngày nói được "chỗ này có năng lượng lạ" và đoán đúng hệ của ít nhất 2 chỗ (nước, lửa, đất...) mà không cần giải thích, nhưng không thấy map bị phủ màu (§6.4). Tắt lớp L4 + L7 thì làng trông như làng chài bình thường.
+- **Linh năng:** người xem chỉ ảnh chụp ban ngày nói được "chỗ này có năng lượng lạ" và đoán đúng hệ của ít nhất 2 chỗ (nước, lửa, đất...) mà không cần giải thích, nhưng không thấy map bị phủ màu (§6.4). Tắt lớp hiệu ứng linh năng G5 thì làng trông như làng chài bình thường.
+- **Độ nét:** kiểm tra ở ×1, ×2, ×3 khi camera đứng và di chuyển; so sánh bật/tắt G5 ngày–đêm. Pixel không nhòe, biên nhân vật/cửa/đường rõ.
 - **Theo lớp:** bật/tắt từng lớp không làm lộ đường ráp ô ở nền; dời một cái cây hay ngôi nhà chỉ cần sửa `layout.json`, không vẽ lại nền.
 - **Ghép thử:** đặt cạnh nhau trên một ảnh 1 cây, 1 đồ vật, 1 nhân vật của làng và bản biến thể Vườn Cây Mẹ / Rừng Sâu (vẽ phác). Người xem phải thấy chúng thuộc cùng một game, khác nơi chứ không khác tay vẽ.
 - Ảnh chụp buổi tối đặt cạnh ảnh Eastward: thấy "cùng họ ánh sáng" nhưng là một thế giới riêng.
@@ -282,45 +291,45 @@ Một góc **Làng Hồ Lặng** khoảng 30×17 ô (1 khối nền 1024×1024 p
 
 > **Map không ghép toàn bộ từ tileset.** Mỗi map là một chồng **lớp PNG** đặt tự do lên lưới logic vuông (§2). Tile chỉ dùng ở chỗ thật sự lặp: mặt đường lát dài, sàn nhà, luống vườn. Còn lại (mặt đất, bờ đầm, bãi biển, vách đá, nhà, cây, đồ vật, linh năng) là **PNG vẽ tay**, đặt theo pixel.
 
-### 11.1 Chồng lớp (từ dưới lên)
+### 11.1 Năm nhóm quản lý hình ảnh
 
-| Lớp | Tên | Dạng | Ghi chú |
-| --- | --- | --- | --- |
-| L0 | **Nền vẽ** | PNG lớn theo **khối 1024×1024 px** (32×32 ô) | Đất, cỏ, cát, bờ đầm, sườn đồi vẽ liền một mảng như tranh; không thấy đường ráp ô |
-| L1 | Nước | PNG mặt nước + shader (gợn, sóng, phản chiếu, lấp lánh) | Hình nước khớp dữ liệu nước trong `life_world.json` |
-| L2 | **Decal mặt đất** | PNG rời nhỏ, đặt tự do | Vết bánh xe bò, vũng nước, rêu, lá rụng, vỏ sò, **mạch linh và vết sẹo mạch** (§6.2). Tile (nếu dùng) nằm cùng lớp này |
-| L3 | Bóng | PNG bóng riêng, màu `#2E2A4A` mờ | Bóng nhà, cây, đồ; ngả phải-dưới (§5) |
-| L4 | **Linh năng mặt đất** | PNG quầng sáng, hòa trộn cộng | Ánh sáng của mạch, điểm tụ, vết sẹo; sáng theo nhịp 47 và theo giờ |
-| L5 | **Đối tượng (Y-sort)** | Mỗi vật một PNG + điểm neo ở chân | Nhà, cây, cột đèn, thuyền, NPC, người chơi, dị thú. Vật lớn tách **thân** (L5) và **phần trên cao** (L6) |
-| L6 | Mái, tán cây | PNG phần trên cao | Mờ đi khi nhân vật đi sau (§2) |
-| L7 | **Hạt và hiệu ứng** | Particle | Hạt linh, đom đóm, lá bay, khói bếp, bụi, bọt sóng |
-| L8 | Ánh sáng | Đèn điểm, normal map, màu phủ theo giờ | §5 |
-| L9 | Không khí | PNG hoặc shader phủ toàn màn | Sương, bóng mây trôi, tia nắng xiên (Vườn Cây Mẹ), sóng sáng Đêm Linh Triều |
+| Nhóm | Nội dung | Cách dựng |
+| --- | --- | --- |
+| G1 — Nền | Đất, cỏ, đường, bờ hồ, decal tĩnh | Vẽ gộp theo khối 1024×1024 px; giữ đường ráp liền mạch |
+| G2 — Nước | Mặt hồ, sông, gợn và phản chiếu | PNG/mask + animation hoặc shader; khớp vùng nước server |
+| G3 — Vật thể và nhân vật | Nhà, cây, đồ vật, NPC, người chơi, dị thú | Đối tượng riêng, neo ở chân, Y-sort; bóng tĩnh đơn giản đi cùng asset |
+| G4 — Phần che phía trên | Mái, tán cần xử lý che người | Chỉ tách phần cần mờ/ẩn; không bắt mọi vật có ảnh mái/tán riêng |
+| G5 — Hiệu ứng và ánh sáng | Linh năng, đèn, hạt, sương, ngày–đêm | Các thành phần độc lập, bật/tắt riêng; không xuất một ảnh phủ kín toàn map |
 
-Ngoài phần nhìn, mỗi map có **lớp dữ liệu** không vẽ ra: va chạm, đường đi, điểm tương tác, vùng an toàn, **mạch và điểm tụ linh năng** (§11.3).
+**G1–G5 là nhóm chức năng, không phải thứ tự z cố định.** Hiệu ứng G5 trên mặt đất vẽ dưới G3; hạt tiền cảnh có thể trên G4. Bóng đi cùng đối tượng vẫn phải vẽ dưới phần thân và các vật cần che nó; tách node bóng khi cần để tránh lỗi Y-sort. Phân lớp không tự làm mờ ảnh.
 
-### 11.2 Luật cho PNG
+Giữ riêng dữ liệu va chạm, đường đi, điểm tương tác, vùng an toàn, mạch và điểm tụ. Không gộp vật có tương tác, trạng thái, chuyển động hoặc cần di dời vào nền.
 
-- **Một pixel PNG = một pixel game** ở zoom ×1. Không scale, không xoay, đặt ở tọa độ nguyên (snap 1 px; lưới phụ 16 px chỉ để gợi ý).
-- Mọi PNG vẫn theo luật chung §3.1: cùng góc camera, cùng ánh sáng, cùng palette khu (§4). Vẽ theo lớp không có nghĩa là mỗi map một kiểu vẽ.
-- **Nền vẽ (L0) là riêng cho từng khối**, nhưng vẽ bằng bộ cọ/mẫu chung của khu (mảng cỏ, đất, cát, đá) để giữ cùng tay vẽ và đỡ công.
-- **Đồ vật (L5) vẫn theo họ asset** (§3.2): một PNG gốc, biến thể theo khu; đặt lại ở nhiều chỗ, không vẽ lại.
-- Vật có trạng thái là sprite sheet PNG (§7). Vật động (nước, sóng, cờ, lồng đèn, lá, lưới phơi) là sprite sheet hoặc shader, không vẽ chết vào nền.
-- Chỗ nối giữa hai map (§3.3): dải 3–4 ô sát mép vẽ trên **một file chung** rồi cắt cho cả hai map.
-- Bộ nhớ: chỉ nạp các khối L0 quanh camera (3×3 khối). Map 160×120 ô = 5×4 khối.
+Quy đổi từ quy chuẩn cũ: nền và decal tĩnh → G1; nước → G2; vật thể và bóng gắn vật → G3; mái/tán → G4; linh năng, hạt, ánh sáng và không khí → G5. Dấu nứt tĩnh có thể ở G1 nhưng ánh sáng của nó ở G5.
+
+### 11.2 Pixel và cách xuất ảnh
+
+- **Một pixel PNG = một pixel game** ở zoom ×1. Asset vẽ đúng kích thước mục tiêu, không kéo giãn/thu nhỏ tùy ý hoặc xoay làm lệch pixel. Kích thước ảnh không cần là bội số của 32.
+- Lọc Nearest, không mipmap cho sprite/nền trong chế độ chơi; camera và phép phóng hiển thị theo pixel, zoom nguyên. Giữ chuyển động logic liên tục, không ép đi theo ô.
+- Cùng góc nhìn, palette, ánh sáng và mật độ pixel (§3). 32 px là đơn vị logic, không phải tuyên bố độ phân giải của mọi sprite.
+- Nền G1 theo khối 1024×1024 px (32×32 ô logic); chỉ nạp khối quanh camera, mục tiêu 3×3 khối ở zoom chơi mặc định. Map 96×72 ô cần 3×3 khối, phần thừa ở mép được cắt.
+- Đồ vật dùng chung họ asset; có trạng thái thì dùng sprite sheet. Nước, cờ, lá động và hiệu ứng không vẽ chết vào nền.
+- Dải 3–4 ô nối map vẽ trên một nguồn chung rồi cắt cho hai phía; tile chỉ dùng khi phần đó thực sự lặp.
+- Họa sĩ được dùng nhiều layer làm việc trong Aseprite; khi xuất gộp phần tĩnh phù hợp. Không bắt mỗi layer làm việc thành một PNG, không xuất ảnh trong suốt toàn khối cho một vật nhỏ.
+- Chi tiết đời sống tập trung quanh nhà, chợ, điểm hoạt động; đường đi có khoảng nghỉ thị giác. Duyệt bằng zoom chơi thật, không chỉ ảnh toàn map thu nhỏ.
 
 ### 11.3 File nguồn và dữ liệu
 
-- Mỗi khối map vẽ trong **một file Aseprite nhiều layer** đặt tên đúng L0–L9; script xuất mỗi layer ra một PNG.
-- Đối tượng đặt trên map lưu ở `client/data/maps/<map_id>/layout.json`: `id`, `png`, `x`, `y` (px), `layer`, `anchor`, `state`, `collision`. Điểm tương tác dùng ID của `server/data/life_world.json`.
-- Linh năng lưu ở `client/data/maps/<map_id>/linh_nang.json`: danh sách **mạch** (đường gấp khúc + hệ + độ sáng) và **điểm tụ** (tâm, bán kính, hệ). Điểm tụ phải trùng điểm thiền của server; script kiểm tra báo lỗi nếu lệch.
-- Nguồn khối map: `client/art/<khu>/map/<map_id>/khoi_<x>_<y>.aseprite` → `client/assets/<khu>/map/<map_id>/khoi_<x>_<y>_<lớp>.png`. Asset rời: `client/art/<khu>/<loại>/<tên>.aseprite` → `client/assets/<khu>/<loại>/<tên>.png`.
-- Godot 4: lọc Nearest, không mipmap, snap pixel; thế giới vẽ trong `SubViewport` theo hệ số zoom nguyên; UI ngoài viewport ở độ phân giải gốc. Mỗi lớp là một `Node2D` riêng theo `z_index`; L5 bật Y-sort; L4 và L7 dùng `CanvasItemMaterial` blend Add.
-- Đèn: `PointLight2D`, `DirectionalLight2D`, `LightOccluder2D`, `CanvasModulate`; normal map qua `CanvasTexture`.
+- Nguồn nền: `client/art/<khu>/map/<map_id>/khoi_<x>_<y>.aseprite`; xuất nền thành `client/assets/<khu>/map/<map_id>/khoi_<x>_<y>_ground.png`. Chỉ xuất thêm nước/mask nếu cần.
+- Asset rời: `client/art/<khu>/<loại>/<tên>.aseprite` → `client/assets/<khu>/<loại>/<tên>.png`; mái/tán và bóng riêng chỉ khi chức năng yêu cầu.
+- Đối tượng trong `client/data/maps/<map_id>/layout.json`: `id`, `png`, `x`, `y` (pixel), `group` (G1–G5), `anchor`, `state`, `collision`; khai báo thêm thứ tự vẽ khi cần. Đây là quy chuẩn dữ liệu khi triển khai, chưa phải schema runtime đã chuyển đổi.
+- Điểm tương tác dùng ID của `server/data/life_world.json`. Tọa độ server theo ô phải đổi sang pixel đúng một lần bằng hệ số 32; footprint và điểm đứng phải khớp ảnh.
+- `client/data/maps/<map_id>/linh_nang.json` chứa mạch (đường + hệ + độ sáng), điểm tụ (tâm, bán kính, hệ); ghi rõ đơn vị tọa độ pixel. Điểm tụ phải khớp điểm thiền server sau quy đổi.
+- Godot: thế giới trong `SubViewport` phóng nguyên, UI ở độ phân giải gốc. G3 dùng Y-sort; G4 xử lý che khuất. G5 quản lý node hiệu ứng theo độ sâu cần thiết; chỉ glow/hạt phát sáng dùng blend Add, không áp blend Add cho sương, khói hay toàn nhóm.
+- Ánh sáng có thể dùng `PointLight2D`, `DirectionalLight2D`, `LightOccluder2D`, `CanvasModulate`; normal map qua `CanvasTexture`. Không tăng độ mềm ánh sáng tới mức mất biên pixel.
 - Tiền tố là ID map bỏ `m_` (vd. `k1_01` Làng Hồ Lặng, `k1_05` Rừng Sâu, `k1_07` Vườn Cây Mẹ); asset dùng chung cả một khu dùng số khu (`k1`); dùng chung toàn game: `char`, `spirit`, `beast`, `ln` (linh năng). Đổi tên nơi không phải đổi tên file.
-- Tên: `tiento_loai_ten_bienthe`, chữ thường, không dấu. Ví dụ `k1_01_prop_thuyen_a`, `k1_05_flora_nam_phat_quang_a`, `spirit_ear_cao_a`, `ln_mach_tho_a`, `ln_seo_mach_b`.
-- Mỗi asset kèm điểm neo (chân), vùng va chạm và điểm đứng nếu tương tác được.
-- Font: Be Vietnam Pro cho UI (đã có, hỗ trợ dấu tiếng Việt); font pixel cho biển gỗ.
+- Tên asset: `vung_loai_ten_bienthe`, chữ thường không dấu; mỗi vật có điểm neo chân, footprint và điểm đứng nếu tương tác được.
+- Font: Be Vietnam Pro cho UI có dấu tiếng Việt; font pixel cho biển hiệu.
 
 ## 12. Nguồn asset và AI
 
@@ -337,9 +346,9 @@ Chưa có ảnh mốc cho bối cảnh fantasy; ảnh đầu tiên cần tạo l
 ### 13.1 Khối chung (đặt đầu mọi lệnh)
 
 ```text
-Detailed hand-painted layered pixel art game map on a 32px grid, ground painted as one
+Detailed hand-painted layered pixel art game map using 32px as a logical scale unit, with free pixel-aligned object placement, ground painted as one
 continuous image, not repeating tiles. Straight top-down 3/4 camera: rooftops seen from
-above with a short front facade, everything on a square grid, no isometric diamond, no
+above with a short front facade, square-grid world coordinates without forced tile-sized objects, no isometric diamond, no
 side view. Light from the top-left, soft cool purple shadows falling to the bottom-right,
 1px dark outlines tinted by material (never pure black), 3-4 tone shading per object,
 dense lived-in detail, harmonious limited palette. Ancient fantasy world: wood, stone,
