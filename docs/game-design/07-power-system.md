@@ -28,19 +28,19 @@ Hấp thụ hệ nào thì Nội Giới mọc ra đúng thứ đó: thế giới
 
 | Hệ | Có trong | Hấp thụ ở đâu (rìa khu Mộc) | Mọc thành trong Nội Giới | Màu |
 | --- | --- | --- | --- | --- |
-| **Kim** | Quặng, kim loại, đồ thép của Người | Vỉa quặng ở Mỏ và Hầm Mỏ; đào khoáng; Dơi Vân Quặng | Mạch quặng, đất kim loại lấp lánh | Bạc trắng |
+| **Kim** | Quặng, kim loại, đồ thép của Người | Vỉa quặng ở Mỏ và khu hang của vùng; đào khoáng; Dơi Vân Quặng | Mạch quặng, đất kim loại lấp lánh | Bạc trắng |
 | **Mộc** | Cây, cỏ, nấm, rễ | Rừng, gốc cây Tinh Linh, vườn nấm; thu hoạch | Cỏ, rừng | Xanh lá |
 | **Thủy** | Hồ, sông, suối, mưa, sương | Bờ Hồ Lặng, suối; câu cá; Rắn Sương | Suối, sông, hồ, biển | Xanh nước |
-| **Hỏa** | Lửa, nắng, sét, lò nung | Đống lửa trại ở Bìa Rừng, sân lò rèn trong làng; Gà Rừng Mào Sét, Nhện Tơ Điện | Đất lửa, núi lửa | Đỏ cam |
+| **Hỏa** | Lửa, nắng, sét, lò nung | Đống lửa trại ở khu Rìa trong một vùng phù hợp, khu hoạt động Hỏa đã được thiết kế; Gà Rừng Mào Sét, Nhện Tơ Điện | Đất lửa, núi lửa | Đỏ cam |
 | **Thổ** | Đất, đá, núi, ruộng | Sân miếu, ruộng, vách đá; thu hoạch; Lợn Gai, Rết Đá | Đồng bằng; chồng lên thành núi | Vàng đất |
-| **Phong** | Gió, mây, bầu trời | Đỉnh cao, tháp gió ở Bìa Rừng; Dơi, Cú, Khỉ | Bầu trời, mây phủ trên đất (không chiếm ô đất) | Trắng xanh |
+| **Phong** | Gió, mây, bầu trời | Đỉnh cao, tháp gió ở khu Rìa trong một vùng phù hợp; Dơi, Cú, Khỉ | Bầu trời, mây phủ trên đất (không chiếm ô đất) | Trắng xanh |
 
 Ngoài sáu hệ còn hai thứ **không thuộc vòng sáu hệ**:
 
 | | Là gì | Trong Nội Giới |
 | --- | --- | --- |
 | **Ẩn** | Linh năng thuần của Tâm Ẩn: sáu hệ hòa làm một, chưa tách ra; phát sáng ngọc lam | **Hạt khởi đầu** của mọi Nội Giới (một thửa Ẩn). Mộc cạnh Ẩn thành Rừng Ẩn |
-| **Tím** | Đá lạ từ nơi thứ ba, không thuộc sáu hệ hay Ẩn; ở lõi trận Đài Thiên Mạch, Chuột Tím, Nhiễm Tím | **Vết nứt tím** (§6), không mọc địa hình |
+| **Tím** | Đá lạ từ nơi thứ ba, không thuộc sáu hệ hay Ẩn; ở một dungeon cuối vùng, Chuột Tím, Nhiễm Tím | **Vết nứt tím** (§6), không mọc địa hình |
 
 Mỗi lần hấp thụ cho ra **hạt linh** gồm hệ và **độ tinh** (sạch hay đục):
 - Hấp Linh ở nơi yên tĩnh: ít nhưng **tinh**. (Người hay gọi là "thiền"; thực ra là cùng một cách thở do Tinh Linh dạy.) Mỗi điểm thiền cho đúng hệ của nơi đó.
@@ -151,7 +151,7 @@ Số thửa là mốc thiết kế ban đầu, sẽ cân bằng sau.
 ### Bước nhảy cho gì
 
 - Một kỹ năng riêng của hình dạng mới (ví dụ Đảo: "Thủy Triều", đẩy lùi quanh mình).
-- Vào được vùng linh năng dày hơn. Ví dụ phải là **Đảo lớn** mới chịu được Rừng Sâu lâu; Nội Giới quá nhỏ sẽ bị linh năng hoang làm **đục dần** khi đứng trong đó.
+- Vào được vùng linh năng dày hơn. Ví dụ phải là **Đảo lớn** mới chịu được khu Trung/Cao của vùng lâu; Nội Giới quá nhỏ sẽ bị linh năng hoang làm **đục dần** khi đứng trong đó.
 - Aura ngoài thế giới thay đổi theo hình dạng (§8).
 
 ## 6. Vết nứt tím
@@ -215,7 +215,7 @@ Người chơi Tinh Linh có thể **dạy Hình Thái** cho người chơi Ngư
 đi săn ở rừng quái ──► Nội Giới to nhanh, nhiều thửa đục
         ▲                              │
         │                              ▼
-  vào được vùng sâu hơn         về làng / Vườn Cây Mẹ: thiền lọc
+  vào được vùng sâu hơn         về làng / làng Tâm Ẩn: thiền lọc
         ▲                              │
         │                              ▼
   bước nhảy hình dạng ◄── xếp thửa thành hình thái ◄── câu, trồng, đào cho hệ tinh
@@ -227,9 +227,9 @@ Hoạt động đời sống bây giờ **góp thẳng vào sức mạnh** (hệ
 
 | Hồi | Nội Giới |
 | --- | --- |
-| A | Người: Bé Mơ **dạy Hấp Linh** ở sân miếu, hạt sáng đầu tiên tự hiện ra. Tinh Linh: xuất phát tại Tâm Ẩn, theo tuyến giao thoa an toàn tới Vườn Cây Mẹ học cùng Lão Hồ. Cả hai kết hồi A thành **Đảo** |
+| A | Người: Tinh Linh hướng dẫn Hấp Linh tại nơi cư trú an toàn, hạt sáng đầu tiên tự hiện ra. Tinh Linh: xuất phát tại Tâm Ẩn, theo tuyến giao thoa an toàn tới làng Tâm Ẩn học cùng Lão Hồ. Cả hai kết hồi A thành **Đảo** |
 | B | Đánh Lợn Gai: lần đầu có thửa đục; Bà Nora hoặc Lão Hồ dạy lọc |
-| C | Ở Hầm Mỏ thấy vân linh mạch chạy thẳng: linh năng đang bị hút về một hướng. Đạt **Đảo lớn** để vào Rừng Sâu |
+| C | Ở khu hang của vùng thấy vân linh mạch chạy thẳng: linh năng đang bị hút về một hướng. Đạt **Đảo lớn** để vào khu Trung/Cao của vùng |
 | D | Hội Rễ dạy **Hình Thái** cho cả hai role (Người học qua Bé Mơ). Học giả Theo phát hiện "pháp thiền của Tháp Học" vốn là của Tinh Linh |
 | E | Boss có Nội Giới bị vết nứt tím chiếm. Sau trận, hướng tới **Quần đảo** |
 
@@ -241,11 +241,11 @@ Câu hỏi để mở cho các mạch sau: nếu một Nội Giới có thể l�
 
 **Đã có (13/10/2026)**, chi tiết ở [API Nội Giới](../inner-world-backend.md):
 - Nội Giới lưu trong hồ sơ: lưới thửa (hệ, đục/sạch, độ cao), mây, linh năng chờ, hình dạng, bước nhảy gần nhất.
-- Học Hấp Linh: Tinh Linh bẩm sinh; Người học từ Bé Mơ ở sân miếu hoặc từ bạn khế ước là Tinh Linh.
+- Học Hấp Linh: Tinh Linh bẩm sinh; Người học từ Bé Mơ ở điểm Hấp Linh tại khu cư trú hoặc từ bạn khế ước là Tinh Linh.
 - **Sáu hệ** Kim, Mộc, Thủy, Hỏa, Thổ, Phong (14/10/2026): Thạch cũ tách thành Thổ (núi, đá) và Kim (quặng); Nội Giới cũ tự chuyển núi Thạch thành núi Thổ. Sinh khắc giữa các thửa, hệ chính, đòn khắc ±25%/−15% ở đánh quái ngoài map, trận Lợn Gai và săn chung. Hình thái mới Mạch Kim, Núi Lửa; chỉ số chí mạng từ Hỏa (chưa dùng trong trận).
 - Nguồn linh năng: Hấp Linh ở 32 điểm thiền (có 6 điểm Hỏa mới) (trực tiếp hoặc tự động, có lọc thửa đục), câu cá, đào khoáng, thu hoạch, hạ quái (đục).
 - Hình thái, chỉ số, bước nhảy Hạt → Quần đảo, chặn khi lệch; xếp lại thửa.
 - Sức đánh/phòng thủ từ Nội Giới đã cộng vào đánh quái ngoài map, trận Lợn Gai và săn chung.
 - Hồ sơ Luyện Khí cũ được chuyển thành linh năng Thổ.
 
-**Chưa có:** linh năng Ẩn và map Vườn Cây Mẹ, vết nứt tím, linh năng từ trận Lợn Gai/săn chung, dùng máu/linh lực/hồi máu/tốc độ trong chiến đấu, dạy Hình Thái giữa người chơi, giao diện. `realm`/`cultivationXp` vẫn được ghi để tương thích nhưng không còn quyết định sức mạnh.
+**Chưa có:** linh năng Ẩn và map làng Tâm Ẩn, vết nứt tím, linh năng từ trận chiến/săn nhóm, dùng máu/linh lực/hồi máu/tốc độ trong chiến đấu, dạy Hình Thái giữa người chơi, giao diện. `realm`/`cultivationXp` vẫn được ghi để tương thích nhưng không còn quyết định sức mạnh.
