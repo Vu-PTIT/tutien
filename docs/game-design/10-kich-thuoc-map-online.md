@@ -12,11 +12,11 @@
 | --- | --- | --- |
 | Ô | 32 px | [04](04-map-art.md) |
 | Khung nhìn ở zoom mặc định | ≈ 30×17 ô = **510 ô** ("1 màn") | [04](04-map-art.md) |
-| Tốc độ đi bộ | 72 px/s = **2,25 ô/s** | `WORLD_SPEED` trong `server/src/world.ts` |
-| Đi hết 1 màn theo chiều ngang | ≈ 13 s | 30 ô ÷ 2,25 |
+| Tốc độ thiết kế | 128 px/s = **4 ô/s** | [11](11-ti-le-map.md); runtime còn 72 px/s, xem [09](09-map-hien-trang.md) |
+| Đi hết 1 màn theo chiều ngang | 7,5 s | 30 ô ÷ 4 |
 | Phần đi được của map | ≈ 60–70% (trừ nước, nhà, vách, cây) | ước lượng |
 
-## 2. Vấn đề với kích thước cũ
+## 2. Lịch sử tính toán kích thước cũ (không phải chuẩn hiện hành)
 
 | Map | Cũ (ô) | Tổng ô | Số màn | Đi ngang hết map | Số màn / người khi đủ 30 người |
 | --- | --- | --- | --- | --- | --- |
@@ -33,17 +33,9 @@
 - Rừng Sâu đủ 30 người thì mỗi người có tới 5 màn riêng, gần như chơi một mình.
 - Đi bộ từ mép này sang mép kia mất 2 phút trở lên. Riêng việc đi từ nhà ra Chốt đã mất khoảng 1 phút, chưa kể đi qua nhiều map.
 
-## 3. Mật độ mục tiêu
+## 3. Mật độ mục tiêu hiện hành
 
-Một map 30 người phải trông **đông khi đủ người**, và vẫn **có người qua lại khi chỉ 1/3 số người online**.
-
-| Loại map | Ví dụ | Mật độ khi đủ 30 người | Diện tích cho 1 người | Tổng diện tích |
-| --- | --- | --- | --- | --- |
-| **Trung tâm / xã hội** | Làng, Vườn Cây Mẹ | ~0,8–1 người/màn; chỗ tụ họp (chợ, cổng) 3–6 người/màn | 400–650 ô | 12 000–20 000 ô |
-| **Săn ngoài trời** | Bìa Rừng, Rừng Sâu | ~0,6–0,7 người/màn (cần chỗ kéo quái, né) | 700–950 ô | 20 000–28 000 ô |
-| **Hầm / hành lang** | Mỏ, Hầm Mỏ, Đài | đông hơn vì đường hẹp | 250–500 ô | 7 500–15 000 ô |
-
-Thời gian đi bộ hết map nên nằm trong khoảng **45–85 s**.
+Dùng kích thước ở [11](11-ti-le-map.md), 30 người/kênh. Làng 96×72 khoảng 13,5 màn (trung bình 2,2 người/màn khi đầy); Tâm Ẩn 80×60 khoảng 9,4 màn (3,2 người/màn). Đây là số trung bình, phải kiểm tra tụ đông tại spawn, chợ và điểm hoạt động. Map săn giữ khoảng trống né đòn và tối đa 6 quái trong một màn. Không dùng mật độ và thời gian 45–85 giây của đợt kích thước cũ làm chuẩn.
 
 ## 4. Kích thước map (Lưu ý: Đã được nâng cấp tại [11-ti-le-map.md](11-ti-le-map.md))
 
@@ -61,11 +53,11 @@ Thời gian đi bộ hết map nên nằm trong khoảng **45–85 s**.
 | Đài Thiên Mạch | 160×128 | 96×80 | **64×48** | 3 072 | 6,0 | 16 s | 100 |
 | Nhà riêng | — | 32×24 | **28×20** | 560 | 1,1 | 7 s | 1 người |
 
-Ghi chú:
-- **Làng 160×120**: vẫn đủ chỗ cho cả 7 khu (Đồi Miếu, Xóm nhà, Sân Hội Khai Phá, Chợ và Phố chợ, Vườn/Ruộng, Đầm Hồ Lặng; thêm Cổng Rễ và bãi biển ở viền), nhưng khu nào cũng nằm trong khoảng 1–2 màn tính từ Sân Hội Khai Phá. Từ điểm xuất phát đi tới bất kỳ khu nào mất dưới 35 s.
-- **Vườn Cây Mẹ nhỏ hơn làng**: là nơi Tinh Linh xuất phát nhưng sau đó họ sẽ sang làng. Map nhỏ giúp Vườn Cây Mẹ trông không vắng. Viền giao thoa không đi qua được (rễ dày, nước sâu) cũng làm map gọn lại.
-- **Đài 96×80**: map chung 30 người như các map khác. Đấu trường boss tròn khoảng 24×20 ô vừa 30 người; máu boss nhân theo số người trong phòng ([06](06-monsters.md) B1).
-- **Rừng Sâu 192×144** thay vì phương án 224×160: giữ đi ngang dưới 90 s và mật độ gần Bìa Rừng.
+Ghi chú hiện hành:
+- Làng 96×72, Vườn Cây Mẹ 80×60, Tâm Ẩn 80×60; Vườn Cây Mẹ là làng địa phương, Tâm Ẩn mới là spawn Tinh Linh.
+- Tâm Ẩn toàn vùng an toàn, không bố trí boss hay quái thù địch để lấp diện tích.
+- Rừng Sâu 128×96 đi ngang khoảng 32 giây; Đài 64×48 khoảng 16 giây. Thời gian thực còn phụ thuộc đường đi.
+- Dữ liệu thực vẫn ở kích thước cũ, xem [09](09-map-hien-trang.md).
 
 ## 5. Những thứ phải đổi theo, ngoài kích thước
 
@@ -80,7 +72,7 @@ Ghi chú:
 - Hiện quái được tạo **riêng cho từng người chơi** (`worldEnsureFieldMobs` lưu trong phiên của mỗi người). Trong game online, quái phải **dùng chung theo kênh**: ai cũng thấy cùng một con, cùng đánh và chia phần thưởng.
 - Số quái tính theo số người: khoảng **1–1,5 quái/người** đang ở map, có mức sàn để map không bao giờ trống.
 
-| Map | Trước | **Đã áp dụng** (đủ 30 người) | Mức sàn khi chỉ còn 1–5 người (làm cùng kênh) |
+| Map | Trước | **Mốc kế hoạch cũ — cần đối chiếu [09]** (đủ 30 người) | Mức sàn khi chỉ còn 1–5 người (làm cùng kênh) |
 | --- | --- | --- | --- |
 | Bìa Rừng | 30 | **37** | 15 |
 | Mỏ Bỏ Hoang | 13 | **21** | 8 |
@@ -94,7 +86,7 @@ Mật độ vẫn giữ quy tắc tối đa 6 quái/màn ([05 §4](05-map-layout
 
 Mỗi điểm hoạt động chỉ cho **1 người dùng một lúc** trên toàn server (khóa `life_slots` theo `mapId:siteId`). Avatar offline cũng giữ chỗ. Với 30 người, số điểm hiện tại không đủ:
 
-| Hoạt động | Trước | **Đã áp dụng** | Ghi chú |
+| Hoạt động | Trước | **Mốc kế hoạch cũ — cần đối chiếu [09]** | Ghi chú |
 | --- | --- | --- | --- |
 | Bến câu (làng) | 4 | **12** | 6 trên sàn gỗ bờ bắc, 3 trên cầu gỗ chìa ra hồ, 3 bờ đông |
 | Luống trồng | 12 dùng chung | **12 luống riêng mỗi người** trong `m_nha` | Xem §5.4 |
@@ -108,7 +100,7 @@ Khóa chỗ nên tính **theo kênh**, không phải toàn server. Nếu không,
 ### 5.4 Nhà và vườn riêng
 
 - Thiết kế hiện tại đặt "**nhà người chơi**" là một căn trong Xóm nhà (~18 nhà). Một map công khai không thể chứa nhà cho mọi người chơi.
-- Đã chốt: Xóm nhà có **cửa nhà chung** (một dãy nhà hoặc một ngõ). Bước vào thì sang **map nhà riêng** (bản sao cho từng người, khoảng 32×24 ô) gồm nhà, sân và **12 luống riêng**. Tinh Linh làm tương tự với một hốc rễ ở Vườn Cây Mẹ.
+- Đã chốt: Xóm nhà có **cửa nhà chung** (một dãy nhà hoặc một ngõ). Bước vào thì sang **map nhà riêng** (bản sao cho từng người, 28×20 ô) gồm nhà, sân và **12 luống riêng**. Tinh Linh làm tương tự với một hốc rễ ở Vườn Cây Mẹ.
 - Vườn công cộng ở làng giữ lại làm khu trang trí, hoặc làm luống thuê theo giờ.
 
 ## 6. Đã làm và còn lại

@@ -13,7 +13,7 @@ Lục địa có **ba lớp từ ngoài vào trong**, và mỗi lớp thuộc v�
 | **Vành Biển** | Dải đất ven biển ngoài cùng, bao quanh lục địa | **Loãng nhất**: biển làm linh năng tan ra | **Người**: cảng, làng chài, thành, kinh đô |
 | **Đất hoang** | Phần lớn diện tích mỗi khu, từ sau Vành Biển vào sâu | Đặc dần, **một hệ trội**; giữa khu là **lõi** thuần nhất | **Dị thú**; Khai Phá Giả đi săn và thám hiểm |
 | **Giao thoa nội địa** | Dải đất nơi hai khu chạm nhau, chạy từ gần Tâm Ẩn ra ngoài, **nhạt dần và tắt trước khi tới biển** | Hai hệ hòa nhau, đậm và sống động | **Tinh Linh** (giao thoa tương sinh); hiểm địa (tương khắc) |
-| **Tâm Ẩn** | Chính giữa (Khu Giao Thoa Trung Tâm) | Sáu hệ hòa làm Ẩn thuần khiết | **Cội nguồn Tinh Linh** (nơi spawn Tinh Linh); mở tự do từ đầu |
+| **Tâm Ẩn** | Chính giữa (Khu Giao Thoa Trung Tâm) | Sáu hệ hòa làm Ẩn thuần khiết | **Vùng cây trung tâm an toàn**; cư trú và spawn Tinh Linh; mở tự do từ đầu |
 
 Vì sao như vậy:
 - **Người** không giữ được linh năng trong người (khi chưa học Hấp Linh), và linh năng đặc làm họ ốm. Họ chỉ sống được ở nơi linh năng loãng: ven biển.
@@ -45,7 +45,7 @@ Vành Biển thật ra chạy vòng quanh cả lục địa; sơ đồ chỉ v�
 
 ### 1.1 Sáu khu vực
 
-Năm khu xếp **theo vòng quanh Tâm Ẩn**, khu nào cũng chạm biển và chạm hai khu bên cạnh:
+Sáu khu xếp **theo vòng quanh Tâm Ẩn**, khu nào cũng chạm biển và chạm hai khu bên cạnh:
 
 ```text
             Phong (bắc)
@@ -63,7 +63,7 @@ Năm khu xếp **theo vòng quanh Tâm Ẩn**, khu nào cũng chạm biển và 
 | **Cao Nguyên Vân Phong** | Phong | Bắc | Cao nguyên gió, đỉnh núi cắm vào mây | Trắng, xanh trời | Đỉnh Mây | Trạm Chim |
 | **Cao Nguyên Hoàng Thổ** | Thổ | Đông bắc | Cao nguyên, hẻm vực, đồng cỏ | Vàng đất, nâu | Vực Đá Sống | Làng Ruộng Bậc |
 | **Đất Xích Nham** | Hỏa | Đông | Núi lửa, sa mạc đỏ, đồng sét | Đỏ cam, đen tro | Miệng Núi Lửa | Thị trấn Lò Rèn |
-| **Tâm Ẩn** | Ẩn | Giữa | Giao thoa cội nguồn sáu hệ | Ngọc lam | Đài Khởi Sinh (safe zone) | Điểm spawn của Tinh Linh; mở từ đầu |
+| **Tâm Ẩn** | Ẩn | Giữa | Giao thoa cội nguồn sáu hệ | Ngọc lam | Cây Trung Tâm, Đài Khởi Sinh; toàn map an toàn | Điểm spawn của Tinh Linh; mở từ đầu |
 
 ### 1.2 Vùng giao thoa: quê của Tinh Linh
 
@@ -100,9 +100,15 @@ Quy luật:
 ### 1.3 Đi lại giữa các khu
 
 - **Người đi đường biển và đường ven bờ**: các thị trấn Vành Biển nối nhau bằng thuyền và đường cái chạy dọc bờ. Đây là đường an toàn, nhưng chỉ chạm mép mỗi khu.
-- **Tinh Linh đi đường giao thoa**: các vùng giao thoa nối nhau quanh Tâm Ẩn như một vòng trong. Người muốn đi đường này phải được Tinh Linh dẫn hoặc có dấu cho phép (Giao Ước Rễ).
+- **Tinh Linh đi đường giao thoa**: các vùng giao thoa nối nhau quanh Tâm Ẩn như một vòng trong. Mọi người đều đi được; người dẫn đường hoặc dấu Giao Ước chỉ đổi thái độ NPC, dịch vụ và nhiệm vụ, không chặn đường.
 - **Khai Phá Giả** đi từ thị trấn ven biển **vào trong**: qua đất hoang, tới lõi khu, tới làng Tinh Linh ở giao thoa. Mạch truyện ở mỗi khu dẫn đi như vậy, nhưng ai muốn đi đường khác cũng được: không có cổng nào chặn.
 - Đội có cả Người lẫn Tinh Linh đi được cả hai đường; đó là lợi thế của chơi chung hai tộc.
+
+### Tâm Ẩn — vùng cây trung tâm
+
+`m_k0_01`, 80×60 ô logic, là trung tâm sự sống và giao lưu của Tinh Linh. Cây Trung Tâm là vật mốc; Đài Khởi Sinh, khu cư trú, suối Hấp Linh và các lối rễ đều an toàn. Không có boss, quái thù địch, áp lực gây đục hay yêu cầu Nội Giới để cư trú. Linh năng đậm đặc nhưng hài hòa; độ đậm không đồng nghĩa độ nguy hiểm. Vườn Cây Mẹ ở Đầm Sen là một làng riêng, không đồng nhất với cây trung tâm.
+
+Các nhánh giao thoa nối ra sáu khu; tuyến cư trú có hành lang đi bộ an toàn cho nhân vật mới, bãi quái/hiểm địa là nhánh khám phá có cảnh báo. Bố cục Tâm Ẩn ở [05 §6](05-map-layouts.md#6-tâm-ẩn--vùng-cây-trung-tâm-m_k0_01-8060).
 
 ## 2. Quy luật hình ảnh
 
@@ -147,7 +153,7 @@ Vườn Cây Mẹ trên sơ đồ vẽ cạnh Bìa Rừng cho gọn; thực tế
 | Hoang | `m_k1_03` | **Mỏ Bỏ Hoang** | **80×64** | 128×112 | Mỏ lộ thiên trên linh mạch, sát ranh Giao Ước |
 | Hoang | `m_k1_04` | **Hầm Mỏ** | **72×48** | 112×80 | Hầm dưới mỏ, B1 mở, B2 đóng |
 | Hoang | `m_k1_06` | **Đài Thiên Mạch** | **64×48** | 96×80 | Đài đá dưới núi của Tháp Học, dungeon có boss |
-| Tinh Linh | `m_k1_07` *(mới)* | **Vườn Cây Mẹ** | **80×60** | 128×96 | Làng Tinh Linh ở giao thoa Đầm Sen; nhà và điểm bắt đầu của Tinh Linh |
+| Tinh Linh | `m_k1_07` *(mới)* | **Vườn Cây Mẹ** | **80×60** | 128×96 | Làng Tinh Linh địa phương ở Đầm Sen; nơi sinh hoạt và ghé học, không phải spawn ban đầu |
 
 Đã có khung, chưa dựng nội dung: `m_k1_08` (đổi tên hiển thị thành **Kinh thành**, cũng trên Vành Biển, phía đông làng) và `m_k2_01` (**Thành Cảng Lam Loan**, đi thuyền tới; nơi mạch truyện 2 bắt đầu).
 
@@ -169,29 +175,22 @@ Vườn Cây Mẹ trên sơ đồ vẽ cạnh Bìa Rừng cho gọn; thực tế
 
 ### Ghép map thành một thế giới
 
-Các map ngoài trời là những mảnh **nằm cạnh nhau trên cùng một mặt đất**. Đi ra mép nào của map này thì vào đúng mép đối diện của map bên cạnh. Tọa độ thế giới (ô) của góc trên-trái mỗi map, lấy Bìa Rừng làm gốc:
+Các map ngoài trời cạnh nhau phải nối đúng mép, đường và dòng nước. **Bảng offset và tọa độ mép 160×120 cũ đã bỏ** vì vượt giới hạn map mới. Tọa độ cục bộ thiết kế nằm ở [05](05-map-layouts.md); offset toàn cục và tọa độ mép phải được chốt bằng blockout ghép trước khi đưa vào server.
 
-| Map | Góc trên-trái | Giáp với |
-| --- | --- | --- |
-| Bìa Rừng | (0, 0) | bắc: Rừng Sâu · nam: Làng (qua tường) · tây: Mỏ |
-| Làng Hồ Lặng | (−5, 128) | bắc: Bìa Rừng · đông: Kinh thành |
-| Rừng Sâu | (2, −144) | nam: Bìa Rừng · tây: Mỏ (phần trên) |
-| Mỏ Bỏ Hoang | (−128, −59) | đông: Bìa Rừng (phần dưới) và Rừng Sâu (phần trên) |
-| Kinh thành | (155, 134) | tây: Làng |
+| Nối | Yêu cầu hình học |
+| --- | --- |
+| Làng ↔ Bìa Rừng | Bắc làng ↔ nam Bìa Rừng; cùng tường cọc, Chốt, dòng sông |
+| Bìa Rừng ↔ Rừng Sâu | Bắc ↔ nam; lối mòn và sông liền nhau |
+| Bìa Rừng ↔ Mỏ | Tây ↔ đông; đường xe bò |
+| Mỏ ↔ Rừng Sâu | Đông bắc mỏ ↔ phía tây rừng; đường núi |
+| Mỏ ↔ Hầm | Giếng tời; không cần khớp mép mặt đất |
+| Rừng Sâu ↔ Đài | Lối xuống công trình; không cần khớp mép mặt đất |
+| Làng ↔ Vườn Cây Mẹ | Hầm Lối Rễ nối xa, không giả định hai map sát nhau |
+| Vườn Cây Mẹ ↔ Đầm Sen Ngập | Làng nằm trong giao thoa; đường cư trú an toàn |
+| Tâm Ẩn ↔ vòng giao thoa | Sáu tuyến ở [12 §9](12-ban-do-cac-khu.md#9-tâm-ẩn-giữa--vùng-cây-trung-tâm), hai chiều, có lối an toàn |
+| Làng ↔ Kinh thành / các cảng | Đường ven bờ hoặc thuyền; phải ghi rõ loại tuyến |
 
-Hầm Mỏ nằm **dưới** Mỏ, Đài nằm **dưới** núi Rừng Sâu. Vườn Cây Mẹ nằm **sâu trong đất liền** ở giao thoa Đầm Sen: không khớp mép với map nào ở rìa khu Mộc, chỉ vào qua Lối Rễ. (Sau này map `m_k2_07` ở [12](12-ban-do-cac-khu.md) mới khớp mép với nó.) Nhà riêng cũng không cần khớp mép.
-
-**Những thứ phải khớp qua mép map:**
-
-| Chỗ nối | Bên này | Bên kia |
-| --- | --- | --- |
-| Sông | Rừng Sâu ra mép nam ở x 148 | Bìa Rừng vào mép bắc ở x 150 |
-| Sông | Bìa Rừng ra mép nam ở x 143 | Làng vào mép bắc ở x 148 |
-| Tường cọc | Làng: dải y 0–4, Chốt ở x 92 | Bìa Rừng: dải y 124–128 (mặt ngoài), Chốt ở x 87 |
-| Lối mòn | Bìa Rừng mép bắc x 95 | Rừng Sâu mép nam x 93 |
-| Đường xe cũ | Bìa Rừng mép tây y 31 | Mỏ mép đông y 90 |
-| Đường núi | Mỏ mép đông y 25 | Rừng Sâu mép tây y 110 |
-| Đường cái | Làng mép đông y 66 (trạm xe ngựa) | Kinh thành mép tây y 60 |
+Đối với các map sát nhau, vẽ chung dải mép rộng 3–4 ô rồi cắt cho hai phía. Không áp quy tắc ghép mép trực tiếp cho hầm, nhà riêng, Lối Rễ hoặc tuyến thuyền.
 
 ## 4. Làng Hồ Lặng (`m_k1_01`)
 
@@ -267,7 +266,7 @@ Hầm Mỏ nằm **dưới** Mỏ, Đài nằm **dưới** núi Rừng Sâu. Vư
 
 ## 6. Vườn Cây Mẹ (`m_k1_07`, map mới)
 
-- **Vai trò:** nhà và điểm bắt đầu của Tinh Linh; Người tới được bất cứ lúc nào qua Lối Rễ hoặc đường bộ qua Đầm Sen.
+- **Vai trò:** làng địa phương và nơi sinh hoạt của Tinh Linh Mộc–Thủy; Người tới được bất cứ lúc nào qua Lối Rễ hoặc đường bộ qua Đầm Sen.
 - **Ở đâu:** sâu trong đất liền, giữa giao thoa Đầm Sen (Thủy – Mộc): rừng mọc giữa nước, cây đứng trên đầm. Xa biển, gần Tâm Ẩn hơn mọi nơi Người từng sống.
 - **Cảm giác:** nắng xiên qua tán lá trong suốt, mặt đầm phẳng như gương, đom đóm ban ngày, tiếng chuông gió. Không gạch, không đinh, không góc vuông.
 - **Các phần trong map:**
@@ -292,7 +291,7 @@ Hầm Mỏ nằm **dưới** Mỏ, Đài nằm **dưới** núi Rừng Sâu. Vư
 | Role | Bắt đầu | Đi đâu tiếp |
 | --- | --- | --- |
 | Người | Nhà trong Làng Hồ Lặng (ven biển) | Làng → Chốt → Bìa Rừng → (Lối Rễ, thăm Vườn Cây Mẹ) → Mỏ → Rừng Sâu → Đài |
-| Tinh Linh | Vườn Cây Mẹ (giao thoa, trong đất liền) | Vườn Cây Mẹ → Lối Rễ → Làng (lần đầu thấy biển) → Chốt → Bìa Rừng → Mỏ → Rừng Sâu → Đài |
+| Tinh Linh | Tâm Ẩn, Đài Khởi Sinh dưới Cây Trung Tâm | Tâm Ẩn → tuyến giao thoa an toàn → Đầm Sen → Vườn Cây Mẹ → Lối Rễ → Làng (lần đầu thấy biển) → Chốt → Bìa Rừng → Mỏ → Rừng Sâu → Đài |
 
 Làng Hồ Lặng là trung tâm của mạch truyện 1: mọi chuyến đi xuất phát và quay về đây. Người chơi Tinh Linh đi **từ trong ra ngoài**, Người đi **từ ngoài vào trong**; hai hướng gặp nhau ở làng.
 

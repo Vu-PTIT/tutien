@@ -47,7 +47,7 @@ Thế giới mở: khu nào cũng vào được từ đầu, và **khu nào cũn
 | Thổ | 5 | Tụ Khối → Chúa Đàn | 6 | 2 | Trùn Đá Vực Sâu (lõi, Cự Thú) | §5.4 |
 | Hỏa | 6 | Tụ Khối → Chúa Đàn (hiểm địa: Quái Rối) | 10 | 2 | Tê Giác Nham (lõi, Cự Thú) | §5.5 |
 | Lõi Mộc | — | Bành Trướng → Chúa Đàn | 4 | 1 | Rùa Lưng Rừng (lõi, Cự Thú) | §5.6 |
-| Tâm Ẩn | Trung tâm | Căn Nguyên / Ẩn Thuần Khiết | Đài Khởi Sinh (safe zone) + Dị thú Căn Nguyên | — | — | §5.7 |
+| Tâm Ẩn | Trung tâm an toàn | Không có dị thú thù địch | 0 | 0 | Không | [12 §9](12-ban-do-cac-khu.md#9-tâm-ẩn-giữa--vùng-cây-trung-tâm) |
 
 ## 2. Hành vi chung
 
@@ -62,7 +62,7 @@ Lang thang ──thấy người chơi──► Cảnh giác ──► Báo đò
 
 - **Lang thang:** đi chậm quanh tâm lãnh địa, ăn, ngủ (animation idle riêng).
 - **Cảnh giác:** dừng, quay về phía người chơi, dấu "!" nhỏ; 0,5 giây trước khi tấn công. Người chơi lùi ra ngoài tầm phát hiện thì quái quên.
-- **Báo đòn:** luôn có **ánh sáng màu hệ của quái** + âm thanh riêng. Thời gian báo đòn dài hơn ở quái cấp thấp.
+- **Báo đòn:** luôn có **ánh sáng màu hệ của quái** + âm thanh riêng. Thời gian báo đòn dài hơn ở dị thú quy mô Nội Giới nhỏ.
 - **Hở:** cửa sổ người chơi đánh trả an toàn.
 - **Về lãnh địa:** hồi dần máu, không đánh nữa.
 
@@ -79,7 +79,7 @@ Tinh Linh ở **đúng khu hệ của mình** (vd. Tinh Linh Mộc trong khu M�
 
 ### 2.3 Phân tầng sinh thái & Quy mô dị thú
 
-Độ khó **tăng theo độ sâu vào đất hoang**, giống nhau ở mọi khu. Các nơi có cư dân hoặc cội nguồn sinh ra đều có vùng an toàn: Vành Biển (Người dựng tường), giao thoa tương sinh quanh làng Tinh Linh (Tinh Linh giữ linh năng cân bằng), và tại **Tâm Ẩn** có **Đài Khởi Sinh** (vùng safe zone an toàn cho Tinh Linh mới sinh). Người chơi Người đi từ biển vào, người chơi Tinh Linh đi từ Tâm Ẩn tỏa ra các vùng giao thoa; cả hai gặp vùng dữ ở giữa.
+Độ khó **tăng theo độ sâu vào đất hoang**, giống nhau ở mọi khu. Các nơi có cư dân hoặc cội nguồn sinh ra đều có vùng an toàn: Vành Biển (Người dựng tường), giao thoa tương sinh quanh làng Tinh Linh (Tinh Linh giữ linh năng cân bằng), và **toàn vùng Tâm Ẩn** an toàn, bao gồm Đài Khởi Sinh, Cây Trung Tâm, khu cư trú và lối ra. Người chơi Người đi từ biển vào, người chơi Tinh Linh đi từ Tâm Ẩn tỏa ra các vùng giao thoa; cả hai gặp vùng dữ ở giữa.
 
 Dị thú **không có cấp độ hay cảnh giới**; sức mạnh của chúng tương ứng với **Quy mô Nội Giới loạn** (mức độ tích tụ linh năng đục và biến dị cơ thể).
 
@@ -91,13 +91,14 @@ Dị thú **không có cấp độ hay cảnh giới**; sức mạnh của chún
 | **Đầu đàn** | Rải rác từng vùng đất hoang | **Chúa Đàn** (~150–400 thửa đục) | Cần Nội Giới mốc **Đảo Lớn** vững hoặc tổ đội | 0,6–0,8 giây | 12–16% | 12–18 |
 | **Boss vùng / Ngục** | Lõi sâu nhất của khu / Đài Thiên Mạch | **Cự Thú / Lĩnh Vực / Nhiễm Tím** (400+ thửa đục) | Cần Nội Giới **Quần Đảo** (~150+ thửa) hoặc đánh hội đồng | Đa dạng, nhịp 47s | 15–25% | 40 nhát (chuẩn 1 người) |
 | **4 — Hiểm** | Hiểm địa (giao thoa tương khắc) | **Quái Rối** (Nội Giới bị hai hệ giằng xé) | Cần Nội Giới đa hệ, biết chuyển dịch khắc chế | 0,35–0,5 giây | 18–25% | 8–12 |
-| **5 — Tâm Ẩn** | Tâm Ẩn (khu giao thoa trung tâm, ngoài Đài Khởi Sinh) | **Căn Nguyên / Ẩn Thuần Khiết** | Mốc **Lục Địa** (~400 thửa) trở lên | — | — | — |
 
-Không có cổng nào chặn theo cấp số. Toàn bộ lục địa kể cả Tâm Ẩn đều mở từ đầu, không có cổng khóa. Người chơi có Nội Giới nhỏ vẫn có thể liều mình bước sâu vào đất hoang, hiểm địa hay Tâm Ẩn; họ chỉ khó sống sót trước luồng linh năng đục và quái vật áp đảo nếu chưa đủ vững. Bản đồ (phím M) và biển báo ở rìa mỗi vùng cảnh báo độ sâu sinh thái.
+Không có cổng nào chặn theo cấp số. Toàn bộ lục địa kể cả Tâm Ẩn đều mở từ đầu, không có cổng khóa. Người chơi có Nội Giới nhỏ vẫn có thể liều mình bước sâu vào đất hoang hay hiểm địa; họ chỉ khó sống sót trước luồng linh năng đục và quái vật áp đảo nếu chưa đủ vững. Bản đồ (phím M) và biển báo ở rìa mỗi vùng cảnh báo độ sâu sinh thái.
 
 Khi vào vùng đất hoang sâu và hiểm địa, dị thú không chỉ tích tụ nhiều linh năng đục hơn mà **có thêm luật** (địa hình, thời tiết, đổi hệ). Báo đòn không bao giờ ngắn hơn 0,35 giây.
 
 Nội Giới người chơi càng lớn (diện tích rộng tăng máu, núi đá tăng thủ, rừng dày hồi máu) thì đánh càng mạnh và chịu đòn càng tốt, nên dị thú ở ven rìa dần trở nên nhỏ bé; quái không tự mạnh lên theo người chơi.
+
+**Tâm Ẩn không thuộc thang nguy hiểm 1–4:** không có quái Căn Nguyên hay boss tại đây. Mạch linh hài hòa không gây đục Nội Giới. Không đặt lãnh địa quái chồng lên tuyến nối nơi spawn với làng giao thoa.
 
 ### 2.4 Hệ và khắc
 
@@ -417,6 +418,8 @@ Mỗi quái thường có: đứng, đi, chạy, cảnh giác, **báo đòn**, r
 Mỗi quái có **một âm thanh báo đòn riêng**, nhận ra được khi không nhìn màn hình. Rìa khu Mộc: gà xù lông, heo khịt mũi, nhện rít, đất rung, dơi ré, sói hú, sương xì, khỉ hét, cú kêu một tiếng, chuột lách tách.
 
 ## 8. Ghi chú backend
+
+> Các số liệu triển khai bên dưới là ghi chép cũ, chưa xác nhận lại. Kiểm tra repository ngày 15/10 thấy thiếu `server/data/world_population.json`; [09](09-map-hien-trang.md) là nguồn hiện trạng ưu tiên. Danh mục loài và hành vi phía trên vẫn là thiết kế, không đồng nghĩa đã chạy trong game.
 
 **Đã có, chỉ khu Mộc (rìa):** `server/data/world_population.json` là nguồn duy nhất cho quái và NPC trên map. File khai báo 14 loài (máu = số nhát × 16, sát thương %, hồi sinh, giờ xuất hiện, hệ linh năng), lãnh địa theo bảng §4 (tọa độ ở [05](05-map-layouts.md)), điểm an toàn và NPC. `node scripts/build-life-world.cjs` biên dịch file này vào `server/src/life_world_generated.ts` và **từ chối build** nếu một con quái đứng trên nước, trong điểm an toàn, cách điểm đến của cổng dưới 12 ô hoặc cách điểm hoạt động dưới 6 ô ([05](05-map-layouts.md) §5). Có 117 quái ở 5 map rừng.
 - Gà Rừng và Khỉ chỉ hiện ban ngày, Cú chỉ hiện ban đêm (theo đồng hồ đời sống).

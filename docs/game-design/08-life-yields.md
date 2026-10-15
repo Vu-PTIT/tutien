@@ -49,7 +49,7 @@ Mỗi lượt 30 giây, tốn 1 mồi, ra **1 thứ**. Mồi không dùng hết 
 | Hạt Sương Đọng | Linh | 12% |
 | **Vảy Ngọc** | Hiếm | 3% |
 
-- Tinh Linh câu được ngay. Người câu được sau khi được mời tới Vườn Cây Mẹ (hồi B).
+- Tinh Linh câu được ngay. Người cũng tới được từ đầu; lời mời hồi B là dẫn truyện, không khóa map. Quyền dùng dịch vụ có thể theo quan hệ với NPC như thiết kế gameplay.
 
 ## 4. Đào khoáng
 

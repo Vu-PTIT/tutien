@@ -13,7 +13,7 @@
   nguy hiểm:  yên        bậc 1 → 2            bậc 3      yên quanh làng; bậc 4 ở hiểm địa
 ```
 
-**Cả lục địa mở từ đầu, kể cả Tâm Ẩn.** Không có màn, không có khu nào bị khóa theo cấp hay theo truyện; **Tâm Ẩn không bị khóa**. Cái giữ người chơi lại là **độ nguy hiểm**: đất hoang dữ dần khi đi sâu, lõi khu có boss, hiểm địa có thời tiết dữ và quái rối, và Tâm Ẩn có áp lực Căn Nguyên bậc 5 ([06](06-monsters.md) §2.3). Người chơi Người thường đi từ thị trấn ven biển vào, Tinh Linh xuất phát từ Tâm Ẩn (khu giao thoa trung tâm) tỏa ra các vùng giao thoa, nhưng ai cũng có thể đi bất cứ đâu nếu dám.
+**Cả lục địa mở từ đầu, kể cả Tâm Ẩn.** Không có màn, không có khu nào bị khóa theo cấp hay theo truyện; **Tâm Ẩn không bị khóa**. Cái giữ người chơi lại là **độ nguy hiểm**: đất hoang dữ dần khi đi sâu, lõi khu có boss, hiểm địa có thời tiết dữ và quái rối, còn Tâm Ẩn là vùng cây trung tâm hoàn toàn an toàn ([06](06-monsters.md) §2.3). Người chơi Người thường đi từ thị trấn ven biển vào, Tinh Linh xuất phát từ Tâm Ẩn (khu giao thoa trung tâm) tỏa ra các vùng giao thoa, nhưng ai cũng có thể đi bất cứ đâu nếu dám.
 
 ### 1.2 Các loại map
 
@@ -46,14 +46,13 @@ Mỗi khu có **ít nhất**: 1 thị trấn ven biển, 2 hoang, 1 hầm, 1 lõ
 
 Mỗi khu có đủ bậc nguy hiểm, từ dễ ở ven tới khó ở lõi ([06](06-monsters.md) §2.3):
 
-| Bậc | Ở đâu trong mỗi khu | Cấp quái |
+| Bậc nguy hiểm | Ở đâu | Quy mô dị thú (không phải cấp độ) |
 | --- | --- | --- |
-| Yên | Thị trấn ven biển, làng Tinh Linh | Không có quái |
-| 1 — Ven | Đất hoang sát Vành Biển; giao thoa tương sinh quanh làng Tinh Linh | 1–4 |
-| 2 — Sâu | Đất hoang sâu, hầm, dungeon gần bờ | 4–8 |
-| 3 — Lõi | Lõi khu, boss vùng | 9–12 |
-| 4 — Hiểm | Hiểm địa (Đồng Bão Cát, Bờ Hơi Sôi) | 13–15 |
-| 5 | Tâm Ẩn | 16+ |
+| Yên | Thị trấn ven biển, làng Tinh Linh và toàn vùng Tâm Ẩn | Không có quái thù địch |
+| 1 — Ven | Đất hoang sát Vành Biển; giao thoa tương sinh quanh làng Tinh Linh | Sơ Nhiễm – Tụ Khối |
+| 2 — Sâu | Đất hoang sâu, hầm, dungeon gần bờ | Tụ Khối cứng – Bành Trướng |
+| 3 — Lõi | Lõi khu, boss vùng | Hung Thú Lõi; Chúa Đàn/Cự Thú theo hồ sơ |
+| 4 — Hiểm | Hiểm địa (Đồng Bão Cát, Bờ Hơi Sôi) | Quái Rối |
 
 Mạch truyện chính ([02](02-story.md) §9) là **chuỗi nhiệm vụ có thứ tự gợi ý**, đi vòng quanh lục địa theo các khu nằm cạnh nhau. Người chơi có thể bỏ ngang, sang khu khác, làm nhiệm vụ phụ, rồi quay lại sau:
 
@@ -215,19 +214,31 @@ Mạch 5 kể **xung đột Người – Tinh Linh**: Người ven biển khai h
 | `m_k6_09` | Rừng Lửa | Giao thoa Hỏa – Mộc | Hỏa + Mộc (2) | 112×80 | Cây lá đỏ cháy âm ỉ; nối vòng trong về Đầm Sen, **khép vòng lục địa** |
 | `m_k6_10` | Tổ Lửa | Làng Tinh Linh | Hỏa + Mộc (2) | 80×60 | Nhà trong thân cây cháy không tàn; Tinh Linh chim lửa, sói đỏ |
 
-## 9. Tâm Ẩn (giữa) — Khu Giao Thoa Trung Tâm
+## 9. Tâm Ẩn (giữa) — Vùng Cây Trung Tâm
 
-| ID map | Tên nơi | Loại | Hệ linh năng | Kích thước | Ghi chú |
-| --- | --- | --- | --- | --- | --- |
-| `m_k0_01` | Tâm Ẩn | Giao thoa trung tâm | Ẩn (cả sáu hệ hòa hợp) | 80×60 | Nơi khởi sinh/spawn của role Tinh Linh; Đài Khởi Sinh (safe zone); mở tự do từ đầu |
+| ID | Vai trò | Hệ | Kích thước | Nguy hiểm |
+| --- | --- | --- | --- | --- |
+| `m_k0_01` | Trung tâm cư trú, khởi sinh và giao lưu của Tinh Linh | Ẩn: sáu hệ hài hòa | 80×60 ô | Yên, toàn map |
 
-Đặc điểm và thiết kế đã chốt:
-- **Khu giao thoa cội nguồn:** Nơi sáu dòng linh năng Kim, Mộc, Thủy, Hỏa, Thổ, Phong gặp nhau ở trung tâm lục địa và hòa lại thành linh năng Ẩn nguyên thủy phát sáng ngọc lam.
-- **Điểm spawn của Tinh Linh:** Khi người chơi chọn role Tinh Linh, họ sẽ spawn tại **Đài Khởi Sinh** (`k0_01.safe.dai_khoi_sinh`) ở trung tâm bản đồ. Đây là khu vực an toàn (safe zone) không có quái vật.
-- **KHÔNG BỊ KHÓA:** Tâm Ẩn **mở hoàn toàn từ đầu**, không có cổng khóa, không yêu cầu xong mạch chính. Người chơi Người có thể tìm đường vào sâu, Tinh Linh có thể đi từ tâm tỏa ra ngoài theo các nhánh giao thoa.
-- **Độ nguy hiểm:** Bậc 5 (khu vực ngoài Đài Khởi Sinh). Dị thú mang thuộc tính Căn Nguyên cổ xưa rất mạnh.
-- **Kết nối:** Nối trực tiếp với vòng giao thoa nội địa (Đầm Sen, Suối Bạc, Đèo Gió Bạc, Núi Vân Vàng, Đất Tro, Rừng Lửa) và có lối thông/quan sát từ lõi các khu (như từ Đài Thiên Mạch `m_k1_06`).
-- **Ngoại cảnh:** Suối linh năng lơ lửng, hoa văn sáu hệ hòa quyện thành ngọc lam trôi chậm, không khí ấm áp và tràn ngập sinh khí cội nguồn.
+**Cây Trung Tâm** là vật mốc lớn ở giữa lục địa; Tâm Ẩn là cả vùng cây và khu sống quanh nó, không phải một đấu trường cuối. Đài Khởi Sinh là điểm spawn, không phải một đảo an toàn nhỏ giữa bãi quái. Người được vào từ đầu và ở lại an toàn như Tinh Linh.
+
+- Không có quái thù địch, boss, sát thương môi trường hoặc tích đục bắt buộc trong map này.
+- Linh năng đậm nhưng cân bằng nuôi dưỡng sự sống; nguy hiểm đến từ mất cân bằng, đất hoang, hiểm địa hoặc nhiễm tím ở các map khác.
+- Có nơi ở, suối Hấp Linh, chỗ gặp gỡ và chỉ dẫn ra sáu khu. Cây Mẹ ở Đầm Sen là cây của một làng địa phương; không đồng nhất với Cây Trung Tâm.
+- Sáu tuyến giao thoa mở hai chiều, có đường chính an toàn cho nhân vật mới tới các làng; điểm rẽ vào bãi săn/hiểm địa phải có dấu cảnh báo và lối quay lại. Không bắt băng lõi boss để ra khỏi Tâm Ẩn.
+- Truyện có thể quay về Tâm Ẩn ở đoạn cuối để hội tụ manh mối; không biến lần tới đầu tiên thành điều kiện kết truyện.
+- Liên kết quan sát từ Đài Thiên Mạch/lõi khu là điểm nhìn hoặc tuyến phụ cần thiết kế riêng, không thay đường cư trú an toàn.
+
+| Tuyến từ Tâm Ẩn | Đích trên vòng giao thoa | Điểm cư trú | Hướng khám phá tiếp |
+| --- | --- | --- | --- |
+| Mộc–Thủy | Đầm Sen Ngập `m_k2_07` | Vườn Cây Mẹ `m_k1_07` | Mộc hoặc Thủy |
+| Thủy–Kim | Suối Bạc `m_k3_07` | Làng Sếu Bạc `m_k3_08` | Thủy hoặc Kim |
+| Kim–Phong | Đèo Gió Bạc `m_k4_05` | Tổ Vách `m_k4_06` | Kim hoặc Phong |
+| Thổ–Kim | Núi Vân Vàng `m_k5_06` | Mỏm Ngân `m_k5_07` | Thổ |
+| Thổ–Hỏa | Đất Tro `m_k6_07` | Lò Tro `m_k6_08` | Thổ hoặc Hỏa |
+| Hỏa–Mộc | Rừng Lửa `m_k6_09` | Tổ Lửa `m_k6_10` | Hỏa hoặc Mộc |
+
+Các tuyến là kết nối thiết kế; tọa độ hai đầu phải được nghiệm thu trước khi đưa vào dữ liệu. Không coi bảng này là backend đã hoàn thành.
 
 ## 10. Tổng số map
 
@@ -239,9 +250,11 @@ Mạch 5 kể **xung đột Người – Tinh Linh**: Người ven biển khai h
 | Phong | 1 | 1 | 1 | 1 | 2 | 1 | 7 |
 | Thổ | 1 | 2 | 1 | 1 | 1 | 1 | 7 |
 | Hỏa | 1 | 2 | 1 | 1 | 3 | 2 | 10 |
-| **Tổng** | 8 | 13 | 9 | 6 | 8 | 6 | **50 + nhà** |
+| **Tổng sáu khu** | 8 | 13 | 9 | 6 | 8 | 6 | **50 + nhà** |
 
-Thứ tự **dựng** (không phải thứ tự chơi): rìa khu Mộc (8 map + nhà) trước, các khu khác sau.
+Thêm **1 map trung tâm Tâm Ẩn**: toàn bộ danh mục có **51 map + 1 nhà riêng = 52 ID map**. Tâm Ẩn là hub riêng, không cộng vào cột lõi/boss.
+
+Thứ tự **dựng** (không phải thứ tự chơi): Tâm Ẩn + hành lang an toàn tới Vườn Cây Mẹ và rìa khu Mộc trước, các khu khác sau.
 
 ## 11. Việc backend phát sinh (ghi lại, chưa làm)
 

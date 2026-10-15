@@ -1,7 +1,8 @@
 # Bố cục bản đồ chi tiết — Vùng 1 (Làng Hồ Lặng và phụ cận)
 
+> **Phạm vi:** bố cục thiết kế, chưa đồng nghĩa tọa độ backend đã migration; dữ liệu thực xem [09](09-map-hien-trang.md).
 > **Tình trạng:** Đã cập nhật theo Chuẩn kích thước mới [11-ti-le-map.md](11-ti-le-map.md) ngày 15/10/2026.
-> **Tỷ lệ chuẩn:** 1 ô = 32×32 px. Tốc độ đi bộ = 4 ô/s (128 px/s).
+> **Tỷ lệ chuẩn:** 1 ô logic = 32×32 px, asset đặt tự do theo pixel nguyên, không ép vào ô. Tốc độ đi bộ = 4 ô/s (128 px/s).
 > **Sức chứa:** Thiết kế tối ưu cho 30 người chơi/kênh.
 > **Tài liệu đối chiếu:** [03-world-and-maps.md](03-world-and-maps.md), [09-map-hien-trang.md](09-map-hien-trang.md), [10-kich-thuoc-map-online.md](10-kich-thuoc-map-online.md), [11-ti-le-map.md](11-ti-le-map.md), [12-ban-do-cac-khu.md](12-ban-do-cac-khu.md).
 
@@ -9,16 +10,18 @@
 
 ### Bảng tổng hợp kích thước & thời gian di chuyển (Vùng 1)
 
+Tâm Ẩn `m_k0_01`: 80×60 ô, khoảng 20 giây đi ngang; hub an toàn và spawn Tinh Linh, bố cục ở §6.
+
 | Map | Mã map | Kích thước mới [11] | Thời gian chạy ngang (4 ô/s) | Đặc điểm & Kết nối |
 | :--- | :--- | :--- | :--- | :--- |
 | **Làng Hồ Lặng** | `m_k1_01` | **96×72** (giảm từ 160×120) | ~24 giây | Trung tâm Vùng 1; nối Bìa Rừng (bắc), Vườn Cây Mẹ (tây), Nhà riêng, Kinh thành |
 | **Nhà riêng** | `m_nha` | **28×20** (giữ nguyên) | ~7 giây | Instance cá nhân của người chơi; 12 luống đất `nha_plot_01…12` |
-| **Vườn Cây Mẹ** | `m_k1_07` | **80×60** (giảm từ 128×96) | ~20 giây | Cội nguồn Tinh Linh; 8 điểm Hấp Linh, 6 bến câu, thu hái nấm & hoa thảo dược |
-| **Bìa Rừng** | `m_k1_02` | **112×80** (giảm từ 176×128) | ~28 giây | Quái Lv 1–3; nối Làng (nam), Mỏ (tây), Rừng Sâu (bắc); 8 điểm thiền |
-| **Mỏ Bỏ Hoang** | `m_k1_03` | **80×64** (giảm từ 128×112) | ~20 giây | Quái Lv 3–5; 8 vỉa quặng sắt; giếng xuống Hầm Mỏ; đường núi lên Rừng Sâu |
-| **Hầm Mỏ B1** | `m_k1_04` | **72×48** (giảm từ 112×80) | ~18 giây | Quái Lv 5–7 + Nhện Mẹ; 6 vỉa quặng quý; giếng lên Mỏ; hầm cổ sang Rừng Sâu |
-| **Rừng Sâu** | `m_k1_05` | **128×96** (giảm từ 192×144) | ~32 giây | Quái Lv 7–9 + Khỉ Đầu Đàn; nối Bìa Rừng, Mỏ, Hầm Mỏ, Đài Thiên Mạch; 6 điểm thiền |
-| **Đài Thiên Mạch** | `m_k1_06` | **64×48** (giảm từ 96×80) | ~16 giây | Quái Lv 9–10 + Boss Thủ Lĩnh Mạch Gãy; sàn boss đấu trường 30 người |
+| **Vườn Cây Mẹ** | `m_k1_07` | **80×60** (giảm từ 128×96) | ~20 giây | Làng Tinh Linh địa phương Đầm Sen; 8 điểm Hấp Linh, 6 bến câu, thu hái nấm & hoa thảo dược |
+| **Bìa Rừng** | `m_k1_02` | **112×80** (giảm từ 176×128) | ~28 giây | Sơ Nhiễm – Tụ Khối; nối Làng (nam), Mỏ (tây), Rừng Sâu (bắc); 8 điểm thiền |
+| **Mỏ Bỏ Hoang** | `m_k1_03` | **80×64** (giảm từ 128×112) | ~20 giây | Tụ Khối – Tụ Khối cứng; 8 vỉa quặng sắt; giếng xuống Hầm Mỏ; đường núi lên Rừng Sâu |
+| **Hầm Mỏ B1** | `m_k1_04` | **72×48** (giảm từ 112×80) | ~18 giây | Tụ Khối bầy + Nhện Mẹ; 6 vỉa quặng quý; giếng lên Mỏ; hầm cổ sang Rừng Sâu |
+| **Rừng Sâu** | `m_k1_05` | **128×96** (giảm từ 192×144) | ~32 giây | Bành Trướng + Khỉ Đầu Đàn; nối Bìa Rừng, Mỏ, Hầm Mỏ, Đài Thiên Mạch; 6 điểm thiền |
+| **Đài Thiên Mạch** | `m_k1_06` | **64×48** (giảm từ 96×80) | ~16 giây | Nhiễm Tím + Boss Thủ Lĩnh Mạch Gãy; sàn boss đấu trường 30 người |
 
 ---
 
@@ -111,7 +114,7 @@ y0 ┌────────────────────────�
 
 ## 3. Vườn Cây Mẹ (`m_k1_07`, 80×60)
 
-Nằm ở phía tây đầm nước Làng Hồ Lặng. Nơi cội rễ tâm linh thanh tịnh của Tinh Linh, không có quái vật.
+Nằm trong giao thoa Đầm Sen sâu trong đất liền; không nằm ngay cạnh đầm của Làng Hồ Lặng. Lối Rễ ngầm nối tới mép tây làng chài. Đây là làng Tinh Linh Mộc–Thủy địa phương, không phải Tâm Ẩn hay điểm spawn ban đầu; toàn làng không có quái thù địch.
 
 ```text
 x→ 0        20          40          60        80
@@ -135,7 +138,7 @@ y0 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓ vách đồi rễ ▓▓▓▓▓�
 | **Vườn Nấm** | x 6–22, y 18–36 | 6 luống nấm linh chi ẩm râm mát | 6 luống thu hái nấm |
 | **Bãi Hoa Tâm Linh** | x 58–74, y 18–36 | Thảm hoa nở theo chu kỳ linh khí, bầy đom đóm | Thu hái thảo dược |
 | **Bờ nước & Bến câu** | x 10–70, y 44–58 | 6 bến câu tĩnh lặng, nước hồ biếc rễ ngập | 6 bến câu `k1_07_fish_01…06` |
-| **Bến Rễ (Cổng)** | ▼ (40,56) | Lối thuyền rễ cây huyền ảo sang làng | Cổng `ln_k1_07_k1_01` (40,56) → Cổng Rễ Làng (2,24) |
+| **Bến Rễ (Cổng)** | ▼ (40,56) | Hầm rễ đi bộ nối xa tới làng chài | Cổng `ln_k1_01_k1_07` (40,56) → Cổng Rễ Làng (2,24) |
 
 ---
 
@@ -322,3 +325,35 @@ Các quy tắc có dấu ✔ được `scripts/build-life-world.cjs` kiểm tra;
 - ✔ **Điểm hoạt động** (vỉa, bến câu, chỗ thiền): quái không vào trong 6 ô; avatar tự hoạt động không bị tấn công.
 - **Mật độ:** tối đa 6 quái trong một màn ở zoom mặc định (30×17 ô). Số quái tính cho map đủ 30 người, khoảng 1–1,5 quái/người ([10](10-kich-thuoc-map-online.md) §5.2).
 - **Lãnh địa:** mỗi nhóm quái có tâm và bán kính; đuổi ra quá bán kính thì quay về (xem [06](06-monsters.md) §2).
+
+## 6. Tâm Ẩn — Vùng Cây Trung Tâm (`m_k0_01`, 80×60)
+
+**Thiết kế áp dụng:** toàn vùng an toàn cho cả hai tộc. Tinh Linh khởi sinh ở đây; Người tới bằng các tuyến giao thoa. Không đặt spawn quái, boss hay vùng gây đục Nội Giới.
+
+Các khoảng dưới đây là blockout thiết kế trong ô logic, không phải dữ liệu BE đã triển khai. Chỉ footprint gốc cây chặn đi; tán vươn trên khu ở thuộc G4, mờ khi che người. Không để tán phủ kín màn hình.
+
+| Phần | Phạm vi (x, y) | Nội dung / tương tác |
+| --- | --- | --- |
+| Cây Trung Tâm | gốc x34–46, y18–28 | Vật mốc; rễ đi quanh được, không tạo tường chia map |
+| Đài Khởi Sinh | x34–46, y31–39 | Spawn dự kiến (40,35); khoảng trống nhìn thấy đường và hướng dẫn ngay |
+| Khu cư trú | x12–29, y20–42 và x51–68, y20–42 | Hốc rễ, nhà tán thấp, ghế, nơi gặp gỡ; không chặn hành lang |
+| Suối Hấp Linh | x29–51, y43–51 | Nơi học, lọc linh năng; đứng trên bờ, cầu nối hai bên |
+| Sân giao lưu | x31–49, y7–16 | Điểm hẹn hai tộc, bảng chỉ dẫn sáu tuyến |
+| Đường vòng quanh cây | ngoài footprint gốc | Rộng 3 ô logic; nối spawn, khu ở, suối và sáu cửa |
+
+**Cửa tuyến dự kiến**, phải kiểm tra hình học hai đầu khi dựng:
+
+| Hướng cửa | Điểm (ô) | Map đích |
+| --- | --- | --- |
+| Tây nam | (8,52) | Đầm Sen Ngập `m_k2_07` |
+| Tây | (3,27) | Suối Bạc `m_k3_07` |
+| Tây bắc | (16,4) | Đèo Gió Bạc `m_k4_05` |
+| Đông bắc | (64,4) | Núi Vân Vàng `m_k5_06` |
+| Đông | (76,27) | Đất Tro `m_k6_07` |
+| Đông nam | (72,52) | Rừng Lửa `m_k6_09` |
+
+Đây là hướng cửa trong map hub, không khẳng định tọa độ ghép toàn lục địa đã hoàn thành. Mỗi cửa phải có điểm đến an toàn, bảng tên và đường trở lại. Tuyến nối cư trú không cho dị thú đi lạc/đuổi theo vào; nhánh săn tách khỏi tuyến, có cảnh báo.
+
+**Hình ảnh:** G1 nền đất/rễ tĩnh; G2 suối riêng; G3 thân cây, nhà, NPC và người chơi; G4 tán cần xử lý che; G5 ánh Ẩn cục bộ, hạt thưa. Ngọc lam tập trung ở gốc và suối; không phủ sáng toàn cảnh. Linh năng sáu hệ hòa hợp không cần rải sáu màu ở mọi màn.
+
+**Nghiệm thu:** nhân vật mới đi từ Đài tới mỗi cửa và quay lại không chiến đấu, không mất máu/nhận đục; mọi khu ở đọc rõ ở zoom ×2; hai tộc đều vào được; cây trung tâm và Vườn Cây Mẹ có ID, vị trí và vai trò khác nhau.

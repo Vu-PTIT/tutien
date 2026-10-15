@@ -20,7 +20,7 @@ Không có màn. Cả lục địa vào được từ phút đầu: người ch�
 - Đất hoang dữ dần khi đi sâu; lõi mỗi khu có boss; hiểm địa có thời tiết dữ và quái "rối" ([06](06-monsters.md) §2.3).
 - Linh năng đặc làm Người chưa đủ mạnh bị chậm hồi máu; Tinh Linh thì chịu tốt hơn ([07](07-power-system.md)).
 - Biển báo ở rìa mỗi vùng và bản đồ (phím M) cho biết bậc nguy hiểm.
-- **Tâm Ẩn không bị khóa**: cả lục địa mở hoàn toàn từ đầu, không có bất kỳ map hay cổng nào bị khóa cứng. Tâm Ẩn là khu giao thoa trung tâm cội nguồn, nơi spawn của Tinh Linh; rào cản tự nhiên duy nhất là độ nguy hiểm của quái vật Căn Nguyên và áp lực linh năng cực hạn.
+- **Tâm Ẩn không bị khóa**: cả lục địa mở hoàn toàn từ đầu, không có bất kỳ map hay cổng nào bị khóa cứng. Tâm Ẩn là khu giao thoa trung tâm cội nguồn, nơi spawn của Tinh Linh; toàn map Tâm Ẩn an toàn, không có quái thù địch hay sát thương do linh năng. Nguy hiểm nằm ở đất hoang và hiểm địa bên ngoài.
 
 Mạch truyện là chuỗi nhiệm vụ có thứ tự gợi ý ([02](02-story.md) §9). Người chơi có thể bỏ ngang, đi nơi khác, làm nhiệm vụ phụ hay chỉ sống ở làng, rồi quay lại sau. Đầu đàn và boss luôn có mặt; hạ chúng trước khi tới đoạn truyện thì truyện ghi nhận.
 
@@ -54,7 +54,7 @@ Sinh ra ở **vùng giao thoa**, nơi hai hệ linh năng gặp nhau, sâu trong
 
 | | Người | Tinh Linh |
 | --- | --- | --- |
-| Điểm bắt đầu | Làng Hồ Lặng, ven biển | Tâm Ẩn (khu giao thoa trung tâm, nơi khởi sinh) |
+| Điểm bắt đầu | Làng Hồ Lặng, ven biển | Tâm Ẩn (vùng cây trung tâm an toàn, nơi khởi sinh) |
 | Cảm nhận linh năng | La bàn linh | Linh Cảm bẩm sinh |
 | Hấp thụ | Hấp Linh, sau khi được Tinh Linh dạy | Hấp Linh, bẩm sinh |
 | Nội Giới | Giống nhau: cùng hạt Ẩn, cùng tốc độ, cùng bước nhảy | Giống nhau |

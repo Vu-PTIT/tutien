@@ -26,7 +26,7 @@ Rút ra ba điều:
 
 ### 2.1 Giữ nguyên
 
-- **1 ô = 32 px ≈ 1 m**, nhân vật cao ~1,3 ô, camera và zoom như [04](04-map-art.md) §2. Màn hình ×2 vẫn thấy ≈ 30×17 ô.
+- **1 ô logic = 32 px** (quy đổi đo bố cục, không ép kích thước hay vị trí asset vào ô), nhân vật cao ~1,3 ô, camera và zoom như [04](04-map-art.md) §2. Màn hình ×2 vẫn thấy ≈ 30×17 ô.
 
 ### 2.2 Tốc độ đi bộ: 2,25 → **4 ô/giây** (128 px/s)
 
@@ -55,7 +55,7 @@ Vẫn hợp với 30 người/kênh ([10](10-kich-thuoc-map-online.md)): làng �
 - **Thị trấn lớn (Kinh thành):** **128×96** (32 s đi ngang)
 - **Thị trấn chuẩn (Làng, Cảng cả lục địa):** **96×72** (24 s đi ngang)
 - **Thị trấn nhỏ / Trạm dừng chân:** **80×64** (20 s đi ngang)
-- **Làng Tinh Linh & Tâm Ẩn (`m_k0_01`):** **80×60** (20 s đi ngang, không gian ấm cúng, không loãng)
+- **Làng Tinh Linh & Tâm Ẩn (`m_k0_01`):** **80×60** (20 s đi ngang; Tâm Ẩn là vùng cây trung tâm an toàn, không là lõi boss)
 - **Đất hoang lớn (Bãi săn chính mỗi khu):** **128×96** (32 s đi ngang, sức chứa 40 quái)
 - **Đất hoang vừa (Bìa rừng, sườn núi, vùng giao thoa):** **112×80** (28 s đi ngang)
 - **Hầm mỏ / Dungeon tầng 1:** **80×64** (20 s đi ngang)

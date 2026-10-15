@@ -18,7 +18,7 @@ Lục địa có **ba lớp từ ngoài vào trong**:
 Khoảng **ba trăm năm trước** là **Thời Khai Phá**: những đoàn thám hiểm Người đầu tiên vượt qua đất hoang vào tới giao thoa, gặp Tinh Linh, và được Tinh Linh dạy **Hấp Linh**, cách thở để linh năng lắng lại thành một thế giới nhỏ bên trong gọi là **Nội Giới** ([07](07-power-system.md)). Từ đó Người có sức mạnh để sống được ở đất đặc linh năng. **Giao Ước Rễ** giữa Người và Tinh Linh chia đất: Vành Biển và phần ngoài đất hoang là của Người; giao thoa là đất thiêng của Tinh Linh; Tinh Linh mở vài **lối riêng** (như Lối Rễ) ra biển để buôn bán.
 
 Hiện tại:
-- Làng, thành, vương quốc của Người nối nhau thành một vòng quanh bờ biển. Người đã vào được đất hoang, tới được nhiều làng Tinh Linh, nhưng **lõi mỗi khu và Tâm Ẩn chưa ai tới mà quay về**. Bản đồ còn trống ở giữa.
+- Làng, thành, vương quốc của Người nối nhau thành một vòng quanh bờ biển. Người đã vào được đất hoang, tới được nhiều làng Tinh Linh, nhưng **nhiều lõi hoang dã chưa được khảo sát đầy đủ**. Tâm Ẩn là vùng cây trung tâm đã có Tinh Linh sinh sống, an toàn và có đường nối với các làng giao thoa.
 - **Hội Khai Phá** cấp thẻ cho những ai đủ sức đi vào vùng nguy hiểm. Trở thành **Khai Phá Giả** là giấc mơ của mọi đứa trẻ ở làng biên.
 - **Dị thú** là động vật bị linh năng thấm quá mức: to hơn, hung hơn, mất kiểm soát. Chúng sống ở những nơi linh năng dày và rối, nên các làng dựng tường ngăn.
 - Gần đây, ở vài nơi, linh năng bắt đầu **chảy sai**: dị thú rời lãnh địa, cây héo theo nhịp, và có những mảnh đá **màu tím** không thuộc hệ nào. Đây là bí ẩn lớn.
@@ -45,7 +45,7 @@ Chi tiết, bản đồ và danh sách vùng giao thoa ở [03](03-world-and-map
 | **Cao Nguyên Hoàng Thổ** (đông bắc) | Thổ | Làng Ruộng Bậc | Cày ruộng bậc, chăn nuôi | Mỏm Ngân (Núi Vân Vàng, với Kim) |
 | **Đất Xích Nham** (đông) | Hỏa | Thị trấn Lò Rèn | Rèn, nung, khai đá nóng | Lò Tro (Đất Tro, với Thổ), Tổ Lửa (Rừng Lửa, với Mộc) |
 
-Sáu khu nằm liền nhau trên cùng một lục địa, khu nào cũng chạm biển. **Người đi lại bằng đường biển** quanh vòng ngoài; **Tinh Linh đi lại bằng vòng giao thoa** bên trong; giữa hai vòng là đất hoang. Mọi con đường tới Tâm Ẩn đều phải băng qua đất hoang rồi qua đất Tinh Linh, nên Khai Phá Giả nào muốn tới Tâm Ẩn cũng cần Tinh Linh.
+Sáu khu nằm liền nhau trên cùng một lục địa, khu nào cũng chạm biển. **Người đi lại bằng đường biển** quanh vòng ngoài; **Tinh Linh đi lại bằng vòng giao thoa** bên trong; giữa hai vòng là đất hoang. Người có thể băng đất hoang hoặc đi Lối Rễ tới mạng giao thoa rồi đến Tâm Ẩn. Người dẫn đường giúp hiểu văn hóa và chọn đường an toàn, không là điều kiện khóa cổng.
 
 ## 4. Hai tộc
 
@@ -124,7 +124,7 @@ Tổ chức:
 | 5 | Thổ: Làng Ruộng Bậc → Vực Đá Sống → Núi Vân Vàng | Người ven biển lấn vào đào vàng ở đất Tinh Linh; chiến tranh nhỏ; chọn phe hay hàn gắn |
 | Cuối | Tâm Ẩn | Khu giao thoa trung tâm, cội nguồn nơi sáu hệ gặp nhau |
 
-Thế giới mở: mạch truyện là **chuỗi nhiệm vụ có thứ tự gợi ý**, không phải màn. Thứ tự gợi ý đi **vòng quanh lục địa**, mỗi lần sang khu cạnh bên; trong mỗi khu, nhiệm vụ dẫn **từ ngoài vào trong**: thị trấn ven biển, đất hoang, boss vùng ở lõi, làng Tinh Linh ở giao thoa. Người chơi có thể bỏ ngang, sang khu khác, rồi quay lại. Boss và nơi chốn có sẵn từ đầu; truyện ghi nhận việc người chơi đã làm trước (ví dụ đã hạ boss thì cảnh truyện kể lại thay vì bắt đánh lại). **Tâm Ẩn mở từ đầu, không bị khóa**; người chơi có thể tiến vào bất cứ lúc nào nếu đủ sức chống chịu nồng độ linh năng cực hạn và dị thú Căn Nguyên. Có một Tinh Linh/Người dẫn đường và một bước nhảy Nội Giới. Map từng khu ở [12](12-ban-do-cac-khu.md). Chỉ mạch 1 được thiết kế chi tiết lúc này.
+Thế giới mở: mạch truyện là **chuỗi nhiệm vụ có thứ tự gợi ý**, không phải màn. Thứ tự gợi ý đi **vòng quanh lục địa**, mỗi lần sang khu cạnh bên; trong mỗi khu, nhiệm vụ dẫn **từ ngoài vào trong**: thị trấn ven biển, đất hoang, boss vùng ở lõi, làng Tinh Linh ở giao thoa. Người chơi có thể bỏ ngang, sang khu khác, rồi quay lại. Boss và nơi chốn có sẵn từ đầu; truyện ghi nhận việc người chơi đã làm trước (ví dụ đã hạ boss thì cảnh truyện kể lại thay vì bắt đánh lại). **Tâm Ẩn mở từ đầu, không bị khóa**; người chơi có thể tiến vào bất cứ lúc nào qua mạng đường giao thoa; nơi đến là vùng cư trú an toàn dưới Cây Trung Tâm. Có một Tinh Linh/Người dẫn đường và một bước nhảy Nội Giới. Map từng khu ở [12](12-ban-do-cac-khu.md). Chỉ mạch 1 được thiết kế chi tiết lúc này.
 
 ## 10. Mạch truyện 1 — Nhịp 47
 
@@ -138,7 +138,7 @@ Hai role có mở đầu khác nhau, gặp nhau ở hồi B và đi chung từ �
 
 ### Hồi A (Tinh Linh) — Lần đầu thấy biển
 
-1. Thức dậy ở Vườn Cây Mẹ. Lão Hồ dạy Hấp Linh bên suối, kể về Thời Khai Phá và Giao Ước. *(dạy: đi, tương tác, tu luyện)*
+1. Thức dậy ở Đài Khởi Sinh dưới Cây Trung Tâm tại Tâm Ẩn; làm quen đi lại và tương tác trong vùng an toàn. Theo tuyến giao thoa an toàn tới Đầm Sen và Vườn Cây Mẹ, gặp Lão Hồ học Hấp Linh bên suối, nghe về Thời Khai Phá và Giao Ước. *(dạy: đi, tương tác, tu luyện; không bắt đi qua bãi quái để rời nơi spawn)*
 2. Bé Mơ dạy Hóa Thú, khoe đồ "lượm" được của Người, rủ chạy đua qua lối mòn. *(dạy: kỹ năng riêng, thu thập)*
 3. Đêm Linh Triều: vài Tinh Linh nhỏ ngã bệnh, lá Cây Mẹ héo theo một nhịp đều. Lão Hồ miễn cưỡng cho người chơi đi **Lối Rễ**, hầm rễ dài chạy ngầm dưới đất hoang, ra làng Người ven biển tìm nguyên nhân. Ra khỏi Cổng Rễ là **lần đầu thấy biển**. Đội Tuần Rừng nhìn chằm chằm; Bé Mơ dẫn đi chợ làng. Nội Giới đã lớn thành **Đảo**.
 
@@ -183,7 +183,7 @@ Rin bước qua Cổng Rễ lần đầu, ngồi cùng Lão Hồ dưới Cây M�
 - Đá tím đến từ một **nơi thứ ba**, ngoài sáu hệ và ngoài cả Tâm Ẩn. Mỗi lần xuất hiện là một manh mối, nên rất hiếm.
 - Tháp Học giấu điều gì về Thời Khai Phá: các Khai Phá Giả đầu tiên có thật sự "được dạy", hay đã lấy?
 - Linh năng đang bị hút dần khỏi các vùng. Tinh Linh có thể không còn đất để sinh ra.
-- Tâm Ẩn là gì, và vì sao không ai tới mà quay về?
+- Vì sao sáu dòng linh năng cân bằng dưới Cây Trung Tâm, và đá tím đang phá cân bằng ấy từ đâu?
 
 Hướng dài hạn: làng biên → các vùng giao thoa → lõi sáu khu → Tâm Ẩn → nơi thứ ba.
 
@@ -202,7 +202,7 @@ Hướng dài hạn: làng biên → các vùng giao thoa → lõi sáu khu → 
 ## 13. Nghiệm thu cốt truyện
 
 Sau hồi A–B, người thử kể lại được:
-- Thế giới là một lục địa chia khu theo hệ linh năng: Người ở ven biển, dị thú ở đất hoang, Tinh Linh ở vùng giao thoa bên trong; Tâm Ẩn ở giữa chưa ai tới.
+- Thế giới là một lục địa chia khu theo hệ linh năng: Người ở ven biển, dị thú ở đất hoang, Tinh Linh ở vùng giao thoa bên trong; Tâm Ẩn ở giữa là vùng cây trung tâm an toàn của Tinh Linh.
 - Tinh Linh sinh ra từ linh năng của vùng; dị thú là thú bị nhiễm.
 - Người học sức mạnh từ Tinh Linh, và vì sao hai tộc chưa tin nhau (đất, Giao Ước).
 - Nhân vật muốn gì (thành Khai Phá Giả, đi tới Tâm Ẩn) và đối thủ là ai.

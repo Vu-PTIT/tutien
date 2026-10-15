@@ -64,6 +64,8 @@ TƯƠNG KHẮC (chế)    Mộc ⊣ Thổ ⊣ Thủy ⊣ Hỏa ⊣ Kim ⊣ Mộc
 - **Trong chiến đấu:** hệ chính của người chơi (hệ có nhiều thửa sạch nhất, Phong tính theo bầu trời, cần ít nhất 3) **khắc** hệ của dị thú thì đòn mạnh hơn **25%**; hệ của dị thú khắc hệ người chơi thì đòn yếu đi **15%**.
 - Ví dụ: Nội Giới nhiều rừng (Mộc) đánh Lợn Gai (Thổ) rất tốt; Nội Giới nhiều nước (Thủy) đánh Lợn Gai lại bị đất chặn.
 
+**Phân biệt độ đậm và độ rối:** linh năng đậm ở Tâm Ẩn được Cây Trung Tâm và sáu dòng hòa hợp giữ cân bằng. Toàn vùng cư trú an toàn cho cả hai tộc, không gây đục hoặc đòi hỏi mốc Nội Giới. Quy tắc chịu áp lực ở đất hoang chỉ áp dụng nơi linh năng hoang/rối; không suy ra nguy hiểm chỉ từ khoảng cách tới tâm lục địa.
+
 ## 3. Lượng: Nội Giới lớn lên
 
 Nội Giới là một lưới ô nhỏ (gọi là **thửa**). Mỗi hạt linh hấp thụ đủ thì thành một thửa mới, mọc ra ở rìa Nội Giới. Thổ sạch đôi khi không mọc thửa mới mà làm một thửa Thổ nằm sâu trong đất liền (bốn phía đều là đất) **cao thêm một tầng**; cao 3 tầng là núi.
@@ -225,7 +227,7 @@ Hoạt động đời sống bây giờ **góp thẳng vào sức mạnh** (hệ
 
 | Hồi | Nội Giới |
 | --- | --- |
-| A | Người: Bé Mơ **dạy Hấp Linh** ở sân miếu, hạt sáng đầu tiên tự hiện ra. Tinh Linh: Lão Hồ dạy Hấp Linh bên suối. Cả hai kết hồi A thành **Đảo** |
+| A | Người: Bé Mơ **dạy Hấp Linh** ở sân miếu, hạt sáng đầu tiên tự hiện ra. Tinh Linh: xuất phát tại Tâm Ẩn, theo tuyến giao thoa an toàn tới Vườn Cây Mẹ học cùng Lão Hồ. Cả hai kết hồi A thành **Đảo** |
 | B | Đánh Lợn Gai: lần đầu có thửa đục; Bà Nora hoặc Lão Hồ dạy lọc |
 | C | Ở Hầm Mỏ thấy vân linh mạch chạy thẳng: linh năng đang bị hút về một hướng. Đạt **Đảo lớn** để vào Rừng Sâu |
 | D | Hội Rễ dạy **Hình Thái** cho cả hai role (Người học qua Bé Mơ). Học giả Theo phát hiện "pháp thiền của Tháp Học" vốn là của Tinh Linh |

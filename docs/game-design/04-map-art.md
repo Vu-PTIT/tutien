@@ -121,6 +121,12 @@ Mọi map phải trông như **cùng một thế giới, cùng một tay vẽ**.
 
 Các khu khác ([12](12-ban-do-cac-khu.md)) lấy màu chủ đạo theo hệ trội của khu ([03](03-world-and-maps.md) §1.1) và thêm palette riêng khi dựng khu đó.
 
+### Tâm Ẩn và cây trung tâm
+
+Tâm Ẩn là vùng cây trung tâm an toàn, có chỗ ở, Đài Khởi Sinh, suối và đường giao thoa. Cây Trung Tâm là vật mốc toàn lục địa; Cây Mẹ ở Đầm Sen là vật mốc làng địa phương. Thể hiện khác nhau bằng quy mô, bố cục và màu linh năng; không dùng chung một layout rồi đổi tên.
+
+Ánh Ẩn ngọc lam tập trung ở gốc, rễ và suối; tán giữ mảng sáng–tối rõ. Không biến cả màn thành lớp glow, không dùng hình ảnh hiểm địa hoặc boss để mô tả vùng khởi sinh. Thân cây thuộc G3, phần tán cần che người thuộc G4, ánh/hạt thuộc G5.
+
 ## 5. Ánh sáng, giờ, thời tiết
 
 Ưu tiên đọc rõ nhân vật, đường đi và vật tương tác; ánh sáng bổ sung không khí, không làm mất nét pixel.

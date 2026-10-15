@@ -1,5 +1,7 @@
 # Tu Tiên
 
+> **Chuẩn hiện hành trên `feat/fantasy-world` — 15/10/2026:** fantasy cổ, lục địa sáu hệ; Tâm Ẩn là vùng cây trung tâm an toàn, nơi Tinh Linh xuất phát. Thiết kế map xem [mục lục](docs/game-design/README.md). Những mô tả hiện đại và demo bên dưới là lịch sử, không dùng làm chuẩn map hiện hành.
+
 > Game pixel online dành cho Gen Z, đồng thời là một không gian số để học/làm việc và gặp gỡ bạn bè, đặt trong một lục địa fantasy cổ nơi linh năng có từ thuở khai thiên: Người sống ở dải ven biển, Tinh Linh sống ở vùng giao thoa trong đất liền.
 
 Tu Tiên có **hai không gian song song, dùng chung tài khoản, avatar, bạn bè và trạng thái**. Người dùng có thể vào phần nền tảng để sắp xếp việc trong ngày, học/làm cùng bạn và trò chuyện; khi muốn chơi, họ mở thế giới pixel để chăm nhà/vườn, khám phá và tu luyện. Mỗi không gian có ích ngay cả khi người dùng không mở phần còn lại.
