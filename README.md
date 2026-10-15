@@ -18,7 +18,8 @@ Game pixel online fantasy cổ về Người, Tinh Linh và linh năng của L�
 - [Thành phần mỗi map](docs/game-design/05-map-layouts.md)
 - [Quái theo cấu trúc mới](docs/game-design/06-monsters.md)
 - [Kích thước map](docs/game-design/11-ti-le-map.md)
-- [Danh mục 27 khu](docs/game-design/12-ban-do-cac-khu.md)\n- [Bố cục và phong cách từng khu](docs/game-design/13-bo-cuc-27-khu.md)
+- [Danh mục 27 khu](docs/game-design/12-ban-do-cac-khu.md)
+- [Bố cục và phong cách từng khu](docs/game-design/13-bo-cuc-27-khu.md)
 
 ## Art và tỉ lệ
 

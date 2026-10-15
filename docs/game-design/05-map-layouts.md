@@ -70,7 +70,9 @@ Tên 24 map và địa hình cụ thể chưa chốt. Không chép tên/nội du
 
 Đơn vị là ô logic 32 px; asset không cần snap vào ô hoặc có kích thước bội 32.
 
-Thiết kế bố cục cụ thể cho 27 khu và bảng màu từng khu nằm tại [13 — Bố cục 27 khu](13-bo-cuc-27-khu.md).\n\n## 6. Nghiệm thu
+Thiết kế bố cục cụ thể cho 27 khu và bảng màu từng khu nằm tại [13 — Bố cục 27 khu](13-bo-cuc-27-khu.md).
+
+## 6. Nghiệm thu
 
 - [ ] Vai trò map đúng trong 27 khu chính.
 - [ ] Lối vào/ra, điểm đến và đường rút lui xác định rõ.
